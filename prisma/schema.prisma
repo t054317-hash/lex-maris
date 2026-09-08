@@ -1,0 +1,276 @@
+// LEX MARIS — relational model.
+//
+// Design rules applied throughout:
+//  * Money is stored as Decimal, never Float.
+//  * Nothing is hard-deleted; `deletedAt` drives visibility. Legal records must
+//    survive their own deletion request for the retention period.
+//  * Every state change lands in AuditEvent. The application has no path that
+//    mutates a Matter or Document without writing one.
+//  * Document ciphertext lives in object storage; only the sealing metadata is
+//    in Postgres, so a database dump alone reveals no document content.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CLIENT
+  FEE_EARNER
+  PARTNER
+  COMPLIANCE
+  ADMIN
+}
+
+enum MatterStage {
+  INSTRUCTED
+  ASSEMBLED
+  SCANNED
+  PARTNER_REVIEW
+  COUNTERPARTY_REVIEW
+  AWAITING_SIGNATURE
+  EXECUTED
+  CLOSED
+}
+
+enum ContractType {
+  SUPPLY
+  DISTRIBUTION
+  CHARTERPARTY
+  BILL_OF_LADING
+  SHAREHOLDERS
+  JV
+}
+
+enum Severity {
+  INFO
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum SignatureStatus {
+  PENDING
+  SIGNED
+  DECLINED
+  EXPIRED
+}
+
+model Organisation {
+  id             String   @id @default(cuid())
+  name           String
+  registrationNo String?
+  jurisdiction   String   @db.Char(2)
+  createdAt      DateTime @default(now())
+
+  users    User[]
+  matters  Matter[]
+  parties  Party[]
+}
+
+model User {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  name           String
+  role           Role      @default(CLIENT)
+  // Argon2id hash. Null for SSO-only principals.
+  passwordHash   String?
+  totpSecretEnc  Bytes?
+  lastLoginAt    DateTime?
+  createdAt      DateTime  @default(now())
+  deletedAt      DateTime?
+
+  organisationId String
+  organisation   Organisation @relation(fields: [organisationId], references: [id])
+
+  sessions     Session[]
+  auditEvents  AuditEvent[]
+  signatures   Signature[]
+  assignedTo   Matter[]     @relation("MatterOwner")
+
+  @@index([organisationId, role])
+}
+
+// Refresh-token sessions. The access token is a short-lived JWT held in an
+// HTTP-only cookie and is never persisted; only the refresh family is.
+model Session {
+  id               String   @id @default(cuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id])
+  refreshTokenHash String   @unique
+  // Rotation family: reuse of a retired token revokes the whole family.
+  familyId         String
+  userAgent        String?
+  ipHash           String?
+  expiresAt        DateTime
+  revokedAt        DateTime?
+  createdAt        DateTime @default(now())
+
+  @@index([userId, familyId])
+  @@index([expiresAt])
+}
+
+model Party {
+  id             String   @id @default(cuid())
+  name           String
+  registrationNo String?
+  address        String
+  jurisdiction   String   @db.Char(2)
+  // Result of the most recent sanctions screen; drives the execution block.
+  screenedAt     DateTime?
+  screenClear    Boolean?
+
+  organisationId String
+  organisation   Organisation @relation(fields: [organisationId], references: [id])
+
+  firstPartyOf  Matter[] @relation("FirstParty")
+  secondPartyOf Matter[] @relation("SecondParty")
+
+  @@index([organisationId])
+  @@index([screenedAt])
+}
+
+model Matter {
+  id           String       @id @default(cuid())
+  reference    String       @unique
+  type         ContractType
+  stage        MatterStage  @default(INSTRUCTED)
+  title        String
+
+  // Commercial terms. Mirrors ContractInput in src/lib/risk-engine.ts; the
+  // engine is the single source of truth for their meaning.
+  valueUsd               Decimal @db.Decimal(18, 2)
+  governingLaw           String  @db.Char(2)
+  disputeForum           String
+  liabilityCapMultiple   Decimal @db.Decimal(4, 2)
+  paymentTermsDays       Int
+  security               String
+  hasForceMajeure        Boolean @default(false)
+  hasSanctionsClause     Boolean @default(false)
+  hasIndemnity           Boolean @default(false)
+  hasTerminationForConv  Boolean @default(false)
+  insuranceAllocated     Boolean @default(false)
+  laytimeHours           Int?
+  demurrageRateUsd       Decimal? @db.Decimal(12, 2)
+
+  organisationId String
+  organisation   Organisation @relation(fields: [organisationId], references: [id])
+  ownerId        String?
+  owner          User?        @relation("MatterOwner", fields: [ownerId], references: [id])
+  firstPartyId   String
+  firstParty     Party        @relation("FirstParty", fields: [firstPartyId], references: [id])
+  secondPartyId  String
+  secondParty    Party        @relation("SecondParty", fields: [secondPartyId], references: [id])
+
+  documents   Document[]
+  riskReports RiskReport[]
+  alerts      Alert[]
+  auditEvents AuditEvent[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@index([organisationId, stage])
+  @@index([ownerId])
+}
+
+model Document {
+  id        String @id @default(cuid())
+  matterId  String
+  matter    Matter @relation(fields: [matterId], references: [id])
+  filename  String
+  mimeType  String
+  version   Int    @default(1)
+
+  // Sealing metadata. See src/lib/document-crypto.ts.
+  // `contentHash` is the document's public identity and the QR payload.
+  contentHash    String @unique
+  storageKey     String @unique
+  wrappedKey     Bytes
+  iv             Bytes
+  authTag        Bytes
+  sizeBytes      Int
+
+  signatures Signature[]
+
+  createdAt DateTime  @default(now())
+  deletedAt DateTime?
+
+  @@unique([matterId, version])
+  @@index([matterId])
+}
+
+model RiskReport {
+  id           String   @id @default(cuid())
+  matterId     String
+  matter       Matter   @relation(fields: [matterId], references: [id])
+  score        Int
+  band         String
+  modelVersion String
+  // Denormalised finding list. Findings are not separately queryable by
+  // design: a report is an immutable snapshot, not a mutable worklist.
+  findings     Json
+  generatedAt  DateTime @default(now())
+
+  @@index([matterId, generatedAt])
+}
+
+model Signature {
+  id         String          @id @default(cuid())
+  documentId String
+  document   Document        @relation(fields: [documentId], references: [id])
+  signerId   String
+  signer     User            @relation(fields: [signerId], references: [id])
+  status     SignatureStatus @default(PENDING)
+
+  // HMAC attestation over (documentHash, signerId, signerName, signedAt, ipHash).
+  attestation String?
+  signerName  String
+  ipHash      String?
+  signedAt    DateTime?
+  expiresAt   DateTime
+
+  @@unique([documentId, signerId])
+  @@index([status, expiresAt])
+}
+
+model Alert {
+  id         String    @id @default(cuid())
+  matterId   String
+  matter     Matter    @relation(fields: [matterId], references: [id])
+  severity   Severity
+  title      String
+  body       String
+  // Set when a human dismisses or resolves it; alerts are never deleted.
+  resolvedAt DateTime?
+  dueAt      DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([matterId, resolvedAt])
+  @@index([dueAt])
+}
+
+// Append-only. There is no update or delete path in the application layer;
+// enforce with a database role that holds INSERT and SELECT only.
+model AuditEvent {
+  id        String   @id @default(cuid())
+  matterId  String?
+  matter    Matter?  @relation(fields: [matterId], references: [id])
+  actorId   String?
+  actor     User?    @relation(fields: [actorId], references: [id])
+  action    String
+  // Before/after diff, with document plaintext and secrets excluded.
+  payload   Json
+  ipHash    String?
+  createdAt DateTime @default(now())
+
+  @@index([matterId, createdAt])
+  @@index([actorId, createdAt])
+  @@index([action, createdAt])
+}

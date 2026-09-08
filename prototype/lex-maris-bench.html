@@ -1,0 +1,1979 @@
+<title>Lex Maris Contract Bench</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+/* ==========================================================================
+   Tokens. This page commits to one visual world - a dark, gold-leafed
+   chambers interior - so the palette is declared once and painted explicitly
+   rather than swapped per theme.
+   ========================================================================== */
+:root {
+  --abyss:      #050A18;
+  --navy:       #0A1128;
+  --navy-lift:  #101A3A;
+  --navy-edge:  #18244F;
+  --gold:       #D4AF37;
+  --gold-lit:   #E7C765;
+  --gold-deep:  #8A6F1F;
+  --ink:        #F3F5FA;
+  --ink-soft:   #C3CADB;
+  --ink-mute:   #8B93A8;
+
+  /* Semantic, kept separate from the gold accent. */
+  --safe:     #3FBF8F;
+  --watch:    #D4AF37;
+  --elevated: #E0725A;
+  --critical: #C0392B;
+
+  --paper:     #F6F3EA;
+  --paper-ink: #1A1A1A;
+
+  --glass:        rgba(16, 26, 58, 0.42);
+  --glass-edge:   rgba(212, 175, 55, 0.22);
+  --glass-edge-lit: rgba(212, 175, 55, 0.55);
+
+  --display: "Cinzel", "Georgia", serif;
+  --body: "Inter", system-ui, -apple-system, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --lux: cubic-bezier(0.22, 1, 0.36, 1);
+  --shell: 1120px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--navy);
+  background-image:
+    radial-gradient(1100px 560px at 12% -8%, rgba(212,175,55,0.10), transparent 62%),
+    radial-gradient(900px 520px at 102% 6%, rgba(24,36,79,0.9), transparent 66%);
+  background-attachment: fixed;
+  color: var(--ink);
+  font: 400 16px/1.6 var(--body);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, .display { font-family: var(--display); font-weight: 600; text-wrap: balance; }
+p { margin: 0; }
+
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+.eyebrow {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: rgba(212,175,55,0.85);
+  margin: 0;
+}
+
+a { color: var(--gold-lit); }
+
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+::selection { background: rgba(212,175,55,0.3); }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* Frosted surface. Declared once so every panel shares blur, edge and lift. */
+.glass {
+  position: relative;
+  background: var(--glass);
+  border: 1px solid var(--glass-edge);
+  border-radius: 18px;
+  box-shadow: 0 24px 60px -24px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.06);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+  transition: border-color 420ms var(--lux), box-shadow 420ms var(--lux), transform 420ms var(--lux);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass { background: rgba(16,26,58,0.92); }
+}
+.glass.lift:hover, .glass.lift:focus-within {
+  border-color: var(--glass-edge-lit);
+  box-shadow: 0 0 0 1px rgba(212,175,55,0.35), 0 0 34px -8px rgba(212,175,55,0.45);
+  transform: translateY(-3px);
+}
+
+.rule {
+  height: 1px; border: 0; margin: 0 auto;
+  background: linear-gradient(90deg, transparent, rgba(212,175,55,0.5), transparent);
+}
+
+/* ==========================================================================
+   Cursor spotlight
+   ========================================================================== */
+body[data-cursor="on"], body[data-cursor="on"] * { cursor: none; }
+
+#cursor-layer { position: fixed; inset: 0; z-index: 90; pointer-events: none; }
+#cursor-ring, #cursor-dot {
+  position: absolute; left: 0; top: 0; opacity: 0;
+  will-change: transform; transition: opacity 200ms linear;
+}
+#cursor-ring {
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 1px solid rgba(212,175,55,0.65);
+  background: radial-gradient(circle, rgba(212,175,55,0.16), rgba(212,175,55,0) 70%);
+  box-shadow: 0 0 24px rgba(212,175,55,0.28);
+}
+#cursor-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold-lit); }
+
+/* ==========================================================================
+   Intro overlay
+   ========================================================================== */
+#intro {
+  position: fixed; inset: 0; z-index: 80;
+  background: var(--abyss);
+  transition: opacity 850ms var(--lux), filter 850ms var(--lux), transform 850ms var(--lux);
+}
+#intro.dissolved { opacity: 0; filter: blur(14px); transform: scale(1.06); pointer-events: none; }
+#intro.gone { display: none; }
+
+#gavel-canvas, #burst-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+#burst-canvas { pointer-events: none; }
+
+#intro-hit {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  background: none; border: 0; padding: 0; cursor: none;
+}
+
+#intro-vignette {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(58% 42% at 50% 58%, rgba(212,175,55,0.14), transparent 70%),
+    radial-gradient(120% 92% at 50% 50%, transparent 44%, rgba(5,10,24,0.93) 100%);
+}
+
+#intro-word {
+  position: absolute; inset-inline: 0; bottom: 15%;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  text-align: center; padding: 0 24px; pointer-events: none;
+  transition: opacity 320ms var(--lux);
+}
+#intro-word h1 {
+  margin: 0; font-size: clamp(28px, 6vw, 56px);
+  letter-spacing: 0.34em; color: var(--gold); font-weight: 400;
+}
+#intro-hint { font-size: 14px; color: var(--ink-soft); margin-top: 14px; }
+@media (prefers-reduced-motion: no-preference) {
+  #intro-hint { animation: bob 6s ease-in-out infinite; }
+}
+@keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+#skip {
+  position: absolute; right: 24px; bottom: 24px; z-index: 10;
+  font: 500 11px var(--body); text-transform: uppercase; letter-spacing: 0.18em;
+  color: var(--ink-soft); padding: 10px 18px; border-radius: 999px;
+  background: var(--glass); border: 1px solid var(--glass-edge);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  cursor: none; transition: color 300ms var(--lux), border-color 300ms var(--lux);
+}
+#skip:hover { color: var(--gold-lit); border-color: var(--glass-edge-lit); }
+
+/* ==========================================================================
+   Layout
+   ========================================================================== */
+.shell { max-width: var(--shell); margin: 0 auto; padding: 0 24px; }
+
+#hero {
+  position: relative; isolation: isolate;
+  padding: 120px 0 96px;
+  overflow: hidden;
+}
+#mesh { position: absolute; inset: 0; z-index: -1; opacity: 0.72; }
+
+#hero h1 {
+  margin: 20px 0 0;
+  font-size: clamp(34px, 6.4vw, 68px);
+  line-height: 1.08; letter-spacing: -0.01em;
+  max-width: 20ch;
+}
+#hero h1 em { font-style: normal; color: var(--gold); }
+.lede {
+  margin-top: 26px; max-width: 62ch;
+  font-size: 18px; font-weight: 300; color: var(--ink-soft);
+}
+
+.cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 20px; margin-top: 38px; }
+
+.btn-gold {
+  font: 500 11px var(--body); text-transform: uppercase; letter-spacing: 0.18em;
+  color: var(--gold-lit); padding: 14px 28px; border-radius: 999px;
+  background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.5);
+  transition: background 300ms var(--lux), border-color 300ms var(--lux);
+}
+.btn-gold:hover { background: rgba(212,175,55,0.22); border-color: var(--gold); }
+.btn-quiet {
+  font: 500 11px var(--body); text-transform: uppercase; letter-spacing: 0.18em;
+  color: var(--ink-soft); background: none; border: 0; padding: 6px 0;
+  text-decoration: underline; text-decoration-color: rgba(212,175,55,0.45);
+  text-underline-offset: 8px; transition: color 300ms var(--lux);
+}
+.btn-quiet:hover { color: var(--gold-lit); }
+
+.stat-rail {
+  display: grid; gap: 24px 40px; margin: 64px 0 0;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  max-width: 680px;
+}
+.stat-rail dt { font-family: var(--display); font-size: 26px; color: var(--gold); }
+.stat-rail dd {
+  margin: 5px 0 0; font-size: 11px; text-transform: uppercase;
+  letter-spacing: 0.13em; color: var(--ink-mute);
+}
+
+section { padding: 96px 0; }
+.section-head { max-width: 60ch; }
+.section-head h2 { margin: 14px 0 0; font-size: clamp(26px, 3.4vw, 38px); line-height: 1.2; }
+.section-head p { margin-top: 18px; color: var(--ink-soft); font-weight: 300; }
+
+/* ==========================================================================
+   Bench: control column + live derivation
+   ========================================================================== */
+.bench {
+  display: grid; gap: 24px; margin-top: 48px;
+  grid-template-columns: minmax(0,1fr) minmax(0,0.88fr);
+}
+@media (max-width: 940px) { .bench { grid-template-columns: minmax(0,1fr); } }
+
+.panel { padding: 28px; }
+@media (min-width: 640px) { .panel { padding: 34px; } }
+
+/* Steps are a genuine sequence - the order in which terms get settled - so
+   they are numbered. */
+.steps { display: flex; flex-wrap: wrap; gap: 4px; list-style: none; margin: 0 0 30px; padding: 0; }
+.steps button {
+  display: inline-flex; align-items: baseline; gap: 7px;
+  font: 500 10.5px var(--body); text-transform: uppercase; letter-spacing: 0.14em;
+  color: var(--ink-mute); background: none; border: 0;
+  padding: 7px 13px; border-radius: 999px;
+  transition: color 300ms var(--lux), background 300ms var(--lux);
+}
+.steps button .n { font-family: var(--mono); font-size: 9.5px; opacity: 0.7; }
+.steps button:hover { color: var(--ink-soft); }
+.steps button[aria-current="step"] { color: var(--gold-lit); background: rgba(212,175,55,0.14); }
+.steps li[data-done="1"] button { color: var(--ink-soft); }
+
+.step-body { min-height: 352px; display: grid; gap: 22px; align-content: start; }
+
+.field { display: block; }
+.field > .eyebrow { margin-bottom: 9px; }
+.field .val { color: var(--ink); letter-spacing: 0.1em; }
+
+select {
+  width: 100%; font: 400 14px var(--body); color: var(--ink);
+  background: rgba(16,26,58,0.72); border: 1px solid rgba(139,147,168,0.28);
+  border-radius: 10px; padding: 11px 13px;
+  transition: border-color 300ms var(--lux);
+}
+select:hover { border-color: rgba(212,175,55,0.5); }
+select option { background: var(--navy-lift); color: var(--ink); }
+
+input[type="range"] {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 6px; border-radius: 999px; outline: none; background: transparent;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--gold-lit); border: 2px solid var(--navy);
+  box-shadow: 0 0 12px rgba(212,175,55,0.6);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--gold-lit); border: 2px solid var(--navy);
+}
+
+.switch {
+  display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 16px;
+  text-align: left; font: 400 14px var(--body); color: var(--ink);
+  background: rgba(16,26,58,0.4); border: 1px solid rgba(139,147,168,0.22);
+  border-radius: 10px; padding: 13px 16px;
+  transition: border-color 300ms var(--lux);
+}
+.switch:hover { border-color: rgba(212,175,55,0.45); }
+.switch .track {
+  position: relative; flex: none; width: 38px; height: 20px; border-radius: 999px;
+  background: rgba(139,147,168,0.3); transition: background 300ms var(--lux);
+}
+.switch[aria-checked="true"] .track { background: rgba(212,175,55,0.7); }
+.switch .knob {
+  position: absolute; top: 2px; left: 2px; width: 16px; height: 16px;
+  border-radius: 50%; background: var(--ink);
+  transition: transform 300ms var(--lux);
+}
+.switch[aria-checked="true"] .knob { transform: translateX(18px); }
+
+.note { font-size: 12.5px; line-height: 1.65; color: var(--ink-mute); }
+
+.nav-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 32px; }
+.nav-row .btn-quiet:disabled, .nav-row .btn-gold:disabled { opacity: 0.3; }
+
+/* --- Exposure dial ------------------------------------------------------- */
+.dial-row { display: flex; align-items: center; gap: 26px; flex-wrap: wrap; }
+.dial { position: relative; width: 128px; height: 128px; flex: none; }
+.dial svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.dial-centre {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.dial-centre .score { font-family: var(--display); font-size: 32px; font-variant-numeric: tabular-nums; }
+.dial-centre .cap { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--ink-mute); }
+#band { font-family: var(--display); font-size: 21px; margin-top: 4px; }
+#tally { display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 14px 0 0; font-size: 12px; color: var(--ink-soft); }
+#tally .item { display: flex; align-items: center; gap: 7px; }
+#tally .pip { width: 6px; height: 6px; border-radius: 50%; }
+#tally dd { margin: 0; color: var(--ink); font-variant-numeric: tabular-nums; }
+
+/* --- Findings register --------------------------------------------------- */
+.findings { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.finding {
+  border: 1px solid rgba(139,147,168,0.2); border-radius: 10px;
+  background: rgba(16,26,58,0.4); overflow: hidden;
+}
+.finding > button {
+  display: flex; gap: 12px; width: 100%; text-align: left;
+  background: none; border: 0; padding: 13px 16px;
+  transition: background 300ms var(--lux);
+}
+.finding > button:hover { background: rgba(24,36,79,0.45); }
+.finding .sev-pip { flex: none; width: 8px; height: 8px; border-radius: 50%; margin-top: 7px; }
+.finding .f-title { display: block; font-size: 14px; color: var(--ink); }
+.finding .f-meta {
+  display: block; margin-top: 3px;
+  font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--ink-mute);
+}
+.finding .detail {
+  display: none; border-top: 1px solid rgba(139,147,168,0.15);
+  padding: 16px 16px 18px 40px;
+}
+.finding[data-open="1"] .detail { display: grid; gap: 12px; }
+.finding .detail p { font-size: 13.5px; line-height: 1.66; color: var(--ink-soft); }
+.finding .detail .fix { color: var(--ink); }
+.finding .detail .authority { font-family: var(--mono); font-size: 11px; color: rgba(212,175,55,0.8); }
+
+.clean {
+  border: 1px solid rgba(63,191,143,0.3); background: rgba(63,191,143,0.06);
+  border-radius: 12px; padding: 24px;
+}
+.clean h3 { margin: 0; font-size: 19px; color: var(--safe); }
+.clean p { margin-top: 10px; font-size: 14px; color: var(--ink-soft); line-height: 1.65; }
+
+/* --- Draft on paper ------------------------------------------------------ */
+.draft-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 13px 20px; border-bottom: 1px solid rgba(139,147,168,0.16);
+}
+.draft-scroll {
+  max-height: 520px; overflow-y: auto; overflow-x: auto;
+  background: var(--paper); color: var(--paper-ink);
+  padding: 28px 26px; border-radius: 0 0 17px 17px;
+}
+.draft-scroll h3 {
+  margin: 8px 0 0; font-size: 17px; text-transform: uppercase; letter-spacing: 0.05em; text-align: center;
+}
+.draft-brand {
+  margin: 0; text-align: center; font-size: 9.5px;
+  text-transform: uppercase; letter-spacing: 0.3em; color: var(--gold-deep);
+}
+.draft-scroll .divider { width: 64px; height: 1px; background: rgba(138,111,31,0.5); margin: 14px auto 0; }
+.recitals { display: grid; gap: 7px; margin-top: 24px; font-size: 12.5px; line-height: 1.65; }
+.clauses { list-style: none; margin: 28px 0 0; padding: 0; display: grid; gap: 20px; }
+.clause { padding-left: 15px; border-left: 2px solid transparent; }
+.clause h4 {
+  margin: 0; font-family: var(--body); font-size: 12.5px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+.clause .flag {
+  margin-top: 4px; font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.1em;
+}
+.clause .para { margin-top: 6px; font-size: 12.5px; line-height: 1.68; color: #2A2A2A; }
+.clause .para .num { color: var(--gold-deep); margin-right: 6px; font-variant-numeric: tabular-nums; }
+.draft-foot {
+  margin-top: 30px; padding-top: 14px; border-top: 1px solid rgba(26,26,26,0.15);
+  font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.14em; color: #6A6A6A;
+}
+
+/* ==========================================================================
+   Matter rail
+   ========================================================================== */
+.matter-grid {
+  display: grid; gap: 24px; margin-top: 48px;
+  grid-template-columns: minmax(0,1.1fr) minmax(0,1fr);
+}
+@media (max-width: 940px) { .matter-grid { grid-template-columns: minmax(0,1fr); } }
+
+.rail { position: relative; list-style: none; margin: 26px 0 0; padding: 0; }
+.rail::before {
+  content: ""; position: absolute; left: 7px; top: 8px; bottom: 8px;
+  width: 1px; background: rgba(139,147,168,0.26);
+}
+#rail-fill {
+  position: absolute; left: 7px; top: 8px; width: 1px;
+  background: var(--gold); box-shadow: 0 0 10px rgba(212,175,55,0.6);
+  transform-origin: top; transform: scaleY(0);
+  transition: transform 1.1s var(--lux);
+}
+.rail li { position: relative; display: flex; gap: 16px; padding-bottom: 26px; }
+.rail li:last-child { padding-bottom: 0; }
+.rail .dot-wrap {
+  position: relative; z-index: 1; flex: none;
+  width: 15px; height: 15px; margin-top: 5px;
+  display: flex; align-items: center; justify-content: center;
+}
+.rail .dot { width: 9px; height: 9px; border-radius: 50%; }
+.rail [data-state="done"] .dot { background: var(--gold); box-shadow: 0 0 10px rgba(212,175,55,0.8); }
+.rail [data-state="active"] .dot { background: var(--gold-lit); }
+.rail [data-state="blocked"] .dot { background: var(--elevated); }
+.rail [data-state="pending"] .dot {
+  width: 7px; height: 7px; background: var(--navy);
+  border: 1px solid rgba(139,147,168,0.6);
+}
+.rail .halo {
+  position: absolute; inset: 3px; border-radius: 50%; background: var(--gold-lit); opacity: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .rail [data-state="active"] .halo { animation: pulse 2s ease-out infinite; }
+}
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.55; }
+  100% { transform: scale(2.8); opacity: 0; }
+}
+.rail .label { font-size: 14px; }
+.rail [data-state="pending"] .label { color: var(--ink-mute); }
+.rail .meta { margin-top: 3px; font-size: 12px; color: var(--ink-mute); }
+.rail .chip {
+  flex: none; align-self: flex-start; margin-top: 4px;
+  font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.14em;
+  color: var(--elevated); border: 1px solid rgba(224,114,90,0.42);
+  background: rgba(224,114,90,0.1); border-radius: 999px; padding: 4px 10px;
+}
+
+.alerts { list-style: none; margin: 18px 0 0; padding: 0; display: grid; gap: 12px; }
+/* Severity is carried by a left stripe as well as by colour, so state reads
+   without relying on hue alone. */
+.alert {
+  border: 1px solid rgba(139,147,168,0.22); border-left-width: 3px;
+  background: rgba(16,26,58,0.4); border-radius: 10px; padding: 15px 17px;
+}
+.alert[data-sev="high"]   { border-left-color: var(--elevated); }
+.alert[data-sev="medium"] { border-left-color: var(--watch); }
+.alert[data-sev="low"]    { border-left-color: var(--ink-mute); }
+.alert h4 { margin: 0; font-family: var(--body); font-size: 14px; font-weight: 500; }
+.alert p { margin-top: 6px; font-size: 12.5px; line-height: 1.6; color: var(--ink-soft); }
+.alert .sev {
+  font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 6px; display: block;
+}
+.alert[data-sev="high"] .sev   { color: var(--elevated); }
+.alert[data-sev="medium"] .sev { color: var(--watch); }
+.alert[data-sev="low"] .sev    { color: var(--ink-mute); }
+
+.vault { list-style: none; margin: 18px 0 0; padding: 0; }
+.vault li {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 13px 0; border-top: 1px solid rgba(139,147,168,0.14);
+}
+.vault li:first-child { border-top: 0; }
+.vault .name { font-size: 14px; }
+.vault .seal { margin-top: 3px; font-size: 10.5px; color: var(--ink-mute); }
+.vault .when { flex: none; font-size: 12px; color: var(--ink-mute); }
+
+footer { border-top: 1px solid rgba(139,147,168,0.16); padding: 36px 0; }
+.foot-row {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px;
+  font-size: 12px; color: var(--ink-mute);
+}
+.wordmark { font-family: var(--display); letter-spacing: 0.3em; color: rgba(212,175,55,0.85); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important; animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+</style>
+
+<!-- three.js UMD build. If it fails to load, initGavel() falls back to a 2D
+     rendition so the intro still works rather than showing a black screen. -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three/0.160.1/three.min.js"></script>
+
+<!-- ========================================================================
+     Intro overlay
+     ===================================================================== -->
+<div id="intro">
+  <canvas id="gavel-canvas"></canvas>
+  <canvas id="burst-canvas"></canvas>
+  <button id="intro-hit" type="button" aria-label="Strike the gavel to enter"></button>
+  <div id="intro-vignette"></div>
+  <div id="intro-word">
+    <h1>LEX MARIS</h1>
+    <p class="eyebrow">Commercial &middot; Corporate &middot; Maritime</p>
+    <p id="intro-hint">Click anywhere to convene</p>
+  </div>
+  <button id="skip" type="button">Skip intro</button>
+</div>
+
+<div id="cursor-layer" aria-hidden="true">
+  <div id="cursor-ring"></div>
+  <div id="cursor-dot"></div>
+</div>
+
+<main id="main">
+  <!-- ======================================================================
+       Hero
+       =================================================================== -->
+  <section id="hero">
+    <canvas id="mesh" aria-hidden="true"></canvas>
+    <div class="shell">
+      <p class="eyebrow">Commercial &middot; Corporate &middot; Maritime</p>
+      <h1>The instrument, <em>drafted and scored</em> before the call ends.</h1>
+      <p class="lede">
+        Lex Maris assembles commercial and maritime instruments from validated
+        terms, scores every clause against a fixed exposure model, and executes
+        them with a verifiable cryptographic trail.
+      </p>
+      <div class="cta-row">
+        <a class="btn-gold" href="#bench" data-cursor="hover">Open the bench</a>
+        <a class="btn-quiet" href="#matter" data-cursor="hover">See a live matter</a>
+      </div>
+      <dl class="stat-rail">
+        <div><dt>12</dt><dd>clause rules per pass</dd></div>
+        <div><dt>&lt; 2s</dt><dd>draft to sealed PDF</dd></div>
+        <div><dt>AES-256</dt><dd>per-document sealing</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <hr class="rule" style="max-width:1120px">
+
+  <!-- ======================================================================
+       The bench
+       =================================================================== -->
+  <section id="bench">
+    <div class="shell">
+      <div class="section-head">
+        <p class="eyebrow">Risk scanner &amp; live contract builder</p>
+        <h2>Change a term. Watch the exposure move.</h2>
+        <p>
+          The draft on the right is assembled from the same inputs the scanner
+          reads, so the document a client approves is the document the engine
+          renders. Figures below are an example matter, not a real one, and
+          nothing here is legal advice.
+        </p>
+      </div>
+
+      <div class="bench">
+        <div class="glass panel">
+          <ol class="steps" id="steps" aria-label="Terms to settle, in order"></ol>
+          <div class="step-body" id="step-body"></div>
+          <div class="nav-row">
+            <button class="btn-quiet" id="back" type="button" data-cursor="hover">Back</button>
+            <button class="btn-gold" id="next" type="button" data-cursor="hover">Continue</button>
+          </div>
+        </div>
+
+        <div style="display:grid; gap:24px; align-content:start">
+          <div class="glass panel" style="padding:26px">
+            <div class="dial-row">
+              <div class="dial">
+                <svg viewBox="0 0 120 120" aria-hidden="true">
+                  <circle cx="60" cy="60" r="54" fill="none"
+                          stroke="rgba(195,202,219,0.14)" stroke-width="8"></circle>
+                  <circle id="dial-arc" cx="60" cy="60" r="54" fill="none"
+                          stroke="#D4AF37" stroke-width="8" stroke-linecap="round"
+                          stroke-dasharray="339.29" stroke-dashoffset="339.29"
+                          style="transition: stroke-dashoffset 550ms var(--lux), stroke 550ms var(--lux)"></circle>
+                </svg>
+                <div class="dial-centre">
+                  <span class="score" id="score">0</span>
+                  <span class="cap">exposure</span>
+                </div>
+              </div>
+              <div style="min-width:0">
+                <p class="eyebrow">Aggregate risk</p>
+                <p id="band" aria-live="polite">Acceptable</p>
+                <dl id="tally"></dl>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass" style="padding:0">
+            <div class="draft-head">
+              <p class="eyebrow">Live draft</p>
+              <p class="mono" id="clause-count" style="font-size:11px;color:var(--ink-mute)"></p>
+            </div>
+            <div class="draft-scroll" id="draft"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule" style="max-width:1120px">
+
+  <!-- ======================================================================
+       Matter rail
+       =================================================================== -->
+  <section id="matter">
+    <div class="shell">
+      <div class="section-head">
+        <p class="eyebrow">Client dashboard</p>
+        <h2>The client always knows where it is.</h2>
+        <p>
+          Matter status streams over an authenticated socket channel. Drafting,
+          review, counterparty comment and execution land on this rail the
+          moment they happen.
+        </p>
+      </div>
+
+      <div class="matter-grid">
+        <div class="glass panel">
+          <div style="display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:10px">
+            <div>
+              <p class="eyebrow">Matter progress</p>
+              <p class="mono" style="margin-top:6px;font-size:13px;color:var(--ink-soft)">LM-2026-0417</p>
+            </div>
+            <p style="font-size:12px;color:var(--ink-mute)">
+              <span class="mono" style="color:var(--gold-lit)">4</span> of
+              <span class="mono">7</span> stages complete
+            </p>
+          </div>
+          <ol class="rail" id="rail"><span id="rail-fill"></span></ol>
+        </div>
+
+        <div style="display:grid;gap:24px;align-content:start">
+          <div class="glass panel" style="padding:26px">
+            <p class="eyebrow">Compliance alerts</p>
+            <ul class="alerts" id="alerts"></ul>
+          </div>
+          <div class="glass panel" style="padding:26px">
+            <p class="eyebrow">Encrypted document vault</p>
+            <ul class="vault" id="vault"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="shell foot-row">
+      <p class="wordmark">LEX MARIS</p>
+      <p>
+        Demonstration interface. Output is a triage signal for a qualified
+        practitioner, not legal advice.
+      </p>
+    </div>
+  </footer>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var FINE_POINTER = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  /* ======================================================================
+     1. Risk engine
+     Pure, deterministic, and the single source of truth for what a term
+     means. Rules that do not apply to a contract type leave the denominator
+     as well as the numerator, so a clean charterparty and a clean supply
+     agreement both score 0.
+     ==================================================================== */
+  var SEVERITY_WEIGHT = { info: 0, low: 1, medium: 2.5, high: 4.5, critical: 7 };
+  var SEVERITY_ORDER = ['critical', 'high', 'medium', 'low', 'info'];
+  var MARITIME = { charterparty: 1, 'bill-of-lading': 1 };
+  var GOODS = { supply: 1, distribution: 1 };
+  var WEAK_ENFORCEMENT = { TW: 1, ER: 1, SO: 1, XX: 1 };
+
+  var RULES = [
+    {
+      id: 'gov-law-silent', clause: 'Governing Law', weight: 1,
+      evaluate: function (c) {
+        if (c.governingLaw !== 'XX') return null;
+        return {
+          severity: 'critical',
+          title: 'No governing law selected',
+          detail: 'Without an express choice of law, the applicable law falls to be decided by the forum conflict rules. Neither party can price that outcome at signature.',
+          remediation: 'Insert an express governing-law clause. For cross-border trade, English law or DIFC law are the conventional neutral choices.',
+          authority: 'Rome I Regulation (EC) 593/2008, Art. 3'
+        };
+      }
+    },
+    {
+      id: 'forum-defect', clause: 'Dispute Resolution', weight: 1,
+      evaluate: function (c) {
+        if (c.disputeForum === 'silent') {
+          return {
+            severity: 'critical',
+            title: 'No dispute-resolution mechanism',
+            detail: 'Absent an agreed forum, proceedings can be commenced in any jurisdiction with a hook, inviting parallel actions and a race to judgment.',
+            remediation: 'Adopt a seated arbitration clause with the seat, language, rules and number of arbitrators expressly stated.',
+            authority: 'New York Convention 1958, Art. II'
+          };
+        }
+        if (c.disputeForum === 'arbitration-adhoc') {
+          return {
+            severity: 'medium',
+            title: 'Ad hoc arbitration without institutional support',
+            detail: 'Ad hoc arbitration leaves appointment, challenge and fee mechanics to the parties. It stalls as soon as one party stops cooperating.',
+            remediation: 'Adopt UNCITRAL Rules with a named appointing authority, or move to an institutional clause (LCIA, ICC, DIFC-LCIA).'
+          };
+        }
+        if (c.disputeForum === 'foreign-courts' && WEAK_ENFORCEMENT[c.counterpartyJurisdiction]) {
+          return {
+            severity: 'high',
+            title: 'Judgment may be unenforceable where the assets sit',
+            detail: 'A court judgment must be recognised in the jurisdiction holding the counterparty assets. That route is materially weaker here than arbitral enforcement.',
+            remediation: 'Switch to arbitration so the award travels under the New York Convention.',
+            authority: 'New York Convention 1958, Art. III'
+          };
+        }
+        return null;
+      }
+    },
+    {
+      id: 'liability-cap', clause: 'Limitation of Liability', weight: 1,
+      evaluate: function (c) {
+        if (c.liabilityCapMultiple === 0) {
+          return {
+            severity: 'high',
+            title: 'Liability is uncapped',
+            detail: 'Exposure is unbounded and, at this contract value, effectively uninsurable at the limits underwriters will write.',
+            remediation: 'Cap aggregate liability at 100-150% of contract value with the usual carve-outs: death or personal injury, fraud, and IP infringement.'
+          };
+        }
+        if (c.liabilityCapMultiple > 3) {
+          return {
+            severity: 'medium',
+            title: 'Liability cap is disproportionate to contract value',
+            detail: 'A cap of ' + c.liabilityCapMultiple + 'x value sits above the market range and will not fit inside a standard professional-indemnity tower.',
+            remediation: 'Negotiate the cap toward 1-2x value, or obtain a bespoke insurance endorsement for the excess layer.'
+          };
+        }
+        return null;
+      }
+    },
+    {
+      id: 'payment-terms', clause: 'Payment', weight: 0.8,
+      evaluate: function (c) {
+        if (c.paymentTermsDays > 90) {
+          return {
+            severity: 'high',
+            title: 'Payment terms exceed 90 days',
+            detail: 'Working-capital exposure of this length turns a trading contract into unsecured credit, and may breach late-payment statutes in the buyer jurisdiction.',
+            remediation: 'Reduce to 30-60 days, or price the credit explicitly through late-payment interest plus security.'
+          };
+        }
+        if (c.paymentTermsDays > 60) {
+          return {
+            severity: 'low',
+            title: 'Extended payment terms',
+            detail: 'Terms beyond 60 days warrant an express late-payment interest rate so the cost of delay is not absorbed silently.',
+            remediation: 'Add interest at a stated margin over the relevant reference rate, compounding monthly.'
+          };
+        }
+        return null;
+      }
+    },
+    {
+      id: 'security-missing', clause: 'Security', weight: 1,
+      appliesTo: function (c) { return c.valueUsd >= 500000; },
+      evaluate: function (c) {
+        if (c.security !== 'none') return null;
+        return {
+          severity: c.valueUsd >= 5000000 ? 'high' : 'medium',
+          title: 'No payment security for a material contract value',
+          detail: 'The full contract value rides on the counterparty balance sheet, with no instrument to call on default.',
+          remediation: 'Require a confirmed irrevocable letter of credit, or a bank guarantee from an investment-grade issuer.',
+          authority: 'UCP 600'
+        };
+      }
+    },
+    {
+      id: 'force-majeure-missing', clause: 'Force Majeure', weight: 0.9,
+      evaluate: function (c) {
+        if (c.hasForceMajeure) return null;
+        return {
+          severity: 'medium',
+          title: 'No force majeure clause',
+          detail: 'Common-law frustration is far narrower than a drafted force majeure clause and rarely excuses delay short of impossibility.',
+          remediation: 'Add a force majeure clause with notice mechanics, a mitigation duty, and a long-stop termination right.'
+        };
+      }
+    },
+    {
+      id: 'sanctions-missing', clause: 'Sanctions and Trade Controls', weight: 1,
+      evaluate: function (c) {
+        if (c.hasSanctionsClause) return null;
+        return {
+          severity: 'high',
+          title: 'No sanctions or trade-control clause',
+          detail: 'Cross-border trade with no sanctions representation, no screening covenant and no suspension right exposes the party to strict-liability penalties and correspondent-bank de-risking.',
+          remediation: 'Add sanctions representations and warranties, an ongoing screening covenant, and a right to suspend or terminate without liability.',
+          authority: 'OFAC 31 CFR Part 500 et seq.; EU Regulation 833/2014'
+        };
+      }
+    },
+    {
+      id: 'termination-convenience', clause: 'Termination', weight: 0.6,
+      evaluate: function (c) {
+        if (c.hasTerminationForConvenience) return null;
+        return {
+          severity: 'low',
+          title: 'No termination for convenience',
+          detail: 'Exit is limited to breach and insolvency events, removing flexibility if commercial conditions move against the party.',
+          remediation: 'Consider a convenience right after an initial committed period, with a defined break fee.'
+        };
+      }
+    },
+    {
+      id: 'indemnity-missing', clause: 'Indemnities', weight: 0.6,
+      evaluate: function (c) {
+        if (c.hasIndemnity) return null;
+        return {
+          severity: 'low',
+          title: 'No express indemnity',
+          detail: 'Recovery is confined to damages for breach, subject to remoteness, causation and the duty to mitigate.',
+          remediation: 'Add targeted indemnities for third-party IP claims, regulatory penalties, and cargo or property damage.'
+        };
+      }
+    },
+    {
+      id: 'insurance-unallocated', clause: 'Insurance', weight: 0.8,
+      appliesTo: function (c) { return !!(MARITIME[c.type] || GOODS[c.type]); },
+      evaluate: function (c) {
+        if (c.insuranceAllocated) return null;
+        return {
+          severity: 'medium',
+          title: 'Insurance responsibility not allocated',
+          detail: 'Where the contract is silent, cover follows risk under the applicable Incoterm, which parties routinely misread, leaving a gap in transit.',
+          remediation: 'State who insures, for what value (conventionally 110% of CIF), and name the other party as loss payee.',
+          authority: 'Incoterms 2020, A5/B5'
+        };
+      }
+    },
+    {
+      id: 'laytime-undefined', clause: 'Laytime', weight: 1,
+      appliesTo: function (c) { return !!MARITIME[c.type]; },
+      evaluate: function (c) {
+        if (c.laytimeHours) return null;
+        return {
+          severity: 'high',
+          title: 'Laytime not defined',
+          detail: 'With no laytime, the moment demurrage starts to run is indeterminate. This is the most frequently arbitrated defect in charterparty drafting.',
+          remediation: 'State laytime in running hours, define notice of readiness, and specify which periods are excepted.',
+          authority: 'Laytime Definitions for Charter Parties 2013'
+        };
+      }
+    },
+    {
+      id: 'demurrage-undefined', clause: 'Demurrage', weight: 1,
+      appliesTo: function (c) { return !!MARITIME[c.type]; },
+      evaluate: function (c) {
+        if (c.demurrageRateUsd) return null;
+        return {
+          severity: 'high',
+          title: 'Demurrage rate unstated',
+          detail: 'Without an agreed rate, delay is recoverable only as damages for detention, which is harder to prove and slower to recover.',
+          remediation: 'State a daily demurrage rate, payable pro rata, with an express time bar for claims.'
+        };
+      }
+    }
+  ];
+
+  function bandFor(score) {
+    if (score < 20) return 'safe';
+    if (score < 45) return 'watch';
+    if (score < 70) return 'risk';
+    return 'critical';
+  }
+
+  function analyse(input) {
+    var findings = [], earned = 0, possible = 0;
+    for (var i = 0; i < RULES.length; i++) {
+      var rule = RULES[i];
+      if (rule.appliesTo && !rule.appliesTo(input)) continue;
+      possible += rule.weight * SEVERITY_WEIGHT.critical;
+      var probe = rule.evaluate(input);
+      if (!probe) continue;
+      probe.id = rule.id;
+      probe.clause = rule.clause;
+      findings.push(probe);
+      earned += rule.weight * SEVERITY_WEIGHT[probe.severity];
+    }
+    var score = possible === 0 ? 0 : Math.round((earned / possible) * 100);
+    var tally = { info: 0, low: 0, medium: 0, high: 0, critical: 0 };
+    findings.forEach(function (f) { tally[f.severity] += 1; });
+    findings.sort(function (a, b) {
+      return SEVERITY_ORDER.indexOf(a.severity) - SEVERITY_ORDER.indexOf(b.severity);
+    });
+    return { score: score, band: bandFor(score), findings: findings, tally: tally };
+  }
+
+  /* ======================================================================
+     2. Document engine
+     Declarative clause assembly. Numbering is derived, so omitting an
+     optional clause renumbers the instrument automatically.
+     ==================================================================== */
+  var TYPE_TITLES = {
+    supply: 'Agreement for the Supply of Goods',
+    distribution: 'Exclusive Distribution Agreement',
+    charterparty: 'Voyage Charterparty',
+    'bill-of-lading': 'Contract of Carriage (Bill of Lading Terms)',
+    shareholders: 'Shareholders Agreement',
+    jv: 'Joint Venture Agreement'
+  };
+  var LAW_NAMES = {
+    GB: 'the laws of England and Wales',
+    AE: 'the laws of the United Arab Emirates',
+    KW: 'the laws of the State of Kuwait',
+    SG: 'the laws of Singapore',
+    CH: 'the laws of Switzerland',
+    US: 'the laws of the State of New York',
+    XX: '[GOVERNING LAW NOT SELECTED]'
+  };
+  var FORUM_TEXT = {
+    'local-courts': 'the courts of the jurisdiction of the First Party shall have exclusive jurisdiction',
+    'foreign-courts': 'the courts of the jurisdiction of the Second Party shall have exclusive jurisdiction',
+    'arbitration-lcia': 'any dispute shall be referred to and finally resolved by arbitration under the LCIA Rules, seated in London, before three arbitrators, in the English language',
+    'arbitration-icc': 'any dispute shall be referred to and finally resolved by arbitration under the Rules of Arbitration of the International Chamber of Commerce, before three arbitrators, in the English language',
+    'arbitration-difc': 'any dispute shall be referred to and finally resolved by arbitration under the DIFC-LCIA Arbitration Rules, seated in the Dubai International Financial Centre, before three arbitrators, in the English language',
+    'arbitration-adhoc': 'any dispute shall be referred to ad hoc arbitration as the parties may agree at the relevant time',
+    silent: '[DISPUTE RESOLUTION MECHANISM NOT SELECTED]'
+  };
+  var SECURITY_TEXT = {
+    lc: 'a confirmed irrevocable documentary letter of credit issued by a bank acceptable to the First Party and governed by UCP 600',
+    'bank-guarantee': 'an on-demand bank guarantee issued by an investment-grade bank acceptable to the First Party',
+    'parent-guarantee': 'a guarantee of the Second Party obligations executed by its ultimate parent undertaking',
+    none: 'no security'
+  };
+
+  function usd(n, compact) {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency', currency: 'USD',
+      notation: compact && n >= 1000000 ? 'compact' : 'standard',
+      maximumFractionDigits: compact && n >= 1000000 ? 1 : 0
+    }).format(n);
+  }
+
+  function assemble(c) {
+    var isMaritime = !!MARITIME[c.type];
+    var draft = [
+      { id: 'definitions', heading: 'Definitions and Interpretation', body: [
+        'In this Agreement, capitalised terms have the meanings given to them in Schedule 1. References to a statute include that statute as amended or re-enacted from time to time.',
+        'Headings are for convenience only and do not affect the construction of this Agreement.'
+      ] },
+      { id: 'scope', heading: 'Scope of Agreement', body: [
+        'The First Party shall provide, and the Second Party shall accept, the goods, services or vessel capacity described in Schedule 2, on and subject to the terms of this Agreement.',
+        'The aggregate value of this Agreement is ' + usd(c.valueUsd) + ' (the "Contract Value").'
+      ] },
+      { id: 'payment', heading: 'Payment', body: [
+        'The Second Party shall pay each valid invoice within ' + c.paymentTermsDays + ' days of the date of invoice, in cleared funds, without set-off or deduction.',
+        c.paymentTermsDays > 60
+          ? 'Sums not paid when due shall bear interest at 4% per annum above the applicable reference rate, accruing daily and compounding monthly, from the due date until payment.'
+          : 'Sums not paid when due shall bear interest at the statutory rate from the due date until payment.'
+      ] },
+      c.security !== 'none' ? { id: 'security', heading: 'Security', body: [
+        'As a condition precedent to the First Party performance obligations, the Second Party shall procure and maintain ' + SECURITY_TEXT[c.security] + ' in an amount not less than the Contract Value.'
+      ] } : null,
+      isMaritime ? { id: 'laytime', heading: 'Laytime', body: [
+        c.laytimeHours
+          ? 'Laytime for loading and discharging shall be ' + c.laytimeHours + ' running hours in total, weather permitting, Sundays and holidays excepted, commencing upon tender of a valid Notice of Readiness.'
+          : '[LAYTIME NOT SPECIFIED — demurrage cannot accrue until laytime is defined.]'
+      ] } : null,
+      isMaritime ? { id: 'demurrage', heading: 'Demurrage', body: [
+        c.demurrageRateUsd
+          ? 'Demurrage shall accrue at ' + usd(c.demurrageRateUsd) + ' per day, or pro rata for part of a day, for all time by which laytime is exceeded. Claims for demurrage shall be time-barred unless presented with supporting documents within 90 days of completion of discharge.'
+          : '[DEMURRAGE RATE NOT SPECIFIED — delay recoverable only as damages for detention.]'
+      ] } : null,
+      { id: 'insurance', heading: 'Insurance', body: [
+        c.insuranceAllocated
+          ? 'The party bearing risk in the goods under the applicable Incoterm shall maintain cargo insurance on Institute Cargo Clauses (A) terms for not less than 110% of the CIF value, naming the other party as loss payee to the extent of its interest.'
+          : '[INSURANCE RESPONSIBILITY NOT ALLOCATED — cover defaults to whichever party bears risk under the applicable Incoterm.]'
+      ] },
+      { id: 'liability', heading: 'Limitation of Liability', body: [
+        c.liabilityCapMultiple > 0
+          ? 'Subject to the following paragraph, the aggregate liability of each party under or in connection with this Agreement shall not exceed ' + usd(c.valueUsd * c.liabilityCapMultiple) + ', being ' + c.liabilityCapMultiple + 'x the Contract Value.'
+          : 'The liability of the parties under this Agreement is not limited. [UNCAPPED — review before execution.]',
+        'Nothing in this Agreement limits liability for death or personal injury caused by negligence, for fraud or fraudulent misrepresentation, or for any liability that cannot lawfully be limited.',
+        'Neither party shall be liable for loss of profit, loss of business or any indirect or consequential loss, in each case whether or not foreseeable.'
+      ] },
+      c.hasIndemnity ? { id: 'indemnity', heading: 'Indemnities', body: [
+        'Each party shall indemnify the other against all losses, liabilities, costs and expenses arising out of any third-party claim that the indemnifying party has infringed that third party intellectual property rights, or has caused damage to property or the environment.',
+        'The indemnified party shall notify the indemnifying party promptly of any claim, and shall not settle it without prior written consent.'
+      ] } : null,
+      c.hasForceMajeure ? { id: 'force-majeure', heading: 'Force Majeure', body: [
+        'Neither party shall be liable for any failure or delay in performance to the extent caused by an event beyond its reasonable control, including act of God, war, civil commotion, port closure, embargo, epidemic or governmental action.',
+        'The affected party shall give notice within five business days, shall use reasonable endeavours to mitigate, and shall resume performance as soon as practicable.',
+        'If the event continues for more than 60 consecutive days, either party may terminate this Agreement on written notice without liability, save for accrued rights.'
+      ] } : null,
+      c.hasSanctionsClause ? { id: 'sanctions', heading: 'Sanctions and Trade Controls', body: [
+        'Each party represents and warrants that neither it, nor any of its affiliates, directors or beneficial owners, is a Restricted Party, and that it will not use, resell or transfer anything supplied under this Agreement in breach of applicable sanctions or export-control laws.',
+        'Each party shall screen its counterparties, vessels and end-users against the applicable restricted-party lists on an ongoing basis.',
+        'Notwithstanding any other provision, a party may suspend or terminate performance immediately and without liability where performance would expose it to a sanctions risk.'
+      ] } : null,
+      { id: 'termination', heading: 'Termination', body: [
+        'Either party may terminate this Agreement immediately on written notice if the other commits a material breach that it fails to remedy within 30 days of notice, or suffers an insolvency event.',
+        c.hasTerminationForConvenience
+          ? 'Either party may additionally terminate this Agreement for convenience on 90 days written notice given after the first anniversary of the date of this Agreement, subject to payment of the break fee set out in Schedule 3.'
+          : 'There is no right to terminate for convenience.'
+      ] },
+      { id: 'confidentiality', heading: 'Confidentiality', body: [
+        'Each party shall keep confidential all information disclosed by the other that is marked confidential or would reasonably be understood to be confidential, and shall use it only for the purposes of this Agreement.',
+        'The obligation survives termination for a period of five years.'
+      ] },
+      { id: 'governing-law', heading: 'Governing Law', body: [
+        'This Agreement and any dispute arising out of or in connection with it shall be governed by and construed in accordance with ' + (LAW_NAMES[c.governingLaw] || ('the laws of ' + c.governingLaw)) + '.'
+      ] },
+      { id: 'dispute-resolution', heading: 'Dispute Resolution', body: [
+        'The parties agree that ' + FORUM_TEXT[c.disputeForum] + '.',
+        'Nothing in this clause prevents either party from seeking interim or conservatory relief from any court of competent jurisdiction.'
+      ] },
+      { id: 'execution', heading: 'Execution', body: [
+        'This Agreement may be executed in counterparts and by electronic signature, each of which shall constitute an original and all of which together shall constitute one and the same instrument.',
+        'The parties agree that an electronic signature applied through the platform, together with the associated audit record and document hash, satisfies any requirement for signature in writing.'
+      ] }
+    ];
+
+    var clauses = [];
+    draft.forEach(function (cl) {
+      if (!cl) return;
+      cl.number = String(clauses.length + 1);
+      clauses.push(cl);
+    });
+
+    return {
+      title: TYPE_TITLES[c.type],
+      recitals: [
+        'THIS AGREEMENT is dated 8 September 2026 and made under reference LM-2026-0417.',
+        '(1) MERIDIAN TRADING DMCC, a company registered in the United Arab Emirates under number DMCC-114820, whose registered office is at Unit 3402, Almas Tower, JLT, Dubai (the "First Party"); and',
+        '(2) NORTHGATE COMMODITIES LTD, a company registered in England and Wales under number 09441237, whose registered office is at 12 Leadenhall Street, London EC3V 1LP (the "Second Party").',
+        'IT IS AGREED as follows:'
+      ],
+      clauses: clauses
+    };
+  }
+
+  /* ======================================================================
+     3. Wizard
+     ==================================================================== */
+  var SEV_COLOR = {
+    critical: 'var(--critical)', high: 'var(--elevated)',
+    medium: 'var(--watch)', low: 'var(--ink-mute)', info: 'var(--ink-mute)'
+  };
+  var BAND = {
+    safe:     { label: 'Acceptable', color: '#3FBF8F' },
+    watch:    { label: 'Watch',      color: '#D4AF37' },
+    risk:     { label: 'Elevated',   color: '#E0725A' },
+    critical: { label: 'Critical',   color: '#C0392B' }
+  };
+
+  var STEPS = ['Instrument', 'Commercial', 'Risk allocation', 'Law & forum', 'Review'];
+
+  var state = {
+    step: 0,
+    openFinding: null,
+    input: {
+      type: 'charterparty',
+      governingLaw: 'GB',
+      counterpartyJurisdiction: 'AE',
+      disputeForum: 'arbitration-lcia',
+      valueUsd: 2500000,
+      liabilityCapMultiple: 1,
+      paymentTermsDays: 45,
+      security: 'lc',
+      hasForceMajeure: true,
+      hasSanctionsClause: true,
+      hasIndemnity: true,
+      hasTerminationForConvenience: false,
+      insuranceAllocated: true,
+      laytimeHours: 72,
+      demurrageRateUsd: 18000
+    }
+  };
+
+  var $ = function (id) { return document.getElementById(id); };
+
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (ch) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch];
+    });
+  }
+
+  function selectField(label, key, options) {
+    var opts = options.map(function (o) {
+      return '<option value="' + o[0] + '"' +
+        (state.input[key] === o[0] ? ' selected' : '') + '>' + esc(o[1]) + '</option>';
+    }).join('');
+    return '<label class="field"><span class="eyebrow">' + esc(label) + '</span>' +
+      '<select data-key="' + key + '">' + opts + '</select></label>';
+  }
+
+  function rangeField(label, key, min, max, step) {
+    var v = state.input[key] || 0;
+    var pct = ((v - min) / (max - min)) * 100;
+    return '<label class="field"><span class="eyebrow">' + label + '</span>' +
+      '<input type="range" data-key="' + key + '" min="' + min + '" max="' + max +
+      '" step="' + step + '" value="' + v + '" style="background:linear-gradient(90deg,#D4AF37 ' +
+      pct + '%, rgba(195,202,219,0.18) ' + pct + '%)"></label>';
+  }
+
+  function switchField(label, key) {
+    var on = !!state.input[key];
+    return '<button type="button" class="switch" role="switch" data-toggle="' + key +
+      '" aria-checked="' + on + '" data-cursor="hover"><span>' + esc(label) +
+      '</span><span class="track" aria-hidden="true"><span class="knob"></span></span></button>';
+  }
+
+  function renderSteps() {
+    $('steps').innerHTML = STEPS.map(function (s, i) {
+      return '<li data-done="' + (i < state.step ? 1 : 0) + '">' +
+        '<button type="button" data-step="' + i + '" data-cursor="hover"' +
+        (i === state.step ? ' aria-current="step"' : '') +
+        '><span class="n">' + (i + 1) + '</span>' + esc(s) + '</button></li>';
+    }).join('');
+  }
+
+  function renderStepBody(report) {
+    var c = state.input;
+    var isMaritime = !!MARITIME[c.type];
+    var html = '';
+
+    if (state.step === 0) {
+      html += selectField('Instrument type', 'type', [
+        ['charterparty', 'Voyage charterparty'],
+        ['bill-of-lading', 'Bill of lading terms'],
+        ['supply', 'Supply of goods'],
+        ['distribution', 'Exclusive distribution'],
+        ['shareholders', 'Shareholders agreement'],
+        ['jv', 'Joint venture']
+      ]);
+      html += selectField('Counterparty jurisdiction', 'counterpartyJurisdiction', [
+        ['AE', 'United Arab Emirates'],
+        ['KW', 'Kuwait'],
+        ['SA', 'Saudi Arabia'],
+        ['GB', 'United Kingdom'],
+        ['SG', 'Singapore'],
+        ['TW', 'Taiwan'],
+        ['XX', 'Not stated']
+      ]);
+      html += '<p class="note">Party details are drawn from the matter record. ' +
+        'Registry data is verified against the relevant commercial register before execution.</p>';
+    } else if (state.step === 1) {
+      html += rangeField('Contract value &mdash; <span class="val">' + usd(c.valueUsd, true) + '</span>',
+        'valueUsd', 50000, 50000000, 50000);
+      html += rangeField('Payment terms &mdash; <span class="val">' + c.paymentTermsDays + ' days</span>',
+        'paymentTermsDays', 7, 180, 1);
+      html += selectField('Payment security', 'security', [
+        ['lc', 'Confirmed irrevocable LC'],
+        ['bank-guarantee', 'On-demand bank guarantee'],
+        ['parent-guarantee', 'Parent company guarantee'],
+        ['none', 'None']
+      ]);
+      if (isMaritime) {
+        html += rangeField('Laytime &mdash; <span class="val">' +
+          (c.laytimeHours ? c.laytimeHours + ' running hours' : 'not stated') + '</span>',
+          'laytimeHours', 0, 240, 6);
+        html += rangeField('Demurrage &mdash; <span class="val">' +
+          (c.demurrageRateUsd ? usd(c.demurrageRateUsd) + ' / day' : 'not stated') + '</span>',
+          'demurrageRateUsd', 0, 60000, 1000);
+      }
+    } else if (state.step === 2) {
+      html += rangeField('Liability cap &mdash; <span class="val">' +
+        (c.liabilityCapMultiple === 0 ? 'uncapped' : c.liabilityCapMultiple + '&times; value') + '</span>',
+        'liabilityCapMultiple', 0, 5, 0.5);
+      html += switchField('Force majeure clause', 'hasForceMajeure');
+      html += switchField('Sanctions & trade-control clause', 'hasSanctionsClause');
+      html += switchField('Express indemnities', 'hasIndemnity');
+      html += switchField('Termination for convenience', 'hasTerminationForConvenience');
+      html += switchField('Insurance responsibility allocated', 'insuranceAllocated');
+    } else if (state.step === 3) {
+      html += selectField('Governing law', 'governingLaw', [
+        ['GB', 'England & Wales'],
+        ['AE', 'United Arab Emirates'],
+        ['KW', 'Kuwait'],
+        ['SG', 'Singapore'],
+        ['CH', 'Switzerland'],
+        ['US', 'New York'],
+        ['XX', 'Not stated']
+      ]);
+      html += selectField('Dispute resolution', 'disputeForum', [
+        ['arbitration-lcia', 'LCIA arbitration, London'],
+        ['arbitration-icc', 'ICC arbitration'],
+        ['arbitration-difc', 'DIFC-LCIA arbitration'],
+        ['arbitration-adhoc', 'Ad hoc arbitration'],
+        ['local-courts', 'Courts — first party seat'],
+        ['foreign-courts', 'Courts — counterparty seat'],
+        ['silent', 'Not stated']
+      ]);
+      html += '<p class="note">Enforceability is assessed against the counterparty ' +
+        'asset jurisdiction, not the seat.</p>';
+    } else {
+      html += renderFindings(report);
+    }
+
+    $('step-body').innerHTML = html;
+  }
+
+  function renderFindings(report) {
+    if (report.findings.length === 0) {
+      return '<div class="clean"><h3>No findings raised</h3>' +
+        '<p>Every rule in the current model passed. The draft is ready for ' +
+        'partner review and execution.</p></div>';
+    }
+    return '<ul class="findings">' + report.findings.map(function (f) {
+      var open = state.openFinding === f.id;
+      return '<li class="finding" data-open="' + (open ? 1 : 0) + '">' +
+        '<button type="button" data-finding="' + f.id + '" aria-expanded="' + open +
+        '" data-cursor="hover">' +
+        '<span class="sev-pip" style="background:' + SEV_COLOR[f.severity] +
+        ';box-shadow:0 0 10px ' + SEV_COLOR[f.severity] + '"></span>' +
+        '<span style="min-width:0;flex:1">' +
+        '<span class="f-title">' + esc(f.title) + '</span>' +
+        '<span class="f-meta">' + esc(f.clause) + ' &nbsp;/&nbsp; <span style="color:' +
+        SEV_COLOR[f.severity] + '">' + f.severity + '</span></span></span></button>' +
+        '<div class="detail"><p>' + esc(f.detail) + '</p>' +
+        '<div><p class="eyebrow">Recommended amendment</p>' +
+        '<p class="fix" style="margin-top:5px">' + esc(f.remediation) + '</p></div>' +
+        (f.authority ? '<p class="authority">' + esc(f.authority) + '</p>' : '') +
+        '</div></li>';
+    }).join('') + '</ul>';
+  }
+
+  var CIRC = 2 * Math.PI * 54;
+
+  function renderDial(report) {
+    var band = BAND[report.band];
+    $('dial-arc').setAttribute('stroke', band.color);
+    $('dial-arc').style.strokeDashoffset = String(CIRC * (1 - report.score / 100));
+    $('dial-arc').style.filter = 'drop-shadow(0 0 8px ' + band.color + '66)';
+    $('score').textContent = String(report.score);
+    $('score').style.color = band.color;
+    var bandEl = $('band');
+    bandEl.textContent = band.label;
+    bandEl.style.color = band.color;
+
+    var order = ['critical', 'high', 'medium', 'low'];
+    var items = order.filter(function (s) { return report.tally[s] > 0; }).map(function (s) {
+      return '<div class="item"><span class="pip" style="background:' + SEV_COLOR[s] +
+        '"></span><dt style="text-transform:capitalize">' + s + '</dt><dd>' +
+        report.tally[s] + '</dd></div>';
+    });
+    $('tally').innerHTML = items.length
+      ? items.join('')
+      : '<span style="color:var(--safe)">No findings</span>';
+  }
+
+  function renderDraft(doc, report) {
+    var rank = { info: 0, low: 1, medium: 2, high: 3, critical: 4 };
+    var worst = {};
+    report.findings.forEach(function (f) {
+      if (!worst[f.clause] || rank[f.severity] > rank[worst[f.clause].severity]) {
+        worst[f.clause] = f;
+      }
+    });
+
+    var html = '<header><p class="draft-brand">Lex Maris</p>' +
+      '<h3>' + esc(doc.title) + '</h3><div class="divider"></div></header>' +
+      '<div class="recitals">' + doc.recitals.map(function (r) {
+        return '<p>' + esc(r) + '</p>';
+      }).join('') + '</div><ol class="clauses">';
+
+    doc.clauses.forEach(function (cl) {
+      var f = worst[cl.heading];
+      var color = f
+        ? (f.severity === 'critical' ? '#C0392B' : f.severity === 'high' ? '#E0725A' : '#8A6F1F')
+        : null;
+      html += '<li class="clause" id="clause-' + cl.id + '"' +
+        (color ? ' style="border-left-color:' + color + '"' : '') + '>' +
+        '<h4>' + cl.number + '. ' + esc(cl.heading) + '</h4>' +
+        (f ? '<p class="flag" style="color:' + color + '">' + f.severity + ' — ' +
+          esc(f.title) + '</p>' : '') +
+        cl.body.map(function (p, i) {
+          return '<p class="para"><span class="num">' + cl.number + '.' + (i + 1) +
+            '</span>' + esc(p) + '</p>';
+        }).join('') + '</li>';
+    });
+
+    html += '</ol><p class="draft-foot">Draft — not for execution. ' +
+      'Generated by the Lex Maris document engine.</p>';
+
+    $('draft').innerHTML = html;
+    $('clause-count').textContent = doc.clauses.length + ' clauses';
+  }
+
+  function render() {
+    var report = analyse(state.input);
+    var doc = assemble(state.input);
+    renderSteps();
+    renderStepBody(report);
+    renderDial(report);
+    renderDraft(doc, report);
+    $('back').disabled = state.step === 0;
+    $('next').disabled = state.step === STEPS.length - 1;
+    $('next').textContent = state.step === STEPS.length - 2 ? 'Review findings' : 'Continue';
+  }
+
+  /* --- Wizard events. Delegated once, so re-rendered markup needs no rebind. */
+  var bench = $('bench');
+
+  bench.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-step],[data-toggle],[data-finding]');
+    if (!t) return;
+    if (t.hasAttribute('data-step')) {
+      state.step = Number(t.getAttribute('data-step'));
+    } else if (t.hasAttribute('data-toggle')) {
+      var k = t.getAttribute('data-toggle');
+      state.input[k] = !state.input[k];
+    } else {
+      var id = t.getAttribute('data-finding');
+      state.openFinding = state.openFinding === id ? null : id;
+    }
+    render();
+  });
+
+  bench.addEventListener('input', function (e) {
+    var key = e.target.getAttribute && e.target.getAttribute('data-key');
+    if (!key) return;
+    var v = e.target.value;
+    state.input[key] = e.target.type === 'range' ? Number(v) : v;
+    render();
+  });
+
+  $('back').addEventListener('click', function () {
+    state.step = Math.max(0, state.step - 1);
+    render();
+  });
+  $('next').addEventListener('click', function () {
+    state.step = Math.min(STEPS.length - 1, state.step + 1);
+    render();
+  });
+
+  render();
+
+  /* ======================================================================
+     4. Matter rail, alerts, vault
+     ==================================================================== */
+  var STAGES = [
+    { label: 'Instructions received', meta: '2 Sep, 09:14', actor: 'Client portal', state: 'done' },
+    { label: 'First draft assembled', meta: '2 Sep, 09:16', actor: 'Document engine', state: 'done' },
+    { label: 'Risk pass complete — 3 findings', meta: '2 Sep, 09:16', actor: 'Scanner v1.0.0', state: 'done' },
+    { label: 'Partner review', meta: '4 Sep, 15:40', actor: 'H. Al-Rashed', state: 'done' },
+    { label: 'Counterparty comments awaited', meta: 'Due 10 Sep', actor: 'Northgate Commodities Ltd', state: 'active' },
+    { label: 'Sanctions re-screen required before execution', meta: 'Screening expired 6 Sep', state: 'blocked' },
+    { label: 'Execution and sealing', meta: 'Not started', state: 'pending' }
+  ];
+
+  var railFill = $('rail-fill');
+  $('rail').insertAdjacentHTML('beforeend', STAGES.map(function (s) {
+    return '<li data-state="' + s.state + '">' +
+      '<span class="dot-wrap"><span class="halo" aria-hidden="true"></span>' +
+      '<span class="dot"></span></span>' +
+      '<span style="min-width:0;flex:1"><span class="label">' + esc(s.label) + '</span>' +
+      '<span class="meta">' + esc(s.meta) +
+      (s.actor ? ' &middot; ' + esc(s.actor) : '') + '</span></span>' +
+      (s.state === 'blocked' ? '<span class="chip">Action required</span>' : '') +
+      '</li>';
+  }).join(''));
+
+  var doneCount = STAGES.filter(function (s) { return s.state === 'done'; }).length;
+  var fillRatio = doneCount / (STAGES.length - 1);
+  railFill.style.bottom = '8px';
+  railFill.style.height = 'calc(100% - 16px)';
+  if (REDUCED) {
+    railFill.style.transform = 'scaleY(' + fillRatio + ')';
+  } else {
+    requestAnimationFrame(function () {
+      railFill.style.transform = 'scaleY(' + fillRatio + ')';
+    });
+  }
+
+  var ALERTS = [
+    { sev: 'high', title: 'Sanctions screening expired',
+      body: 'The counterparty screening record is 91 days old. Execution is blocked until a fresh screen is recorded against the current consolidated lists.' },
+    { sev: 'medium', title: 'Demurrage time bar approaching',
+      body: 'Claim LM-2026-0388 must be presented with supporting documents within 11 days or it is time-barred under clause 6.2.' },
+    { sev: 'low', title: 'Letter of credit expiry',
+      body: 'The confirmed LC on matter LM-2026-0402 expires in 24 days, ahead of the final shipment window.' }
+  ];
+  $('alerts').innerHTML = ALERTS.map(function (a) {
+    return '<li class="alert" data-sev="' + a.sev + '">' +
+      '<span class="sev">' + a.sev + '</span>' +
+      '<h4>' + esc(a.title) + '</h4><p>' + esc(a.body) + '</p></li>';
+  }).join('');
+
+  var VAULT = [
+    ['Voyage charterparty — executed', 'SHA-256 · 4f9c…9a71e', '6 Sep'],
+    ['Supply agreement — draft 4', 'Sealed · AES-256-GCM', '4 Sep'],
+    ['Sanctions screening record', 'Expired', '7 Jun'],
+    ['Bill of lading — MV Sirocco', 'Sealed · AES-256-GCM', '1 Sep']
+  ];
+  $('vault').innerHTML = VAULT.map(function (d) {
+    return '<li data-cursor="hover"><span style="min-width:0"><span class="name">' +
+      esc(d[0]) + '</span><span class="seal mono">' + esc(d[1]) +
+      '</span></span><span class="when">' + esc(d[2]) + '</span></li>';
+  }).join('');
+
+  /* ======================================================================
+     5. Cursor spotlight
+     Position is written straight to style.transform inside one rAF loop.
+     A state update per pointermove would re-render ~120x a second.
+     ==================================================================== */
+  if (FINE_POINTER && !REDUCED) {
+    document.body.setAttribute('data-cursor', 'on');
+    var ringEl = $('cursor-ring'), dotEl = $('cursor-dot');
+    var target = { x: innerWidth / 2, y: innerHeight / 2 };
+    var ring = { x: target.x, y: target.y, scale: 1, alpha: 0 };
+
+    addEventListener('pointermove', function (e) {
+      target.x = e.clientX; target.y = e.clientY; ring.alpha = 1;
+      var hit = e.target.closest &&
+        e.target.closest('a,button,select,input,[data-cursor="hover"]');
+      ring.scale = hit ? 2.15 : 1;
+    }, { passive: true });
+    addEventListener('pointerleave', function () { ring.alpha = 0; });
+
+    (function tick() {
+      ring.x += (target.x - ring.x) * 0.16;
+      ring.y += (target.y - ring.y) * 0.16;
+      ringEl.style.transform = 'translate3d(' + ring.x + 'px,' + ring.y +
+        'px,0) translate(-50%,-50%) scale(' + ring.scale + ')';
+      ringEl.style.opacity = String(ring.alpha * 0.9);
+      dotEl.style.transform = 'translate3d(' + target.x + 'px,' + target.y +
+        'px,0) translate(-50%,-50%)';
+      dotEl.style.opacity = String(ring.alpha);
+      requestAnimationFrame(tick);
+    })();
+  } else {
+    $('cursor-layer').style.display = 'none';
+  }
+
+  /* ======================================================================
+     6. Legal matrix mesh
+     O(n^2) edge testing, bounded by a hard node cap so frame cost stays flat
+     regardless of viewport. Suspends when scrolled away or the tab is hidden.
+     ==================================================================== */
+  (function () {
+    var canvas = $('mesh');
+    if (!canvas || REDUCED) { if (canvas) canvas.style.display = 'none'; return; }
+    var ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    var LINK = 132, FIELD = 190, MAX_NODES = 90, DENSITY = 11000;
+    var nodes = [], w = 0, h = 0, raf = 0, running = false;
+    var ptr = { x: -9999, y: -9999, on: false };
+
+    function resize() {
+      var rect = canvas.getBoundingClientRect();
+      var dpr = Math.min(devicePixelRatio || 1, 2);
+      w = rect.width; h = rect.height;
+      canvas.width = Math.floor(w * dpr);
+      canvas.height = Math.floor(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      var count = Math.min(MAX_NODES, Math.max(28, Math.round((w * h) / DENSITY)));
+      nodes = [];
+      for (var i = 0; i < count; i++) {
+        nodes.push({
+          x: Math.random() * w, y: Math.random() * h,
+          vx: (Math.random() - 0.5) * 0.22, vy: (Math.random() - 0.5) * 0.22,
+          r: 0.9 + Math.random() * 1.5
+        });
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, w, h);
+
+      for (var i = 0; i < nodes.length; i++) {
+        var n = nodes[i];
+        n.x += n.vx; n.y += n.vy;
+        if (n.x < -20) n.x = w + 20;
+        if (n.x > w + 20) n.x = -20;
+        if (n.y < -20) n.y = h + 20;
+        if (n.y > h + 20) n.y = -20;
+        if (ptr.on) {
+          var dx = ptr.x - n.x, dy = ptr.y - n.y, d = Math.hypot(dx, dy);
+          if (d < FIELD && d > 0.5) {
+            var pull = (1 - d / FIELD) * 0.35;
+            n.x += (dx / d) * pull; n.y += (dy / d) * pull;
+          }
+        }
+      }
+
+      ctx.lineWidth = 1;
+      for (var a = 0; a < nodes.length; a++) {
+        for (var b = a + 1; b < nodes.length; b++) {
+          var p = nodes[a], q = nodes[b];
+          var dist = Math.hypot(p.x - q.x, p.y - q.y);
+          if (dist > LINK) continue;
+          var prox = 1 - dist / LINK;
+          var heat = ptr.on
+            ? Math.max(0, 1 - Math.hypot(ptr.x - (p.x + q.x) / 2, ptr.y - (p.y + q.y) / 2) / FIELD)
+            : 0;
+          ctx.strokeStyle = 'rgba(' + Math.round(150 + heat * 62) + ',' +
+            Math.round(168 + heat * 7) + ',' + Math.round(210 - heat * 155) + ',' +
+            (prox * (0.1 + heat * 0.5)).toFixed(3) + ')';
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(q.x, q.y);
+          ctx.stroke();
+        }
+      }
+
+      for (var k = 0; k < nodes.length; k++) {
+        var m = nodes[k];
+        var ht = ptr.on ? Math.max(0, 1 - Math.hypot(ptr.x - m.x, ptr.y - m.y) / FIELD) : 0;
+        ctx.beginPath();
+        ctx.arc(m.x, m.y, m.r + ht * 1.6, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(' + Math.round(196 + ht * 16) + ',' +
+          Math.round(202 - ht * 27) + ',' + Math.round(219 - ht * 164) + ',' +
+          (0.32 + ht * 0.55).toFixed(3) + ')';
+        ctx.fill();
+      }
+
+      raf = requestAnimationFrame(draw);
+    }
+
+    function start() { if (!running) { running = true; raf = requestAnimationFrame(draw); } }
+    function stop() { running = false; cancelAnimationFrame(raf); }
+
+    addEventListener('pointermove', function (e) {
+      var rect = canvas.getBoundingClientRect();
+      ptr.x = e.clientX - rect.left; ptr.y = e.clientY - rect.top; ptr.on = true;
+    }, { passive: true });
+    addEventListener('pointerleave', function () { ptr.on = false; });
+    addEventListener('resize', resize);
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) stop(); else start();
+    });
+
+    if (typeof IntersectionObserver !== 'undefined') {
+      new IntersectionObserver(function (entries) {
+        if (entries[0] && entries[0].isIntersecting) start(); else stop();
+      }, { rootMargin: '120px' }).observe(canvas);
+    }
+
+    resize();
+    start();
+  })();
+
+  /* ======================================================================
+     7. Gavel strike: audio
+     Synthesised, not sampled - three layered voices instead of a 60 kB file.
+     The AudioContext is created inside the gesture handler, which is what
+     autoplay policy requires.
+     ==================================================================== */
+  var audio = (function () {
+    var ctx = null, noise = null;
+
+    function get() {
+      var Ctor = window.AudioContext || window.webkitAudioContext;
+      if (!Ctor) return null;
+      if (!ctx) ctx = new Ctor();
+      if (ctx.resume) ctx.resume();
+      return ctx;
+    }
+
+    function prime() {
+      var c = get();
+      if (!c || noise) return;
+      var len = Math.floor(c.sampleRate * 0.35);
+      noise = c.createBuffer(1, len, c.sampleRate);
+      var data = noise.getChannelData(0);
+      for (var i = 0; i < len; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.4);
+      }
+    }
+
+    function strike(vol) {
+      var c = get();
+      if (!c) return;
+      prime();
+      var now = c.currentTime;
+      var master = c.createGain();
+      master.gain.value = Math.min(Math.max(vol == null ? 0.85 : vol, 0), 1);
+      master.connect(c.destination);
+
+      if (noise) {                                  // 1 - wood crack
+        var src = c.createBufferSource();
+        src.buffer = noise;
+        var bp = c.createBiquadFilter();
+        bp.type = 'bandpass'; bp.frequency.value = 1750; bp.Q.value = 0.9;
+        var g = c.createGain();
+        g.gain.setValueAtTime(0.85, now);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + 0.3);
+        src.connect(bp).connect(g).connect(master);
+        src.start(now); src.stop(now + 0.35);
+      }
+
+      var thump = c.createOscillator();             // 2 - body thump
+      thump.type = 'sine';
+      thump.frequency.setValueAtTime(180, now);
+      thump.frequency.exponentialRampToValueAtTime(48, now + 0.22);
+      var tg = c.createGain();
+      tg.gain.setValueAtTime(0.9, now);
+      tg.gain.exponentialRampToValueAtTime(0.0001, now + 0.26);
+      thump.connect(tg).connect(master);
+      thump.start(now); thump.stop(now + 0.3);
+
+      var click = c.createOscillator();             // 3 - impact transient
+      click.type = 'square';
+      click.frequency.value = 2600;
+      var cg = c.createGain();
+      cg.gain.setValueAtTime(0.22, now);
+      cg.gain.exponentialRampToValueAtTime(0.0001, now + 0.045);
+      click.connect(cg).connect(master);
+      click.start(now); click.stop(now + 0.05);
+    }
+
+    return { strike: strike, prime: prime };
+  })();
+
+  /* ======================================================================
+     8. Gavel strike: particle burst
+     ==================================================================== */
+  function burst(canvas, originY) {
+    var ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    var dpr = Math.min(devicePixelRatio || 1, 2);
+    var w = canvas.clientWidth, h = canvas.clientHeight;
+    canvas.width = Math.floor(w * dpr);
+    canvas.height = Math.floor(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    var ox = w / 2, oy = h * originY;
+    var parts = [];
+    for (var i = 0; i < 220; i++) {
+      // Spray biased sideways and upward - debris off a struck surface.
+      var ang = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 1.55;
+      var sp = 2.2 + Math.random() * 8.5;
+      var life = 46 + Math.random() * 46;
+      parts.push({
+        x: ox + (Math.random() - 0.5) * 26, y: oy + (Math.random() - 0.5) * 10,
+        vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp,
+        life: life, maxLife: life, size: 0.7 + Math.random() * 2.1
+      });
+    }
+
+    (function step() {
+      ctx.clearRect(0, 0, w, h);
+      ctx.globalCompositeOperation = 'lighter';
+      var alive = 0;
+      for (var i = 0; i < parts.length; i++) {
+        var p = parts[i];
+        if (p.life <= 0) continue;
+        alive++;
+        p.vy += 0.13; p.vx *= 0.985; p.vy *= 0.985;
+        p.x += p.vx; p.y += p.vy; p.life -= 1;
+        var t = p.life / p.maxLife;
+        var grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 4);
+        grad.addColorStop(0, 'rgba(255,236,170,' + (t * 0.95).toFixed(3) + ')');
+        grad.addColorStop(0.45, 'rgba(212,175,55,' + (t * 0.5).toFixed(3) + ')');
+        grad.addColorStop(1, 'rgba(212,175,55,0)');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * 4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalCompositeOperation = 'source-over';
+      if (alive > 0) requestAnimationFrame(step);
+      else ctx.clearRect(0, 0, w, h);
+    })();
+  }
+
+  /* ======================================================================
+     9. Gavel strike: the 3D scene
+     Swing geometry: the pivot sits at the handle butt (x = +0.95) and the head
+     hangs off it at local x = -0.95, so rotating the pivot swings the head on
+     a real arc. Rotating (-0.95, 0) by theta gives y = -0.95*sin(theta), so a
+     negative theta raises the head; at theta = 0 the head centre sits at the
+     origin and its 0.24 radius puts the striking face exactly on the block.
+     ==================================================================== */
+  var FALL = 260, RECOIL = 700;      // ms
+  var RAISED = -0.72, IMPACT = 0.02; // rad
+
+  function initGavel(canvas) {
+    var THREE = window.THREE;
+    if (!THREE || !canvas) return null;
+
+    var renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        canvas: canvas, antialias: true, alpha: true, powerPreference: 'high-performance'
+      });
+    } catch (err) {
+      return null; // No WebGL: caller falls back to the 2D rendition.
+    }
+    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.6));
+    if (THREE.ACESFilmicToneMapping) {
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.15;
+    }
+
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
+    camera.position.set(0.55, 0.75, 3.6);
+    camera.lookAt(0.25, 0.02, 0);
+
+    scene.add(new THREE.AmbientLight(0xf3f5fa, 0.28));
+    var key = new THREE.DirectionalLight(0xfff3d0, 1.5);
+    key.position.set(3, 5, 4);
+    scene.add(key);
+    var rim = new THREE.DirectionalLight(0x6f8ad0, 0.55);
+    rim.position.set(-4, 2, -3);
+    scene.add(rim);
+
+    var gold = new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.96, roughness: 0.24 });
+    var darkGold = new THREE.MeshStandardMaterial({ color: 0x8a6f1f, metalness: 0.9, roughness: 0.42 });
+    var blockMat = new THREE.MeshStandardMaterial({ color: 0x101a3a, metalness: 0.55, roughness: 0.5 });
+
+    var HEAD_X = -0.95;
+    var pivot = new THREE.Group();
+    pivot.position.set(0.95, 0, 0);
+    pivot.rotation.z = RAISED;
+    scene.add(pivot);
+
+    var handle = new THREE.Mesh(new THREE.CylinderGeometry(0.062, 0.075, 0.95, 32), darkGold);
+    handle.position.set(HEAD_X / 2, 0, 0);
+    handle.rotation.z = Math.PI / 2;
+    pivot.add(handle);
+
+    var pommel = new THREE.Mesh(new THREE.SphereGeometry(0.098, 24, 24), gold);
+    pivot.add(pommel);
+
+    // Head axis rotated onto Z so the cylinder lies across the handle.
+    var head = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.86, 48), gold);
+    head.position.set(HEAD_X, 0, 0);
+    head.rotation.x = Math.PI / 2;
+    pivot.add(head);
+
+    // A torus already rings the Z axis, so the bands need no rotation.
+    [-0.3, 0.3].forEach(function (z) {
+      var band = new THREE.Mesh(new THREE.TorusGeometry(0.245, 0.022, 16, 48), darkGold);
+      band.position.set(HEAD_X, 0, z);
+      pivot.add(band);
+    });
+
+    var block = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.2, 1.0), blockMat);
+    block.position.set(0, -0.34, 0);
+    scene.add(block);
+    var plate = new THREE.Mesh(new THREE.BoxGeometry(1.52, 0.012, 1.02), gold);
+    plate.position.set(0, -0.235, 0);
+    scene.add(plate);
+
+    var flash = new THREE.PointLight(0xe7c765, 0.6, 7);
+    flash.position.set(0, 0.1, 0.6);
+    scene.add(flash);
+
+    function resize() {
+      var w = canvas.clientWidth, h = canvas.clientHeight;
+      if (!w || !h) return;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+    }
+    resize();
+    addEventListener('resize', resize);
+
+    var phase = 'idle', t0 = performance.now(), fired = false, onImpact = null, raf = 0;
+
+    var easeInQuad = function (t) { return t * t; };
+    var easeOutBack = function (t) {
+      var c = 1.9;
+      return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2);
+    };
+
+    function frame(now) {
+      var t = (now - t0) / 1000;
+
+      if (phase === 'idle') {
+        pivot.rotation.z = RAISED + Math.sin(t * 1.5) * 0.035;
+        pivot.rotation.y = Math.sin(t * 0.42) * 0.28;
+        flash.intensity = 0.6;
+      } else {
+        var ms = (now - t0);
+        pivot.rotation.y *= 0.9;
+        if (ms < FALL) {
+          var p = easeInQuad(ms / FALL);
+          pivot.rotation.z = RAISED + (IMPACT - RAISED) * p;
+        } else {
+          if (!fired) { fired = true; if (onImpact) onImpact(); }
+          var q = Math.min((ms - FALL) / RECOIL, 1);
+          var bounce = Math.sin(q * Math.PI * 3) * (1 - q) * 0.16;
+          pivot.rotation.z = IMPACT - bounce - easeOutBack(q) * 0.1;
+          flash.intensity = 0.6 + Math.max(0, 1 - q * 3) * 9;
+          block.scale.y = 1 - Math.max(0, 1 - q * 5) * 0.12;
+          camera.position.x = 0.55 + Math.sin(q * 22) * (1 - q) * 0.05;
+        }
+      }
+
+      renderer.render(scene, camera);
+      raf = requestAnimationFrame(frame);
+    }
+    raf = requestAnimationFrame(frame);
+
+    return {
+      strike: function (cb) {
+        if (phase !== 'idle') return;
+        phase = 'strike';
+        t0 = performance.now();
+        fired = false;
+        onImpact = cb;
+      },
+      dispose: function () { cancelAnimationFrame(raf); }
+    };
+  }
+
+  /**
+   * 2D fallback, used when three.js or WebGL is unavailable. Same swing, same
+   * timings, drawn with a metallic gradient - so the intro degrades to a
+   * simpler animation rather than a black screen.
+   */
+  function initGavel2D(canvas) {
+    var ctx = canvas.getContext('2d');
+    if (!ctx) return null;
+    var w = 0, h = 0, dpr = Math.min(devicePixelRatio || 1, 2);
+    var phase = 'idle', t0 = performance.now(), fired = false, onImpact = null, raf = 0;
+
+    function resize() {
+      w = canvas.clientWidth; h = canvas.clientHeight;
+      canvas.width = Math.floor(w * dpr);
+      canvas.height = Math.floor(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    resize();
+    addEventListener('resize', resize);
+
+    function metal(x0, y0, x1, y1) {
+      var g = ctx.createLinearGradient(x0, y0, x1, y1);
+      g.addColorStop(0, '#8A6F1F');
+      g.addColorStop(0.4, '#E7C765');
+      g.addColorStop(0.6, '#D4AF37');
+      g.addColorStop(1, '#6B551A');
+      return g;
+    }
+
+    function frame(now) {
+      var t = (now - t0) / 1000, ms = now - t0, angle;
+      if (phase === 'idle') {
+        angle = RAISED + Math.sin(t * 1.5) * 0.05;
+      } else if (ms < FALL) {
+        angle = RAISED + (IMPACT - RAISED) * (ms / FALL) * (ms / FALL);
+      } else {
+        if (!fired) { fired = true; if (onImpact) onImpact(); }
+        var q = Math.min((ms - FALL) / RECOIL, 1);
+        angle = IMPACT - Math.sin(q * Math.PI * 3) * (1 - q) * 0.2;
+      }
+
+      ctx.clearRect(0, 0, w, h);
+      var scale = Math.min(w, h) / 4.2;
+      var cx = w / 2 + scale * 0.45, cy = h * 0.56;
+
+      // Sound block
+      ctx.fillStyle = '#101A3A';
+      ctx.fillRect(cx - scale * 1.7, cy + scale * 0.24, scale * 1.5, scale * 0.2);
+      ctx.fillStyle = '#D4AF37';
+      ctx.fillRect(cx - scale * 1.72, cy + scale * 0.22, scale * 1.54, scale * 0.02);
+
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(angle);
+
+      ctx.fillStyle = metal(-scale, -scale * 0.08, -scale * 0.2, scale * 0.08);
+      ctx.fillRect(-scale * 0.95, -scale * 0.07, scale * 0.95, scale * 0.14);
+
+      ctx.fillStyle = metal(-scale * 1.2, -scale * 0.3, -scale * 0.7, scale * 0.3);
+      ctx.beginPath();
+      ctx.roundRect
+        ? ctx.roundRect(-scale * 1.24, -scale * 0.26, scale * 0.58, scale * 0.52, scale * 0.06)
+        : ctx.rect(-scale * 1.24, -scale * 0.26, scale * 0.58, scale * 0.52);
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(0, 0, scale * 0.1, 0, Math.PI * 2);
+      ctx.fillStyle = '#E7C765';
+      ctx.fill();
+      ctx.restore();
+
+      raf = requestAnimationFrame(frame);
+    }
+    raf = requestAnimationFrame(frame);
+
+    return {
+      strike: function (cb) {
+        if (phase !== 'idle') return;
+        phase = 'strike'; t0 = performance.now(); fired = false; onImpact = cb;
+      },
+      dispose: function () { cancelAnimationFrame(raf); }
+    };
+  }
+
+  /* ======================================================================
+     10. Intro orchestration
+     ==================================================================== */
+  (function () {
+    var intro = $('intro');
+    var gavelCanvas = $('gavel-canvas');
+    var burstCanvas = $('burst-canvas');
+    var word = $('intro-word');
+    var struck = false, dismissed = false;
+
+    function finish() {
+      if (dismissed) return;
+      dismissed = true;
+      intro.classList.add('dissolved');
+      setTimeout(function () {
+        intro.classList.add('gone');
+        if (gavel && gavel.dispose) gavel.dispose();
+      }, 900);
+    }
+
+    // Reduced motion: no strike, no overlay. Straight to the page.
+    if (REDUCED) {
+      intro.classList.add('gone');
+      return;
+    }
+
+    var gavel = initGavel(gavelCanvas) || initGavel2D(gavelCanvas);
+
+    function strike() {
+      if (struck || !gavel) return;
+      struck = true;
+      audio.prime();          // Must happen inside the gesture.
+      word.style.opacity = '0';
+      gavel.strike(function () {
+        audio.strike(0.85);
+        burst(burstCanvas, 0.56);
+        if (navigator.vibrate) navigator.vibrate(18);
+        setTimeout(finish, 1150);
+      });
+    }
+
+    $('intro-hit').addEventListener('click', strike);
+    $('skip').addEventListener('click', function (e) {
+      e.stopPropagation();
+      finish();
+    });
+
+    addEventListener('keydown', function (e) {
+      if (dismissed) return;
+      if (e.key === 'Escape') { finish(); return; }
+      if (e.key === 'Enter' || e.key === ' ') {
+        if (document.activeElement === $('skip')) return;
+        e.preventDefault();
+        strike();
+      }
+    });
+  })();
+})();
+</script>
