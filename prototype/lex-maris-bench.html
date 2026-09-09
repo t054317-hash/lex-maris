@@ -1225,6 +1225,23 @@ html[lang="ar"] .summary-value { direction: ltr; unicode-bidi: embed; }
     </p>
     <span class="demo-badge" data-i18n="auth.demoBadge">Preview — no live account</span>
 
+    <button type="button" id="auth-google" data-cursor="hover"
+            style="display:flex;width:100%;align-items:center;justify-content:center;gap:10px;margin-top:18px;padding:12px 20px;border-radius:999px;border:1px solid rgba(139,147,168,0.3);background:rgba(16,26,58,0.6);color:var(--ink);font:400 14px var(--body);cursor:none">
+      <svg aria-hidden="true" viewBox="0 0 18 18" width="16" height="16">
+        <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92a8.78 8.78 0 0 0 2.68-6.62Z"/>
+        <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.81.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.34A9 9 0 0 0 9 18Z"/>
+        <path fill="#FBBC05" d="M3.97 10.72a5.4 5.4 0 0 1 0-3.44V4.94H.96a9 9 0 0 0 0 8.12l3.01-2.34Z"/>
+        <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.59C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.94l3.01 2.34C4.68 5.16 6.66 3.58 9 3.58Z"/>
+      </svg>
+      <span>Continue with Google</span>
+    </button>
+
+    <div aria-hidden="true" style="display:flex;align-items:center;gap:12px;margin:18px 0 0">
+      <span style="height:1px;flex:1;background:rgba(139,147,168,0.2)"></span>
+      <span style="font-size:10px;text-transform:uppercase;letter-spacing:0.16em;color:var(--ink-mute)">or</span>
+      <span style="height:1px;flex:1;background:rgba(139,147,168,0.2)"></span>
+    </div>
+
     <form id="auth-form">
       <label class="auth-field" id="auth-name-field" hidden>
         <span class="eyebrow" data-i18n="auth.fullName">Full name</span>
@@ -2962,7 +2979,11 @@ html[lang="ar"] .summary-value { direction: ltr; unicode-bidi: embed; }
       'auth.badEmail': 'Please enter a valid email address.',
       'auth.shortPassword': 'Use at least 8 characters.',
       'auth.signedInAs': 'Signed in as',
-      'auth.previewNotice': 'This preview keeps your name and email in this browser only, so the checkout can use them. Your password is neither checked nor stored — the live app authenticates against Supabase Auth.',
+      'auth.duplicate': 'This email is already registered. Please sign in instead.',
+      'auth.invalid': 'Invalid email or password.',
+      'auth.useGoogle': 'This account uses Google Sign-In. Use the Google button above.',
+      'auth.googlePreview': 'Google Sign-In needs the deployed app — this preview cannot reach Google. Email and password work here.',
+      'auth.previewNotice': 'Accounts in this preview are stored in THIS BROWSER only, and passwords are hashed with PBKDF2-SHA256 (150,000 iterations, per-user salt) — never in plain text. There is no server here, so accounts do not follow you to another device. The deployed app uses Supabase Auth with bcrypt.',
       'common.notLegalAdvice': 'Demonstration interface. Output is a triage signal for a qualified practitioner, not legal advice.'
     },
     ar: {
@@ -3046,7 +3067,11 @@ html[lang="ar"] .summary-value { direction: ltr; unicode-bidi: embed; }
       'auth.badEmail': 'يرجى إدخال بريد إلكتروني صحيح.',
       'auth.shortPassword': 'استخدم ٨ أحرف على الأقل.',
       'auth.signedInAs': 'مسجَّل الدخول باسم',
-      'auth.previewNotice': 'تحفظ هذه المعاينة اسمك وبريدك في هذا المتصفح فقط، لتستخدمها صفحة الدفع. كلمة المرور لا يتم التحقق منها ولا تخزينها — التطبيق الفعلي يصادق عبر Supabase Auth.',
+      'auth.duplicate': 'هذا البريد الإلكتروني مسجَّل بالفعل. يرجى تسجيل الدخول.',
+      'auth.invalid': 'البريد الإلكتروني أو كلمة المرور غير صحيحة.',
+      'auth.useGoogle': 'هذا الحساب يستخدم تسجيل الدخول بجوجل. استخدم زر جوجل أعلاه.',
+      'auth.googlePreview': 'تسجيل الدخول بجوجل يتطلّب التطبيق المنشور — هذه المعاينة لا تستطيع الوصول إلى جوجل. البريد وكلمة المرور يعملان هنا.',
+      'auth.previewNotice': 'تُحفظ الحسابات في هذه المعاينة داخل هذا المتصفح فقط، وتُشفَّر كلمات المرور بخوارزمية PBKDF2-SHA256 (١٥٠٬٠٠٠ تكرار، مع ملح خاص لكل مستخدم) — ولا تُخزَّن كنص صريح أبداً. لا يوجد خادم هنا، لذا لا تنتقل الحسابات إلى جهاز آخر. التطبيق المنشور يستخدم Supabase Auth مع bcrypt.',
       'common.notLegalAdvice': 'واجهة عرض توضيحية. النتيجة مؤشر فرز لممارس مؤهّل، وليست استشارة قانونية.'
     }
   };
@@ -3147,6 +3172,16 @@ html[lang="ar"] .summary-value { direction: ltr; unicode-bidi: embed; }
     }
     openAuth();
   });
+  /* Google in the preview: the OAuth redirect to accounts.google.com cannot
+     happen from inside this sandbox, so rather than a button that appears to
+     hang, it says so. The deployed app wires the real flow through
+     signInWithOAuth('google') and /auth/callback. */
+  $('auth-google').addEventListener('click', function () {
+    var out = $('auth-result');
+    out.textContent = tr('auth.googlePreview');
+    out.style.color = 'var(--watch)';
+  });
+
   $('auth-close').addEventListener('click', closeAuth);
   $('auth-scrim').addEventListener('click', closeAuth);
   $('auth-mode-toggle').addEventListener('click', function () {
@@ -3187,6 +3222,101 @@ html[lang="ar"] .summary-value { direction: ltr; unicode-bidi: embed; }
      ---------------------------------------------------------------------- */
   var SESSION_KEY = 'lexmaris.preview.session';
   var session = null;
+
+  /* ======================================================================
+     Local account store, with REAL credential verification.
+
+     The earlier version accepted any password. It now genuinely validates:
+
+       - a users table (id, email, password_hash, salt, auth_provider,
+           created_at) in localStorage;
+       - registration REFUSES an email that already exists;
+       - sign-in derives a hash from what you typed and compares it to the
+           stored one, so a wrong password is rejected.
+
+     Hashing is PBKDF2-SHA256, 150,000 iterations, with a 16-byte random salt
+     per user, via the browser's own SubtleCrypto. Deliberately NOT bcrypt:
+     there is no native bcrypt in a browser, and a JS implementation would be
+     both slower and weaker than the platform primitive. The deployed app does
+     use bcrypt, because Supabase hashes server-side.
+
+     SCOPE, plainly: this store lives in ONE browser, there is no server, and
+     it cannot stop anyone who opens devtools. It exists so the sign-in flow
+     behaves correctly in a preview with no network. Real accounts need the
+     deployed app.
+     ====================================================================== */
+  var USERS_KEY = 'lexmaris.preview.users';
+  var PBKDF2_ITERATIONS = 150000;
+
+  function readUsers() {
+    try {
+      var raw = localStorage.getItem(USERS_KEY);
+      var parsed = raw ? JSON.parse(raw) : [];
+      return Object.prototype.toString.call(parsed) === '[object Array]' ? parsed : [];
+    } catch (err) { return []; }
+  }
+
+  function writeUsers(users) {
+    try { localStorage.setItem(USERS_KEY, JSON.stringify(users)); }
+    catch (err) { /* storage unavailable */ }
+  }
+
+  function findUser(email) {
+    var users = readUsers();
+    var needle = String(email).trim().toLowerCase();
+    for (var i = 0; i < users.length; i++) {
+      // Normalised compare, so Founder@x.com and founder@X.com are one account.
+      if (String(users[i].email).toLowerCase() === needle) return users[i];
+    }
+    return null;
+  }
+
+  function toHex(buffer) {
+    var bytes = new Uint8Array(buffer), out = '';
+    for (var i = 0; i < bytes.length; i++) {
+      out += (bytes[i] < 16 ? '0' : '') + bytes[i].toString(16);
+    }
+    return out;
+  }
+
+  function randomSaltHex() {
+    var bytes = new Uint8Array(16);
+    crypto.getRandomValues(bytes);
+    return toHex(bytes);
+  }
+
+  /** Promise<hex>. Promises, not async/await, to keep this file ES5-parseable. */
+  function derivePasswordHash(password, saltHex) {
+    if (!(window.crypto && crypto.subtle)) {
+      return Promise.reject(new Error('This browser cannot hash securely.'));
+    }
+    var salt = new Uint8Array(saltHex.length / 2);
+    for (var i = 0; i < salt.length; i++) {
+      salt[i] = parseInt(saltHex.substr(i * 2, 2), 16);
+    }
+    return crypto.subtle
+      .importKey('raw', new TextEncoder().encode(password),
+                 { name: 'PBKDF2' }, false, ['deriveBits'])
+      .then(function (key) {
+        return crypto.subtle.deriveBits(
+          { name: 'PBKDF2', salt: salt, iterations: PBKDF2_ITERATIONS, hash: 'SHA-256' },
+          key, 256);
+      })
+      .then(toHex);
+  }
+
+  /* Length-independent compare. Both sides are fixed-length hex so this is
+     belt and braces, but comparing secrets with === teaches the wrong habit. */
+  function hashesMatch(a, b) {
+    if (typeof a !== 'string' || typeof b !== 'string' || a.length !== b.length) return false;
+    var diff = 0;
+    for (var i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+    return diff === 0;
+  }
+
+  function newUserId() {
+    return crypto.randomUUID ? crypto.randomUUID() : 'u_' + randomSaltHex();
+  }
 
   function loadSession() {
     try {
@@ -3241,21 +3371,85 @@ html[lang="ar"] .summary-value { direction: ltr; unicode-bidi: embed; }
       return;
     }
 
-    session = {
-      email: email,
-      // Fall back to the local part of the address when no name was given.
-      name: name || email.split('@')[0]
-    };
-    saveSession();
-    renderSession();
+    var submitBtn = $('auth-submit');
+    submitBtn.disabled = true;
+    out.style.color = 'var(--ink-mute)';
+    out.textContent = tr('auth.working');
 
-    out.textContent = tr(authMode === 'signUp' ? 'auth.created' : 'auth.welcome');
-    out.style.color = 'var(--safe)';
+    function done(message, colour) {
+      out.textContent = message;
+      out.style.color = colour;
+      submitBtn.disabled = false;
+    }
 
-    // Clear the password field immediately; it is not wanted for anything.
-    $('auth-password').value = '';
+    function establish(user, message) {
+      session = { id: user.id, email: user.email, name: user.full_name, provider: user.auth_provider };
+      saveSession();
+      renderSession();
+      // Never leave the typed password sitting in the DOM.
+      $('auth-password').value = '';
+      done(message, 'var(--safe)');
+      setTimeout(closeAuth, 900);
+    }
 
-    setTimeout(closeAuth, 900);
+    var existing = findUser(email);
+
+    if (authMode === 'signUp') {
+      // --- Unique email check -------------------------------------------
+      if (existing) {
+        $('auth-password').value = '';
+        done(tr('auth.duplicate'), 'var(--elevated)');
+        // Offer the fix, not just the refusal: flip to sign-in, keep the email.
+        authMode = 'signIn';
+        syncAuthMode();
+        return;
+      }
+
+      var salt = randomSaltHex();
+      derivePasswordHash(password, salt).then(function (hash) {
+        var user = {
+          id: newUserId(),
+          email: email,
+          full_name: name || email.split('@')[0],
+          password_hash: hash,   // PBKDF2-SHA256, never the plaintext
+          salt: salt,
+          auth_provider: 'email',
+          created_at: new Date().toISOString()
+        };
+        var users = readUsers();
+        users.push(user);
+        writeUsers(users);
+        establish(user, tr('auth.created'));
+      }).catch(function (err) {
+        done(err.message || String(err), 'var(--elevated)');
+      });
+      return;
+    }
+
+    // --- Sign in --------------------------------------------------------
+    // One message whether the address is unknown or the password is wrong.
+    // Distinguishing them tells an attacker which emails hold accounts.
+    if (!existing) {
+      $('auth-password').value = '';
+      done(tr('auth.invalid'), 'var(--elevated)');
+      return;
+    }
+
+    if (existing.auth_provider === 'google' && !existing.password_hash) {
+      done(tr('auth.useGoogle'), 'var(--elevated)');
+      return;
+    }
+
+    derivePasswordHash(password, existing.salt).then(function (hash) {
+      if (!hashesMatch(hash, existing.password_hash)) {
+        $('auth-password').value = '';
+        done(tr('auth.invalid'), 'var(--elevated)');
+        return;
+      }
+      establish(existing, tr('auth.welcome'));
+    }).catch(function (err) {
+      done(err.message || String(err), 'var(--elevated)');
+    });
   });
 
   /* ======================================================================
