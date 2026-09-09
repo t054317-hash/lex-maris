@@ -22,9 +22,61 @@
     background-attachment: fixed;
   }
 
-  /* Arabic locale: swap type stack and flow direction. */
+  /* -------------------------------------------------------------------------
+     Arabic / RTL.
+
+     Three corrections that matter more than the direction flip itself:
+
+     1. LETTER-SPACING MUST GO. Arabic is a joined script -- adding tracking
+        pulls the glyphs apart and breaks the connecting strokes, which reads as
+        broken rendering rather than as style. Our design leans on wide tracking
+        for every eyebrow and button, so it all has to be neutralised.
+
+     2. CINZEL HAS NO ARABIC GLYPHS. Left alone, every display heading would
+        silently fall back to a system serif. Headings switch to Tajawal.
+
+     3. Arabic needs slightly more line-height at the same optical size,
+        because of the ascenders and descenders on ه/ج/ي.
+     ------------------------------------------------------------------------- */
   html[lang='ar'] body {
     @apply font-arabic;
+  }
+
+  html[lang='ar'] h1,
+  html[lang='ar'] h2,
+  html[lang='ar'] h3,
+  html[lang='ar'] h4,
+  html[lang='ar'] .font-display,
+  html[lang='ar'] .display {
+    font-family: var(--font-tajawal), 'Tajawal', 'Cairo', sans-serif;
+    line-height: 1.35;
+  }
+
+  html[lang='ar'] .eyebrow,
+  html[lang='ar'] [class*='tracking-'],
+  html[lang='ar'] [class*='uppercase'] {
+    letter-spacing: normal;
+  }
+
+  /* Uppercase is meaningless in Arabic -- it has no letter case. Leaving the
+     transform on is harmless for the glyphs but the intent is clearer off. */
+  html[lang='ar'] [class*='uppercase'] {
+    text-transform: none;
+  }
+
+  html[lang='ar'] p,
+  html[lang='ar'] li,
+  html[lang='ar'] dd {
+    line-height: 1.9;
+  }
+
+  /* The draft-preview paper is a legal document: in Arabic it reads RTL, but
+     the clause numbering stays Latin, which is the Gulf drafting convention. */
+  html[lang='ar'] .clause .num,
+  html[lang='ar'] .tabular-nums,
+  html[lang='ar'] [class*='tabular-nums'] {
+    direction: ltr;
+    unicode-bidi: embed;
   }
 
   /* The custom spotlight cursor replaces the native one — but only for pointer
