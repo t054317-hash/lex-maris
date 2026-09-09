@@ -1250,7 +1250,13 @@ html[lang="ar"] .summary-value { direction: ltr; unicode-bidi: embed; }
       <button type="button" id="auth-close" data-cursor="hover" data-i18n="auth.close">Close</button>
     </div>
 
-    <p class="auth-note" data-i18n="auth.privilegeNotice">
+    <p class="auth-note" data-i18n="auth.previewNotice">
+      This preview keeps your name and email in this browser only, so the
+      checkout can use them. Your password is neither checked nor stored — the
+      live app authenticates against Supabase Auth.
+    </p>
+    <p class="auth-note" style="border-top:0;padding-top:0;margin-top:10px"
+       data-i18n="auth.privilegeNotice">
       Communications through this platform may be privileged. Do not share your
       credentials.
     </p>
@@ -2917,6 +2923,12 @@ html[lang="ar"] .summary-value { direction: ltr; unicode-bidi: embed; }
       'auth.demoBadge': 'Preview — no live account',
       'auth.demo': 'Preview only — this page cannot reach the authentication service. The live app signs in against Supabase Auth.',
       'auth.privilegeNotice': 'Communications through this platform may be privileged. Do not share your credentials.',
+      'auth.welcome': 'Signed in. Your details now carry through to checkout.',
+      'auth.created': 'Account created. Your details now carry through to checkout.',
+      'auth.badEmail': 'Please enter a valid email address.',
+      'auth.shortPassword': 'Use at least 8 characters.',
+      'auth.signedInAs': 'Signed in as',
+      'auth.previewNotice': 'This preview keeps your name and email in this browser only, so the checkout can use them. Your password is neither checked nor stored — the live app authenticates against Supabase Auth.',
       'common.notLegalAdvice': 'Demonstration interface. Output is a triage signal for a qualified practitioner, not legal advice.'
     },
     ar: {
@@ -2995,6 +3007,12 @@ html[lang="ar"] .summary-value { direction: ltr; unicode-bidi: embed; }
       'auth.demoBadge': 'معاينة — لا يوجد حساب فعلي',
       'auth.demo': 'معاينة فقط — لا تستطيع هذه الصفحة الوصول إلى خدمة المصادقة. التطبيق الفعلي يسجّل الدخول عبر Supabase Auth.',
       'auth.privilegeNotice': 'قد تكون المراسلات عبر هذه المنصة مشمولة بالسرية المهنية. لا تشارك بيانات دخولك.',
+      'auth.welcome': 'تم تسجيل الدخول. ستُستخدم بياناتك في صفحة الدفع.',
+      'auth.created': 'تم إنشاء الحساب. ستُستخدم بياناتك في صفحة الدفع.',
+      'auth.badEmail': 'يرجى إدخال بريد إلكتروني صحيح.',
+      'auth.shortPassword': 'استخدم ٨ أحرف على الأقل.',
+      'auth.signedInAs': 'مسجَّل الدخول باسم',
+      'auth.previewNotice': 'تحفظ هذه المعاينة اسمك وبريدك في هذا المتصفح فقط، لتستخدمها صفحة الدفع. كلمة المرور لا يتم التحقق منها ولا تخزينها — التطبيق الفعلي يصادق عبر Supabase Auth.',
       'common.notLegalAdvice': 'واجهة عرض توضيحية. النتيجة مؤشر فرز لممارس مؤهّل، وليست استشارة قانونية.'
     }
   };
@@ -3026,7 +3044,10 @@ html[lang="ar"] .summary-value { direction: ltr; unicode-bidi: embed; }
     });
 
     // Re-render anything whose text is generated rather than marked up.
+    // renderSession must come AFTER the data-i18n pass above, which would
+    // otherwise reset the header button to "Sign in" while signed in.
     renderCheckout();
+    renderSession();
     if (authOpen) syncAuthMode();
   }
 
@@ -3082,7 +3103,16 @@ html[lang="ar"] .summary-value { direction: ltr; unicode-bidi: embed; }
     if (authReturnFocus && authReturnFocus.focus) authReturnFocus.focus();
   }
 
-  $('open-auth').addEventListener('click', openAuth);
+  // One button, two jobs: sign in when signed out, sign out when signed in.
+  $('open-auth').addEventListener('click', function () {
+    if (session) {
+      session = null;
+      saveSession();
+      renderSession();
+      return;
+    }
+    openAuth();
+  });
   $('auth-close').addEventListener('click', closeAuth);
   $('auth-scrim').addEventListener('click', closeAuth);
   $('auth-mode-toggle').addEventListener('click', function () {
@@ -3103,13 +3133,95 @@ html[lang="ar"] .summary-value { direction: ltr; unicode-bidi: embed; }
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   }, true);
 
+  /* ----------------------------------------------------------------------
+     Session.
+
+     WHAT THIS IS NOT: authentication. This page cannot reach Supabase Auth --
+     the artifact sandbox blocks network calls to any other host -- so there is
+     nothing to verify a password against.
+
+     What it does instead is let the flow complete, which is what a design
+     preview needs: you sign in, the header reflects it, and your name and
+     email carry through to the checkout form.
+
+     THE PASSWORD IS NEVER READ, HASHED, TRANSMITTED OR STORED. Only the name
+     and email are kept, in this browser's localStorage, which never leaves the
+     device. Storing a credential here would be indefensible: the only shared
+     store available to this page (the db capability) is readable by every
+     viewer of the artifact, and there is no per-viewer private subtree without
+     the `user` capability, which this account does not have.
+     ---------------------------------------------------------------------- */
+  var SESSION_KEY = 'lexmaris.preview.session';
+  var session = null;
+
+  function loadSession() {
+    try {
+      var raw = localStorage.getItem(SESSION_KEY);
+      session = raw ? JSON.parse(raw) : null;
+    } catch (err) {
+      // Private window, blocked site data, or corrupt JSON. Not an error
+      // worth surfacing -- the page simply starts signed out.
+      session = null;
+    }
+  }
+
+  function saveSession() {
+    try {
+      if (session) localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+      else localStorage.removeItem(SESSION_KEY);
+    } catch (err) { /* storage unavailable; session stays in memory only */ }
+  }
+
+  function renderSession() {
+    var btn = $('open-auth');
+    if (session) {
+      btn.textContent = tr('nav.signOut');
+      btn.setAttribute('title', tr('auth.signedInAs') + ' ' + session.email);
+      // Carry the details into the checkout, which is the point of signing in.
+      if ($('co-name') && !$('co-name').value) $('co-name').value = session.name || '';
+      if ($('co-email') && !$('co-email').value) $('co-email').value = session.email || '';
+    } else {
+      btn.textContent = tr('nav.signIn');
+      btn.removeAttribute('title');
+    }
+  }
+
   $('auth-form').addEventListener('submit', function (e) {
     e.preventDefault();
-    // This preview cannot reach Supabase: the artifact sandbox blocks network
-    // calls to any host but its own. Saying so beats a spinner that never ends.
     var out = $('auth-result');
-    out.textContent = tr('auth.demo');
-    out.style.color = 'var(--elevated)';
+    var email = $('auth-email').value.trim();
+    var password = $('auth-password').value;
+    var name = ($('auth-name').value || '').trim();
+
+    // Validate what we can actually validate.
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+      out.textContent = tr('auth.badEmail');
+      out.style.color = 'var(--elevated)';
+      $('auth-email').focus();
+      return;
+    }
+    if (password.length < 8) {
+      out.textContent = tr('auth.shortPassword');
+      out.style.color = 'var(--elevated)';
+      $('auth-password').focus();
+      return;
+    }
+
+    session = {
+      email: email,
+      // Fall back to the local part of the address when no name was given.
+      name: name || email.split('@')[0]
+    };
+    saveSession();
+    renderSession();
+
+    out.textContent = tr(authMode === 'signUp' ? 'auth.created' : 'auth.welcome');
+    out.style.color = 'var(--safe)';
+
+    // Clear the password field immediately; it is not wanted for anything.
+    $('auth-password').value = '';
+
+    setTimeout(closeAuth, 900);
   });
 
   /* ======================================================================
@@ -3327,8 +3439,8 @@ html[lang="ar"] .summary-value { direction: ltr; unicode-bidi: embed; }
     });
   })();
 
+  loadSession();      // before applyLocale, which renders the session state
   routeFromHash();
-  applyLocale('en');
-  renderCheckout();
+  applyLocale('en');  // also calls renderCheckout() and renderSession()
 })();
 </script>
