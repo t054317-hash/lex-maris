@@ -2304,8 +2304,33 @@ html[lang="ar"] .summary-value { direction: ltr; unicode-bidi: embed; }
      negative theta raises the head; at theta = 0 the head centre sits at the
      origin and its 0.24 radius puts the striking face exactly on the block.
      ==================================================================== */
-  var FALL = 260, RECOIL = 700;      // ms
-  var RAISED = -0.72, IMPACT = 0.02; // rad
+  var FALL = 260, RECOIL = 700;    // ms
+
+  /* FRONT STRIKE geometry.
+
+     Previously the head's cylinder axis ran along Z, so the CURVED BARREL met
+     the block instead of a face, and the swing sat in the XY (screen) plane so
+     the viewer watched the gavel sweep sideways past the block.
+
+     Now: the handle runs along +Z toward the viewer, the pivot sits at
+     z = +0.95, and the swing is rotation about X — so the head descends from
+     the FRONT. The head keeps its default Y axis, standing upright, so its
+     lower flat face is the striking face and lands square.
+
+     Rotating the local offset (0, 0, -0.95) about X by theta gives
+       y' =  0.95 * sin(theta)
+       z' = -0.95 * cos(theta)
+     so a POSITIVE theta raises the head — the opposite sign to the old Z-axis
+     swing. Reusing the old constants would drive the head down through the
+     block.
+
+     Contact height: the head is 0.8 tall standing on its axis, so the striking
+     face is 0.4 below its centre. The block top is at y = -0.235, so the head
+     centre must reach y = 0.165 — hence the pivot's y. */
+  var RAISED = 0.72, IMPACT = -0.02;   // rad, about X
+  var PIVOT_Y = 0.165, PIVOT_Z = 0.95;
+  var HEAD_R = 0.235, HEAD_H = 0.8;
+  var CAM = [2.35, 1.25, 2.55], CAM_TARGET = [0, -0.05, 0.1];
 
   function initGavel(canvas) {
     var THREE = window.THREE;
@@ -2354,8 +2379,10 @@ html[lang="ar"] .summary-value { direction: ltr; unicode-bidi: embed; }
 
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
-    camera.position.set(0.55, 0.75, 3.6);
-    camera.lookAt(0.25, 0.02, 0);
+    camera.position.set(CAM[0], CAM[1], CAM[2]);
+    // Aim at the block, not the origin: the handle now extends toward the
+    // viewer, so a default look-at would foreshorten it badly.
+    camera.lookAt(CAM_TARGET[0], CAM_TARGET[1], CAM_TARGET[2]);
 
     /* ---------------------------------------------------------------------
        Studio environment.
@@ -2541,10 +2568,10 @@ html[lang="ar"] .summary-value { direction: ltr; unicode-bidi: embed; }
     shadowPlane.receiveShadow = true;
     scene.add(shadowPlane);
 
-    var HEAD_X = -0.95;
+    var HEAD_Z = -0.95;
     var pivot = new THREE.Group();
-    pivot.position.set(0.95, 0, 0);
-    pivot.rotation.z = RAISED;
+    pivot.position.set(0, PIVOT_Y, PIVOT_Z);
+    pivot.rotation.x = RAISED;
     scene.add(pivot);
 
     // Handle: a lathe profile rather than a plain cylinder, so it has the
@@ -2556,47 +2583,51 @@ html[lang="ar"] .summary-value { direction: ltr; unicode-bidi: embed; }
       new THREE.Vector2(0.076, 0.4), new THREE.Vector2(0.078, 0.475),
       new THREE.Vector2(0.0, 0.475)
     ];
+    // Lathe geometry is built around Y, so +90 deg about X lays it along Z,
+    // pointing toward the viewer.
     var handle = new THREE.Mesh(new THREE.LatheGeometry(handleProfile, 48), woodMat);
-    handle.position.set(HEAD_X / 2, 0, 0);
-    handle.rotation.z = Math.PI / 2;
+    handle.position.set(0, 0, HEAD_Z / 2);
+    handle.rotation.x = Math.PI / 2;
     handle.castShadow = true;
     pivot.add(handle);
 
     // Brass collar where handle meets head — catches a hard highlight.
     var collar = new THREE.Mesh(new THREE.CylinderGeometry(0.088, 0.075, 0.09, 40), gold);
-    collar.position.set(HEAD_X + 0.14, 0, 0);
-    collar.rotation.z = Math.PI / 2;
+    collar.position.set(0, 0, HEAD_Z + 0.14);
+    collar.rotation.x = Math.PI / 2;
     collar.castShadow = true;
     pivot.add(collar);
 
     var pommel = new THREE.Mesh(new THREE.SphereGeometry(0.062, 28, 28), gold);
-    pommel.position.set(0.02, 0, 0);
+    pommel.position.set(0, 0, 0.02);
     pommel.castShadow = true;
     pivot.add(pommel);
 
-    // Head axis rotated onto Z so the cylinder lies across the handle.
-    var head = new THREE.Mesh(new THREE.CylinderGeometry(0.235, 0.235, 0.8, 64), gold);
-    head.position.set(HEAD_X, 0, 0);
-    head.rotation.x = Math.PI / 2;
+    // Head: NO rotation. The cylinder keeps its default Y axis so it stands
+    // upright and its lower flat face is the striking face.
+    var head = new THREE.Mesh(new THREE.CylinderGeometry(HEAD_R, HEAD_R, HEAD_H, 64), gold);
+    head.position.set(0, 0, HEAD_Z);
     head.castShadow = true;
     pivot.add(head);
 
-    // Chamfered rims. Without these the striking face reads as a flat disc.
-    [-0.4, 0.4].forEach(function (z) {
+    // Chamfered rims, top and bottom of the head. A default torus rings Z, so
+    // these need the +90 deg X turn to ring Y instead.
+    [-HEAD_H / 2, HEAD_H / 2].forEach(function (y) {
       var rim2 = new THREE.Mesh(new THREE.TorusGeometry(0.222, 0.014, 20, 64), gold);
-      rim2.position.set(HEAD_X, 0, z);
+      rim2.position.set(0, y, HEAD_Z);
+      rim2.rotation.x = Math.PI / 2;
       rim2.castShadow = true;
       pivot.add(rim2);
       var cap = new THREE.Mesh(new THREE.CylinderGeometry(0.222, 0.222, 0.006, 64), gold);
-      cap.position.set(HEAD_X, 0, z);
-      cap.rotation.x = Math.PI / 2;
+      cap.position.set(0, y, HEAD_Z);
       pivot.add(cap);
     });
 
-    // Inlaid bands. A torus already rings the Z axis, so no rotation needed.
-    [-0.26, 0.26].forEach(function (z) {
+    // Inlaid bands, ringing the head's vertical axis.
+    [-0.26, 0.26].forEach(function (y) {
       var band = new THREE.Mesh(new THREE.TorusGeometry(0.238, 0.011, 16, 64), darkGold);
-      band.position.set(HEAD_X, 0, z);
+      band.position.set(0, y, HEAD_Z);
+      band.rotation.x = Math.PI / 2;
       pivot.add(band);
     });
 
@@ -2635,24 +2666,27 @@ html[lang="ar"] .summary-value { direction: ltr; unicode-bidi: embed; }
     function frame(now) {
       var t = (now - t0) / 1000;
 
+      // Swing is rotation about X now, and a POSITIVE angle raises the head,
+      // so recoil ADDS where the old Z-axis swing subtracted.
       if (phase === 'idle') {
-        pivot.rotation.z = RAISED + Math.sin(t * 1.5) * 0.035;
-        pivot.rotation.y = Math.sin(t * 0.42) * 0.28;
+        pivot.rotation.x = RAISED + Math.sin(t * 1.5) * 0.035;
+        // Display yaw only; damped out before impact so the face lands square.
+        pivot.rotation.y = Math.sin(t * 0.42) * 0.18;
         flash.intensity = 0.6;
       } else {
         var ms = (now - t0);
-        pivot.rotation.y *= 0.9;
+        pivot.rotation.y *= 0.86;
         if (ms < FALL) {
           var p = easeInQuad(ms / FALL);
-          pivot.rotation.z = RAISED + (IMPACT - RAISED) * p;
+          pivot.rotation.x = RAISED + (IMPACT - RAISED) * p;
         } else {
           if (!fired) { fired = true; if (onImpact) onImpact(); }
           var q = Math.min((ms - FALL) / RECOIL, 1);
           var bounce = Math.sin(q * Math.PI * 3) * (1 - q) * 0.16;
-          pivot.rotation.z = IMPACT - bounce - easeOutBack(q) * 0.1;
+          pivot.rotation.x = IMPACT + bounce + easeOutBack(q) * 0.1;
           flash.intensity = 0.6 + Math.max(0, 1 - q * 3) * 9;
           block.scale.y = 1 - Math.max(0, 1 - q * 5) * 0.12;
-          camera.position.x = 0.55 + Math.sin(q * 22) * (1 - q) * 0.05;
+          camera.position.x = CAM[0] + Math.sin(q * 22) * (1 - q) * 0.05;
         }
       }
 
@@ -2677,7 +2711,7 @@ html[lang="ar"] .summary-value { direction: ltr; unicode-bidi: embed; }
         t0 = performance.now();
         fired = false;
         block.scale.y = 1;
-        camera.position.x = 0.55;
+        camera.position.x = CAM[0];
       },
       // A WebGL scene with a shadow map is expensive enough that it must not
       // keep rendering while it is off screen or the tab is hidden.

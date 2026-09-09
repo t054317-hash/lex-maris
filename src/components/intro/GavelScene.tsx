@@ -19,21 +19,45 @@ const FALL_DURATION = 0.26;
 const RECOIL_DURATION = 0.7;
 
 /**
- * Swing geometry.
+ * Swing geometry — FRONT STRIKE.
  *
- * The pivot sits at the handle butt (world x = +0.95, the "wrist"), and the
- * head hangs off it at local x = -0.95. Rotating the pivot about Z therefore
- * swings the head on a real arc instead of spinning it in place.
+ * What was wrong before: the head's cylinder axis ran along Z, so the CURVED
+ * BARREL of the head met the block, not a face. A real gavel lands one of the
+ * flat circular faces squarely. The swing also sat in the XY (screen) plane,
+ * so the viewer watched the gavel sweep sideways past the block.
  *
- * Rotating the local vector (-0.95, 0) by theta gives y = -0.95 * sin(theta),
- * so a *negative* theta raises the head. At theta = 0 the head centre sits at
- * the world origin and its 0.24 radius puts the striking face at y = -0.24,
- * which is exactly the top of the sound block. Hence impact is theta ~= 0.
+ * Both are now fixed by changing the swing axis and the head's orientation:
+ *
+ *   - The handle runs along +Z, toward the viewer. The pivot ("wrist") sits at
+ *     z = +0.95 and the head hangs off it at local z = -0.95, so the swing
+ *     arc lies in the YZ plane and the head descends from the FRONT.
+ *   - The head cylinder keeps its default Y axis, so it stands VERTICAL. Its
+ *     lower flat face is the striking face and it lands flat on the block.
+ *
+ * The maths: rotating the local offset (0, 0, -0.95) about X by theta gives
+ *   y' =  0.95 * sin(theta)
+ *   z' = -0.95 * cos(theta)
+ * so a POSITIVE theta raises the head (the opposite sign to the old Z-axis
+ * swing — worth noting, because reusing the old constants silently drives the
+ * head down through the block).
+ *
+ * Contact height: with the head 0.8 tall and standing on its axis, the
+ * striking face sits 0.4 below the head centre. The block's top surface is at
+ * y = -0.235, so the head centre must reach y = 0.165 at impact. That is why
+ * the pivot's y is 0.165 rather than 0.
  */
-const PIVOT: [number, number, number] = [0.95, 0, 0];
-const HEAD_OFFSET_X = -0.95;
-const RAISED_ANGLE = -0.72;
-const IMPACT_ANGLE = 0.02;
+const PIVOT: [number, number, number] = [0, 0.165, 0.95];
+const HEAD_OFFSET_Z = -0.95;
+const HEAD_RADIUS = 0.235;
+const HEAD_HEIGHT = 0.8;
+/** Positive theta lifts the head, on this axis. */
+const RAISED_ANGLE = 0.72;
+/** A hair past contact, so the strike reads as compression rather than a kiss. */
+const IMPACT_ANGLE = -0.02;
+
+/** Camera base position; the impact shake is applied relative to this. */
+const CAMERA_POSITION: [number, number, number] = [2.35, 1.25, 2.55];
+const CAMERA_TARGET: [number, number, number] = [0, -0.05, 0.1];
 
 const easeInQuad = (t: number) => t * t;
 const easeOutBack = (t: number) => {
@@ -248,19 +272,25 @@ function Gavel({ phase, onImpact }: { phase: GavelPhase; onImpact: () => void })
     clock.current.elapsed += delta;
     const t = clock.current.elapsed;
 
+    // The swing is now rotation about X (YZ plane), and a positive angle
+    // raises the head. Recoil therefore ADDS to the impact angle to lift the
+    // head back up, where the old Z-axis swing subtracted.
     if (phase === 'idle') {
-      g.rotation.z = RAISED_ANGLE + Math.sin(t * 1.5) * 0.035;
-      g.rotation.y = Math.sin(t * 0.42) * 0.28;
+      g.rotation.x = RAISED_ANGLE + Math.sin(t * 1.5) * 0.035;
+      // A gentle yaw for display only; it is damped out before the strike so
+      // the face lands square rather than skewed.
+      g.rotation.y = Math.sin(t * 0.42) * 0.18;
       g.position.y = PIVOT[1] + Math.sin(t * 1.15) * 0.06;
       if (glowRef.current) glowRef.current.intensity = 0.5;
       return;
     }
 
-    g.rotation.y *= 0.9;
+    // Square up: any residual yaw would land the face at an angle.
+    g.rotation.y *= 0.86;
 
     if (t < FALL_DURATION) {
       const p = easeInQuad(t / FALL_DURATION);
-      g.rotation.z = THREE.MathUtils.lerp(RAISED_ANGLE, IMPACT_ANGLE, p);
+      g.rotation.x = THREE.MathUtils.lerp(RAISED_ANGLE, IMPACT_ANGLE, p);
       g.position.y = THREE.MathUtils.lerp(g.position.y, PIVOT[1], p);
       return;
     }
@@ -272,7 +302,7 @@ function Gavel({ phase, onImpact }: { phase: GavelPhase; onImpact: () => void })
 
     const p = Math.min((t - FALL_DURATION) / RECOIL_DURATION, 1);
     const bounce = Math.sin(p * Math.PI * 3) * (1 - p) * 0.16;
-    g.rotation.z = IMPACT_ANGLE - bounce - easeOutBack(p) * 0.1;
+    g.rotation.x = IMPACT_ANGLE + bounce + easeOutBack(p) * 0.1;
 
     if (glowRef.current) {
       glowRef.current.intensity = 0.5 + Math.max(0, 1 - p * 3) * 11;
@@ -281,18 +311,21 @@ function Gavel({ phase, onImpact }: { phase: GavelPhase; onImpact: () => void })
       blockRef.current.scale.y = 1 - Math.max(0, 1 - p * 5) * 0.1;
     }
 
-    state.camera.position.x = 0.55 + Math.sin(p * 26) * (1 - p) * 0.045;
+    // Shake along the camera's own X, relative to its base position.
+    state.camera.position.x =
+      CAMERA_POSITION[0] + Math.sin(p * 26) * (1 - p) * 0.045;
   });
 
   return (
     <group>
-      <group ref={pivot} position={PIVOT} rotation={[0, 0, RAISED_ANGLE]}>
+      <group ref={pivot} position={PIVOT} rotation={[RAISED_ANGLE, 0, 0]}>
         {/* Handle: a lathe profile rather than a plain cylinder, so it has the
-            swell and taper of a turned grip. */}
+            swell and taper of a turned grip. Lathe geometry is built around Y,
+            so rotating +90 deg about X lays it along Z, toward the viewer. */}
         <mesh
           material={materials.wood}
-          position={[HEAD_OFFSET_X / 2, 0, 0]}
-          rotation={[0, 0, Math.PI / 2]}
+          position={[0, 0, HEAD_OFFSET_Z / 2]}
+          rotation={[Math.PI / 2, 0, 0]}
           castShadow
         >
           <latheGeometry
@@ -316,36 +349,51 @@ function Gavel({ phase, onImpact }: { phase: GavelPhase; onImpact: () => void })
         {/* Brass collar where handle meets head — catches a hard highlight. */}
         <mesh
           material={materials.brass}
-          position={[HEAD_OFFSET_X + 0.14, 0, 0]}
-          rotation={[0, 0, Math.PI / 2]}
+          position={[0, 0, HEAD_OFFSET_Z + 0.14]}
+          rotation={[Math.PI / 2, 0, 0]}
         >
           <cylinderGeometry args={[0.088, 0.075, 0.09, 40]} />
         </mesh>
 
-        {/* Pommel cap at the butt */}
-        <mesh material={materials.brass} position={[0.02, 0, 0]}>
+        {/* Pommel cap at the butt, just behind the pivot. */}
+        <mesh material={materials.brass} position={[0, 0, 0.02]}>
           <sphereGeometry args={[0.062, 28, 28]} />
         </mesh>
 
-        {/* Head, chamfered: the cylinder body plus a torus at each rim, which
-            is what stops the striking face reading as a flat disc. */}
-        <group position={[HEAD_OFFSET_X, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        {/* Head. NO rotation: the cylinder keeps its default Y axis so it
+            stands upright and its lower flat face is the striking face.
+            Chamfered with a torus at each rim, which is what stops the face
+            reading as a bare disc. */}
+        <group position={[0, 0, HEAD_OFFSET_Z]}>
           <mesh material={materials.brass} castShadow>
-            <cylinderGeometry args={[0.235, 0.235, 0.8, 64]} />
+            <cylinderGeometry args={[HEAD_RADIUS, HEAD_RADIUS, HEAD_HEIGHT, 64]} />
           </mesh>
-          {[-0.4, 0.4].map((y) => (
-            <mesh key={y} material={materials.brass} position={[0, y, 0]} castShadow>
+          {/* Rim toruses ring the Y axis, so they need the +90 deg X turn a
+              default (Z-ringing) torus does not have. */}
+          {[-HEAD_HEIGHT / 2, HEAD_HEIGHT / 2].map((y) => (
+            <mesh
+              key={y}
+              material={materials.brass}
+              position={[0, y, 0]}
+              rotation={[Math.PI / 2, 0, 0]}
+              castShadow
+            >
               <torusGeometry args={[0.222, 0.014, 20, 64]} />
             </mesh>
           ))}
-          {[-0.4, 0.4].map((y) => (
+          {[-HEAD_HEIGHT / 2, HEAD_HEIGHT / 2].map((y) => (
             <mesh key={`cap${y}`} material={materials.brass} position={[0, y, 0]}>
               <cylinderGeometry args={[0.222, 0.222, 0.006, 64]} />
             </mesh>
           ))}
           {/* Inlaid bands */}
           {[-0.26, 0.26].map((y) => (
-            <mesh key={`band${y}`} material={materials.brassDark} position={[0, y, 0]}>
+            <mesh
+              key={`band${y}`}
+              material={materials.brassDark}
+              position={[0, y, 0]}
+              rotation={[Math.PI / 2, 0, 0]}
+            >
               <torusGeometry args={[0.238, 0.011, 16, 64]} />
             </mesh>
           ))}
@@ -379,9 +427,11 @@ function Gavel({ phase, onImpact }: { phase: GavelPhase; onImpact: () => void })
         color="#03060f"
       />
 
+      {/* Impact flash, sitting just in front of the contact point (which is
+          now at the origin, under the descending face). */}
       <pointLight
         ref={glowRef}
-        position={[0, 0.05, 0.55]}
+        position={[0, 0.02, 0.45]}
         color={THEME_HEX.gold400}
         intensity={0.5}
         distance={6}
@@ -414,15 +464,18 @@ export function GavelScene({
     <Canvas
       dpr={[1, 1.6]}
       shadows="soft"
-      camera={{ position: [0.55, 0.75, 3.6], fov: 42 }}
+      camera={{ position: CAMERA_POSITION, fov: 42 }}
       gl={{
         antialias: true,
         alpha: true,
         powerPreference: 'high-performance',
       }}
-      onCreated={({ gl }) => {
+      onCreated={({ gl, camera }) => {
         gl.toneMapping = THREE.ACESFilmicToneMapping;
         gl.toneMappingExposure = 1.05;
+        // Aim at the block rather than the origin: the handle now extends
+        // toward the viewer, so the default look-at would foreshorten it.
+        camera.lookAt(...CAMERA_TARGET);
       }}
     >
       {/* Studio rig, baked to a cube map. */}
