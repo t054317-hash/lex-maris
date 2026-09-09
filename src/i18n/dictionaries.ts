@@ -56,6 +56,7 @@ const en = {
   'auth.forgot': 'Forgotten your password?',
   'auth.reset.sent': 'Check your email for a reset link.',
   'auth.confirm.sent': 'Check your email to confirm your address, then sign in.',
+  'auth.duplicate': 'An account with this email already exists. Please log in.',
   'auth.close': 'Close',
   'auth.working': 'One moment…',
   'auth.privilegeNotice':
@@ -194,6 +195,7 @@ const ar: Record<TranslationKey, string> = {
   'auth.forgot': 'هل نسيت كلمة المرور؟',
   'auth.reset.sent': 'راجع بريدك الإلكتروني للحصول على رابط إعادة التعيين.',
   'auth.confirm.sent': 'راجع بريدك لتأكيد عنوانك، ثم سجّل الدخول.',
+  'auth.duplicate': 'يوجد حساب مسجَّل بهذا البريد الإلكتروني. يرجى تسجيل الدخول.',
   'auth.close': 'إغلاق',
   'auth.working': 'لحظة واحدة…',
   'auth.privilegeNotice':

@@ -29,7 +29,7 @@ export function AuthDialog({
   onClose: () => void;
   initialMode?: Mode;
 }) {
-  const { t, dir } = useI18n();
+  const { t, dir, locale } = useI18n();
   const [mode, setMode] = useState<Mode>(initialMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -101,42 +101,66 @@ export function AuthDialog({
       setError(null);
       setNotice(null);
 
-      const supabase = getSupabaseBrowserClient();
-
       try {
-        if (mode === 'signIn') {
-          const { error: signInError } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-          });
-          if (signInError) throw signInError;
-          onClose();
-        } else {
-          const { data, error: signUpError } = await supabase.auth.signUp({
-            email,
-            password,
-            options: {
-              // Consumed by the handle_new_user() trigger, which creates the
-              // profile and, for a first user, founds their organisation.
-              data: {
-                full_name: fullName,
-                organisation_name: organisation,
-              },
-            },
-          });
-          if (signUpError) throw signUpError;
+        /**
+         * Routed through /api/auth/* rather than calling supabase.auth from
+         * here, for three reasons the client cannot handle itself:
+         *
+         *  - the duplicate-email check needs privileged read access to
+         *    profiles, which an anonymous browser client does not have;
+         *  - login signs out any existing session server-side FIRST, so
+         *    switching accounts cannot leave a half-replaced cookie set;
+         *  - Supabase returns a success-shaped response for a duplicate
+         *    signup (empty `identities`) as anti-enumeration. Detecting that
+         *    belongs in one place, not in every form.
+         */
+        const endpoint = mode === 'signIn' ? '/api/auth/login' : '/api/auth/register';
+        const payload =
+          mode === 'signIn'
+            ? { email, password }
+            : { email, password, fullName, organisationName: organisation, locale };
 
-          // With email confirmation on, there is no session yet.
-          if (data.session) onClose();
-          else setNotice(t('auth.confirm.sent'));
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        const result = (await res.json()) as {
+          ok?: boolean;
+          error?: string;
+          confirmationRequired?: boolean;
+        };
+
+        if (!res.ok) {
+          // 409 on register carries the "already exists, please log in"
+          // message. Offer the fix as well as the error: flip to sign-in and
+          // keep the address they already typed.
+          if (res.status === 409 && mode === 'signUp') {
+            setError(result.error ?? t('auth.duplicate'));
+            setMode('signIn');
+            setPassword('');
+            return;
+          }
+          throw new Error(result.error ?? `Request failed (${res.status})`);
         }
+
+        if (result.confirmationRequired) {
+          setNotice(t('auth.confirm.sent'));
+          return;
+        }
+
+        // The cookie is set; refresh the client's own view of the session
+        // before closing so the header does not lag a beat behind.
+        await getSupabaseBrowserClient().auth.getSession();
+        onClose();
       } catch (err) {
         setError(err instanceof Error ? err.message : String(err));
       } finally {
         setBusy(false);
       }
     },
-    [mode, email, password, fullName, organisation, onClose, t],
+    [mode, email, password, fullName, organisation, locale, onClose, t],
   );
 
   const resetPassword = useCallback(async () => {

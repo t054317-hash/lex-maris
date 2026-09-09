@@ -7,6 +7,7 @@ import { LanguageToggle } from './LanguageToggle';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useSession } from '@/hooks/useSession';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
+import { clearUserScopedState, setStateOwner } from '@/lib/session';
 
 /**
  * Site header. Sticky, translucent, and the single home for the two global
@@ -20,8 +21,22 @@ export function SiteHeader() {
   const { session, loading } = useSession();
   const [authOpen, setAuthOpen] = useState(false);
 
+  /**
+   * Sign out via the route handler, so the refresh token is revoked
+   * server-side and the cookies are cleared authoritatively. Then discard any
+   * cached per-user state, which the cookie clear does not touch -- that is
+   * what stops the next person on a shared machine seeing this user's drafts.
+   */
   const signOut = async () => {
-    await getSupabaseBrowserClient().auth.signOut();
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } finally {
+      clearUserScopedState();
+      setStateOwner(null);
+      // Re-read so onAuthStateChange fires and the header updates even if the
+      // network call failed and the cookie was cleared locally only.
+      await getSupabaseBrowserClient().auth.signOut({ scope: 'local' });
+    }
   };
 
   return (
