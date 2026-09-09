@@ -1,6 +1,6 @@
 <title>Lex Maris Contract Bench</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Tajawal:wght@300;400;500;700&display=swap">
 
 <style>
 /* ==========================================================================
@@ -494,6 +494,281 @@ footer { border-top: 1px solid rgba(139,147,168,0.16); padding: 36px 0; }
 }
 .wordmark { font-family: var(--display); letter-spacing: 0.3em; color: rgba(212,175,55,0.85); }
 
+/* ==========================================================================
+   Arabic / RTL
+
+   The direction flip is the easy half. These three corrections are the half
+   that decides whether it reads as Arabic or as broken Arabic:
+
+   1. Letter-spacing has to go. Arabic is a joined script, so tracking pulls
+      the glyphs apart and severs the connecting strokes. This design leans on
+      wide tracking for every eyebrow and button, so it all needs neutralising.
+   2. Cinzel carries no Arabic glyphs — headings must switch to Tajawal or they
+      silently fall back to a system serif.
+   3. Arabic wants more leading at the same optical size, for the ascenders and
+      descenders on ه ج ي.
+   ========================================================================== */
+html[lang="ar"] body { font-family: "Tajawal", "Cairo", system-ui, sans-serif; }
+
+html[lang="ar"] h1,
+html[lang="ar"] h2,
+html[lang="ar"] h3,
+html[lang="ar"] .display,
+html[lang="ar"] #intro-word h1,
+html[lang="ar"] .wordmark,
+html[lang="ar"] .dial-centre .score,
+html[lang="ar"] #band,
+html[lang="ar"] .stat-rail dt {
+  font-family: "Tajawal", "Cairo", system-ui, sans-serif;
+  line-height: 1.35;
+}
+
+html[lang="ar"] .eyebrow,
+html[lang="ar"] .stat-rail dd,
+html[lang="ar"] .btn-gold,
+html[lang="ar"] .btn-quiet,
+html[lang="ar"] .steps button,
+html[lang="ar"] .chip,
+html[lang="ar"] .alert .sev,
+html[lang="ar"] .dial-centre .cap,
+html[lang="ar"] .draft-brand,
+html[lang="ar"] .draft-foot,
+html[lang="ar"] #skip,
+html[lang="ar"] .nav a,
+html[lang="ar"] .finding .f-meta {
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+html[lang="ar"] p,
+html[lang="ar"] li,
+html[lang="ar"] dd { line-height: 1.9; }
+
+/* Reference numbers and money stay Latin-numeral LTR runs even inside Arabic
+   text — the Gulf drafting convention. */
+html[lang="ar"] .mono,
+html[lang="ar"] .clause .num,
+html[lang="ar"] #tally dd,
+html[lang="ar"] .summary-value { direction: ltr; unicode-bidi: embed; }
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+#site-header {
+  position: sticky; top: 0; z-index: 60;
+  border-bottom: 1px solid rgba(139,147,168,0.12);
+  background: rgba(10,17,40,0.72);
+  -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+}
+.header-row {
+  max-width: var(--shell); margin: 0 auto; padding: 0 24px;
+  height: 64px; display: flex; align-items: center; gap: 16px;
+}
+.header-brand {
+  font-family: var(--display); font-size: 13px; letter-spacing: 0.28em;
+  color: var(--gold); text-decoration: none; white-space: nowrap;
+}
+.nav { display: none; gap: 28px; margin-inline-start: auto; }
+@media (min-width: 860px) { .nav { display: flex; } }
+.nav a {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.16em;
+  color: var(--ink-soft); text-decoration: none; transition: color 300ms var(--lux);
+}
+.nav a:hover { color: var(--gold-lit); }
+.header-actions { display: flex; align-items: center; gap: 10px; margin-inline-start: auto; }
+@media (min-width: 860px) { .header-actions { margin-inline-start: 0; } }
+
+/* Language toggle — a segmented control, not a select: with two locales a
+   dropdown costs an extra interaction and hides the alternative. */
+.lang-toggle {
+  display: flex; align-items: center; gap: 2px; padding: 2px;
+  border: 1px solid rgba(139,147,168,0.25); border-radius: 999px;
+  background: rgba(16,26,58,0.5);
+}
+.lang-toggle button {
+  min-width: 38px; padding: 5px 10px; border: 0; border-radius: 999px;
+  background: none; color: var(--ink-mute);
+  font: 500 12px var(--body); cursor: none;
+  transition: color 300ms var(--lux), background 300ms var(--lux);
+}
+.lang-toggle button[aria-pressed="true"] {
+  background: rgba(212,175,55,0.2); color: var(--gold-lit);
+}
+.lang-toggle button:hover { color: var(--ink); }
+
+.btn-signin {
+  border: 1px solid rgba(212,175,55,0.45); background: rgba(212,175,55,0.1);
+  color: var(--gold-lit); border-radius: 999px; padding: 8px 16px;
+  font: 500 11px var(--body); text-transform: uppercase; letter-spacing: 0.16em;
+  cursor: none; white-space: nowrap;
+  transition: background 300ms var(--lux), border-color 300ms var(--lux);
+}
+.btn-signin:hover { background: rgba(212,175,55,0.2); border-color: var(--gold); }
+
+/* ==========================================================================
+   Hero, rebuilt
+   Two columns; no 100vh opener (it pushed the real content below the fold);
+   the gavel is now a live strikeable object rather than intro-only.
+   ========================================================================== */
+#hero { padding: 64px 0 80px; }
+.hero-grid {
+  display: grid; gap: 48px; align-items: center;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+}
+@media (max-width: 900px) { .hero-grid { grid-template-columns: minmax(0,1fr); } }
+
+#hero h1 {
+  margin: 20px 0 0; max-width: 20ch;
+  font-size: clamp(32px, 5.4vw, 60px); line-height: 1.08; letter-spacing: -0.01em;
+}
+#hero h1 .accent { color: var(--gold); }
+
+.hero-gavel { position: relative; aspect-ratio: 4 / 3; width: 100%; }
+#hero-gavel-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+#hero-gavel-hit {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  background: none; border: 0; cursor: none;
+}
+.hero-gavel-hint {
+  position: absolute; inset-inline: 0; bottom: 0; text-align: center;
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.2em;
+  color: var(--ink-mute); pointer-events: none;
+}
+
+/* ==========================================================================
+   Views — hash-routed, so the checkout is a real destination with a URL
+   ========================================================================== */
+.view[hidden] { display: none !important; }
+
+/* ==========================================================================
+   Login modal
+   ========================================================================== */
+#auth-overlay {
+  position: fixed; inset: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: center; padding: 16px;
+}
+#auth-overlay[hidden] { display: none !important; }
+#auth-scrim {
+  position: absolute; inset: 0; border: 0; padding: 0;
+  background: rgba(5,10,24,0.82);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  cursor: none;
+}
+#auth-panel {
+  position: relative; width: 100%; max-width: 440px; padding: 32px;
+  animation: authIn 360ms var(--lux);
+}
+@keyframes authIn {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to   { opacity: 1; transform: none; }
+}
+#auth-panel h2 { margin: 12px 0 0; font-size: 24px; }
+.auth-field { display: block; margin-top: 16px; }
+.auth-field span { display: block; margin-bottom: 8px; }
+.auth-field input {
+  width: 100%; font: 400 14px var(--body); color: var(--ink);
+  background: rgba(16,26,58,0.72); border: 1px solid rgba(139,147,168,0.28);
+  border-radius: 10px; padding: 11px 13px; transition: border-color 300ms var(--lux);
+}
+.auth-field input:hover { border-color: rgba(212,175,55,0.5); }
+.auth-links {
+  display: flex; flex-wrap: wrap; align-items: center;
+  justify-content: space-between; gap: 12px; margin-top: 22px; font-size: 12px;
+}
+.auth-links button {
+  background: none; border: 0; padding: 0; cursor: none;
+  color: var(--ink-soft); font: 400 12px var(--body);
+  text-decoration: underline; text-decoration-color: rgba(212,175,55,0.4);
+  text-underline-offset: 4px; transition: color 300ms var(--lux);
+}
+.auth-links button:hover { color: var(--gold-lit); }
+.auth-note {
+  margin-top: 22px; padding-top: 16px;
+  border-top: 1px solid rgba(139,147,168,0.15);
+  font-size: 11px; line-height: 1.7; color: var(--ink-mute);
+}
+.demo-badge {
+  display: inline-block; margin-top: 14px; padding: 5px 11px; border-radius: 999px;
+  border: 1px solid rgba(224,114,90,0.4); background: rgba(224,114,90,0.1);
+  color: var(--elevated); font-size: 10px; text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+/* ==========================================================================
+   Checkout
+   ========================================================================== */
+.checkout-grid {
+  display: grid; gap: 24px; margin-top: 44px;
+  grid-template-columns: minmax(0,1fr) minmax(0,0.72fr);
+  align-items: start;
+}
+@media (max-width: 940px) { .checkout-grid { grid-template-columns: minmax(0,1fr); } }
+.checkout-aside { display: grid; gap: 24px; position: sticky; top: 88px; }
+@media (max-width: 940px) { .checkout-aside { position: static; } }
+
+.field-grid { display: grid; gap: 20px; margin-top: 20px; }
+@media (min-width: 560px) { .field-grid { grid-template-columns: 1fr 1fr; } }
+
+.co-field { display: block; }
+.co-field > span { display: block; margin-bottom: 8px; }
+.co-field input, .co-field select, .co-field textarea {
+  width: 100%; font: 400 14px var(--body); color: var(--ink);
+  background: rgba(16,26,58,0.72); border: 1px solid rgba(139,147,168,0.28);
+  border-radius: 10px; padding: 11px 13px; transition: border-color 300ms var(--lux);
+}
+.co-field textarea { resize: vertical; line-height: 1.7; }
+.co-field input:hover, .co-field select:hover, .co-field textarea:hover {
+  border-color: rgba(212,175,55,0.5);
+}
+.co-field .req { color: var(--elevated); margin-inline-start: 4px; }
+
+.summary-line {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 16px; font-size: 14px;
+}
+.summary-line dt { color: var(--ink-soft); }
+.summary-line.muted dt { color: var(--ink-mute); }
+.summary-value { color: var(--ink); font-variant-numeric: tabular-nums; }
+.summary-line.total { border-top: 1px solid rgba(139,147,168,0.15); padding-top: 12px; margin-top: 12px; }
+.summary-line.total .summary-value {
+  font-family: var(--display); font-size: 19px; color: var(--gold-lit);
+}
+
+.pay-options { display: grid; gap: 8px; margin-top: 12px; }
+.pay-option {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  border: 1px solid rgba(139,147,168,0.22); background: rgba(16,26,58,0.4);
+  border-radius: 10px; padding: 13px 16px; color: var(--ink);
+  font: 400 14px var(--body); cursor: none; text-align: start;
+  transition: border-color 300ms var(--lux), background 300ms var(--lux), color 300ms var(--lux);
+}
+.pay-option:hover { border-color: rgba(212,175,55,0.4); }
+.pay-option[aria-checked="true"] {
+  border-color: rgba(212,175,55,0.6); background: rgba(212,175,55,0.1); color: var(--gold-lit);
+}
+.pay-option .radio {
+  flex: none; width: 14px; height: 14px; border-radius: 50%;
+  border: 1px solid rgba(139,147,168,0.5);
+}
+.pay-option[aria-checked="true"] .radio {
+  border-color: var(--gold); background: rgba(212,175,55,0.7);
+}
+.btn-block {
+  width: 100%; margin-top: 20px; border-radius: 999px; padding: 14px 24px;
+  border: 1px solid rgba(212,175,55,0.5); background: rgba(212,175,55,0.12);
+  color: var(--gold-lit); font: 500 11px var(--body);
+  text-transform: uppercase; letter-spacing: 0.18em; cursor: none;
+  transition: background 300ms var(--lux), border-color 300ms var(--lux);
+}
+.btn-block:hover { background: rgba(212,175,55,0.22); border-color: var(--gold); }
+
+.breadcrumb {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.16em;
+  color: var(--ink-mute); margin-bottom: 28px;
+}
+.breadcrumb a { color: var(--ink-mute); text-decoration: none; transition: color 300ms var(--lux); }
+.breadcrumb a:hover { color: var(--gold-lit); }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.001ms !important; animation-iteration-count: 1 !important;
@@ -502,9 +777,17 @@ footer { border-top: 1px solid rgba(139,147,168,0.16); padding: 36px 0; }
 }
 </style>
 
-<!-- three.js UMD build. If it fails to load, initGavel() falls back to a 2D
-     rendition so the intro still works rather than showing a black screen. -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three/0.160.1/three.min.js"></script>
+<!-- three.js UMD build.
+     NOTE THE PATH: on cdnjs the library is registered as "three.js", not
+     "three". The obvious-looking /libs/three/... 404s, which is exactly what
+     happened here — the fallback below silently swallowed it and every visitor
+     got the 2D gavel instead of the 3D one.
+     r0.160.1 is the last release that still ships the UMD build; r161 removed
+     it in favour of ES modules only, so do not bump this version without
+     switching to an importmap.
+     If it still fails to load, initGavel() falls back to a 2D rendition so the
+     intro degrades rather than showing a black screen. -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.1/three.min.js"></script>
 
 <!-- ========================================================================
      Intro overlay
@@ -527,28 +810,68 @@ footer { border-top: 1px solid rgba(139,147,168,0.16); padding: 36px 0; }
   <div id="cursor-dot"></div>
 </div>
 
+<!-- ========================================================================
+     Header — the single home for the two global controls: language and login
+     ===================================================================== -->
+<header id="site-header">
+  <div class="header-row">
+    <a class="header-brand" href="#site" data-cursor="hover" data-i18n="brand.name">LEX MARIS</a>
+    <nav class="nav">
+      <a href="#bench" data-cursor="hover" data-i18n="nav.bench">Contract bench</a>
+      <a href="#matter" data-cursor="hover" data-i18n="nav.dashboard">Dashboard</a>
+      <a href="#checkout" data-cursor="hover" data-i18n="nav.commission">Commission</a>
+    </nav>
+    <div class="header-actions">
+      <div class="lang-toggle" role="group" id="lang-toggle" aria-label="Change language">
+        <button type="button" lang="en" data-locale="en" aria-pressed="true" data-cursor="hover">EN</button>
+        <button type="button" lang="ar" data-locale="ar" aria-pressed="false" data-cursor="hover">ع</button>
+      </div>
+      <button type="button" class="btn-signin" id="open-auth" data-cursor="hover" data-i18n="nav.signIn">Sign in</button>
+    </div>
+  </div>
+</header>
+
 <main id="main">
+ <div class="view" id="view-site">
   <!-- ======================================================================
-       Hero
+       Hero — restructured into two columns. The copy is unchanged; what is
+       new is that the gavel now lives here as a live, re-strikeable object
+       instead of being locked inside an intro a returning visitor never
+       sees again. The old 100vh height is gone: it pushed the actual
+       content below the fold, so a skim-read got only a headline.
        =================================================================== -->
   <section id="hero">
     <canvas id="mesh" aria-hidden="true"></canvas>
     <div class="shell">
-      <p class="eyebrow">Commercial &middot; Corporate &middot; Maritime</p>
-      <h1>The instrument, <em>drafted and scored</em> before the call ends.</h1>
-      <p class="lede">
-        Lex Maris assembles commercial and maritime instruments from validated
-        terms, scores every clause against a fixed exposure model, and executes
-        them with a verifiable cryptographic trail.
-      </p>
-      <div class="cta-row">
-        <a class="btn-gold" href="#bench" data-cursor="hover">Open the bench</a>
-        <a class="btn-quiet" href="#matter" data-cursor="hover">See a live matter</a>
+      <div class="hero-grid">
+        <div>
+          <p class="eyebrow" data-i18n="hero.eyebrow">Commercial &middot; Corporate &middot; Maritime</p>
+          <h1 data-i18n-html="hero.title">The instrument, <span class="accent">drafted and scored</span> before the call ends.</h1>
+          <p class="lede" data-i18n="hero.lede">
+            Lex Maris assembles commercial and maritime instruments from validated
+            terms, scores every clause against a fixed exposure model, and executes
+            them with a verifiable cryptographic trail.
+          </p>
+          <div class="cta-row">
+            <a class="btn-gold" href="#checkout" data-cursor="hover" data-i18n="hero.cta.primary">Commission a contract</a>
+            <a class="btn-quiet" href="#bench" data-cursor="hover" data-i18n="hero.cta.secondary">Try the risk bench</a>
+          </div>
+          <p class="eyebrow" style="margin-top:28px" data-i18n="hero.trust">Kuwait &middot; UAE &middot; England &amp; Wales &middot; Singapore</p>
+        </div>
+
+        <div class="hero-gavel">
+          <canvas id="hero-gavel-canvas"></canvas>
+          <button type="button" id="hero-gavel-hit" aria-label="Strike the gavel"></button>
+          <p class="hero-gavel-hint" data-i18n="hero.gavel.hint">Strike the gavel</p>
+        </div>
       </div>
-      <dl class="stat-rail">
-        <div><dt>12</dt><dd>clause rules per pass</dd></div>
-        <div><dt>&lt; 2s</dt><dd>draft to sealed PDF</dd></div>
-        <div><dt>AES-256</dt><dd>per-document sealing</dd></div>
+
+      <hr class="rule" style="margin-top:56px">
+      <dl class="stat-rail" style="margin-top:32px">
+        <div><dt>12</dt><dd data-i18n="hero.metric.rules">clause rules per pass</dd></div>
+        <div><dt>&lt; 2s</dt><dd data-i18n="hero.metric.turnaround">draft to sealed PDF</dd></div>
+        <div><dt>AES-256</dt><dd data-i18n="hero.metric.sealing">per-document sealing</dd></div>
+        <div><dt>4</dt><dd data-i18n="hero.metric.forum">arbitral seats modelled</dd></div>
       </dl>
     </div>
   </section>
@@ -664,16 +987,275 @@ footer { border-top: 1px solid rgba(139,147,168,0.16); padding: 36px 0; }
     </div>
   </section>
 
+ </div><!-- /view-site -->
+
+ <!-- =======================================================================
+      Contract Writing checkout.
+      Hash-routed to #checkout so it is a real, linkable destination.
+
+      Two design points worth naming:
+       * The brief form is the same shape the risk engine consumes, so the
+         provisional exposure on the right is computed by the identical rule
+         set the bench uses -- not a marketing approximation of it.
+       * There is no card field anywhere on this page, by design. The buttons
+         choose a METHOD; the number is only ever entered on the gateway's own
+         page. That is what keeps the site out of PCI-DSS scope.
+      ==================================================================== -->
+ <div class="view" id="view-checkout" hidden>
+  <section>
+    <div class="shell">
+      <p class="breadcrumb">
+        <a href="#site" data-cursor="hover" data-i18n="brand.name">LEX MARIS</a>
+        <span aria-hidden="true" style="opacity:0.4;margin:0 8px">/</span>
+        <span style="color:var(--ink-soft)" data-i18n="checkout.title">Contract Writing</span>
+      </p>
+
+      <div class="section-head">
+        <p class="eyebrow" data-i18n="checkout.eyebrow">Commission</p>
+        <h2 data-i18n="checkout.title">Contract Writing</h2>
+        <p data-i18n="checkout.subtitle">
+          Tell us the terms. Counsel drafts the instrument and returns it with a
+          clause-level risk report.
+        </p>
+      </div>
+
+      <form class="checkout-grid" id="checkout-form">
+        <div style="display:grid;gap:24px">
+          <div class="glass panel">
+            <p class="eyebrow" data-i18n="checkout.section.instrument">The instrument</p>
+            <div class="field-grid">
+              <label class="co-field">
+                <span class="eyebrow" data-i18n="checkout.field.instrumentType">Instrument type</span>
+                <select id="co-type"></select>
+              </label>
+              <label class="co-field">
+                <span class="eyebrow" data-i18n="checkout.field.deadline">Needed by</span>
+                <input type="date" id="co-deadline">
+              </label>
+            </div>
+          </div>
+
+          <div class="glass panel">
+            <p class="eyebrow" data-i18n="checkout.section.parties">The parties</p>
+            <div class="field-grid">
+              <label class="co-field">
+                <span class="eyebrow"><span data-i18n="checkout.field.firstParty">Your entity</span><span class="req">*</span></span>
+                <input type="text" id="co-first" required>
+              </label>
+              <label class="co-field">
+                <span class="eyebrow"><span data-i18n="checkout.field.secondParty">Counterparty</span><span class="req">*</span></span>
+                <input type="text" id="co-second" required>
+              </label>
+              <label class="co-field">
+                <span class="eyebrow" data-i18n="checkout.field.counterpartyJurisdiction">Counterparty jurisdiction</span>
+                <select id="co-cpjur"></select>
+              </label>
+              <label class="co-field">
+                <span class="eyebrow" data-i18n="checkout.field.governingLaw">Preferred governing law</span>
+                <select id="co-law"></select>
+              </label>
+            </div>
+          </div>
+
+          <div class="glass panel">
+            <p class="eyebrow" data-i18n="checkout.section.terms">Commercial terms</p>
+            <div class="field-grid">
+              <label class="co-field">
+                <span class="eyebrow" data-i18n="checkout.field.value">Contract value (USD)</span>
+                <input type="number" id="co-value" min="0" step="50000" value="2500000">
+              </label>
+              <label class="co-field">
+                <span class="eyebrow" data-i18n="checkout.field.paymentTerms">Payment terms (days)</span>
+                <input type="number" id="co-terms" min="0" max="365" value="45">
+              </label>
+              <label class="co-field">
+                <span class="eyebrow" data-i18n="checkout.field.forum">Preferred dispute forum</span>
+                <select id="co-forum"></select>
+              </label>
+              <label class="co-field">
+                <span class="eyebrow" data-i18n="checkout.field.security">Payment security</span>
+                <select id="co-security"></select>
+              </label>
+              <label class="co-field" id="co-laytime-wrap">
+                <span class="eyebrow" data-i18n="checkout.field.laytime">Laytime (running hours)</span>
+                <input type="number" id="co-laytime" min="0" max="480" step="6" value="72">
+              </label>
+              <label class="co-field" id="co-demurrage-wrap">
+                <span class="eyebrow" data-i18n="checkout.field.demurrage">Demurrage (USD / day)</span>
+                <input type="number" id="co-demurrage" min="0" step="500" value="18000">
+              </label>
+            </div>
+            <label class="co-field" style="margin-top:20px">
+              <span class="eyebrow" data-i18n="checkout.field.instructions">Anything else counsel should know</span>
+              <textarea id="co-notes" rows="4"
+                data-i18n-placeholder="checkout.field.instructions.placeholder"
+                placeholder="Laytime expectations, security required, known sticking points…"></textarea>
+            </label>
+          </div>
+
+          <div class="glass panel">
+            <p class="eyebrow" data-i18n="checkout.section.contact">Your details</p>
+            <div class="field-grid">
+              <label class="co-field">
+                <span class="eyebrow"><span data-i18n="checkout.field.name">Full name</span><span class="req">*</span></span>
+                <input type="text" id="co-name" autocomplete="name" required>
+              </label>
+              <label class="co-field">
+                <span class="eyebrow"><span data-i18n="checkout.field.email">Email address</span><span class="req">*</span></span>
+                <input type="email" id="co-email" autocomplete="email" required>
+              </label>
+              <label class="co-field">
+                <span class="eyebrow" data-i18n="checkout.field.phone">Phone (optional)</span>
+                <input type="tel" id="co-phone" autocomplete="tel">
+              </label>
+              <label class="co-field">
+                <span class="eyebrow" data-i18n="checkout.field.country">Billing country</span>
+                <select id="co-country"></select>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="checkout-aside">
+          <div class="glass panel" style="padding:26px">
+            <p class="eyebrow" data-i18n="checkout.riskPreview.title">Provisional exposure</p>
+            <div class="dial-row" style="margin-top:16px">
+              <div class="dial">
+                <svg viewBox="0 0 120 120" aria-hidden="true">
+                  <circle cx="60" cy="60" r="54" fill="none"
+                          stroke="rgba(195,202,219,0.14)" stroke-width="8"></circle>
+                  <circle id="co-arc" cx="60" cy="60" r="54" fill="none"
+                          stroke="#D4AF37" stroke-width="8" stroke-linecap="round"
+                          stroke-dasharray="339.29" stroke-dashoffset="339.29"
+                          style="transition: stroke-dashoffset 550ms var(--lux), stroke 550ms var(--lux)"></circle>
+                </svg>
+                <div class="dial-centre">
+                  <span class="score" id="co-score">0</span>
+                  <span class="cap" data-i18n="dial.exposure">exposure</span>
+                </div>
+              </div>
+              <div style="min-width:0">
+                <p id="co-band" aria-live="polite">Acceptable</p>
+                <dl id="co-tally"></dl>
+              </div>
+            </div>
+            <p class="note" style="margin-top:16px;border-top:1px solid rgba(139,147,168,0.15);padding-top:12px"
+               data-i18n="checkout.riskPreview.note">
+              Scored live from the terms above by the same engine counsel uses. Indicative only.
+            </p>
+          </div>
+
+          <div class="glass panel" style="padding:26px">
+            <p class="eyebrow" data-i18n="checkout.summary.title">Order summary</p>
+            <dl style="display:grid;gap:10px;margin-top:20px">
+              <div class="summary-line">
+                <dt data-i18n="checkout.summary.service">Contract writing</dt>
+                <dd class="summary-value" id="co-subtotal">KWD 250.000</dd>
+              </div>
+              <div class="summary-line muted">
+                <dt data-i18n="checkout.summary.turnaround">Turnaround</dt>
+                <dd class="summary-value"><span id="co-days">3</span> <span data-i18n="checkout.summary.days">business days</span></dd>
+              </div>
+              <div class="summary-line muted">
+                <dt data-i18n="checkout.summary.tax">Tax</dt>
+                <dd class="summary-value" id="co-tax">KWD 0.000</dd>
+              </div>
+              <div class="summary-line total">
+                <dt data-i18n="checkout.summary.total">Total due</dt>
+                <dd class="summary-value" id="co-total">KWD 250.000</dd>
+              </div>
+            </dl>
+
+            <p class="eyebrow" style="margin-top:26px" data-i18n="checkout.section.payment">Payment</p>
+            <div class="pay-options" id="pay-options" role="radiogroup">
+              <button type="button" class="pay-option" role="radio" data-method="card" aria-checked="true" data-cursor="hover">
+                <span data-i18n="checkout.pay.card">Pay by card</span><span class="radio" aria-hidden="true"></span>
+              </button>
+              <button type="button" class="pay-option" role="radio" data-method="knet" aria-checked="false" data-cursor="hover">
+                <span data-i18n="checkout.pay.knet">Pay by KNET</span><span class="radio" aria-hidden="true"></span>
+              </button>
+              <button type="button" class="pay-option" role="radio" data-method="transfer" aria-checked="false" data-cursor="hover">
+                <span data-i18n="checkout.pay.transfer">Bank transfer</span><span class="radio" aria-hidden="true"></span>
+              </button>
+            </div>
+
+            <button type="submit" class="btn-block" id="co-submit" data-cursor="hover"
+                    data-i18n="checkout.pay.submit">Continue to payment</button>
+            <p class="note" style="margin-top:14px" data-i18n="checkout.pay.redirect">
+              You will be taken to our payment provider. Card details are entered
+              there, never on this site.
+            </p>
+            <p id="co-result" class="note" style="margin-top:12px" role="status"></p>
+          </div>
+        </div>
+      </form>
+
+      <p class="note" style="margin-top:48px;border-top:1px solid rgba(139,147,168,0.15);padding-top:24px"
+         data-i18n="checkout.disclaimer">
+        Submitting this form creates an instruction, not a retainer. An engagement
+        letter follows before work begins.
+      </p>
+    </div>
+  </section>
+ </div><!-- /view-checkout -->
+
   <footer>
     <div class="shell foot-row">
-      <p class="wordmark">LEX MARIS</p>
-      <p>
+      <p class="wordmark" data-i18n="brand.name">LEX MARIS</p>
+      <p data-i18n="common.notLegalAdvice">
         Demonstration interface. Output is a triage signal for a qualified
         practitioner, not legal advice.
       </p>
     </div>
   </footer>
 </main>
+
+<!-- ==========================================================================
+     Login modal.
+     A modal rather than a page so a visitor part-way through the checkout form
+     can sign in without losing what they typed.
+     =========================================================================== -->
+<div id="auth-overlay" hidden>
+  <button type="button" id="auth-scrim" aria-label="Close"></button>
+  <div class="glass" id="auth-panel" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+    <p class="eyebrow" data-i18n="brand.name">LEX MARIS</p>
+    <h2 id="auth-title" data-i18n="auth.signIn.title">Sign in</h2>
+    <p class="note" style="margin-top:8px" id="auth-subtitle" data-i18n="auth.signIn.subtitle">
+      Access your matters, drafts and executed instruments.
+    </p>
+    <span class="demo-badge" data-i18n="auth.demoBadge">Preview — no live account</span>
+
+    <form id="auth-form">
+      <label class="auth-field" id="auth-name-field" hidden>
+        <span class="eyebrow" data-i18n="auth.fullName">Full name</span>
+        <input type="text" id="auth-name" autocomplete="name">
+      </label>
+      <label class="auth-field">
+        <span class="eyebrow" data-i18n="auth.email">Email address</span>
+        <input type="email" id="auth-email" autocomplete="email" required>
+      </label>
+      <label class="auth-field">
+        <span class="eyebrow" data-i18n="auth.password">Password</span>
+        <input type="password" id="auth-password" autocomplete="current-password" required minlength="8">
+      </label>
+      <button type="submit" class="btn-block" id="auth-submit" data-cursor="hover"
+              data-i18n="auth.submit.signIn">Sign in</button>
+      <p class="note" style="margin-top:12px" id="auth-result" role="status"></p>
+    </form>
+
+    <div class="auth-links">
+      <button type="button" id="auth-mode-toggle" data-cursor="hover" data-i18n="auth.toggle.toSignUp">
+        No account yet? Create one
+      </button>
+      <button type="button" id="auth-close" data-cursor="hover" data-i18n="auth.close">Close</button>
+    </div>
+
+    <p class="auth-note" data-i18n="auth.privilegeNotice">
+      Communications through this platform may be privileged. Do not share your
+      credentials.
+    </p>
+  </div>
+</div>
 
 <script>
 (function () {
@@ -1642,6 +2224,27 @@ footer { border-top: 1px solid rgba(139,147,168,0.16); padding: 36px 0; }
   /* ======================================================================
      8. Gavel strike: particle burst
      ==================================================================== */
+  /* One pre-rendered glow sprite, built once and reused.
+
+     The previous version called createRadialGradient() for EVERY particle on
+     EVERY frame -- 220 gradient objects per frame at 60 fps. On a GPU that is
+     merely wasteful; on a software rasteriser it locks the tab, which is what
+     it did. Blitting one cached sprite with globalAlpha is the same image for
+     a fraction of the cost. */
+  var glowSprite = (function () {
+    var size = 64;
+    var c = document.createElement('canvas');
+    c.width = c.height = size;
+    var g = c.getContext('2d');
+    var grad = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+    grad.addColorStop(0, 'rgba(255,236,170,0.95)');
+    grad.addColorStop(0.45, 'rgba(212,175,55,0.5)');
+    grad.addColorStop(1, 'rgba(212,175,55,0)');
+    g.fillStyle = grad;
+    g.fillRect(0, 0, size, size);
+    return c;
+  })();
+
   function burst(canvas, originY) {
     var ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -1653,7 +2256,7 @@ footer { border-top: 1px solid rgba(139,147,168,0.16); padding: 36px 0; }
 
     var ox = w / 2, oy = h * originY;
     var parts = [];
-    for (var i = 0; i < 220; i++) {
+    for (var i = 0; i < 160; i++) {
       // Spray biased sideways and upward - debris off a struck surface.
       var ang = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 1.55;
       var sp = 2.2 + Math.random() * 8.5;
@@ -1676,15 +2279,11 @@ footer { border-top: 1px solid rgba(139,147,168,0.16); padding: 36px 0; }
         p.vy += 0.13; p.vx *= 0.985; p.vy *= 0.985;
         p.x += p.vx; p.y += p.vy; p.life -= 1;
         var t = p.life / p.maxLife;
-        var grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 4);
-        grad.addColorStop(0, 'rgba(255,236,170,' + (t * 0.95).toFixed(3) + ')');
-        grad.addColorStop(0.45, 'rgba(212,175,55,' + (t * 0.5).toFixed(3) + ')');
-        grad.addColorStop(1, 'rgba(212,175,55,0)');
-        ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size * 4, 0, Math.PI * 2);
-        ctx.fill();
+        var d = p.size * 8;
+        ctx.globalAlpha = t;
+        ctx.drawImage(glowSprite, p.x - d / 2, p.y - d / 2, d, d);
       }
+      ctx.globalAlpha = 1;
       ctx.globalCompositeOperation = 'source-over';
       if (alive > 0) requestAnimationFrame(step);
       else ctx.clearRect(0, 0, w, h);
@@ -1714,28 +2313,227 @@ footer { border-top: 1px solid rgba(139,147,168,0.16); padding: 36px 0; }
     } catch (err) {
       return null; // No WebGL: caller falls back to the 2D rendition.
     }
-    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.6));
+    /* ---------------------------------------------------------------------
+       Is there a real GPU behind this context?
+
+       Clearcoat is a second BRDF layer, a baked cube map is an extra render
+       pass, and every shadow-casting mesh compiles its own depth program. On
+       hardware that is a few milliseconds. On a SOFTWARE rasteriser
+       (SwiftShader in a VM, llvmpipe on Linux, Basic Render Driver on Windows
+       without a display driver) it is seconds per frame — the tab simply
+       stops responding, which is precisely what happened while testing this.
+
+       So ask the driver what it is, and drop to a cheap path if the answer is
+       "no GPU". The 60 FPS obligation applies to the weakest machine that
+       loads the page, not the strongest.
+       ------------------------------------------------------------------- */
+    var LOW_POWER = false;
+    try {
+      var gl = renderer.getContext();
+      var dbg = gl.getExtension('WEBGL_debug_renderer_info');
+      var gpuName = dbg ? String(gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL)) : '';
+      LOW_POWER = /swiftshader|software|basic render|llvmpipe|microsoft basic/i.test(gpuName);
+    } catch (glErr) {
+      // No debug extension: assume the worst rather than freeze.
+      LOW_POWER = true;
+    }
+
+    renderer.setPixelRatio(LOW_POWER ? 1 : Math.min(devicePixelRatio || 1, 1.6));
     if (THREE.ACESFilmicToneMapping) {
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.15;
+      renderer.toneMappingExposure = 1.05;
     }
+    renderer.shadowMap.enabled = !LOW_POWER;
+    renderer.shadowMap.type = LOW_POWER ? THREE.BasicShadowMap : THREE.PCFSoftShadowMap;
 
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
     camera.position.set(0.55, 0.75, 3.6);
     camera.lookAt(0.25, 0.02, 0);
 
-    scene.add(new THREE.AmbientLight(0xf3f5fa, 0.28));
-    var key = new THREE.DirectionalLight(0xfff3d0, 1.5);
-    key.position.set(3, 5, 4);
+    /* ---------------------------------------------------------------------
+       Studio environment.
+
+       This is where the realism actually comes from -- not from more polygons.
+       Metal looks like metal because it REFLECTS something shaped. So we build
+       a tiny scene of emissive softbox panels and bake it to a cube map with
+       PMREMGenerator, then hand that to scene.environment.
+
+       Deliberately procedural rather than an HDR file: the artifact sandbox
+       blocks image loads from anywhere but this page, and even in the Next app
+       an external HDR is a blocking request on first paint.
+       ------------------------------------------------------------------- */
+    var envTexture = null;
+    try {
+      if (LOW_POWER) throw new Error('skip env bake on software renderer');
+      var envScene = new THREE.Scene();
+      var panels = [
+        // [w, h, x, y, z, colour, intensity]
+        [6, 6, 3, 4, 2, 0xfff4d6, 5],      // key, high and to the right
+        [0.5, 5, -1, 2.2, 2.6, 0xffffff, 11], // strip -- draws the long specular
+        [5, 5, -3.5, 1.2, -3, 0x7d97e0, 3.5], // cool rim, separates from navy
+        [6, 3, 0, -2.4, 1, 0xc98f3a, 1.6],    // warm bounce, as if off a desk
+      ];
+      panels.forEach(function (p) {
+        var panel = new THREE.Mesh(
+          new THREE.PlaneGeometry(p[0], p[1]),
+          new THREE.MeshBasicMaterial({ color: p[5] })
+        );
+        panel.material.color.multiplyScalar(p[6]);
+        panel.position.set(p[2], p[3], p[4]);
+        panel.lookAt(0, 0, 0);
+        envScene.add(panel);
+      });
+
+      var pmrem = new THREE.PMREMGenerator(renderer);
+      pmrem.compileEquirectangularShader();
+      envTexture = pmrem.fromScene(envScene, 0.04).texture;
+      scene.environment = envTexture;
+      pmrem.dispose();
+      envScene.traverse(function (o) {
+        if (o.geometry) o.geometry.dispose();
+        if (o.material) o.material.dispose();
+      });
+    } catch (envErr) {
+      // Older WebGL without float render targets: fall back to lights alone.
+      envTexture = null;
+    }
+
+    scene.add(new THREE.AmbientLight(0xf3f5fa, envTexture ? 0.12 : 0.3));
+    var key = new THREE.DirectionalLight(0xfff1cc, envTexture ? 1.9 : 1.6);
+    key.position.set(3.2, 5, 3.6);
+    key.castShadow = true;
+    // 512 is plenty at this object size, and halves the per-frame shadow cost.
+    // Two gavel scenes can be alive at once during the intro dissolve.
+    key.shadow.mapSize.width = 512;
+    key.shadow.mapSize.height = 512;
+    key.shadow.bias = -0.0004;
+    key.shadow.camera.near = 0.5;
+    key.shadow.camera.far = 12;
     scene.add(key);
-    var rim = new THREE.DirectionalLight(0x6f8ad0, 0.55);
+    var rim = new THREE.DirectionalLight(0x6f8ad0, 0.4);
     rim.position.set(-4, 2, -3);
     scene.add(rim);
 
-    var gold = new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.96, roughness: 0.24 });
-    var darkGold = new THREE.MeshStandardMaterial({ color: 0x8a6f1f, metalness: 0.9, roughness: 0.42 });
-    var blockMat = new THREE.MeshStandardMaterial({ color: 0x101a3a, metalness: 0.55, roughness: 0.5 });
+    /* --- Procedural textures -------------------------------------------- */
+
+    // Cheap deterministic value noise, so the grain is identical every load.
+    function hashNoise(x, y, seed) {
+      var n = Math.sin(x * 12.9898 + y * 78.233 + seed * 43758.5453) * 43758.5453;
+      return n - Math.floor(n);
+    }
+
+    // Walnut: rings running across the handle, warped so they do not look
+    // printed, plus a finer fibre pass.
+    function makeWood() {
+      var w = 512, h = 128;
+      var c = document.createElement('canvas'); c.width = w; c.height = h;
+      var g = c.getContext('2d');
+      var rc = document.createElement('canvas'); rc.width = w; rc.height = h;
+      var rg = rc.getContext('2d');
+      var img = g.createImageData(w, h), rimg = rg.createImageData(w, h);
+
+      for (var y = 0; y < h; y++) {
+        for (var x = 0; x < w; x++) {
+          var warp = hashNoise(x * 0.02, y * 0.05, 1) * 6 + hashNoise(x * 0.11, y * 0.02, 2) * 2;
+          var rings = Math.sin((x + warp) * 0.22) * 0.5 + 0.5;
+          var fibre = hashNoise(x * 0.9, y * 0.35, 3) * 0.18;
+          var t = Math.pow(rings, 1.7) * 0.75 + fibre;
+          var i = (y * w + x) * 4;
+          img.data[i] = Math.round(58 + t * 64);
+          img.data[i + 1] = Math.round(36 + t * 42);
+          img.data[i + 2] = Math.round(24 + t * 22);
+          img.data[i + 3] = 255;
+          // Late wood is denser and glossier under lacquer, so roughness runs
+          // inverse to the ring value.
+          var r = Math.round(215 - t * 90);
+          rimg.data[i] = rimg.data[i + 1] = rimg.data[i + 2] = r;
+          rimg.data[i + 3] = 255;
+        }
+      }
+      g.putImageData(img, 0, 0);
+      rg.putImageData(rimg, 0, 0);
+
+      var map = new THREE.CanvasTexture(c);
+      map.wrapS = map.wrapT = THREE.RepeatWrapping;
+      if (THREE.SRGBColorSpace) map.colorSpace = THREE.SRGBColorSpace;
+      var rough = new THREE.CanvasTexture(rc);
+      rough.wrapS = rough.wrapT = THREE.RepeatWrapping;
+      return { map: map, rough: rough };
+    }
+
+    // Brushed metal: one roughness value per row, so the streaks stay
+    // continuous along the lathe axis. This is what separates machined brass
+    // from a mirror ball.
+    function makeBrushed() {
+      var s = 512;
+      var c = document.createElement('canvas'); c.width = s; c.height = s;
+      var g = c.getContext('2d');
+      var img = g.createImageData(s, s);
+      for (var y = 0; y < s; y++) {
+        var streak = hashNoise(y * 0.7, 0, 7);
+        for (var x = 0; x < s; x++) {
+          var grit = hashNoise(x * 0.35, y * 0.9, 11) * 0.35;
+          var v = Math.round(46 + streak * 34 + grit * 28);
+          var i = (y * s + x) * 4;
+          img.data[i] = img.data[i + 1] = img.data[i + 2] = v;
+          img.data[i + 3] = 255;
+        }
+      }
+      g.putImageData(img, 0, 0);
+      var tex = new THREE.CanvasTexture(c);
+      tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+      tex.repeat.set(3, 1);
+      return tex;
+    }
+
+    var woodTex = makeWood();
+    var brushedTex = makeBrushed();
+
+    /* --- Materials -------------------------------------------------------
+       MeshPhysicalMaterial rather than Standard, for two properties that do
+       most of the work: `clearcoat` puts a lacquer layer with its own
+       highlight above the wood grain, and `anisotropy` stretches the metal's
+       specular along the brush direction the way turned brass really does.
+       Both degrade gracefully on builds that lack them.
+       ------------------------------------------------------------------- */
+    // Physical on hardware, Standard on a software rasteriser. Standard drops
+    // the clearcoat layer entirely, which is the single most expensive part of
+    // the shader, and keeps the same maps so it still reads as brass and wood.
+    var Physical = (!LOW_POWER && THREE.MeshPhysicalMaterial) || THREE.MeshStandardMaterial;
+    var coat = LOW_POWER ? {} : { clearcoat: 0.25, clearcoatRoughness: 0.3 };
+
+    var gold = new Physical(Object.assign({
+      color: 0xd4af37, metalness: 1, roughness: LOW_POWER ? 0.28 : 0.32,
+      roughnessMap: brushedTex, envMapIntensity: 1.5
+    }, coat));
+    // anisotropy arrived after r160, so this is a no-op on the pinned build.
+    if ('anisotropy' in gold) { gold.anisotropy = 0.65; gold.anisotropyRotation = Math.PI / 2; }
+
+    var darkGold = new Physical({
+      color: 0x8a6f1f, metalness: 1, roughness: 0.45,
+      roughnessMap: brushedTex, envMapIntensity: 1.1
+    });
+
+    var woodMat = new Physical(Object.assign({
+      map: woodTex.map, roughnessMap: woodTex.rough,
+      roughness: 1, metalness: 0, envMapIntensity: 0.7
+    }, LOW_POWER ? {} : { clearcoat: 0.85, clearcoatRoughness: 0.12 }));
+
+    var blockMat = new Physical(Object.assign({
+      color: 0x0d1530, metalness: 0.2, roughness: 0.55, envMapIntensity: 0.9
+    }, LOW_POWER ? {} : { clearcoat: 0.4, clearcoatRoughness: 0.25 }));
+
+    // Catch the shadow on an otherwise invisible plane. A floating object never
+    // looks real; this grounding is doing as much work as the materials.
+    var shadowPlane = new THREE.Mesh(
+      new THREE.PlaneGeometry(6, 6),
+      new THREE.ShadowMaterial({ opacity: 0.55, color: 0x03060f })
+    );
+    shadowPlane.rotation.x = -Math.PI / 2;
+    shadowPlane.position.y = -0.445;
+    shadowPlane.receiveShadow = true;
+    scene.add(shadowPlane);
 
     var HEAD_X = -0.95;
     var pivot = new THREE.Group();
@@ -1743,32 +2541,67 @@ footer { border-top: 1px solid rgba(139,147,168,0.16); padding: 36px 0; }
     pivot.rotation.z = RAISED;
     scene.add(pivot);
 
-    var handle = new THREE.Mesh(new THREE.CylinderGeometry(0.062, 0.075, 0.95, 32), darkGold);
+    // Handle: a lathe profile rather than a plain cylinder, so it has the
+    // swell and taper of a turned grip.
+    var handleProfile = [
+      new THREE.Vector2(0.0, -0.475), new THREE.Vector2(0.055, -0.475),
+      new THREE.Vector2(0.062, -0.4), new THREE.Vector2(0.058, -0.2),
+      new THREE.Vector2(0.064, 0.0), new THREE.Vector2(0.07, 0.22),
+      new THREE.Vector2(0.076, 0.4), new THREE.Vector2(0.078, 0.475),
+      new THREE.Vector2(0.0, 0.475)
+    ];
+    var handle = new THREE.Mesh(new THREE.LatheGeometry(handleProfile, 48), woodMat);
     handle.position.set(HEAD_X / 2, 0, 0);
     handle.rotation.z = Math.PI / 2;
+    handle.castShadow = true;
     pivot.add(handle);
 
-    var pommel = new THREE.Mesh(new THREE.SphereGeometry(0.098, 24, 24), gold);
+    // Brass collar where handle meets head — catches a hard highlight.
+    var collar = new THREE.Mesh(new THREE.CylinderGeometry(0.088, 0.075, 0.09, 40), gold);
+    collar.position.set(HEAD_X + 0.14, 0, 0);
+    collar.rotation.z = Math.PI / 2;
+    collar.castShadow = true;
+    pivot.add(collar);
+
+    var pommel = new THREE.Mesh(new THREE.SphereGeometry(0.062, 28, 28), gold);
+    pommel.position.set(0.02, 0, 0);
+    pommel.castShadow = true;
     pivot.add(pommel);
 
     // Head axis rotated onto Z so the cylinder lies across the handle.
-    var head = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.86, 48), gold);
+    var head = new THREE.Mesh(new THREE.CylinderGeometry(0.235, 0.235, 0.8, 64), gold);
     head.position.set(HEAD_X, 0, 0);
     head.rotation.x = Math.PI / 2;
+    head.castShadow = true;
     pivot.add(head);
 
-    // A torus already rings the Z axis, so the bands need no rotation.
-    [-0.3, 0.3].forEach(function (z) {
-      var band = new THREE.Mesh(new THREE.TorusGeometry(0.245, 0.022, 16, 48), darkGold);
+    // Chamfered rims. Without these the striking face reads as a flat disc.
+    [-0.4, 0.4].forEach(function (z) {
+      var rim2 = new THREE.Mesh(new THREE.TorusGeometry(0.222, 0.014, 20, 64), gold);
+      rim2.position.set(HEAD_X, 0, z);
+      rim2.castShadow = true;
+      pivot.add(rim2);
+      var cap = new THREE.Mesh(new THREE.CylinderGeometry(0.222, 0.222, 0.006, 64), gold);
+      cap.position.set(HEAD_X, 0, z);
+      cap.rotation.x = Math.PI / 2;
+      pivot.add(cap);
+    });
+
+    // Inlaid bands. A torus already rings the Z axis, so no rotation needed.
+    [-0.26, 0.26].forEach(function (z) {
+      var band = new THREE.Mesh(new THREE.TorusGeometry(0.238, 0.011, 16, 64), darkGold);
       band.position.set(HEAD_X, 0, z);
       pivot.add(band);
     });
 
-    var block = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.2, 1.0), blockMat);
+    var block = new THREE.Mesh(new THREE.BoxGeometry(1.45, 0.19, 0.95), blockMat);
     block.position.set(0, -0.34, 0);
+    block.castShadow = true;
+    block.receiveShadow = true;
     scene.add(block);
-    var plate = new THREE.Mesh(new THREE.BoxGeometry(1.52, 0.012, 1.02), gold);
-    plate.position.set(0, -0.235, 0);
+    var plate = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.014, 1.0), gold);
+    plate.position.set(0, -0.236, 0);
+    plate.receiveShadow = true;
     scene.add(plate);
 
     var flash = new THREE.PointLight(0xe7c765, 0.6, 7);
@@ -1830,7 +2663,30 @@ footer { border-top: 1px solid rgba(139,147,168,0.16); padding: 36px 0; }
         fired = false;
         onImpact = cb;
       },
-      dispose: function () { cancelAnimationFrame(raf); }
+      // The intro is one-shot, but the hero gavel is struck repeatedly, so it
+      // needs a way back to the idle swing. Without this the second click on
+      // the hero does nothing at all.
+      reset: function () {
+        phase = 'idle';
+        t0 = performance.now();
+        fired = false;
+        block.scale.y = 1;
+        camera.position.x = 0.55;
+      },
+      // A WebGL scene with a shadow map is expensive enough that it must not
+      // keep rendering while it is off screen or the tab is hidden.
+      pause: function () { cancelAnimationFrame(raf); raf = 0; },
+      resume: function () { if (!raf) raf = requestAnimationFrame(frame); },
+      dispose: function () {
+        cancelAnimationFrame(raf);
+        raf = 0;
+        woodTex.map.dispose();
+        woodTex.rough.dispose();
+        brushedTex.dispose();
+        [gold, darkGold, woodMat, blockMat].forEach(function (m) { m.dispose(); });
+        if (envTexture) envTexture.dispose();
+        renderer.dispose();
+      }
     };
   }
 
@@ -1914,6 +2770,7 @@ footer { border-top: 1px solid rgba(139,147,168,0.16); padding: 36px 0; }
         if (phase !== 'idle') return;
         phase = 'strike'; t0 = performance.now(); fired = false; onImpact = cb;
       },
+      reset: function () { phase = 'idle'; t0 = performance.now(); fired = false; },
       dispose: function () { cancelAnimationFrame(raf); }
     };
   }
@@ -1934,13 +2791,17 @@ footer { border-top: 1px solid rgba(139,147,168,0.16); padding: 36px 0; }
       intro.classList.add('dissolved');
       setTimeout(function () {
         intro.classList.add('gone');
+        // Free the intro's WebGL context and textures BEFORE the hero scene
+        // is built, so the two never render concurrently.
         if (gavel && gavel.dispose) gavel.dispose();
+        dispatchEvent(new CustomEvent('lexmaris:intro-done'));
       }, 900);
     }
 
     // Reduced motion: no strike, no overlay. Straight to the page.
     if (REDUCED) {
       intro.classList.add('gone');
+      dispatchEvent(new CustomEvent('lexmaris:intro-done'));
       return;
     }
 
@@ -1975,5 +2836,499 @@ footer { border-top: 1px solid rgba(139,147,168,0.16); padding: 36px 0; }
       }
     });
   })();
+
+  /* ======================================================================
+     11. Localisation (EN / AR) with RTL
+     ==================================================================== */
+  var I18N = {
+    en: {
+      'brand.name': 'LEX MARIS',
+      'nav.bench': 'Contract bench',
+      'nav.dashboard': 'Dashboard',
+      'nav.commission': 'Commission',
+      'nav.signIn': 'Sign in',
+      'nav.signOut': 'Sign out',
+      'hero.eyebrow': 'Commercial · Corporate · Maritime',
+      'hero.title': 'The instrument, <span class="accent">drafted and scored</span> before the call ends.',
+      'hero.lede': 'Lex Maris assembles commercial and maritime instruments from validated terms, scores every clause against a fixed exposure model, and executes them with a verifiable cryptographic trail.',
+      'hero.cta.primary': 'Commission a contract',
+      'hero.cta.secondary': 'Try the risk bench',
+      'hero.trust': 'Kuwait · UAE · England & Wales · Singapore',
+      'hero.gavel.hint': 'Strike the gavel',
+      'hero.metric.rules': 'clause rules per pass',
+      'hero.metric.turnaround': 'draft to sealed PDF',
+      'hero.metric.sealing': 'per-document sealing',
+      'hero.metric.forum': 'arbitral seats modelled',
+      'dial.exposure': 'exposure',
+      'checkout.eyebrow': 'Commission',
+      'checkout.title': 'Contract Writing',
+      'checkout.subtitle': 'Tell us the terms. Counsel drafts the instrument and returns it with a clause-level risk report.',
+      'checkout.section.instrument': 'The instrument',
+      'checkout.section.parties': 'The parties',
+      'checkout.section.terms': 'Commercial terms',
+      'checkout.section.contact': 'Your details',
+      'checkout.section.payment': 'Payment',
+      'checkout.field.instrumentType': 'Instrument type',
+      'checkout.field.deadline': 'Needed by',
+      'checkout.field.firstParty': 'Your entity',
+      'checkout.field.secondParty': 'Counterparty',
+      'checkout.field.counterpartyJurisdiction': 'Counterparty jurisdiction',
+      'checkout.field.governingLaw': 'Preferred governing law',
+      'checkout.field.value': 'Contract value (USD)',
+      'checkout.field.paymentTerms': 'Payment terms (days)',
+      'checkout.field.forum': 'Preferred dispute forum',
+      'checkout.field.security': 'Payment security',
+      'checkout.field.laytime': 'Laytime (running hours)',
+      'checkout.field.demurrage': 'Demurrage (USD / day)',
+      'checkout.field.instructions': 'Anything else counsel should know',
+      'checkout.field.instructions.placeholder': 'Laytime expectations, security required, known sticking points…',
+      'checkout.field.name': 'Full name',
+      'checkout.field.email': 'Email address',
+      'checkout.field.phone': 'Phone (optional)',
+      'checkout.field.country': 'Billing country',
+      'checkout.riskPreview.title': 'Provisional exposure',
+      'checkout.riskPreview.note': 'Scored live from the terms above by the same engine counsel uses. Indicative only.',
+      'checkout.summary.title': 'Order summary',
+      'checkout.summary.service': 'Contract writing',
+      'checkout.summary.turnaround': 'Turnaround',
+      'checkout.summary.days': 'business days',
+      'checkout.summary.tax': 'Tax',
+      'checkout.summary.total': 'Total due',
+      'checkout.pay.card': 'Pay by card',
+      'checkout.pay.knet': 'Pay by KNET',
+      'checkout.pay.transfer': 'Bank transfer',
+      'checkout.pay.submit': 'Continue to payment',
+      'checkout.pay.redirect': 'You will be taken to our payment provider. Card details are entered there, never on this site.',
+      'checkout.disclaimer': 'Submitting this form creates an instruction, not a retainer. An engagement letter follows before work begins.',
+      'checkout.demo': 'Preview only — this page is not connected to a payment gateway. In the live app this creates an order and redirects to the provider.',
+      'checkout.incomplete': 'Please complete the highlighted fields.',
+      'auth.signIn.title': 'Sign in',
+      'auth.signIn.subtitle': 'Access your matters, drafts and executed instruments.',
+      'auth.signUp.title': 'Create an account',
+      'auth.signUp.subtitle': 'Commission work and track it from instruction to execution.',
+      'auth.fullName': 'Full name',
+      'auth.email': 'Email address',
+      'auth.password': 'Password',
+      'auth.submit.signIn': 'Sign in',
+      'auth.submit.signUp': 'Create account',
+      'auth.toggle.toSignUp': 'No account yet? Create one',
+      'auth.toggle.toSignIn': 'Already registered? Sign in',
+      'auth.close': 'Close',
+      'auth.demoBadge': 'Preview — no live account',
+      'auth.demo': 'Preview only — this page cannot reach the authentication service. The live app signs in against Supabase Auth.',
+      'auth.privilegeNotice': 'Communications through this platform may be privileged. Do not share your credentials.',
+      'common.notLegalAdvice': 'Demonstration interface. Output is a triage signal for a qualified practitioner, not legal advice.'
+    },
+    ar: {
+      'brand.name': 'ليكس ماريس',
+      'nav.bench': 'منصة العقود',
+      'nav.dashboard': 'لوحة المتابعة',
+      'nav.commission': 'اطلب صياغة',
+      'nav.signIn': 'تسجيل الدخول',
+      'nav.signOut': 'تسجيل الخروج',
+      'hero.eyebrow': 'تجاري · مؤسسي · بحري',
+      'hero.title': 'العقد، <span class="accent">مصوغاً ومُقيَّماً</span> قبل أن تنتهي المكالمة.',
+      'hero.lede': 'تُركّب ليكس ماريس العقود التجارية والبحرية من شروط مُتحقَّق منها، وتقيّم كل بند وفق نموذج تعرّض ثابت، وتنفّذها بسجل تشفيري قابل للإثبات.',
+      'hero.cta.primary': 'اطلب صياغة عقد',
+      'hero.cta.secondary': 'جرّب منصة المخاطر',
+      'hero.trust': 'الكويت · الإمارات · إنجلترا وويلز · سنغافورة',
+      'hero.gavel.hint': 'اطرق المطرقة',
+      'hero.metric.rules': 'قاعدة بنود في كل تقييم',
+      'hero.metric.turnaround': 'من المسودة إلى ملف مختوم',
+      'hero.metric.sealing': 'تشفير لكل مستند',
+      'hero.metric.forum': 'مقار تحكيم مُنمذجة',
+      'dial.exposure': 'التعرّض',
+      'checkout.eyebrow': 'طلب خدمة',
+      'checkout.title': 'صياغة العقود',
+      'checkout.subtitle': 'أخبرنا بالشروط. تتولى المحاماة الصياغة وتعيد العقد مع تقرير مخاطر على مستوى البنود.',
+      'checkout.section.instrument': 'العقد',
+      'checkout.section.parties': 'الأطراف',
+      'checkout.section.terms': 'الشروط التجارية',
+      'checkout.section.contact': 'بياناتك',
+      'checkout.section.payment': 'الدفع',
+      'checkout.field.instrumentType': 'نوع العقد',
+      'checkout.field.deadline': 'المطلوب بحلول',
+      'checkout.field.firstParty': 'جهتك',
+      'checkout.field.secondParty': 'الطرف المقابل',
+      'checkout.field.counterpartyJurisdiction': 'اختصاص الطرف المقابل',
+      'checkout.field.governingLaw': 'القانون الحاكم المفضّل',
+      'checkout.field.value': 'قيمة العقد (دولار أمريكي)',
+      'checkout.field.paymentTerms': 'مدة السداد (أيام)',
+      'checkout.field.forum': 'جهة فضّ النزاع المفضّلة',
+      'checkout.field.security': 'ضمان السداد',
+      'checkout.field.laytime': 'مدة التحميل (ساعات سارية)',
+      'checkout.field.demurrage': 'غرامة التأخير (دولار / يوم)',
+      'checkout.field.instructions': 'أي معلومات أخرى تهم المحاماة',
+      'checkout.field.instructions.placeholder': 'توقعات مدة التحميل، الضمانات المطلوبة، نقاط الخلاف المعروفة…',
+      'checkout.field.name': 'الاسم الكامل',
+      'checkout.field.email': 'البريد الإلكتروني',
+      'checkout.field.phone': 'الهاتف (اختياري)',
+      'checkout.field.country': 'بلد الفاتورة',
+      'checkout.riskPreview.title': 'التعرّض المبدئي',
+      'checkout.riskPreview.note': 'يُحسب فورياً من الشروط أعلاه بالمحرّك نفسه الذي تستخدمه المحاماة. للاسترشاد فقط.',
+      'checkout.summary.title': 'ملخص الطلب',
+      'checkout.summary.service': 'صياغة عقد',
+      'checkout.summary.turnaround': 'مدة التنفيذ',
+      'checkout.summary.days': 'أيام عمل',
+      'checkout.summary.tax': 'الضريبة',
+      'checkout.summary.total': 'الإجمالي المستحق',
+      'checkout.pay.card': 'الدفع بالبطاقة',
+      'checkout.pay.knet': 'الدفع عبر كي-نت',
+      'checkout.pay.transfer': 'حوالة بنكية',
+      'checkout.pay.submit': 'المتابعة إلى الدفع',
+      'checkout.pay.redirect': 'سيتم تحويلك إلى مزوّد الدفع. تُدخل بيانات البطاقة هناك، وليس على هذا الموقع.',
+      'checkout.disclaimer': 'إرسال هذا النموذج يُنشئ تكليفاً وليس عقد وكالة. يصدر خطاب التكليف قبل بدء العمل.',
+      'checkout.demo': 'معاينة فقط — هذه الصفحة غير موصولة بمزوّد دفع. في التطبيق الفعلي يُنشأ الطلب ويُحوَّل المستخدم إلى المزوّد.',
+      'checkout.incomplete': 'يرجى إكمال الحقول المحدَّدة.',
+      'auth.signIn.title': 'تسجيل الدخول',
+      'auth.signIn.subtitle': 'اطّلع على قضاياك ومسوداتك والعقود المنفّذة.',
+      'auth.signUp.title': 'إنشاء حساب',
+      'auth.signUp.subtitle': 'اطلب العمل وتابعه من التكليف حتى التنفيذ.',
+      'auth.fullName': 'الاسم الكامل',
+      'auth.email': 'البريد الإلكتروني',
+      'auth.password': 'كلمة المرور',
+      'auth.submit.signIn': 'تسجيل الدخول',
+      'auth.submit.signUp': 'إنشاء الحساب',
+      'auth.toggle.toSignUp': 'ليس لديك حساب؟ أنشئ حساباً',
+      'auth.toggle.toSignIn': 'مسجَّل بالفعل؟ سجّل الدخول',
+      'auth.close': 'إغلاق',
+      'auth.demoBadge': 'معاينة — لا يوجد حساب فعلي',
+      'auth.demo': 'معاينة فقط — لا تستطيع هذه الصفحة الوصول إلى خدمة المصادقة. التطبيق الفعلي يسجّل الدخول عبر Supabase Auth.',
+      'auth.privilegeNotice': 'قد تكون المراسلات عبر هذه المنصة مشمولة بالسرية المهنية. لا تشارك بيانات دخولك.',
+      'common.notLegalAdvice': 'واجهة عرض توضيحية. النتيجة مؤشر فرز لممارس مؤهّل، وليست استشارة قانونية.'
+    }
+  };
+
+  var locale = 'en';
+  function tr(key) {
+    return (I18N[locale] && I18N[locale][key]) || I18N.en[key] || key;
+  }
+
+  function applyLocale(next) {
+    locale = I18N[next] ? next : 'en';
+    var root = document.documentElement;
+    root.lang = locale;
+    root.dir = locale === 'ar' ? 'rtl' : 'ltr';
+
+    document.querySelectorAll('[data-i18n]').forEach(function (el) {
+      el.textContent = tr(el.getAttribute('data-i18n'));
+    });
+    // Only for the headline, which carries one inline <span> for the accent.
+    document.querySelectorAll('[data-i18n-html]').forEach(function (el) {
+      el.innerHTML = tr(el.getAttribute('data-i18n-html'));
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(function (el) {
+      el.setAttribute('placeholder', tr(el.getAttribute('data-i18n-placeholder')));
+    });
+
+    document.querySelectorAll('#lang-toggle button').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.getAttribute('data-locale') === locale));
+    });
+
+    // Re-render anything whose text is generated rather than marked up.
+    renderCheckout();
+    if (authOpen) syncAuthMode();
+  }
+
+  document.getElementById('lang-toggle').addEventListener('click', function (e) {
+    var btn = e.target.closest('button[data-locale]');
+    if (btn) applyLocale(btn.getAttribute('data-locale'));
+  });
+
+  /* ======================================================================
+     12. Views — hash-routed so the checkout is a linkable destination
+     ==================================================================== */
+  function routeFromHash() {
+    var checkout = location.hash === '#checkout';
+    $('view-site').hidden = checkout;
+    $('view-checkout').hidden = !checkout;
+    if (checkout) window.scrollTo({ top: 0, behavior: REDUCED ? 'auto' : 'smooth' });
+  }
+  addEventListener('hashchange', routeFromHash);
+
+  /* ======================================================================
+     13. Login modal
+     ==================================================================== */
+  var authOpen = false;
+  var authMode = 'signIn';
+  var authReturnFocus = null;
+
+  function syncAuthMode() {
+    $('auth-title').textContent = tr('auth.' + authMode + '.title');
+    $('auth-subtitle').textContent = tr('auth.' + authMode + '.subtitle');
+    $('auth-submit').textContent = tr('auth.submit.' + authMode);
+    $('auth-mode-toggle').textContent =
+      tr(authMode === 'signIn' ? 'auth.toggle.toSignUp' : 'auth.toggle.toSignIn');
+    $('auth-name-field').hidden = authMode !== 'signUp';
+    $('auth-password').setAttribute(
+      'autocomplete', authMode === 'signIn' ? 'current-password' : 'new-password'
+    );
+  }
+
+  function openAuth() {
+    authReturnFocus = document.activeElement;
+    authOpen = true;
+    $('auth-overlay').hidden = false;
+    syncAuthMode();
+    $('auth-result').textContent = '';
+    document.body.style.overflow = 'hidden';
+    requestAnimationFrame(function () { $('auth-email').focus(); });
+  }
+
+  function closeAuth() {
+    authOpen = false;
+    $('auth-overlay').hidden = true;
+    document.body.style.overflow = '';
+    if (authReturnFocus && authReturnFocus.focus) authReturnFocus.focus();
+  }
+
+  $('open-auth').addEventListener('click', openAuth);
+  $('auth-close').addEventListener('click', closeAuth);
+  $('auth-scrim').addEventListener('click', closeAuth);
+  $('auth-mode-toggle').addEventListener('click', function () {
+    authMode = authMode === 'signIn' ? 'signUp' : 'signIn';
+    syncAuthMode();
+    $('auth-result').textContent = '';
+  });
+
+  // Escape closes, and Tab is confined to the panel.
+  addEventListener('keydown', function (e) {
+    if (!authOpen) return;
+    if (e.key === 'Escape') { e.stopPropagation(); closeAuth(); return; }
+    if (e.key !== 'Tab') return;
+    var f = $('auth-panel').querySelectorAll('button:not([disabled]), input:not([disabled])');
+    if (!f.length) return;
+    var first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }, true);
+
+  $('auth-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    // This preview cannot reach Supabase: the artifact sandbox blocks network
+    // calls to any host but its own. Saying so beats a spinner that never ends.
+    var out = $('auth-result');
+    out.textContent = tr('auth.demo');
+    out.style.color = 'var(--elevated)';
+  });
+
+  /* ======================================================================
+     14. Checkout
+     ==================================================================== */
+  var TYPE_OPTIONS = [
+    ['charterparty', 'Voyage charterparty'], ['bill-of-lading', 'Bill of lading terms'],
+    ['supply', 'Supply of goods'], ['distribution', 'Exclusive distribution'],
+    ['shareholders', 'Shareholders agreement'], ['jv', 'Joint venture']
+  ];
+  var JUR_OPTIONS = [
+    ['KW', 'Kuwait'], ['AE', 'United Arab Emirates'], ['SA', 'Saudi Arabia'],
+    ['QA', 'Qatar'], ['GB', 'United Kingdom'], ['SG', 'Singapore'], ['XX', 'Not stated']
+  ];
+  var LAW_OPTIONS = [
+    ['GB', 'England & Wales'], ['AE', 'United Arab Emirates'], ['KW', 'Kuwait'],
+    ['SG', 'Singapore'], ['CH', 'Switzerland'], ['US', 'New York'], ['XX', 'Not stated']
+  ];
+  var FORUM_OPTIONS = [
+    ['arbitration-lcia', 'LCIA arbitration, London'], ['arbitration-icc', 'ICC arbitration'],
+    ['arbitration-difc', 'DIFC-LCIA arbitration'], ['arbitration-adhoc', 'Ad hoc arbitration'],
+    ['local-courts', 'Courts — your seat'], ['foreign-courts', 'Courts — counterparty seat'],
+    ['silent', 'Not stated']
+  ];
+  var SEC_OPTIONS = [
+    ['lc', 'Confirmed irrevocable LC'], ['bank-guarantee', 'On-demand bank guarantee'],
+    ['parent-guarantee', 'Parent company guarantee'], ['none', 'None']
+  ];
+
+  function fillSelect(id, options, selected) {
+    var el = $(id);
+    if (!el) return;
+    el.innerHTML = options.map(function (o) {
+      return '<option value="' + o[0] + '"' +
+        (o[0] === selected ? ' selected' : '') + '>' + esc(o[1]) + '</option>';
+    }).join('');
+  }
+
+  fillSelect('co-type', TYPE_OPTIONS, 'charterparty');
+  fillSelect('co-cpjur', JUR_OPTIONS, 'AE');
+  fillSelect('co-law', LAW_OPTIONS, 'GB');
+  fillSelect('co-forum', FORUM_OPTIONS, 'arbitration-lcia');
+  fillSelect('co-security', SEC_OPTIONS, 'lc');
+  fillSelect('co-country', JUR_OPTIONS.filter(function (o) { return o[0] !== 'XX'; }), 'KW');
+
+  // Prices in fils. 1 KWD = 1000 fils. Integer arithmetic only -- never float
+  // a price.
+  var SERVICE = { price: 250000, currency: 'KWD', days: 3 };
+  var payMethod = 'card';
+
+  function kwd(fils) {
+    return new Intl.NumberFormat(locale === 'ar' ? 'ar-KW-u-nu-latn' : 'en-US', {
+      style: 'currency', currency: SERVICE.currency, minimumFractionDigits: 3
+    }).format(fils / 1000);
+  }
+
+  /** Read the checkout form into the exact shape the risk engine consumes. */
+  function checkoutTerms() {
+    var type = $('co-type').value;
+    var maritime = !!MARITIME[type];
+    return {
+      type: type,
+      governingLaw: $('co-law').value,
+      counterpartyJurisdiction: $('co-cpjur').value,
+      disputeForum: $('co-forum').value,
+      valueUsd: Number($('co-value').value) || 0,
+      liabilityCapMultiple: 1,
+      paymentTermsDays: Number($('co-terms').value) || 0,
+      security: $('co-security').value,
+      hasForceMajeure: true,
+      hasSanctionsClause: true,
+      hasIndemnity: true,
+      hasTerminationForConvenience: false,
+      insuranceAllocated: true,
+      laytimeHours: maritime ? Number($('co-laytime').value) || 0 : undefined,
+      demurrageRateUsd: maritime ? Number($('co-demurrage').value) || 0 : undefined
+    };
+  }
+
+  function renderCheckout() {
+    if (!$('co-type')) return;
+
+    var terms = checkoutTerms();
+    var maritime = !!MARITIME[terms.type];
+    $('co-laytime-wrap').hidden = !maritime;
+    $('co-demurrage-wrap').hidden = !maritime;
+
+    // Same engine as the bench, so the number here and the number counsel
+    // sees come from one rule set.
+    var report = analyse(terms);
+    var band = BAND[report.band];
+
+    $('co-arc').setAttribute('stroke', band.color);
+    $('co-arc').style.strokeDashoffset = String(CIRC * (1 - report.score / 100));
+    $('co-arc').style.filter = 'drop-shadow(0 0 8px ' + band.color + '66)';
+    $('co-score').textContent = String(report.score);
+    $('co-score').style.color = band.color;
+    $('co-band').textContent = band.label;
+    $('co-band').style.color = band.color;
+
+    var order = ['critical', 'high', 'medium', 'low'];
+    var items = order.filter(function (s) { return report.tally[s] > 0; }).map(function (s) {
+      return '<div class="item"><span class="pip" style="background:' + SEV_COLOR[s] +
+        '"></span><dt style="text-transform:capitalize">' + s + '</dt><dd>' +
+        report.tally[s] + '</dd></div>';
+    });
+    $('co-tally').innerHTML = items.length
+      ? items.join('')
+      : '<span style="color:var(--safe)">No findings</span>';
+
+    $('co-subtotal').textContent = kwd(SERVICE.price);
+    $('co-tax').textContent = kwd(0);
+    $('co-total').textContent = kwd(SERVICE.price);
+    $('co-days').textContent = String(SERVICE.days);
+  }
+
+  ['co-type', 'co-law', 'co-cpjur', 'co-forum', 'co-security',
+   'co-value', 'co-terms', 'co-laytime', 'co-demurrage'].forEach(function (id) {
+    var el = $(id);
+    if (el) {
+      el.addEventListener('input', renderCheckout);
+      el.addEventListener('change', renderCheckout);
+    }
+  });
+
+  $('pay-options').addEventListener('click', function (e) {
+    var btn = e.target.closest('.pay-option');
+    if (!btn) return;
+    payMethod = btn.getAttribute('data-method');
+    document.querySelectorAll('.pay-option').forEach(function (b) {
+      b.setAttribute('aria-checked', String(b === btn));
+    });
+  });
+
+  $('checkout-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var out = $('co-result');
+    var required = ['co-first', 'co-second', 'co-name', 'co-email'];
+    var missing = required.filter(function (id) { return !$(id).value.trim(); });
+    if (missing.length) {
+      out.textContent = tr('checkout.incomplete');
+      out.style.color = 'var(--elevated)';
+      $(missing[0]).focus();
+      return;
+    }
+    // Honest about the boundary: no gateway is reachable from this sandbox.
+    out.textContent = tr('checkout.demo');
+    out.style.color = 'var(--watch)';
+  });
+
+  /* ======================================================================
+     15. Hero gavel — a second, re-strikeable instance
+     ==================================================================== */
+  (function () {
+    var canvas = $('hero-gavel-canvas');
+    var hit = $('hero-gavel-hit');
+    if (!canvas || REDUCED) {
+      if (canvas) canvas.style.display = 'none';
+      if (hit) hit.style.display = 'none';
+      var hint = document.querySelector('.hero-gavel-hint');
+      if (hint) hint.style.display = 'none';
+      return;
+    }
+
+    /* Built LAZILY, only once the intro has disposed its own scene.
+       Standing both up at page load meant two WebGL contexts, each with a
+       shadow map and a baked cube map, rendering simultaneously -- enough to
+       lock up a machine on integrated graphics. */
+    var gavel = null;
+    var armed = true;
+    var onScreen = true;
+
+    function build() {
+      if (gavel) return;
+      gavel = initGavel(canvas) || initGavel2D(canvas);
+      if (!gavel) return;
+
+      // Suspend when scrolled away or the tab is hidden. Same contract the
+      // matrix mesh already honours.
+      if (typeof IntersectionObserver !== 'undefined') {
+        new IntersectionObserver(function (entries) {
+          onScreen = !!(entries[0] && entries[0].isIntersecting);
+          if (!gavel.pause) return;
+          if (onScreen && !document.hidden) gavel.resume();
+          else gavel.pause();
+        }, { rootMargin: '80px' }).observe(canvas);
+      }
+      document.addEventListener('visibilitychange', function () {
+        if (!gavel || !gavel.pause) return;
+        if (document.hidden || !onScreen) gavel.pause();
+        else gavel.resume();
+      });
+    }
+
+    addEventListener('lexmaris:intro-done', build, { once: true });
+    // The intro only runs once per session; on a return visit it is already
+    // gone and no event will fire, so build immediately in that case.
+    if (document.getElementById('intro').classList.contains('gone')) build();
+
+    hit.addEventListener('click', function () {
+      // gavel is null until the intro has finished and released its context.
+      if (!gavel || !armed) return;
+      armed = false;
+      audio.prime();
+      gavel.strike(function () {
+        audio.strike(0.6);
+        if (navigator.vibrate) navigator.vibrate(12);
+        // Unlike the one-shot intro, the hero gavel returns to its idle swing
+        // and re-arms once the recoil has settled.
+        setTimeout(function () {
+          if (gavel.reset) gavel.reset();
+          armed = true;
+        }, 1500);
+      });
+    });
+  })();
+
+  routeFromHash();
+  applyLocale('en');
+  renderCheckout();
 })();
 </script>
