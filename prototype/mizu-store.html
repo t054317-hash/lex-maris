@@ -262,15 +262,19 @@ a { color: inherit; }
   border-left: 1px solid var(--hairline);
   box-shadow: -30px 0 80px -40px rgba(33,33,33,.45);
   transform: translateX(102%);
-  transition: transform .5s var(--lux);
+  visibility: hidden;
+  transition: transform .5s var(--lux), visibility 0s linear .5s;
 }
-.drawer.open { transform: translateX(0); }
+.drawer.open { transform: translateX(0); visibility: visible; transition: transform .5s var(--lux), visibility 0s; }
 
 .modal-wrap {
   position: fixed; inset: 0; z-index: 70;
   display: grid; place-items: center; padding: 20px;
   pointer-events: none;
+  visibility: hidden;
+  transition: visibility 0s linear .4s;
 }
+.modal-wrap.open { visibility: visible; transition: visibility 0s; }
 .modal {
   width: min(460px, 100%);
   max-height: min(88vh, 780px); overflow-y: auto;
@@ -280,9 +284,10 @@ a { color: inherit; }
   box-shadow: 0 40px 90px -40px rgba(33,33,33,.5);
   opacity: 0; transform: translateY(18px) scale(.97);
   transition: opacity .38s ease, transform .38s var(--lux);
-  pointer-events: auto;
+  pointer-events: none;
 }
 .modal-wrap.open { pointer-events: auto; }
+.modal-wrap.open .modal { pointer-events: auto; }
 .modal-wrap.open .modal { opacity: 1; transform: translateY(0) scale(1); }
 
 .field {
@@ -384,7 +389,7 @@ a { color: inherit; }
 
 <!-- Tailwind utilities last, so a utility class always wins over the
      component CSS above — the order Tailwind is designed around. -->
-<style id="tw-utilities">.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0}.pointer-events-none{pointer-events:none}.visible{visibility:visible}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.inset-x-0{left:0;right:0}.-left-2{left:-.5rem}.-right-2{right:-.5rem}.bottom-0{bottom:0}.bottom-10{bottom:2.5rem}.bottom-2{bottom:.5rem}.bottom-6{bottom:1.5rem}.left-1{left:.25rem}.left-1\/2{left:50%}.left-2{left:.5rem}.left-3{left:.75rem}.left-3\.5{left:.875rem}.right-0{right:0}.right-1{right:.25rem}.right-3{right:.75rem}.right-5{right:1.25rem}.top-0{top:0}.top-1{top:.25rem}.top-1\/2{top:50%}.top-3{top:.75rem}.top-6{top:1.5rem}.top-\[calc\(100\%\+10px\)\]{top:calc(100% + 10px)}.z-10{z-index:10}.z-40{z-index:40}.z-50{z-index:50}.z-\[80\]{z-index:80}.mb-10{margin-bottom:2.5rem}.mb-2{margin-bottom:.5rem}.mb-2\.5{margin-bottom:.625rem}.mb-3{margin-bottom:.75rem}.mb-5{margin-bottom:1.25rem}.mb-6{margin-bottom:1.5rem}.mb-9{margin-bottom:2.25rem}.ml-4{margin-left:1rem}.ml-auto{margin-left:auto}.mt-0{margin-top:0}.mt-0\.5{margin-top:.125rem}.mt-1{margin-top:.25rem}.mt-1\.5{margin-top:.375rem}.mt-2{margin-top:.5rem}.mt-2\.5{margin-top:.625rem}.mt-3{margin-top:.75rem}.mt-4{margin-top:1rem}.mt-auto{margin-top:auto}.block{display:block}.inline{display:inline}.flex{display:flex}.inline-flex{display:inline-flex}.table{display:table}.grid{display:grid}.hidden{display:none}.\!h-1{height:.25rem!important}.\!h-1\.5{height:.375rem!important}.\!h-7{height:1.75rem!important}.\!h-9{height:2.25rem!important}.\!h-\[6px\]{height:6px!important}.h-10{height:2.5rem}.h-11{height:2.75rem}.h-14{height:3.5rem}.h-16{height:4rem}.h-4{height:1rem}.h-9{height:2.25rem}.h-\[68px\]{height:68px}.h-\[92px\]{height:92px}.max-h-0{max-height:0}.min-h-\[300px\]{min-height:300px}.min-h-\[320px\]{min-height:320px}.min-h-\[380px\]{min-height:380px}.\!w-7{width:1.75rem!important}.\!w-9{width:2.25rem!important}.\!w-auto{width:auto!important}.w-10{width:2.5rem}.w-11{width:2.75rem}.w-12{width:3rem}.w-14{width:3.5rem}.w-16{width:4rem}.w-4{width:1rem}.w-6{width:1.5rem}.w-9{width:2.25rem}.w-\[210px\]{width:210px}.w-\[232px\]{width:232px}.w-\[320px\]{width:320px}.w-\[42px\]{width:42px}.w-\[52px\]{width:52px}.w-\[62px\]{width:62px}.w-\[68px\]{width:68px}.w-full{width:100%}.min-w-0{min-width:0}.max-w-\[300px\]{max-width:300px}.max-w-\[380px\]{max-width:380px}.max-w-\[460px\]{max-width:460px}.max-w-\[540px\]{max-width:540px}.max-w-\[560px\]{max-width:560px}.flex-1{flex:1 1 0%}.shrink-0{flex-shrink:0}.-translate-x-1{--tw-translate-x:-0.25rem}.-translate-x-1,.-translate-x-1\/2{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.-translate-x-1\/2{--tw-translate-x:-50%}.-translate-y-1{--tw-translate-y:-0.25rem}.-translate-y-1,.-translate-y-1\/2{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.-translate-y-1\/2{--tw-translate-y:-50%}.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-pointer{cursor:pointer}.resize{resize:both}.scroll-mt-24{scroll-margin-top:6rem}.appearance-none{-webkit-appearance:none;-moz-appearance:none;appearance:none}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.place-items-center{place-items:center}.items-start{align-items:flex-start}.items-end{align-items:flex-end}.items-center{align-items:center}.items-baseline{align-items:baseline}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-0{gap:0}.gap-0\.5{gap:.125rem}.gap-1{gap:.25rem}.gap-1\.5{gap:.375rem}.gap-10{gap:2.5rem}.gap-12{gap:3rem}.gap-14{gap:3.5rem}.gap-2{gap:.5rem}.gap-2\.5{gap:.625rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.gap-5{gap:1.25rem}.gap-6{gap:1.5rem}.gap-7{gap:1.75rem}.gap-8{gap:2rem}.gap-9{gap:2.25rem}.gap-x-5{-moz-column-gap:1.25rem;column-gap:1.25rem}.gap-y-2{row-gap:.5rem}.gap-y-3{row-gap:.75rem}.self-start{align-self:flex-start}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis}.truncate,.whitespace-nowrap{white-space:nowrap}.text-wrap{text-wrap:wrap}.\!rounded-full{border-radius:9999px!important}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:.5rem}.rounded-xl{border-radius:.75rem}.\!border-0{border-width:0!important}.border{border-width:1px}.border-y{border-top-width:1px}.border-b,.border-y{border-bottom-width:1px}.border-t{border-top-width:1px}.border-transparent{border-color:transparent}.\!bg-transparent{background-color:transparent!important}.\!bg-white{--tw-bg-opacity:1!important;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))!important}.bg-porcelain{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.p-1{padding:.25rem}.p-2{padding:.5rem}.p-3{padding:.75rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.p-7{padding:1.75rem}.\!px-3{padding-left:.75rem!important;padding-right:.75rem!important}.\!px-3\.5{padding-left:.875rem!important;padding-right:.875rem!important}.\!py-1{padding-top:.25rem!important;padding-bottom:.25rem!important}.\!py-1\.5{padding-top:.375rem!important;padding-bottom:.375rem!important}.\!py-2{padding-top:.5rem!important;padding-bottom:.5rem!important}.\!py-2\.5{padding-top:.625rem!important;padding-bottom:.625rem!important}.px-1{padding-left:.25rem;padding-right:.25rem}.px-2{padding-left:.5rem;padding-right:.5rem}.px-2\.5{padding-left:.625rem;padding-right:.625rem}.px-3{padding-left:.75rem;padding-right:.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.px-8{padding-left:2rem;padding-right:2rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}.py-10{padding-top:2.5rem;padding-bottom:2.5rem}.py-12{padding-top:3rem;padding-bottom:3rem}.py-14{padding-top:3.5rem;padding-bottom:3.5rem}.py-16{padding-top:4rem;padding-bottom:4rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.py-2\.5{padding-top:.625rem;padding-bottom:.625rem}.py-3{padding-top:.75rem;padding-bottom:.75rem}.py-3\.5{padding-top:.875rem;padding-bottom:.875rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-5{padding-top:1.25rem;padding-bottom:1.25rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.py-7{padding-top:1.75rem;padding-bottom:1.75rem}.\!pl-10{padding-left:2.5rem!important}.\!pl-3{padding-left:.75rem!important}.\!pl-3\.5{padding-left:.875rem!important}.\!pr-12{padding-right:3rem!important}.\!pr-3{padding-right:.75rem!important}.\!pr-8{padding-right:2rem!important}.pb-1{padding-bottom:.25rem}.pb-4{padding-bottom:1rem}.pb-6{padding-bottom:1.5rem}.pl-2{padding-left:.5rem}.pr-4{padding-right:1rem}.pr-6{padding-right:1.5rem}.pt-1{padding-top:.25rem}.pt-16{padding-top:4rem}.pt-2{padding-top:.5rem}.pt-4{padding-top:1rem}.pt-5{padding-top:1.25rem}.pt-\[68px\]{padding-top:68px}.text-left{text-align:left}.text-center{text-align:center}.text-right{text-align:right}.font-display{font-family:Marcellus,Georgia,serif}.font-mono{font-family:IBM Plex Mono,ui-monospace,Menlo,monospace}.\!text-\[10\.5px\]{font-size:10.5px!important}.text-\[10\.5px\]{font-size:10.5px}.text-\[10px\]{font-size:10px}.text-\[11\.5px\]{font-size:11.5px}.text-\[11px\]{font-size:11px}.text-\[12\.5px\]{font-size:12.5px}.text-\[12px\]{font-size:12px}.text-\[13\.5px\]{font-size:13.5px}.text-\[13px\]{font-size:13px}.text-\[14\.5px\]{font-size:14.5px}.text-\[14px\]{font-size:14px}.text-\[15\.5px\]{font-size:15.5px}.text-\[15px\]{font-size:15px}.text-\[16\.5px\]{font-size:16.5px}.text-\[16px\]{font-size:16px}.text-\[17px\]{font-size:17px}.text-\[18px\]{font-size:18px}.text-\[19px\]{font-size:19px}.text-\[20px\]{font-size:20px}.text-\[21px\]{font-size:21px}.text-\[22px\]{font-size:22px}.text-\[24px\]{font-size:24px}.text-\[26px\]{font-size:26px}.text-\[30px\]{font-size:30px}.text-\[32px\]{font-size:32px}.text-\[54px\]{font-size:54px}.text-\[8\.5px\]{font-size:8.5px}.text-\[9\.5px\]{font-size:9.5px}.text-\[clamp\(1\.6rem\2c 3\.4vw\2c 2\.2rem\)\]{font-size:clamp(1.6rem,3.4vw,2.2rem)}.text-\[clamp\(1\.7rem\2c 3\.4vw\2c 2\.3rem\)\]{font-size:clamp(1.7rem,3.4vw,2.3rem)}.text-\[clamp\(1\.9rem\2c 4vw\2c 2\.7rem\)\]{font-size:clamp(1.9rem,4vw,2.7rem)}.text-\[clamp\(2\.45rem\2c 6\.2vw\2c 4\.15rem\)\]{font-size:clamp(2.45rem,6.2vw,4.15rem)}.font-medium{font-weight:500}.uppercase{text-transform:uppercase}.leading-\[1\.04\]{line-height:1.04}.leading-\[1\.12\]{line-height:1.12}.leading-none{line-height:1}.leading-relaxed{line-height:1.625}.leading-snug{line-height:1.375}.leading-tight{line-height:1.25}.tracking-\[0\.12em\]{letter-spacing:.12em}.tracking-\[0\.14em\]{letter-spacing:.14em}.tracking-\[0\.16em\]{letter-spacing:.16em}.tracking-\[0\.18em\]{letter-spacing:.18em}.tracking-\[0\.1em\]{letter-spacing:.1em}.tracking-\[0\.22em\]{letter-spacing:.22em}.tracking-\[0\.24em\]{letter-spacing:.24em}.tracking-\[0\.2em\]{letter-spacing:.2em}.tracking-\[0\.3em\]{letter-spacing:.3em}.tracking-wide{letter-spacing:.025em}.tracking-wider{letter-spacing:.05em}.text-charcoal{--tw-text-opacity:1;color:rgb(33 33 33/var(--tw-text-opacity,1))}.text-stone-400{--tw-text-opacity:1;color:rgb(169 164 155/var(--tw-text-opacity,1))}.text-stone-500{--tw-text-opacity:1;color:rgb(110 106 99/var(--tw-text-opacity,1))}.text-stone-600{--tw-text-opacity:1;color:rgb(74 71 65/var(--tw-text-opacity,1))}.underline{text-decoration-line:underline}.line-through{text-decoration-line:line-through}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.accent-\[\#D4AF37\]{accent-color:#d4af37}.opacity-0{opacity:0}.outline{outline-style:solid}.ring{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.blur{--tw-blur:blur(8px)}.blur,.filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.backdrop-filter{-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,-webkit-backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter,-webkit-backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-\[background-color\2c border-color\2c box-shadow\]{transition-property:background-color,border-color,box-shadow;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-\[max-height\]{transition-property:max-height;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-colors{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-opacity{transition-property:opacity;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.duration-500{transition-duration:.5s}.ease-in-out{transition-timing-function:cubic-bezier(.4,0,.2,1)}.hover\:bg-linen:hover{--tw-bg-opacity:1;background-color:rgb(250 249 246/var(--tw-bg-opacity,1))}.hover\:text-charcoal:hover{--tw-text-opacity:1;color:rgb(33 33 33/var(--tw-text-opacity,1))}.focus\:not-sr-only:focus{position:static;width:auto;height:auto;padding:0;margin:0;overflow:visible;clip:auto;white-space:normal}.focus\:fixed:focus{position:fixed}.focus\:left-4:focus{left:1rem}.focus\:top-4:focus{top:1rem}.focus\:z-\[95\]:focus{z-index:95}.focus\:rounded-full:focus{border-radius:9999px}.focus\:bg-charcoal:focus{--tw-bg-opacity:1;background-color:rgb(33 33 33/var(--tw-bg-opacity,1))}.focus\:px-4:focus{padding-left:1rem;padding-right:1rem}.focus\:py-2:focus{padding-top:.5rem;padding-bottom:.5rem}.focus\:text-sm:focus{font-size:.875rem;line-height:1.25rem}.focus\:text-white:focus{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}@media (min-width:640px){.sm\:left-2{left:.5rem}.sm\:right-1{right:.25rem}.sm\:block{display:block}.sm\:min-h-\[380px\]{min-height:380px}.sm\:min-h-\[460px\]{min-height:460px}.sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.sm\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.sm\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.sm\:flex-row{flex-direction:row}.sm\:justify-start{justify-content:flex-start}.sm\:gap-2{gap:.5rem}.sm\:gap-5{gap:1.25rem}.sm\:p-10{padding:2.5rem}.sm\:p-8{padding:2rem}}@media (min-width:768px){.md\:block{display:block}.md\:hidden{display:none}.md\:h-\[76px\]{height:76px}.md\:flex-row{flex-direction:row}.md\:items-center{align-items:center}.md\:py-20{padding-top:5rem;padding-bottom:5rem}.md\:py-24{padding-top:6rem;padding-bottom:6rem}.md\:pt-20{padding-top:5rem}.md\:pt-\[76px\]{padding-top:76px}}@media (min-width:1024px){.lg\:sticky{position:sticky}.lg\:top-28{top:7rem}.lg\:flex{display:flex}.lg\:hidden{display:none}.lg\:min-h-\[520px\]{min-height:520px}.lg\:w-\[248px\]{width:248px}.lg\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.lg\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.lg\:grid-cols-\[0\.85fr_1\.15fr\]{grid-template-columns:.85fr 1.15fr}.lg\:grid-cols-\[1\.02fr_0\.98fr\]{grid-template-columns:1.02fr .98fr}.lg\:grid-cols-\[1\.1fr_0\.9fr\]{grid-template-columns:1.1fr .9fr}.lg\:grid-cols-\[1\.3fr_repeat\(3\2c 0\.9fr\)\]{grid-template-columns:1.3fr repeat(3,.9fr)}.lg\:grid-cols-\[340px_1fr\]{grid-template-columns:340px 1fr}.lg\:gap-12{gap:3rem}.lg\:gap-16{gap:4rem}.lg\:gap-8{gap:2rem}.lg\:border-l{border-left-width:1px}.lg\:border-t-0{border-top-width:0}.lg\:py-24{padding-top:6rem;padding-bottom:6rem}}</style>
+<style id="tw-utilities">.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0}.pointer-events-none{pointer-events:none}.visible{visibility:visible}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.inset-x-0{left:0;right:0}.-left-2{left:-.5rem}.-right-2{right:-.5rem}.bottom-0{bottom:0}.bottom-10{bottom:2.5rem}.bottom-2{bottom:.5rem}.bottom-6{bottom:1.5rem}.left-1{left:.25rem}.left-1\/2{left:50%}.left-2{left:.5rem}.left-3{left:.75rem}.left-3\.5{left:.875rem}.right-0{right:0}.right-1{right:.25rem}.right-3{right:.75rem}.right-5{right:1.25rem}.top-0{top:0}.top-1{top:.25rem}.top-1\/2{top:50%}.top-3{top:.75rem}.top-6{top:1.5rem}.top-\[calc\(100\%\+10px\)\]{top:calc(100% + 10px)}.z-10{z-index:10}.z-40{z-index:40}.z-50{z-index:50}.z-\[80\]{z-index:80}.mb-10{margin-bottom:2.5rem}.mb-2{margin-bottom:.5rem}.mb-2\.5{margin-bottom:.625rem}.mb-3{margin-bottom:.75rem}.mb-5{margin-bottom:1.25rem}.mb-6{margin-bottom:1.5rem}.mb-9{margin-bottom:2.25rem}.ml-4{margin-left:1rem}.ml-auto{margin-left:auto}.mt-0{margin-top:0}.mt-0\.5{margin-top:.125rem}.mt-1{margin-top:.25rem}.mt-1\.5{margin-top:.375rem}.mt-2{margin-top:.5rem}.mt-2\.5{margin-top:.625rem}.mt-3{margin-top:.75rem}.mt-4{margin-top:1rem}.mt-auto{margin-top:auto}.block{display:block}.inline{display:inline}.flex{display:flex}.inline-flex{display:inline-flex}.table{display:table}.grid{display:grid}.hidden{display:none}.\!h-1{height:.25rem!important}.\!h-1\.5{height:.375rem!important}.\!h-7{height:1.75rem!important}.\!h-9{height:2.25rem!important}.\!h-\[6px\]{height:6px!important}.h-10{height:2.5rem}.h-11{height:2.75rem}.h-14{height:3.5rem}.h-16{height:4rem}.h-4{height:1rem}.h-9{height:2.25rem}.h-\[68px\]{height:68px}.h-\[92px\]{height:92px}.max-h-0{max-height:0}.min-h-\[300px\]{min-height:300px}.min-h-\[320px\]{min-height:320px}.min-h-\[380px\]{min-height:380px}.\!w-7{width:1.75rem!important}.\!w-9{width:2.25rem!important}.\!w-auto{width:auto!important}.w-10{width:2.5rem}.w-11{width:2.75rem}.w-12{width:3rem}.w-14{width:3.5rem}.w-16{width:4rem}.w-4{width:1rem}.w-6{width:1.5rem}.w-9{width:2.25rem}.w-\[210px\]{width:210px}.w-\[232px\]{width:232px}.w-\[320px\]{width:320px}.w-\[42px\]{width:42px}.w-\[52px\]{width:52px}.w-\[62px\]{width:62px}.w-\[68px\]{width:68px}.w-full{width:100%}.min-w-0{min-width:0}.max-w-\[300px\]{max-width:300px}.max-w-\[380px\]{max-width:380px}.max-w-\[460px\]{max-width:460px}.max-w-\[540px\]{max-width:540px}.max-w-\[560px\]{max-width:560px}.flex-1{flex:1 1 0%}.shrink-0{flex-shrink:0}.-translate-x-1{--tw-translate-x:-0.25rem}.-translate-x-1,.-translate-x-1\/2{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.-translate-x-1\/2{--tw-translate-x:-50%}.-translate-y-1{--tw-translate-y:-0.25rem}.-translate-y-1,.-translate-y-1\/2{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.-translate-y-1\/2{--tw-translate-y:-50%}.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-pointer{cursor:pointer}.resize{resize:both}.scroll-mt-24{scroll-margin-top:6rem}.appearance-none{-webkit-appearance:none;-moz-appearance:none;appearance:none}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.place-items-center{place-items:center}.items-start{align-items:flex-start}.items-end{align-items:flex-end}.items-center{align-items:center}.items-baseline{align-items:baseline}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-0{gap:0}.gap-0\.5{gap:.125rem}.gap-1{gap:.25rem}.gap-1\.5{gap:.375rem}.gap-10{gap:2.5rem}.gap-12{gap:3rem}.gap-14{gap:3.5rem}.gap-2{gap:.5rem}.gap-2\.5{gap:.625rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.gap-5{gap:1.25rem}.gap-6{gap:1.5rem}.gap-7{gap:1.75rem}.gap-8{gap:2rem}.gap-9{gap:2.25rem}.gap-x-5{-moz-column-gap:1.25rem;column-gap:1.25rem}.gap-y-2{row-gap:.5rem}.gap-y-3{row-gap:.75rem}.self-start{align-self:flex-start}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis}.truncate,.whitespace-nowrap{white-space:nowrap}.text-wrap{text-wrap:wrap}.\!rounded-full{border-radius:9999px!important}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:.5rem}.rounded-xl{border-radius:.75rem}.\!border-0{border-width:0!important}.border{border-width:1px}.border-y{border-top-width:1px}.border-b,.border-y{border-bottom-width:1px}.border-t{border-top-width:1px}.border-transparent{border-color:transparent}.\!bg-transparent{background-color:transparent!important}.\!bg-white{--tw-bg-opacity:1!important;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))!important}.bg-porcelain{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.p-1{padding:.25rem}.p-2{padding:.5rem}.p-3{padding:.75rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.p-7{padding:1.75rem}.\!px-3{padding-left:.75rem!important;padding-right:.75rem!important}.\!px-3\.5{padding-left:.875rem!important;padding-right:.875rem!important}.\!py-1{padding-top:.25rem!important;padding-bottom:.25rem!important}.\!py-1\.5{padding-top:.375rem!important;padding-bottom:.375rem!important}.\!py-2{padding-top:.5rem!important;padding-bottom:.5rem!important}.\!py-2\.5{padding-top:.625rem!important;padding-bottom:.625rem!important}.px-1{padding-left:.25rem;padding-right:.25rem}.px-2{padding-left:.5rem;padding-right:.5rem}.px-2\.5{padding-left:.625rem;padding-right:.625rem}.px-3{padding-left:.75rem;padding-right:.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.px-8{padding-left:2rem;padding-right:2rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}.py-10{padding-top:2.5rem;padding-bottom:2.5rem}.py-12{padding-top:3rem;padding-bottom:3rem}.py-14{padding-top:3.5rem;padding-bottom:3.5rem}.py-16{padding-top:4rem;padding-bottom:4rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.py-2\.5{padding-top:.625rem;padding-bottom:.625rem}.py-3{padding-top:.75rem;padding-bottom:.75rem}.py-3\.5{padding-top:.875rem;padding-bottom:.875rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-5{padding-top:1.25rem;padding-bottom:1.25rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.py-7{padding-top:1.75rem;padding-bottom:1.75rem}.\!pl-10{padding-left:2.5rem!important}.\!pl-3{padding-left:.75rem!important}.\!pl-3\.5{padding-left:.875rem!important}.\!pr-12{padding-right:3rem!important}.\!pr-3{padding-right:.75rem!important}.\!pr-8{padding-right:2rem!important}.pb-1{padding-bottom:.25rem}.pb-4{padding-bottom:1rem}.pb-6{padding-bottom:1.5rem}.pl-2{padding-left:.5rem}.pr-4{padding-right:1rem}.pr-6{padding-right:1.5rem}.pt-1{padding-top:.25rem}.pt-16{padding-top:4rem}.pt-2{padding-top:.5rem}.pt-4{padding-top:1rem}.pt-5{padding-top:1.25rem}.pt-\[68px\]{padding-top:68px}.text-left{text-align:left}.text-center{text-align:center}.text-right{text-align:right}.font-display{font-family:Marcellus,Georgia,serif}.font-mono{font-family:IBM Plex Mono,ui-monospace,Menlo,monospace}.\!text-\[10\.5px\]{font-size:10.5px!important}.text-\[10\.5px\]{font-size:10.5px}.text-\[10px\]{font-size:10px}.text-\[11\.5px\]{font-size:11.5px}.text-\[11px\]{font-size:11px}.text-\[12\.5px\]{font-size:12.5px}.text-\[12px\]{font-size:12px}.text-\[13\.5px\]{font-size:13.5px}.text-\[13px\]{font-size:13px}.text-\[14\.5px\]{font-size:14.5px}.text-\[14px\]{font-size:14px}.text-\[15\.5px\]{font-size:15.5px}.text-\[15px\]{font-size:15px}.text-\[16\.5px\]{font-size:16.5px}.text-\[16px\]{font-size:16px}.text-\[17px\]{font-size:17px}.text-\[18px\]{font-size:18px}.text-\[19px\]{font-size:19px}.text-\[20px\]{font-size:20px}.text-\[21px\]{font-size:21px}.text-\[22px\]{font-size:22px}.text-\[24px\]{font-size:24px}.text-\[26px\]{font-size:26px}.text-\[30px\]{font-size:30px}.text-\[32px\]{font-size:32px}.text-\[54px\]{font-size:54px}.text-\[8\.5px\]{font-size:8.5px}.text-\[9\.5px\]{font-size:9.5px}.text-\[clamp\(1\.6rem\2c 3\.4vw\2c 2\.2rem\)\]{font-size:clamp(1.6rem,3.4vw,2.2rem)}.text-\[clamp\(1\.7rem\2c 3\.4vw\2c 2\.3rem\)\]{font-size:clamp(1.7rem,3.4vw,2.3rem)}.text-\[clamp\(1\.9rem\2c 4vw\2c 2\.7rem\)\]{font-size:clamp(1.9rem,4vw,2.7rem)}.text-\[clamp\(2\.45rem\2c 6\.2vw\2c 4\.15rem\)\]{font-size:clamp(2.45rem,6.2vw,4.15rem)}.font-medium{font-weight:500}.uppercase{text-transform:uppercase}.leading-\[1\.04\]{line-height:1.04}.leading-\[1\.12\]{line-height:1.12}.leading-none{line-height:1}.leading-relaxed{line-height:1.625}.leading-snug{line-height:1.375}.leading-tight{line-height:1.25}.tracking-\[0\.12em\]{letter-spacing:.12em}.tracking-\[0\.14em\]{letter-spacing:.14em}.tracking-\[0\.16em\]{letter-spacing:.16em}.tracking-\[0\.18em\]{letter-spacing:.18em}.tracking-\[0\.1em\]{letter-spacing:.1em}.tracking-\[0\.22em\]{letter-spacing:.22em}.tracking-\[0\.24em\]{letter-spacing:.24em}.tracking-\[0\.2em\]{letter-spacing:.2em}.tracking-\[0\.3em\]{letter-spacing:.3em}.tracking-wide{letter-spacing:.025em}.tracking-wider{letter-spacing:.05em}.text-charcoal{--tw-text-opacity:1;color:rgb(33 33 33/var(--tw-text-opacity,1))}.text-stone-400{--tw-text-opacity:1;color:rgb(169 164 155/var(--tw-text-opacity,1))}.text-stone-500{--tw-text-opacity:1;color:rgb(110 106 99/var(--tw-text-opacity,1))}.text-stone-600{--tw-text-opacity:1;color:rgb(74 71 65/var(--tw-text-opacity,1))}.underline{text-decoration-line:underline}.line-through{text-decoration-line:line-through}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.accent-\[\#D4AF37\]{accent-color:#d4af37}.opacity-0{opacity:0}.shadow{--tw-shadow:0 1px 3px 0 rgba(0,0,0,.1),0 1px 2px -1px rgba(0,0,0,.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color),0 1px 2px -1px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.outline{outline-style:solid}.ring{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.blur{--tw-blur:blur(8px)}.blur,.filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.backdrop-filter{-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,-webkit-backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter,-webkit-backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-\[background-color\2c border-color\2c box-shadow\]{transition-property:background-color,border-color,box-shadow;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-\[max-height\]{transition-property:max-height;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-colors{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-opacity{transition-property:opacity;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.duration-500{transition-duration:.5s}.ease-in-out{transition-timing-function:cubic-bezier(.4,0,.2,1)}.hover\:bg-linen:hover{--tw-bg-opacity:1;background-color:rgb(250 249 246/var(--tw-bg-opacity,1))}.hover\:text-charcoal:hover{--tw-text-opacity:1;color:rgb(33 33 33/var(--tw-text-opacity,1))}.focus\:not-sr-only:focus{position:static;width:auto;height:auto;padding:0;margin:0;overflow:visible;clip:auto;white-space:normal}.focus\:fixed:focus{position:fixed}.focus\:left-4:focus{left:1rem}.focus\:top-4:focus{top:1rem}.focus\:z-\[95\]:focus{z-index:95}.focus\:rounded-full:focus{border-radius:9999px}.focus\:bg-charcoal:focus{--tw-bg-opacity:1;background-color:rgb(33 33 33/var(--tw-bg-opacity,1))}.focus\:px-4:focus{padding-left:1rem;padding-right:1rem}.focus\:py-2:focus{padding-top:.5rem;padding-bottom:.5rem}.focus\:text-sm:focus{font-size:.875rem;line-height:1.25rem}.focus\:text-white:focus{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}@media (min-width:640px){.sm\:left-2{left:.5rem}.sm\:right-1{right:.25rem}.sm\:block{display:block}.sm\:min-h-\[380px\]{min-height:380px}.sm\:min-h-\[460px\]{min-height:460px}.sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.sm\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.sm\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.sm\:flex-row{flex-direction:row}.sm\:justify-start{justify-content:flex-start}.sm\:gap-2{gap:.5rem}.sm\:gap-5{gap:1.25rem}.sm\:p-10{padding:2.5rem}.sm\:p-8{padding:2rem}}@media (min-width:768px){.md\:block{display:block}.md\:hidden{display:none}.md\:h-\[76px\]{height:76px}.md\:flex-row{flex-direction:row}.md\:items-center{align-items:center}.md\:py-20{padding-top:5rem;padding-bottom:5rem}.md\:py-24{padding-top:6rem;padding-bottom:6rem}.md\:pt-20{padding-top:5rem}.md\:pt-\[76px\]{padding-top:76px}}@media (min-width:1024px){.lg\:sticky{position:sticky}.lg\:top-28{top:7rem}.lg\:flex{display:flex}.lg\:hidden{display:none}.lg\:min-h-\[520px\]{min-height:520px}.lg\:w-\[248px\]{width:248px}.lg\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.lg\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.lg\:grid-cols-\[0\.85fr_1\.15fr\]{grid-template-columns:.85fr 1.15fr}.lg\:grid-cols-\[1\.02fr_0\.98fr\]{grid-template-columns:1.02fr .98fr}.lg\:grid-cols-\[1\.1fr_0\.9fr\]{grid-template-columns:1.1fr .9fr}.lg\:grid-cols-\[1\.3fr_repeat\(3\2c 0\.9fr\)\]{grid-template-columns:1.3fr repeat(3,.9fr)}.lg\:grid-cols-\[340px_1fr\]{grid-template-columns:340px 1fr}.lg\:gap-12{gap:3rem}.lg\:gap-16{gap:4rem}.lg\:gap-8{gap:2rem}.lg\:border-l{border-left-width:1px}.lg\:border-t-0{border-top-width:0}.lg\:py-24{padding-top:6rem;padding-bottom:6rem}}</style>
 
 <a href="#collection" class="sr-only focus:not-sr-only focus:fixed focus:z-[95] focus:left-4 focus:top-4 focus:bg-charcoal focus:text-white focus:px-4 focus:py-2 focus:rounded-full focus:text-sm">Skip to the collection</a>
 
@@ -582,7 +587,7 @@ a { color: inherit; }
           <button type="button" class="chip" data-filter="all" aria-pressed="true">All</button>
           <button type="button" class="chip" data-filter="tumbler" aria-pressed="false">Tumblers</button>
           <button type="button" class="chip" data-filter="mug" aria-pressed="false">Mugs</button>
-          <button type="button" class="chip" data-filter="flask" aria-pressed="false">Flasks</button>
+          <button type="button" class="chip" data-filter="cup" aria-pressed="false">Cups</button>
         </div>
       </div>
 
@@ -645,7 +650,7 @@ a { color: inherit; }
             <div class="flex flex-col gap-4">
               <div class="flex items-center justify-between gap-4">
                 <span class="eyebrow">Thermal performance</span>
-                <div class="flex gap-1 p-1 rounded-full" style="background:var(--linen);border:1px solid var(--hairline)" role="group" aria-label="Show hot or cold retention">
+                <div class="flex gap-1 p-1 rounded-full" id="thermalToggle" style="background:var(--linen);border:1px solid var(--hairline)" role="group" aria-label="Show hot or cold retention">
                   <button type="button" class="btn btn-sm !py-1.5 !px-3.5" data-thermal="hot" aria-pressed="true" style="background:var(--charcoal);color:#fff">Hot</button>
                   <button type="button" class="btn btn-sm !py-1.5 !px-3.5" data-thermal="cold" aria-pressed="false">Cold</button>
                 </div>
@@ -972,7 +977,7 @@ a { color: inherit; }
           <p class="eyebrow">Shop</p>
           <a href="#collection" class="text-[14.5px] hover:text-charcoal transition-colors" style="color:var(--stone-500)">Tumblers</a>
           <a href="#collection" class="text-[14.5px] hover:text-charcoal transition-colors" style="color:var(--stone-500)">Coffee mugs</a>
-          <a href="#collection" class="text-[14.5px] hover:text-charcoal transition-colors" style="color:var(--stone-500)">Flasks</a>
+          <a href="#collection" class="text-[14.5px] hover:text-charcoal transition-colors" style="color:var(--stone-500)">Camp cups</a>
           <a href="#collection" class="text-[14.5px] hover:text-charcoal transition-colors" style="color:var(--stone-500)">Lids and spare parts</a>
           <a href="#collection" class="text-[14.5px] hover:text-charcoal transition-colors" style="color:var(--stone-500)">Gift sets</a>
         </nav>
@@ -1252,13 +1257,15 @@ a { color: inherit; }
 
   /* Finishes are shared across the range; each carries the hex the vessel
      artwork is shaded from, so a swatch click really repaints the product. */
+  /* The five colourways the range ships in. `hex` drives the artwork's shading
+     maths, `lid` the cap, and `matte` damps the specular highlights so a
+     powder-coated finish does not read like polished steel. */
   const FINISHES = {
-    stainless: { name: 'Brushed Stainless', hex: '#C6CBD1', lid: '#3D4348' },
-    white:     { name: 'Enamel White',      hex: '#F2F0EB', lid: '#4A4741' },
-    sage:      { name: 'Matcha Sage',       hex: '#BFD3BC', lid: '#46573F' },
-    sky:       { name: 'Glacier Sky',       hex: '#BAD6EA', lid: '#33526B' },
-    charcoal:  { name: 'Charcoal Ink',      hex: '#4A4C4F', lid: '#26282A' },
-    sand:      { name: 'Desert Sand',       hex: '#DAC7AC', lid: '#5B4A33' },
+    stainless: { name: 'Stainless',      hex: '#C4C9CE', lid: '#3A3F44', matte: false },
+    black:     { name: 'Midnight Black', hex: '#24262A', lid: '#141619', matte: true },
+    green:     { name: 'Army Green',     hex: '#4E5B40', lid: '#2B3226', matte: true },
+    ocean:     { name: 'Ocean Blue',     hex: '#2F5C7B', lid: '#1B384A', matte: true },
+    sand:      { name: 'Sand Desert',    hex: '#C7AD88', lid: '#6A5941', matte: true },
   };
 
   const CATALOGUE = [
@@ -1268,7 +1275,7 @@ a { color: inherit; }
       price: 37.99, compare: 44.0, capacity: '16 oz / 450 ml',
       dims: { height: '155 mm', base: '87 mm', weight: '264 g' }, hot: 12, cold: 24,
       rating: 4.9, reviews: 612, badge: 'Most loved',
-      finishes: ['white', 'stainless', 'sage', 'charcoal'],
+      finishes: ['black', 'stainless', 'green', 'sand'],
       blurb: 'Our filter-coffee flask: a fired ceramic interior over double-wall vacuum steel, so a light roast tastes the way the roaster intended — with nothing metallic underneath it.',
       specs: ['Ceramic interior', 'Double-wall vacuum', 'BPA-free', 'Leak-proof SnapSeal lid', 'Cup-holder base'],
     },
@@ -1278,7 +1285,7 @@ a { color: inherit; }
       price: 31.99, compare: 36.0, capacity: '16 oz / 450 ml',
       dims: { height: '155 mm', base: '87 mm', weight: '249 g' }, hot: 12, cold: 24,
       rating: 4.8, reviews: 738, badge: 'Best seller',
-      finishes: ['stainless', 'white', 'sky', 'charcoal', 'sand'],
+      finishes: ['stainless', 'black', 'ocean', 'green', 'sand'],
       blurb: 'The everyday size. Wide mouth for ice and a matching sip-through lid, in 18/8 stainless with the sip path kept entirely plastic-free.',
       specs: ['Double-wall vacuum', 'Wide mouth', 'BPA-free', 'Leak-proof SnapSeal lid', 'Cup-holder base'],
     },
@@ -1288,7 +1295,7 @@ a { color: inherit; }
       price: 27.99, compare: 31.0, capacity: '10 oz / 295 ml',
       dims: { height: '128 mm', base: '87 mm', weight: '198 g' }, hot: 8, cold: 18,
       rating: 4.7, reviews: 341, badge: null,
-      finishes: ['stainless', 'sage', 'white', 'charcoal'],
+      finishes: ['stainless', 'green', 'black', 'ocean'],
       blurb: 'Cortado-sized and short enough to sit under an espresso machine group head. The one people buy second, then use most.',
       specs: ['Double-wall vacuum', 'Fits under a group head', 'BPA-free', 'Leak-proof SnapSeal lid'],
     },
@@ -1298,7 +1305,7 @@ a { color: inherit; }
       price: 35.99, compare: 40.0, capacity: '20 oz / 590 ml',
       dims: { height: '186 mm', base: '87 mm', weight: '291 g' }, hot: 14, cold: 28,
       rating: 4.8, reviews: 402, badge: null,
-      finishes: ['charcoal', 'stainless', 'sky', 'sand'],
+      finishes: ['black', 'stainless', 'ocean', 'sand'],
       blurb: 'A full pour-over batch, or a day of iced coffee. Same 87 mm base as the smaller tumblers, so it still drops into a car holder.',
       specs: ['Double-wall vacuum', 'Holds a full V60 batch', 'BPA-free', 'Leak-proof SnapSeal lid', 'Cup-holder base'],
     },
@@ -1308,19 +1315,20 @@ a { color: inherit; }
       price: 29.99, compare: 34.0, capacity: '14 oz / 415 ml',
       dims: { height: '112 mm', base: '96 mm', weight: '310 g' }, hot: 6, cold: 12,
       rating: 4.7, reviews: 286, badge: 'Desk favourite',
-      finishes: ['white', 'stainless', 'sage', 'sand'],
+      finishes: ['stainless', 'black', 'green', 'sand'],
       blurb: 'A proper handled mug that happens to be vacuum insulated — the last coffee is as warm as the first, whether the desk is an office or a tailgate.',
       specs: ['Double-wall vacuum', 'Cast steel handle', 'BPA-free', 'Splash-resistant sip lid'],
     },
     {
-      id: 'coffee-flask-17', name: 'Coffee Flask 17', short: 'Flask 17',
-      type: 'flask', shape: 'flask', ceramic: true,
-      price: 42.99, compare: 49.0, capacity: '17 oz / 500 ml',
-      dims: { height: '243 mm', base: '73 mm', weight: '342 g' }, hot: 18, cold: 36,
-      rating: 4.9, reviews: 178, badge: 'New',
-      finishes: ['charcoal', 'stainless', 'sky', 'white'],
-      blurb: 'Narrow-neck and ceramic lined, built to travel a full day with brewed coffee and pour it out hot at the other end. The insulation champion of the range.',
-      specs: ['Ceramic interior', 'Double-wall vacuum', 'BPA-free', 'Screw cap, fully sealed', 'Narrow pour neck'],
+      id: 'camp-cup-12', name: 'Camp Cup 12', short: 'Camp Cup',
+      type: 'cup', shape: 'cup', ceramic: false,
+      price: 24.99, compare: 28.0, capacity: '12 oz / 350 ml',
+      dims: { height: '95 mm', base: '82 mm', weight: '186 g' },
+      hot: null, cold: null, insulated: false,
+      rating: 4.6, reviews: 214, badge: 'Camp classic',
+      finishes: ['stainless', 'ocean', 'black', 'green'],
+      blurb: 'Single-wall steel with a rolled rim and a fold-flat handle. It goes straight on the camp stove, which is the one thing a vacuum flask can never do.',
+      specs: ['Single-wall steel', 'Stove and fire safe', 'BPA-free', 'Rolled rim', 'Fold-flat handle'],
     },
   ];
 
@@ -1380,7 +1388,7 @@ a { color: inherit; }
     cart: [],
     promo: null,
     user: null,
-    cfg: { id: 'tumbler-16-ceramic', finish: 'white', qty: 1 },
+    cfg: { id: 'tumbler-16-ceramic', finish: 'black', qty: 1 },
     thermal: 'hot',
     filter: 'all',
     query: '',
@@ -1461,83 +1469,224 @@ a { color: inherit; }
 
   let uid = 0;
 
-  /* Every vessel is drawn, not photographed: the finish drives the gradient
-     stops, so swatch changes are instant and never need a second asset. */
+  /* ------------------------------------------------------ photography slots ---
+     Drop a URL in here and it becomes the product shot everywhere that vessel
+     appears — grid, configurator, cart line, checkout, search suggestions.
+     Keys are 'finish' for a whole-range shot, or 'productId:finish' to override
+     one vessel. Anything missing (or blocked, or 404) falls back to the drawn
+     artwork below, so the page never shows a broken image.
+     See docs/MIZU-STORE.md for how to fill this in.                          */
+  const PHOTOS = {
+    // stainless: 'https://…/mizu-t16-stainless.jpg',
+    // 'coffee-mug-14:black': 'https://…/mizu-mug14-black.jpg',
+  };
+
+  function photoFor(id, finish) {
+    return PHOTOS[id + ':' + finish] || PHOTOS[finish] || null;
+  }
+
+  /* One scale for the whole range: every vessel is drawn at 1.25 px per real
+     millimetre, so a T20 really is taller than a T10 on screen. */
+  const PX = 1.25;
+
+  /* The vessel is drawn, not photographed: gradients, brushing, specular bands,
+     contact shadow and floor reflection are all derived from the finish hex. */
   function vesselSVG(p, finishKey, opts) {
     opts = opts || {};
     const f = FINISHES[finishKey] || FINISHES.stainless;
     const g = 'v' + (++uid);
-    const hex = f.hex;
-    const body = {
-      edge: shade(hex, -20), dark: shade(hex, -10), mid: hex,
-      light: shade(hex, 9), spec: shade(hex, 17),
-    };
-    const lidDark = shade(f.lid, -8);
-    const lidLit = shade(f.lid, 12);
     const w = opts.width || 220;
     const steam = opts.steam && !reduceMotion();
+    const matte = !!f.matte;
 
-    let vessel = '';
+    const hex = f.hex;
+    const tone = hexToHsl(hex);
+    const lift = matte ? 10 : 23;
+    const drop = matte ? -16 : -27;
+    const body = {
+      edge: shade(hex, drop), dark: shade(hex, drop / 2), mid: hex,
+      warm: shade(hex, lift * 0.5), lit: shade(hex, lift),
+    };
+    const lidDark = shade(f.lid, -9);
+    const lidLit = shade(f.lid, matte ? 11 : 20);
+    const deboss = tone.l > 60 ? 'rgba(28,28,28,.26)' : 'rgba(255,255,255,.24)';
+    const glassOpacity = matte ? 0.12 : (tone.l > 60 ? 0.17 : 0.26);
+
+    /* Geometry from the product's own measurements. */
+    const cx = 120, floor = 320;
+    const totalH = parseFloat(p.dims.height) * PX;
+    const baseW = parseFloat(p.dims.base) * PX;
+    const topY = floor - totalH;
+    const lidH = p.shape === 'cup' ? 0 : (p.shape === 'mug' ? 20 : 26);
+    const bodyTop = topY + lidH;
+    const flare = p.shape === 'cup' ? 1.24 : (p.shape === 'mug' ? 1.02 : 1.08);
+    const topW = baseW * flare;
+
+    const tl = cx - topW / 2, tr = cx + topW / 2;
+    const bl = cx - baseW / 2, br = cx + baseW / 2;
+    const r = 11;
+    const bodyPath = 'M' + tl.toFixed(1) + ' ' + bodyTop.toFixed(1) +
+      ' L' + tr.toFixed(1) + ' ' + bodyTop.toFixed(1) +
+      ' L' + br.toFixed(1) + ' ' + (floor - r).toFixed(1) +
+      ' Q' + br.toFixed(1) + ' ' + floor + ' ' + (br - r).toFixed(1) + ' ' + floor +
+      ' L' + (bl + r).toFixed(1) + ' ' + floor +
+      ' Q' + bl.toFixed(1) + ' ' + floor + ' ' + bl.toFixed(1) + ' ' + (floor - r).toFixed(1) + ' Z';
+
+    /* Handles: the mug's is cast and chunky, the camp cup's is folded wire. */
+    let handle = '';
     if (p.shape === 'mug') {
-      vessel =
-        '<path d="M168 150 q34 0 34 26 t-34 30" fill="none" stroke="url(#' + g + 'b)" stroke-width="15" stroke-linecap="round"/>' +
-        '<path d="M52 124 L172 124 L166 258 q-1 16 -17 16 L69 274 q-16 0 -17 -16 Z" fill="url(#' + g + 'b)"/>' +
-        '<rect x="46" y="104" width="132" height="26" rx="11" fill="url(#' + g + 'l)"/>' +
-        '<rect x="86" y="109" width="52" height="7" rx="3.5" fill="' + lidLit + '" opacity=".55"/>' +
-        '<path d="M62 138 L72 138 L68 254 L60 254 Z" fill="#FFFFFF" opacity=".18"/>';
-    } else if (p.shape === 'flask') {
-      vessel =
-        '<path d="M84 96 L136 96 L134 128 q22 14 22 44 L156 286 q0 18 -18 18 L82 304 q-18 0 -18 -18 L64 172 q0 -30 22 -44 Z" fill="url(#' + g + 'b)"/>' +
-        '<rect x="80" y="58" width="60" height="44" rx="13" fill="url(#' + g + 'l)"/>' +
-        '<rect x="80" y="86" width="60" height="7" rx="3" fill="' + lidDark + '"/>' +
-        '<path d="M92 140 L102 140 L96 292 L86 292 Z" fill="#FFFFFF" opacity=".2"/>' +
-        '<rect x="76" y="196" width="68" height="20" rx="9" fill="' + body.edge + '" opacity=".45"/>';
-    } else {
-      vessel =
-        '<path d="M46 104 L174 104 L163 292 q-1 14 -15 14 L72 306 q-14 0 -15 -14 Z" fill="url(#' + g + 'b)"/>' +
-        '<rect x="40" y="72" width="140" height="36" rx="13" fill="url(#' + g + 'l)"/>' +
-        '<rect x="76" y="79" width="68" height="9" rx="4.5" fill="' + lidLit + '" opacity=".5"/>' +
-        '<circle cx="152" cy="90" r="6" fill="' + lidLit + '" opacity=".75"/>' +
-        '<path d="M62 120 L74 120 L70 288 L60 288 Z" fill="#FFFFFF" opacity=".2"/>' +
-        '<path d="M150 120 L160 120 L153 288 L146 288 Z" fill="#000000" opacity=".05"/>';
+      const y1 = bodyTop + 30, y2 = floor - 34;
+      handle = '<path d="M' + (tr - 4).toFixed(1) + ' ' + y1.toFixed(1) +
+        ' C' + (tr + 44).toFixed(1) + ' ' + (y1 + 6).toFixed(1) +
+        ' ' + (tr + 44).toFixed(1) + ' ' + (y2 - 6).toFixed(1) +
+        ' ' + (tr - 4).toFixed(1) + ' ' + y2.toFixed(1) + '" fill="none" stroke="url(#' + g + 'h)" stroke-width="14" stroke-linecap="round"/>';
+    } else if (p.shape === 'cup') {
+      const y1 = bodyTop + 22, y2 = floor - 26;
+      handle = '<path d="M' + (tr - 6).toFixed(1) + ' ' + y1.toFixed(1) +
+        ' C' + (tr + 34).toFixed(1) + ' ' + (y1 + 4).toFixed(1) +
+        ' ' + (tr + 34).toFixed(1) + ' ' + (y2 - 4).toFixed(1) +
+        ' ' + (tr - 6).toFixed(1) + ' ' + y2.toFixed(1) + '" fill="none" stroke="url(#' + g + 'h)" stroke-width="9" stroke-linecap="round"/>';
     }
 
-    const ceramicRing = p.ceramic
-      ? '<rect x="' + (p.shape === 'flask' ? 84 : 52) + '" y="' + (p.shape === 'flask' ? 96 : (p.shape === 'mug' ? 124 : 104)) + '" width="' + (p.shape === 'flask' ? 52 : 120) + '" height="6" rx="3" fill="#F6F2E9" opacity=".95"/>'
+    /* The lid, or — on the open camp cup — the interior and rolled rim. */
+    let mouth = '';
+    if (lidH) {
+      mouth =
+        '<rect x="' + (tl - 3).toFixed(1) + '" y="' + topY.toFixed(1) + '" width="' + (topW + 6).toFixed(1) + '" height="' + (lidH + 8) + '" rx="11" fill="url(#' + g + 'l)"/>' +
+        '<rect x="' + (tl - 3).toFixed(1) + '" y="' + (topY + lidH * 0.62).toFixed(1) + '" width="' + (topW + 6).toFixed(1) + '" height="4" fill="' + lidDark + '" opacity=".55"/>' +
+        '<rect x="' + (cx - 24) + '" y="' + (topY + 6).toFixed(1) + '" width="48" height="9" rx="4.5" fill="' + lidLit + '" opacity=".5"/>' +
+        '<circle cx="' + (tr - 12).toFixed(1) + '" cy="' + (topY + 10.5).toFixed(1) + '" r="4.5" fill="' + lidLit + '" opacity=".7"/>';
+    } else {
+      mouth =
+        '<ellipse cx="' + cx + '" cy="' + bodyTop.toFixed(1) + '" rx="' + (topW / 2).toFixed(1) + '" ry="9" fill="' + shade(hex, drop - 8) + '"/>' +
+        '<ellipse cx="' + cx + '" cy="' + (bodyTop + 1.5).toFixed(1) + '" rx="' + (topW / 2 - 7).toFixed(1) + '" ry="6.5" fill="' + shade(hex, drop - 20) + '"/>' +
+        '<ellipse cx="' + cx + '" cy="' + bodyTop.toFixed(1) + '" rx="' + (topW / 2).toFixed(1) + '" ry="9" fill="none" stroke="' + body.lit + '" stroke-width="3.5"/>';
+    }
+
+    const ceramic = p.ceramic
+      ? '<rect x="' + (tl + 4).toFixed(1) + '" y="' + (bodyTop + 4).toFixed(1) + '" width="' + (topW - 8).toFixed(1) + '" height="5" rx="2.5" fill="#F4EFE4" opacity=".9"/>'
       : '';
 
+    const wordmark = '<text x="' + cx + '" y="' + (bodyTop + (floor - bodyTop) * 0.46).toFixed(1) + '"' +
+      ' text-anchor="middle" font-family="Marcellus, Georgia, serif" font-size="12"' +
+      ' letter-spacing="3.6" fill="' + deboss + '">MIZU</text>';
+
     const steamMarkup = steam
-      ? '<g stroke="#8FA6B4" stroke-width="3.4" stroke-linecap="round" fill="none" opacity=".7">' +
-        '<path class="steam" d="M92 62 q-9 -16 0 -30 q9 -14 2 -26"/>' +
-        '<path class="steam" d="M112 56 q-9 -16 0 -30 q9 -14 2 -26"/>' +
-        '<path class="steam" d="M132 62 q-9 -16 0 -30 q9 -14 2 -26"/>' +
+      ? '<g stroke="#93A8B6" stroke-width="3.2" stroke-linecap="round" fill="none" opacity=".65">' +
+        [-26, 0, 26].map(off =>
+          '<path class="steam" d="M' + (cx + off) + ' ' + (topY - 8).toFixed(1) +
+          ' q-10 -17 0 -32 q10 -15 2 -26"/>').join('') +
+        '</g>'
+      : '';
+
+    const droplets = opts.cold
+      ? '<g fill="#FFFFFF" opacity=".55">' +
+        [[0.26, 0.32, 3.1], [0.62, 0.26, 2.3], [0.44, 0.52, 2.7], [0.74, 0.58, 3.4], [0.32, 0.74, 2.2], [0.6, 0.82, 2.9]]
+          .map(d => '<ellipse cx="' + (tl + topW * d[0]).toFixed(1) + '" cy="' + (bodyTop + (floor - bodyTop) * d[1]).toFixed(1) +
+            '" rx="' + d[2] + '" ry="' + (d[2] * 1.25).toFixed(1) + '"/>').join('') +
         '</g>'
       : '';
 
     return '' +
-      '<svg viewBox="0 0 220 340" width="' + w + '" style="max-width:100%;height:auto;display:block" role="img" aria-label="' + escapeHtml(p.name + ' in ' + f.name) + '">' +
+      '<svg viewBox="0 0 240 372" width="' + w + '" style="width:' + w + 'px;max-width:100%;height:auto;display:block"' +
+      ' role="img" aria-label="' + escapeHtml(p.name + ' in ' + f.name) + '">' +
         '<defs>' +
+          /* Nine stops: shadowed edges, two specular bands, a lit centre. */
           '<linearGradient id="' + g + 'b" x1="0" y1="0" x2="1" y2="0">' +
             '<stop offset="0%" stop-color="' + body.edge + '"/>' +
-            '<stop offset="16%" stop-color="' + body.dark + '"/>' +
-            '<stop offset="38%" stop-color="' + body.spec + '"/>' +
-            '<stop offset="58%" stop-color="' + body.mid + '"/>' +
-            '<stop offset="82%" stop-color="' + body.dark + '"/>' +
+            '<stop offset="9%" stop-color="' + body.dark + '"/>' +
+            '<stop offset="26%" stop-color="' + body.lit + '"/>' +
+            '<stop offset="38%" stop-color="' + body.warm + '"/>' +
+            '<stop offset="54%" stop-color="' + body.mid + '"/>' +
+            '<stop offset="72%" stop-color="' + body.warm + '"/>' +
+            '<stop offset="86%" stop-color="' + body.dark + '"/>' +
             '<stop offset="100%" stop-color="' + body.edge + '"/>' +
           '</linearGradient>' +
           '<linearGradient id="' + g + 'l" x1="0" y1="0" x2="1" y2="0">' +
             '<stop offset="0%" stop-color="' + lidDark + '"/>' +
-            '<stop offset="45%" stop-color="' + lidLit + '"/>' +
+            '<stop offset="42%" stop-color="' + lidLit + '"/>' +
             '<stop offset="100%" stop-color="' + lidDark + '"/>' +
           '</linearGradient>' +
+          '<linearGradient id="' + g + 'h" x1="0" y1="0" x2="1" y2="0">' +
+            '<stop offset="0%" stop-color="' + body.dark + '"/>' +
+            '<stop offset="45%" stop-color="' + body.lit + '"/>' +
+            '<stop offset="100%" stop-color="' + body.edge + '"/>' +
+          '</linearGradient>' +
           '<radialGradient id="' + g + 's" cx="50%" cy="50%" r="50%">' +
-            '<stop offset="0%" stop-color="rgba(33,33,33,.26)"/>' +
+            '<stop offset="0%" stop-color="rgba(33,33,33,.30)"/>' +
+            '<stop offset="70%" stop-color="rgba(33,33,33,.10)"/>' +
             '<stop offset="100%" stop-color="rgba(33,33,33,0)"/>' +
           '</radialGradient>' +
+          '<linearGradient id="' + g + 'f" x1="0" y1="0" x2="0" y2="1">' +
+            '<stop offset="0%" stop-color="#FFFFFF" stop-opacity=".42"/>' +
+            '<stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>' +
+          '</linearGradient>' +
+          '<mask id="' + g + 'm"><rect x="0" y="' + floor + '" width="240" height="50" fill="url(#' + g + 'f)"/></mask>' +
+          /* Brushing: fine vertical lines, polished finishes only. */
+          '<pattern id="' + g + 'p" width="5" height="8" patternUnits="userSpaceOnUse">' +
+            '<rect width="5" height="8" fill="none"/>' +
+            '<rect x="0" width="1" height="8" fill="#FFFFFF" opacity="' + (matte ? 0.03 : 0.10) + '"/>' +
+            '<rect x="3" width="1" height="8" fill="#000000" opacity="' + (matte ? 0.02 : 0.05) + '"/>' +
+          '</pattern>' +
+          '<filter id="' + g + 'g" x="-60%" y="-15%" width="220%" height="130%">' +
+            '<feGaussianBlur stdDeviation="2.2"/>' +
+          '</filter>' +
+          /* Vertical form: the cylinder darkens under the lid and at the foot. */
+          '<linearGradient id="' + g + 'v" x1="0" y1="0" x2="0" y2="1">' +
+            '<stop offset="0%" stop-color="#000000" stop-opacity=".16"/>' +
+            '<stop offset="14%" stop-color="#000000" stop-opacity="0"/>' +
+            '<stop offset="82%" stop-color="#000000" stop-opacity="0"/>' +
+            '<stop offset="100%" stop-color="#000000" stop-opacity=".14"/>' +
+          '</linearGradient>' +
         '</defs>' +
-        '<ellipse cx="110" cy="314" rx="76" ry="15" fill="url(#' + g + 's)"/>' +
-        steamMarkup + vessel + ceramicRing +
+
+        /* Floor: contact shadow, then the vessel reflected into it. */
+        '<ellipse cx="' + cx + '" cy="' + (floor + 6) + '" rx="' + (baseW * 0.68).toFixed(1) + '" ry="12" fill="url(#' + g + 's)"/>' +
+        '<g mask="url(#' + g + 'm)" transform="translate(0,' + (floor * 1.3).toFixed(1) + ') scale(1,-0.3)">' +
+          '<path d="' + bodyPath + '" fill="url(#' + g + 'b)"/>' +
+        '</g>' +
+
+        steamMarkup + handle +
+
+        /* Body, its brushing, then the light on top of it. */
+        '<path d="' + bodyPath + '" fill="url(#' + g + 'b)"/>' +
+        '<path d="' + bodyPath + '" fill="url(#' + g + 'p)"/>' +
+        '<path d="' + bodyPath + '" fill="url(#' + g + 'v)"/>' +
+        '<rect x="' + (tl + 10).toFixed(1) + '" y="' + (bodyTop + 12).toFixed(1) + '" width="9" height="' + (floor - bodyTop - 34).toFixed(1) +
+          '" rx="4.5" fill="#FFFFFF" opacity="' + glassOpacity + '" filter="url(#' + g + 'g)"/>' +
+        '<rect x="' + (tr - 13).toFixed(1) + '" y="' + (bodyTop + 16).toFixed(1) + '" width="5" height="' + (floor - bodyTop - 44).toFixed(1) +
+          '" rx="2.5" fill="#FFFFFF" opacity="' + (glassOpacity * 0.62).toFixed(2) + '"/>' +
+        droplets + ceramic + wordmark + mouth +
       '</svg>';
+  }
+
+  /* A real photograph wins whenever one is configured. */
+  function artFor(p, finishKey, opts) {
+    opts = opts || {};
+    const url = photoFor(p.id, finishKey);
+    if (!url) return vesselSVG(p, finishKey, opts);
+    const w = opts.width || 220;
+    const f = FINISHES[finishKey] || FINISHES.stainless;
+    return '<img src="' + escapeHtml(url) + '" alt="' + escapeHtml(p.name + ' in ' + f.name) + '"' +
+      ' data-art-fallback="' + p.id + '|' + finishKey + '|' + w + (opts.steam ? '|steam' : '') + '"' +
+      ' style="width:' + w + 'px;max-width:100%;height:auto;display:block" loading="lazy" decoding="async">';
+  }
+
+  /* If a photo cannot load — offline, a blocked host, a dead URL — the drawn
+     vessel takes its place instead of leaving a broken image behind. */
+  function wireArtFallbacks(root) {
+    $$('img[data-art-fallback]', root).forEach(img => {
+      if (img.dataset.wired) return;
+      img.dataset.wired = '1';
+      img.addEventListener('error', () => {
+        const bits = img.getAttribute('data-art-fallback').split('|');
+        const subject = product(bits[0]);
+        if (!subject) return;
+        const holder = document.createElement('span');
+        holder.innerHTML = vesselSVG(subject, bits[1], { width: Number(bits[2]), steam: bits[3] === 'steam' });
+        if (holder.firstChild) img.replaceWith(holder.firstChild);
+      });
+    });
   }
 
   function stars(rating, size) {
@@ -1633,7 +1782,7 @@ a { color: inherit; }
 
   function renderHero() {
     const p = product('tumbler-16-ceramic');
-    $('#heroArt').innerHTML = vesselSVG(p, 'white', { width: 290, steam: true });
+    $('#heroArt').innerHTML = artFor(p, 'stainless', { width: 290, steam: true });
     $('#heroStars').innerHTML = stars(4.8, 14);
     $('#summaryStars').innerHTML = stars(4.8, 15);
   }
@@ -1680,8 +1829,8 @@ a { color: inherit; }
         '<article class="card p-5 flex flex-col gap-4 reveal" data-product-card="' + p.id + '" aria-current="' + (store.cfg.id === p.id) + '">' +
           '<div class="relative rounded-2xl grid place-items-center px-4 py-3 overflow-hidden" style="background:linear-gradient(160deg,var(--porcelain),' + (p.ceramic ? 'var(--sage)' : 'var(--mist)') + ')">' +
             (p.badge ? '<span class="absolute top-3 left-3 font-mono text-[9.5px] tracking-[0.16em] px-2.5 py-1 rounded-full" style="background:var(--charcoal);color:#fff">' + escapeHtml(p.badge.toUpperCase()) + '</span>' : '') +
-            '<span class="absolute top-3 right-3 font-mono text-[10px] tnum" style="color:var(--stone-500)">' + escapeHtml(p.hot) + 'H HOT</span>' +
-            '<div data-card-art="' + p.id + '">' + vesselSVG(p, finish, { width: 156 }) + '</div>' +
+            '<span class="absolute top-3 right-3 font-mono text-[10px] tnum" style="color:var(--stone-500)">' + (p.hot ? escapeHtml(p.hot) + 'H HOT' : 'SINGLE WALL') + '</span>' +
+            '<div data-card-art="' + p.id + '">' + artFor(p, finish, { width: 156 }) + '</div>' +
           '</div>' +
 
           '<div class="flex items-start justify-between gap-3">' +
@@ -1709,6 +1858,7 @@ a { color: inherit; }
         '</article>';
     }).join('');
 
+    wireArtFallbacks(grid);
     armReveals();
   }
 
@@ -1722,7 +1872,8 @@ a { color: inherit; }
     const art = $('#cfgArt');
     art.classList.add('swapping');
     setTimeout(() => {
-      art.innerHTML = vesselSVG(p, store.cfg.finish, { width: 300, steam: store.thermal === 'hot' });
+      art.innerHTML = artFor(p, store.cfg.finish, { width: 300, steam: store.thermal === 'hot' && !!p.hot, cold: store.thermal === 'cold' && !!p.cold });
+      wireArtFallbacks(art);
       art.classList.remove('swapping');
     }, reduceMotion() ? 0 : 180);
 
@@ -1767,8 +1918,23 @@ a { color: inherit; }
   function renderThermal() {
     const p = product(store.cfg.id);
     const hot = store.thermal === 'hot';
-    const hours = hot ? p.hot : p.cold;
     const fill = $('#thermalFill');
+
+    /* Not every vessel is a vacuum flask. The camp cup is single-wall, so the
+       switch stands down rather than quoting a retention figure it cannot hold. */
+    $('#thermalToggle').hidden = !p.hot;
+    if (!p.hot) {
+      fill.className = 'thermal-fill';
+      fill.style.width = '0%';
+      $('#thermalHours').textContent = 'Single-wall';
+      $('#thermalCopy').textContent = 'No vacuum layer: it warms with the drink and cools with it. Made for a camp stove, not a commute.';
+      $('#thermalOrb').style.background = 'rgba(110,106,99,.12)';
+      $('#thermalGlyph').innerHTML = '<g fill="none" stroke="#6E6A63" stroke-width="2.6" stroke-linecap="round">' +
+        '<path d="M9 12h22v18a4 4 0 0 1-4 4H13a4 4 0 0 1-4-4V12Z"/><path d="M31 16h4v7h-4"/></g>';
+      return;
+    }
+
+    const hours = hot ? p.hot : p.cold;
 
     fill.className = 'thermal-fill ' + (hot ? 'hot' : 'cold');
     requestAnimationFrame(() => { fill.style.width = Math.min(100, (hours / THERMAL_SCALE) * 100) + '%'; });
@@ -1829,6 +1995,7 @@ a { color: inherit; }
     badge.classList.add('bump');
     setTimeout(() => badge.classList.remove('bump'), 520);
     toast(product(id).name + ' in ' + FINISHES[finish].name + ' added to your cart.');
+    openOverlay('cart');
   }
 
   function renderCart() {
@@ -1848,7 +2015,7 @@ a { color: inherit; }
       const p = product(l.id);
       return '' +
         '<div class="flex gap-3 pb-4" style="border-bottom:1px solid var(--hairline)">' +
-          '<div class="w-[62px] shrink-0 rounded-xl grid place-items-center py-1" style="background:var(--linen)">' + vesselSVG(p, l.finish, { width: 48 }) + '</div>' +
+          '<div class="w-[62px] shrink-0 rounded-xl grid place-items-center py-1" style="background:var(--linen)">' + artFor(p, l.finish, { width: 48 }) + '</div>' +
           '<div class="flex-1 min-w-0 flex flex-col gap-1.5">' +
             '<div class="flex items-start justify-between gap-2">' +
               '<div class="min-w-0">' +
@@ -1873,6 +2040,8 @@ a { color: inherit; }
         '</div>';
     }).join('');
 
+    wireArtFallbacks($('#cartItems'));
+
     const t = totals();
     $('#sumSubtotal').textContent = money(t.sub);
     $('#sumShipping').textContent = t.ship === 0 ? 'Free' : money(t.ship);
@@ -1895,12 +2064,13 @@ a { color: inherit; }
     $('#checkoutLines').innerHTML = store.cart.map(l => {
       const p = product(l.id);
       return '<div class="flex items-center gap-3">' +
-        '<div class="w-[52px] shrink-0 rounded-lg grid place-items-center py-1" style="background:var(--linen)">' + vesselSVG(p, l.finish, { width: 40 }) + '</div>' +
+        '<div class="w-[52px] shrink-0 rounded-lg grid place-items-center py-1" style="background:var(--linen)">' + artFor(p, l.finish, { width: 40 }) + '</div>' +
         '<div class="flex-1 min-w-0"><p class="text-[14.5px] font-medium truncate">' + escapeHtml(p.name) + '</p>' +
         '<p class="font-mono text-[10px] tracking-[0.12em]" style="color:var(--stone-500)">' + escapeHtml(FINISHES[l.finish].name.toUpperCase()) + ' · ×' + l.qty + '</p></div>' +
         '<span class="font-mono text-[13px] tnum">' + money(p.price * l.qty) + '</span></div>';
     }).join('');
 
+    wireArtFallbacks($('#checkoutLines'));
     $('#coSubtotal').textContent = money(t.sub);
     $('#coShipping').textContent = t.ship === 0 ? 'Free' : money(t.ship);
     $('#coTotal').textContent = money(t.total);
@@ -2100,13 +2270,14 @@ a { color: inherit; }
     const hits = visibleProducts().slice(0, 4);
     searchResults.innerHTML = hits.length ? hits.map(p =>
       '<button type="button" class="w-full flex items-center gap-3 p-2 rounded-xl text-left hover:bg-linen transition-colors" data-configure="' + p.id + '" role="option">' +
-        '<span class="w-[42px] shrink-0 rounded-lg grid place-items-center py-1" style="background:var(--linen)">' + vesselSVG(p, cardFinish[p.id], { width: 32 }) + '</span>' +
+        '<span class="w-[42px] shrink-0 rounded-lg grid place-items-center py-1" style="background:var(--linen)">' + artFor(p, cardFinish[p.id], { width: 32 }) + '</span>' +
         '<span class="flex-1 min-w-0"><span class="block text-[14px] font-medium truncate">' + escapeHtml(p.name) + '</span>' +
         '<span class="block font-mono text-[10px] tracking-[0.1em]" style="color:var(--stone-500)">' + escapeHtml(p.capacity.toUpperCase()) + '</span></span>' +
         '<span class="font-mono text-[12px] tnum">' + money(p.price) + '</span>' +
       '</button>'
     ).join('') : '<p class="p-3 text-[13.5px]" style="color:var(--stone-500)">No match. Try “ceramic” or “mug”.</p>';
     searchResults.classList.remove('hidden');
+    wireArtFallbacks(searchResults);
   }
 
   searchInputs.forEach(input => {
@@ -2153,7 +2324,8 @@ a { color: inherit; }
       if (holder) {
         holder.classList.add('stage-art', 'swapping');
         setTimeout(() => {
-          holder.innerHTML = vesselSVG(product(id), cardFinish[id], { width: 156 });
+          holder.innerHTML = artFor(product(id), cardFinish[id], { width: 156 });
+          wireArtFallbacks(holder);
           holder.classList.remove('swapping');
         }, reduceMotion() ? 0 : 160);
       }
@@ -2254,7 +2426,6 @@ a { color: inherit; }
 
     if (e.target.closest('[data-buy-now]')) {
       addToCart(store.cfg.id, store.cfg.finish, store.cfg.qty);
-      openOverlay('cart');
       return;
     }
   });
