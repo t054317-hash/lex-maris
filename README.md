@@ -111,3 +111,9 @@ canvas and WebGL consumers, which cannot read Tailwind classes.
 See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — back-end boundaries, key
 hierarchy and threat model, auth token strategy, real-time contract, the
 performance obligations above, and a list of deliberate omissions.
+
+## Also in this repository
+
+`prototype/mizu-store.html` is an unrelated single-file storefront prototype for
+the Mizu mug / flask brand — same "open it in a browser" convention, none of the
+LEX MARIS code. See [`docs/MIZU-STORE.md`](docs/MIZU-STORE.md).
