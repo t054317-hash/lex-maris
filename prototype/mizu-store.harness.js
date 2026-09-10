@@ -248,6 +248,151 @@ const ok = (n, cond, extra) => results.push((cond ? 'PASS  ' : 'FAIL  ') + n + (
   await pm.screenshot({ path: 'v2-mobile-state.png' });
   await pm.close();
 
+
+  // ---------- language, currency, engraving, drop, club ----------
+  const pl = await b.newPage({ viewport: { width: 1320, height: 900 } });
+  const lerrs = []; pl.on('pageerror', e => lerrs.push(e.message));
+  await pl.goto(url, { waitUntil: 'load' });
+  await pl.waitForTimeout(1300);
+
+  // currency: SAR
+  await pl.selectOption('#currencySelect', 'SAR');
+  await pl.waitForTimeout(400);
+  ok('SAR re-prices the page', await pl.evaluate(() =>
+    document.querySelector('#cfgPrice').textContent.indexOf('SR ') === 0), await pl.evaluate(() => document.querySelector('#cfgPrice').textContent));
+  await pl.selectOption('#currencySelect', 'KWD');
+  await pl.waitForTimeout(300);
+  ok('KWD shows three decimals', await pl.evaluate(() => /^KD \d+\.\d{3}$/.test(document.querySelector('#cfgPrice').textContent)),
+     await pl.evaluate(() => document.querySelector('#cfgPrice').textContent));
+
+  // engraving
+  await pl.check('#engraveOn');
+  await pl.waitForTimeout(300);
+  ok('engraving input unlocks with the checkbox', await pl.evaluate(() => !document.querySelector('#engraveText').disabled));
+  await pl.fill('#engraveText', 'layla');
+  await pl.waitForTimeout(500);
+  ok('engraving is uppercased, counted and etched on the vessel', await pl.evaluate(() =>
+    document.querySelector('#engraveText').value === 'LAYLA' &&
+    document.querySelector('#engraveCount').textContent === '5 / 14' &&
+    document.querySelector('#cfgArt').innerHTML.indexOf('>LAYLA<') > -1));
+  await pl.fill('#engraveText', 'abcdefghijklmnopqrst');
+  await pl.waitForTimeout(300);
+  ok('engraving stops at fourteen characters', await pl.evaluate(() => document.querySelector('#engraveText').value.length === 14));
+  await pl.fill('#engraveText', 'layla');
+  await pl.waitForTimeout(300);
+  await pl.click('#cfgAdd');
+  await pl.waitForTimeout(700);
+  ok('engraved vessel reaches the cart with its text', await pl.evaluate(() =>
+    /LAYLA/.test(document.querySelector('#cartItems').textContent) ));
+  await pl.keyboard.press('Escape');
+  await pl.waitForTimeout(400);
+
+  // monthly drop + club
+  await pl.evaluate(() => document.querySelector('#drop').scrollIntoView());
+  await pl.waitForTimeout(500);
+  ok('drop renders its progress and art', await pl.evaluate(() =>
+    /\d+ \/ 400/.test(document.querySelector('#dropClaimed').textContent) &&
+    document.querySelector('#dropArt').innerHTML.indexOf('svg') > -1));
+  await pl.click('#dropAdd');
+  await pl.waitForTimeout(700);
+  ok('reserving the drop adds the Ember Orange T16', await pl.evaluate(() =>
+    /Ember Orange/i.test(document.querySelector('#cartItems').textContent)));
+  await pl.keyboard.press('Escape');
+  await pl.waitForTimeout(300);
+  ok('club shows three tiers and a balance', await pl.evaluate(() =>
+    document.querySelectorAll('#clubTiers article').length === 3 &&
+    document.querySelector('#clubPoints').textContent === '380'));
+
+  // ---- Arabic + RTL ----
+  await pl.click('[data-lang="ar"]');
+  await pl.waitForTimeout(1200);
+  ok('switch sets lang=ar and dir=rtl', await pl.evaluate(() =>
+    document.documentElement.getAttribute('lang') === 'ar' && document.documentElement.getAttribute('dir') === 'rtl'));
+  ok('navigation, headings and buttons are Arabic', await pl.evaluate(() => {
+    const nav = document.querySelector('nav[aria-label], nav');
+    const txt = document.body.textContent;
+    return txt.indexOf('المجموعة') > -1 && txt.indexOf('أضف إلى السلة') > -1 && txt.indexOf('العزل الحراري') > -1;
+  }));
+  ok('product names and specs are Arabic', await pl.evaluate(() =>
+    /ترمس 16/.test(document.querySelector('#cfgName').textContent) &&
+    /بطانة سيراميك|جدار مزدوج/.test(document.querySelector('#cfgSpecs').textContent) &&
+    /السعة/.test(document.querySelector('#cfgMeta').textContent)));
+  ok('thermal reading is Arabic', await pl.evaluate(() => /ساعة/.test(document.querySelector('#thermalHours').textContent)),
+     await pl.evaluate(() => document.querySelector('#thermalHours').textContent));
+  ok('reviews are Arabic', await pl.evaluate(() => /دانة|قهوة/.test(document.querySelector('#reviewRail').textContent)));
+  ok('FAQ is Arabic', await pl.evaluate(() => /غسّالة الأطباق|الأغطية/.test(document.querySelector('#faqList').textContent)));
+  ok('currency mark follows the language', await pl.evaluate(() =>
+    document.querySelector('#cfgPrice').textContent.indexOf('د.ك') === 0), await pl.evaluate(() => document.querySelector('#cfgPrice').textContent));
+  ok('placeholders and aria-labels are Arabic', await pl.evaluate(() =>
+    document.querySelector('#searchInput').getAttribute('placeholder') === 'ابحث في الترامس والأكواب…' &&
+    document.querySelector('#cartBtn').getAttribute('aria-label').indexOf('السلة') > -1));
+  ok('no RTL horizontal overflow at 1320px', await pl.evaluate(() => document.documentElement.scrollWidth <= 1320),
+     await pl.evaluate(() => document.documentElement.scrollWidth));
+
+  // RTL interception + drawer side
+  const rtlBlocked = await pl.evaluate(() => {
+    const sels = ['#accountBtn', '#cartBtn', '.faq-q', '[data-quick-add]', '[data-cfg-swatch]', '#cfgAdd', '[data-lang]'];
+    const bad = [];
+    sels.forEach(sel => document.querySelectorAll(sel).forEach((el, i) => {
+      if (i > 0) return;
+      el.scrollIntoView({ block: 'center' });
+      const r = el.getBoundingClientRect();
+      if (!r.width) return;
+      const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+      if (!hit || !(el.contains(hit) || hit.contains(el))) bad.push(sel);
+    }));
+    return bad;
+  });
+  ok('no control intercepted in RTL', rtlBlocked.length === 0, rtlBlocked.join(', ') || 'clear');
+
+  await pl.click('#cartBtn');
+  await pl.waitForTimeout(600);
+  ok('cart drawer opens from the left in RTL', await pl.evaluate(() =>
+    Math.abs(document.querySelector('#cartDrawer').getBoundingClientRect().left) < 2));
+  await pl.keyboard.press('Escape');
+  await pl.waitForTimeout(400);
+
+  await pl.click('.faq-item:nth-child(3) .faq-q');
+  await pl.waitForTimeout(500);
+  ok('FAQ still expands in Arabic', await pl.evaluate(() => document.querySelectorAll('.faq-item')[2].classList.contains('open')));
+
+  await pl.screenshot({ path: 'v4-arabic.png', fullPage: false });
+  await pl.evaluate(() => document.querySelector('#club').scrollIntoView());
+  await pl.waitForTimeout(600);
+  await pl.screenshot({ path: 'v4-arabic-club.png' });
+
+  // back to English, exactly
+  await pl.click('[data-lang="en"]');
+  await pl.waitForTimeout(1200);
+  // Stronger than a spot check: no Arabic may survive anywhere in the visible
+  // page. Scripts and styles are excluded (the dictionary lives there), as are
+  // the currency options and the language button, which stay native by design.
+  ok('switching back leaves no Arabic in the page', await pl.evaluate(() => {
+    const clone = document.body.cloneNode(true);
+    clone.querySelectorAll('script, style, option, #toastStack').forEach(n => n.remove());
+    const text = clone.textContent.split('عربي').join('');
+    return document.documentElement.getAttribute('dir') === 'ltr' &&
+      text.indexOf('The coffee collection') > -1 &&
+      !/[\u0600-\u06FF]/.test(text) &&
+      document.querySelector('#searchInput').getAttribute('placeholder') === 'Search tumblers, mugs…';
+  }));
+  ok('no page errors in the language pass', lerrs.length === 0, lerrs.join(' | ') || 'none');
+  await pl.close();
+
+  // Arabic on a phone
+  const pa = await b.newPage({ viewport: { width: 390, height: 844 } });
+  await pa.goto(url, { waitUntil: 'load' });
+  await pa.waitForTimeout(1200);
+  await pa.click('#menuBtn');
+  await pa.waitForTimeout(500);
+  await pa.click('#mobileMenu [data-lang="ar"]');
+  await pa.waitForTimeout(1200);
+  ok('mobile switches to Arabic', await pa.evaluate(() => document.documentElement.getAttribute('dir') === 'rtl'));
+  ok('no RTL overflow at 390px', await pa.evaluate(() => document.documentElement.scrollWidth <= 390),
+     await pa.evaluate(() => document.documentElement.scrollWidth));
+  await pa.screenshot({ path: 'v4-arabic-mobile.png' });
+  await pa.close();
+
   await b.close();
   console.log(results.join('\n'));
   const fails = results.filter(r => r.startsWith('FAIL')).length;

@@ -2,7 +2,7 @@
 <meta name="description" content="Vacuum-insulated mugs, tumblers and flasks — Mizu coffee collection storefront.">
 
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Manrope:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Manrope:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Tajawal:wght@300;400;500;700&family=Amiri:wght@400;700&display=swap">
 
 <!-- Tailwind utilities, compiled against this file so the page stays a single
      self-contained document with no runtime CDN dependency. Rebuild after
@@ -36,8 +36,11 @@
   --stone-500: #6E6A63;
   --stone-600: #4A4741;
 
-  --hot:  #E2725B;
-  --cold: #4A90C2;
+  /* Thermal semantics, taken from the source brand's ember and frost. */
+  --hot:  #FF6A1F;
+  --hot-ink: #CF4708;
+  --cold: #22C6E8;
+  --cold-ink: #00819F;
   --good: #4F8A5B;
 
   --hairline: rgba(33, 33, 33, 0.09);
@@ -50,6 +53,8 @@
   --display: 'Marcellus', Georgia, serif;
   --body: 'Manrope', system-ui, -apple-system, sans-serif;
   --mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+  --display-ar: 'Amiri', 'Marcellus', Georgia, serif;
+  --body-ar: 'Tajawal', 'Manrope', system-ui, sans-serif;
   --lux: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -231,8 +236,8 @@ a { color: inherit; }
   position: absolute; inset: 0 auto 0 0; border-radius: 999px;
   width: 0; transition: width 1.1s var(--lux);
 }
-.thermal-fill.hot  { background: linear-gradient(90deg, #F2C0A8, var(--hot)); }
-.thermal-fill.cold { background: linear-gradient(90deg, #BBD9EE, var(--cold)); }
+.thermal-fill.hot  { background: linear-gradient(90deg, #FFC53D, var(--hot)); }
+.thermal-fill.cold { background: linear-gradient(90deg, #B7EEF8, var(--cold)); }
 
 .heat-wave { animation: wave 2.6s ease-in-out infinite; transform-origin: center bottom; }
 .heat-wave:nth-child(2) { animation-delay: .45s; }
@@ -309,6 +314,14 @@ a { color: inherit; }
 }
 .tab[aria-selected="true"] { background: var(--porcelain); color: var(--charcoal); box-shadow: var(--shadow-soft); }
 
+/* Live line counter */
+.pulse-dot {
+  width: 7px; height: 7px; border-radius: 999px; background: var(--good);
+  box-shadow: 0 0 0 3px rgba(79,138,91,.18);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100% { opacity: .45; transform: scale(.85); } 50% { opacity: 1; transform: scale(1.12); } }
+
 /* --- Reviews -------------------------------------------------------------- */
 /* min-width:0 keeps this scroller from handing its full content width up to
    the grid column that holds it. */
@@ -381,6 +394,60 @@ a { color: inherit; }
 
 .tnum { font-variant-numeric: tabular-nums; }
 
+/* ==========================================================================
+   Arabic / RTL. Only the direction-dependent declarations are restated here —
+   everything laid out with flex, grid or logical centring mirrors by itself.
+   ========================================================================== */
+[lang="ar"] body { font-family: var(--body-ar); font-size: 16.5px; line-height: 1.85; }
+[lang="ar"] h1, [lang="ar"] h2, [lang="ar"] h3, [lang="ar"] h4, [lang="ar"] .display,
+[lang="ar"] .font-display { font-family: var(--display-ar); letter-spacing: 0; }
+/* Arabic has no case and no letter-spaced small caps: undo both. */
+[lang="ar"] .eyebrow { font-family: var(--body-ar); letter-spacing: 0.06em; text-transform: none; font-weight: 500; font-size: 12px; }
+[lang="ar"] .uppercase { text-transform: none; }
+[lang="ar"] .font-mono:not(.tnum) { font-family: var(--body-ar); letter-spacing: 0.02em; }
+
+[dir="rtl"] .text-right { text-align: left; }
+[dir="rtl"] .text-left { text-align: right; }
+
+[dir="rtl"] .drawer {
+  right: auto; left: 0;
+  border-left: 0; border-right: 1px solid var(--hairline);
+  box-shadow: 30px 0 80px -40px rgba(33,33,33,.45);
+  transform: translateX(-102%);
+}
+[dir="rtl"] .drawer.open { transform: translateX(0); }
+
+[dir="rtl"] .search-icon { left: auto; right: 14px; }
+[dir="rtl"] #searchInput { padding-left: 12px !important; padding-right: 40px !important; }
+[dir="rtl"] .sel-chevron { right: auto; left: 12px; }
+[dir="rtl"] select.field { padding-left: 32px !important; padding-right: 14px !important; }
+[dir="rtl"] .pw-toggle { right: auto; left: 12px; }
+[dir="rtl"] input.field[id$="Password"], [dir="rtl"] #signinPassword, [dir="rtl"] #signupPassword { padding-right: 15px !important; padding-left: 48px !important; }
+[dir="rtl"] #toTop { right: auto; left: 20px; }
+[dir="rtl"] .hero-chip-start { left: auto; right: -0.5rem; }
+[dir="rtl"] .hero-chip-end { right: auto; left: -0.5rem; }
+[dir="rtl"] .card-badge { left: auto; right: 0.75rem; }
+[dir="rtl"] .card-hot { right: auto; left: 0.75rem; }
+[dir="rtl"] .media-caption { left: auto; right: 0.75rem; }
+[dir="rtl"] .marquee { animation-direction: reverse; }
+@media (min-width: 640px) {
+  [dir="rtl"] .hero-chip-start { right: 0.5rem; }
+  [dir="rtl"] .hero-chip-end { left: 0.25rem; }
+}
+
+/* The language switch itself */
+.lang-btn {
+  padding: 7px 11px; border-radius: 999px; border: 0; background: transparent; cursor: pointer;
+  font-weight: 600; font-size: 12.5px; color: var(--stone-500); line-height: 1;
+  transition: background-color .3s ease, color .3s ease;
+}
+.lang-btn[aria-pressed="true"] { background: var(--charcoal); color: #FFFFFF; }
+.lang-btn:last-child { font-family: var(--body-ar); font-size: 13.5px; }
+
+/* Engraving preview on the bench */
+.engrave-row { display: flex; gap: 10px; align-items: flex-start; }
+.engrave-count { font: 500 11px/1 var(--mono); color: var(--stone-400); }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
   .marquee { animation: none; }
@@ -389,7 +456,7 @@ a { color: inherit; }
 
 <!-- Tailwind utilities last, so a utility class always wins over the
      component CSS above — the order Tailwind is designed around. -->
-<style id="tw-utilities">.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0}.pointer-events-none{pointer-events:none}.visible{visibility:visible}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.inset-x-0{left:0;right:0}.-left-2{left:-.5rem}.-right-2{right:-.5rem}.bottom-0{bottom:0}.bottom-10{bottom:2.5rem}.bottom-2{bottom:.5rem}.bottom-6{bottom:1.5rem}.left-1{left:.25rem}.left-1\/2{left:50%}.left-2{left:.5rem}.left-3{left:.75rem}.left-3\.5{left:.875rem}.right-0{right:0}.right-1{right:.25rem}.right-3{right:.75rem}.right-5{right:1.25rem}.top-0{top:0}.top-1{top:.25rem}.top-1\/2{top:50%}.top-3{top:.75rem}.top-6{top:1.5rem}.top-\[calc\(100\%\+10px\)\]{top:calc(100% + 10px)}.z-10{z-index:10}.z-40{z-index:40}.z-50{z-index:50}.z-\[80\]{z-index:80}.mb-10{margin-bottom:2.5rem}.mb-2{margin-bottom:.5rem}.mb-2\.5{margin-bottom:.625rem}.mb-3{margin-bottom:.75rem}.mb-5{margin-bottom:1.25rem}.mb-6{margin-bottom:1.5rem}.mb-9{margin-bottom:2.25rem}.ml-4{margin-left:1rem}.ml-auto{margin-left:auto}.mt-0{margin-top:0}.mt-0\.5{margin-top:.125rem}.mt-1{margin-top:.25rem}.mt-1\.5{margin-top:.375rem}.mt-2{margin-top:.5rem}.mt-2\.5{margin-top:.625rem}.mt-3{margin-top:.75rem}.mt-4{margin-top:1rem}.mt-auto{margin-top:auto}.block{display:block}.inline{display:inline}.flex{display:flex}.inline-flex{display:inline-flex}.table{display:table}.grid{display:grid}.hidden{display:none}.\!h-1{height:.25rem!important}.\!h-1\.5{height:.375rem!important}.\!h-7{height:1.75rem!important}.\!h-9{height:2.25rem!important}.\!h-\[6px\]{height:6px!important}.h-10{height:2.5rem}.h-11{height:2.75rem}.h-14{height:3.5rem}.h-16{height:4rem}.h-4{height:1rem}.h-9{height:2.25rem}.h-\[68px\]{height:68px}.h-\[92px\]{height:92px}.max-h-0{max-height:0}.min-h-\[300px\]{min-height:300px}.min-h-\[320px\]{min-height:320px}.min-h-\[380px\]{min-height:380px}.\!w-7{width:1.75rem!important}.\!w-9{width:2.25rem!important}.\!w-auto{width:auto!important}.w-10{width:2.5rem}.w-11{width:2.75rem}.w-12{width:3rem}.w-14{width:3.5rem}.w-16{width:4rem}.w-4{width:1rem}.w-6{width:1.5rem}.w-9{width:2.25rem}.w-\[210px\]{width:210px}.w-\[232px\]{width:232px}.w-\[320px\]{width:320px}.w-\[42px\]{width:42px}.w-\[52px\]{width:52px}.w-\[62px\]{width:62px}.w-\[68px\]{width:68px}.w-full{width:100%}.min-w-0{min-width:0}.max-w-\[300px\]{max-width:300px}.max-w-\[380px\]{max-width:380px}.max-w-\[460px\]{max-width:460px}.max-w-\[540px\]{max-width:540px}.max-w-\[560px\]{max-width:560px}.flex-1{flex:1 1 0%}.shrink-0{flex-shrink:0}.-translate-x-1{--tw-translate-x:-0.25rem}.-translate-x-1,.-translate-x-1\/2{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.-translate-x-1\/2{--tw-translate-x:-50%}.-translate-y-1{--tw-translate-y:-0.25rem}.-translate-y-1,.-translate-y-1\/2{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.-translate-y-1\/2{--tw-translate-y:-50%}.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-pointer{cursor:pointer}.resize{resize:both}.scroll-mt-24{scroll-margin-top:6rem}.appearance-none{-webkit-appearance:none;-moz-appearance:none;appearance:none}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.place-items-center{place-items:center}.items-start{align-items:flex-start}.items-end{align-items:flex-end}.items-center{align-items:center}.items-baseline{align-items:baseline}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-0{gap:0}.gap-0\.5{gap:.125rem}.gap-1{gap:.25rem}.gap-1\.5{gap:.375rem}.gap-10{gap:2.5rem}.gap-12{gap:3rem}.gap-14{gap:3.5rem}.gap-2{gap:.5rem}.gap-2\.5{gap:.625rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.gap-5{gap:1.25rem}.gap-6{gap:1.5rem}.gap-7{gap:1.75rem}.gap-8{gap:2rem}.gap-9{gap:2.25rem}.gap-x-5{-moz-column-gap:1.25rem;column-gap:1.25rem}.gap-y-2{row-gap:.5rem}.gap-y-3{row-gap:.75rem}.self-start{align-self:flex-start}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis}.truncate,.whitespace-nowrap{white-space:nowrap}.text-wrap{text-wrap:wrap}.\!rounded-full{border-radius:9999px!important}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:.5rem}.rounded-xl{border-radius:.75rem}.\!border-0{border-width:0!important}.border{border-width:1px}.border-y{border-top-width:1px}.border-b,.border-y{border-bottom-width:1px}.border-t{border-top-width:1px}.border-transparent{border-color:transparent}.\!bg-transparent{background-color:transparent!important}.\!bg-white{--tw-bg-opacity:1!important;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))!important}.bg-porcelain{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.p-1{padding:.25rem}.p-2{padding:.5rem}.p-3{padding:.75rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.p-7{padding:1.75rem}.\!px-3{padding-left:.75rem!important;padding-right:.75rem!important}.\!px-3\.5{padding-left:.875rem!important;padding-right:.875rem!important}.\!py-1{padding-top:.25rem!important;padding-bottom:.25rem!important}.\!py-1\.5{padding-top:.375rem!important;padding-bottom:.375rem!important}.\!py-2{padding-top:.5rem!important;padding-bottom:.5rem!important}.\!py-2\.5{padding-top:.625rem!important;padding-bottom:.625rem!important}.px-1{padding-left:.25rem;padding-right:.25rem}.px-2{padding-left:.5rem;padding-right:.5rem}.px-2\.5{padding-left:.625rem;padding-right:.625rem}.px-3{padding-left:.75rem;padding-right:.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.px-8{padding-left:2rem;padding-right:2rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}.py-10{padding-top:2.5rem;padding-bottom:2.5rem}.py-12{padding-top:3rem;padding-bottom:3rem}.py-14{padding-top:3.5rem;padding-bottom:3.5rem}.py-16{padding-top:4rem;padding-bottom:4rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.py-2\.5{padding-top:.625rem;padding-bottom:.625rem}.py-3{padding-top:.75rem;padding-bottom:.75rem}.py-3\.5{padding-top:.875rem;padding-bottom:.875rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-5{padding-top:1.25rem;padding-bottom:1.25rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.py-7{padding-top:1.75rem;padding-bottom:1.75rem}.\!pl-10{padding-left:2.5rem!important}.\!pl-3{padding-left:.75rem!important}.\!pl-3\.5{padding-left:.875rem!important}.\!pr-12{padding-right:3rem!important}.\!pr-3{padding-right:.75rem!important}.\!pr-8{padding-right:2rem!important}.pb-1{padding-bottom:.25rem}.pb-4{padding-bottom:1rem}.pb-6{padding-bottom:1.5rem}.pl-2{padding-left:.5rem}.pr-4{padding-right:1rem}.pr-6{padding-right:1.5rem}.pt-1{padding-top:.25rem}.pt-16{padding-top:4rem}.pt-2{padding-top:.5rem}.pt-4{padding-top:1rem}.pt-5{padding-top:1.25rem}.pt-\[68px\]{padding-top:68px}.text-left{text-align:left}.text-center{text-align:center}.text-right{text-align:right}.font-display{font-family:Marcellus,Georgia,serif}.font-mono{font-family:IBM Plex Mono,ui-monospace,Menlo,monospace}.\!text-\[10\.5px\]{font-size:10.5px!important}.text-\[10\.5px\]{font-size:10.5px}.text-\[10px\]{font-size:10px}.text-\[11\.5px\]{font-size:11.5px}.text-\[11px\]{font-size:11px}.text-\[12\.5px\]{font-size:12.5px}.text-\[12px\]{font-size:12px}.text-\[13\.5px\]{font-size:13.5px}.text-\[13px\]{font-size:13px}.text-\[14\.5px\]{font-size:14.5px}.text-\[14px\]{font-size:14px}.text-\[15\.5px\]{font-size:15.5px}.text-\[15px\]{font-size:15px}.text-\[16\.5px\]{font-size:16.5px}.text-\[16px\]{font-size:16px}.text-\[17px\]{font-size:17px}.text-\[18px\]{font-size:18px}.text-\[19px\]{font-size:19px}.text-\[20px\]{font-size:20px}.text-\[21px\]{font-size:21px}.text-\[22px\]{font-size:22px}.text-\[24px\]{font-size:24px}.text-\[26px\]{font-size:26px}.text-\[30px\]{font-size:30px}.text-\[32px\]{font-size:32px}.text-\[54px\]{font-size:54px}.text-\[8\.5px\]{font-size:8.5px}.text-\[9\.5px\]{font-size:9.5px}.text-\[clamp\(1\.6rem\2c 3\.4vw\2c 2\.2rem\)\]{font-size:clamp(1.6rem,3.4vw,2.2rem)}.text-\[clamp\(1\.7rem\2c 3\.4vw\2c 2\.3rem\)\]{font-size:clamp(1.7rem,3.4vw,2.3rem)}.text-\[clamp\(1\.9rem\2c 4vw\2c 2\.7rem\)\]{font-size:clamp(1.9rem,4vw,2.7rem)}.text-\[clamp\(2\.45rem\2c 6\.2vw\2c 4\.15rem\)\]{font-size:clamp(2.45rem,6.2vw,4.15rem)}.font-medium{font-weight:500}.uppercase{text-transform:uppercase}.leading-\[1\.04\]{line-height:1.04}.leading-\[1\.12\]{line-height:1.12}.leading-none{line-height:1}.leading-relaxed{line-height:1.625}.leading-snug{line-height:1.375}.leading-tight{line-height:1.25}.tracking-\[0\.12em\]{letter-spacing:.12em}.tracking-\[0\.14em\]{letter-spacing:.14em}.tracking-\[0\.16em\]{letter-spacing:.16em}.tracking-\[0\.18em\]{letter-spacing:.18em}.tracking-\[0\.1em\]{letter-spacing:.1em}.tracking-\[0\.22em\]{letter-spacing:.22em}.tracking-\[0\.24em\]{letter-spacing:.24em}.tracking-\[0\.2em\]{letter-spacing:.2em}.tracking-\[0\.3em\]{letter-spacing:.3em}.tracking-wide{letter-spacing:.025em}.tracking-wider{letter-spacing:.05em}.text-charcoal{--tw-text-opacity:1;color:rgb(33 33 33/var(--tw-text-opacity,1))}.text-stone-400{--tw-text-opacity:1;color:rgb(169 164 155/var(--tw-text-opacity,1))}.text-stone-500{--tw-text-opacity:1;color:rgb(110 106 99/var(--tw-text-opacity,1))}.text-stone-600{--tw-text-opacity:1;color:rgb(74 71 65/var(--tw-text-opacity,1))}.underline{text-decoration-line:underline}.line-through{text-decoration-line:line-through}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.accent-\[\#D4AF37\]{accent-color:#d4af37}.opacity-0{opacity:0}.shadow{--tw-shadow:0 1px 3px 0 rgba(0,0,0,.1),0 1px 2px -1px rgba(0,0,0,.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color),0 1px 2px -1px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.outline{outline-style:solid}.ring{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.blur{--tw-blur:blur(8px)}.blur,.filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.backdrop-filter{-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,-webkit-backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter,-webkit-backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-\[background-color\2c border-color\2c box-shadow\]{transition-property:background-color,border-color,box-shadow;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-\[max-height\]{transition-property:max-height;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-colors{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-opacity{transition-property:opacity;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.duration-500{transition-duration:.5s}.ease-in-out{transition-timing-function:cubic-bezier(.4,0,.2,1)}.hover\:bg-linen:hover{--tw-bg-opacity:1;background-color:rgb(250 249 246/var(--tw-bg-opacity,1))}.hover\:text-charcoal:hover{--tw-text-opacity:1;color:rgb(33 33 33/var(--tw-text-opacity,1))}.focus\:not-sr-only:focus{position:static;width:auto;height:auto;padding:0;margin:0;overflow:visible;clip:auto;white-space:normal}.focus\:fixed:focus{position:fixed}.focus\:left-4:focus{left:1rem}.focus\:top-4:focus{top:1rem}.focus\:z-\[95\]:focus{z-index:95}.focus\:rounded-full:focus{border-radius:9999px}.focus\:bg-charcoal:focus{--tw-bg-opacity:1;background-color:rgb(33 33 33/var(--tw-bg-opacity,1))}.focus\:px-4:focus{padding-left:1rem;padding-right:1rem}.focus\:py-2:focus{padding-top:.5rem;padding-bottom:.5rem}.focus\:text-sm:focus{font-size:.875rem;line-height:1.25rem}.focus\:text-white:focus{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}@media (min-width:640px){.sm\:left-2{left:.5rem}.sm\:right-1{right:.25rem}.sm\:block{display:block}.sm\:min-h-\[380px\]{min-height:380px}.sm\:min-h-\[460px\]{min-height:460px}.sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.sm\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.sm\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.sm\:flex-row{flex-direction:row}.sm\:justify-start{justify-content:flex-start}.sm\:gap-2{gap:.5rem}.sm\:gap-5{gap:1.25rem}.sm\:p-10{padding:2.5rem}.sm\:p-8{padding:2rem}}@media (min-width:768px){.md\:block{display:block}.md\:hidden{display:none}.md\:h-\[76px\]{height:76px}.md\:flex-row{flex-direction:row}.md\:items-center{align-items:center}.md\:py-20{padding-top:5rem;padding-bottom:5rem}.md\:py-24{padding-top:6rem;padding-bottom:6rem}.md\:pt-20{padding-top:5rem}.md\:pt-\[76px\]{padding-top:76px}}@media (min-width:1024px){.lg\:sticky{position:sticky}.lg\:top-28{top:7rem}.lg\:flex{display:flex}.lg\:hidden{display:none}.lg\:min-h-\[520px\]{min-height:520px}.lg\:w-\[248px\]{width:248px}.lg\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.lg\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.lg\:grid-cols-\[0\.85fr_1\.15fr\]{grid-template-columns:.85fr 1.15fr}.lg\:grid-cols-\[1\.02fr_0\.98fr\]{grid-template-columns:1.02fr .98fr}.lg\:grid-cols-\[1\.1fr_0\.9fr\]{grid-template-columns:1.1fr .9fr}.lg\:grid-cols-\[1\.3fr_repeat\(3\2c 0\.9fr\)\]{grid-template-columns:1.3fr repeat(3,.9fr)}.lg\:grid-cols-\[340px_1fr\]{grid-template-columns:340px 1fr}.lg\:gap-12{gap:3rem}.lg\:gap-16{gap:4rem}.lg\:gap-8{gap:2rem}.lg\:border-l{border-left-width:1px}.lg\:border-t-0{border-top-width:0}.lg\:py-24{padding-top:6rem;padding-bottom:6rem}}</style>
+<style id="tw-utilities">.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0}.pointer-events-none{pointer-events:none}.visible{visibility:visible}.static{position:static}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.inset-x-0{left:0;right:0}.-left-2{left:-.5rem}.-right-2{right:-.5rem}.bottom-0{bottom:0}.bottom-10{bottom:2.5rem}.bottom-2{bottom:.5rem}.bottom-6{bottom:1.5rem}.left-1{left:.25rem}.left-1\/2{left:50%}.left-2{left:.5rem}.left-3{left:.75rem}.left-3\.5{left:.875rem}.left-4{left:1rem}.right-0{right:0}.right-1{right:.25rem}.right-3{right:.75rem}.right-5{right:1.25rem}.top-0{top:0}.top-1{top:.25rem}.top-1\/2{top:50%}.top-3{top:.75rem}.top-4{top:1rem}.top-6{top:1.5rem}.top-\[calc\(100\%\+10px\)\]{top:calc(100% + 10px)}.z-10{z-index:10}.z-40{z-index:40}.z-50{z-index:50}.z-\[80\]{z-index:80}.mb-1{margin-bottom:.25rem}.mb-10{margin-bottom:2.5rem}.mb-2{margin-bottom:.5rem}.mb-2\.5{margin-bottom:.625rem}.mb-3{margin-bottom:.75rem}.mb-5{margin-bottom:1.25rem}.mb-6{margin-bottom:1.5rem}.mb-9{margin-bottom:2.25rem}.ml-4{margin-left:1rem}.ml-auto{margin-left:auto}.mt-0{margin-top:0}.mt-0\.5{margin-top:.125rem}.mt-1{margin-top:.25rem}.mt-1\.5{margin-top:.375rem}.mt-2{margin-top:.5rem}.mt-2\.5{margin-top:.625rem}.mt-3{margin-top:.75rem}.mt-4{margin-top:1rem}.mt-auto{margin-top:auto}.block{display:block}.inline{display:inline}.flex{display:flex}.inline-flex{display:inline-flex}.table{display:table}.grid{display:grid}.hidden{display:none}.\!h-1{height:.25rem!important}.\!h-1\.5{height:.375rem!important}.\!h-7{height:1.75rem!important}.\!h-9{height:2.25rem!important}.\!h-\[6px\]{height:6px!important}.h-10{height:2.5rem}.h-11{height:2.75rem}.h-14{height:3.5rem}.h-16{height:4rem}.h-4{height:1rem}.h-9{height:2.25rem}.h-\[68px\]{height:68px}.h-\[92px\]{height:92px}.max-h-0{max-height:0}.min-h-\[300px\]{min-height:300px}.min-h-\[320px\]{min-height:320px}.min-h-\[380px\]{min-height:380px}.\!w-7{width:1.75rem!important}.\!w-9{width:2.25rem!important}.\!w-auto{width:auto!important}.w-10{width:2.5rem}.w-11{width:2.75rem}.w-12{width:3rem}.w-14{width:3.5rem}.w-16{width:4rem}.w-4{width:1rem}.w-6{width:1.5rem}.w-9{width:2.25rem}.w-\[210px\]{width:210px}.w-\[232px\]{width:232px}.w-\[320px\]{width:320px}.w-\[42px\]{width:42px}.w-\[52px\]{width:52px}.w-\[62px\]{width:62px}.w-\[68px\]{width:68px}.w-full{width:100%}.min-w-0{min-width:0}.max-w-\[300px\]{max-width:300px}.max-w-\[380px\]{max-width:380px}.max-w-\[460px\]{max-width:460px}.max-w-\[540px\]{max-width:540px}.max-w-\[560px\]{max-width:560px}.flex-1{flex:1 1 0%}.shrink-0{flex-shrink:0}.-translate-x-1{--tw-translate-x:-0.25rem}.-translate-x-1,.-translate-x-1\/2{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.-translate-x-1\/2{--tw-translate-x:-50%}.-translate-y-1{--tw-translate-y:-0.25rem}.-translate-y-1,.-translate-y-1\/2{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.-translate-y-1\/2{--tw-translate-y:-50%}.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-pointer{cursor:pointer}.resize{resize:both}.scroll-mt-24{scroll-margin-top:6rem}.appearance-none{-webkit-appearance:none;-moz-appearance:none;appearance:none}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.place-items-center{place-items:center}.items-start{align-items:flex-start}.items-end{align-items:flex-end}.items-center{align-items:center}.items-baseline{align-items:baseline}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-0{gap:0}.gap-0\.5{gap:.125rem}.gap-1{gap:.25rem}.gap-1\.5{gap:.375rem}.gap-10{gap:2.5rem}.gap-12{gap:3rem}.gap-14{gap:3.5rem}.gap-2{gap:.5rem}.gap-2\.5{gap:.625rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.gap-5{gap:1.25rem}.gap-6{gap:1.5rem}.gap-7{gap:1.75rem}.gap-8{gap:2rem}.gap-9{gap:2.25rem}.gap-x-5{-moz-column-gap:1.25rem;column-gap:1.25rem}.gap-y-2{row-gap:.5rem}.gap-y-3{row-gap:.75rem}.self-start{align-self:flex-start}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis}.truncate,.whitespace-nowrap{white-space:nowrap}.text-wrap{text-wrap:wrap}.\!rounded-full{border-radius:9999px!important}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:.5rem}.rounded-xl{border-radius:.75rem}.\!border-0{border-width:0!important}.border{border-width:1px}.border-y{border-top-width:1px}.border-b,.border-y{border-bottom-width:1px}.border-t{border-top-width:1px}.border-transparent{border-color:transparent}.\!bg-transparent{background-color:transparent!important}.\!bg-white{--tw-bg-opacity:1!important;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))!important}.bg-porcelain{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.p-1{padding:.25rem}.p-2{padding:.5rem}.p-3{padding:.75rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.p-7{padding:1.75rem}.p-8{padding:2rem}.\!px-3{padding-left:.75rem!important;padding-right:.75rem!important}.\!px-3\.5{padding-left:.875rem!important;padding-right:.875rem!important}.\!py-1{padding-top:.25rem!important;padding-bottom:.25rem!important}.\!py-1\.5{padding-top:.375rem!important;padding-bottom:.375rem!important}.\!py-2{padding-top:.5rem!important;padding-bottom:.5rem!important}.\!py-2\.5{padding-top:.625rem!important;padding-bottom:.625rem!important}.px-1{padding-left:.25rem;padding-right:.25rem}.px-2{padding-left:.5rem;padding-right:.5rem}.px-2\.5{padding-left:.625rem;padding-right:.625rem}.px-3{padding-left:.75rem;padding-right:.75rem}.px-3\.5{padding-left:.875rem;padding-right:.875rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.px-8{padding-left:2rem;padding-right:2rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}.py-10{padding-top:2.5rem;padding-bottom:2.5rem}.py-12{padding-top:3rem;padding-bottom:3rem}.py-14{padding-top:3.5rem;padding-bottom:3.5rem}.py-16{padding-top:4rem;padding-bottom:4rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.py-2\.5{padding-top:.625rem;padding-bottom:.625rem}.py-3{padding-top:.75rem;padding-bottom:.75rem}.py-3\.5{padding-top:.875rem;padding-bottom:.875rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-5{padding-top:1.25rem;padding-bottom:1.25rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.py-7{padding-top:1.75rem;padding-bottom:1.75rem}.\!pl-10{padding-left:2.5rem!important}.\!pl-3{padding-left:.75rem!important}.\!pl-3\.5{padding-left:.875rem!important}.\!pr-12{padding-right:3rem!important}.\!pr-3{padding-right:.75rem!important}.\!pr-8{padding-right:2rem!important}.pb-1{padding-bottom:.25rem}.pb-4{padding-bottom:1rem}.pb-6{padding-bottom:1.5rem}.pl-2{padding-left:.5rem}.pr-4{padding-right:1rem}.pr-6{padding-right:1.5rem}.pt-1{padding-top:.25rem}.pt-16{padding-top:4rem}.pt-2{padding-top:.5rem}.pt-4{padding-top:1rem}.pt-5{padding-top:1.25rem}.pt-\[68px\]{padding-top:68px}.text-left{text-align:left}.text-center{text-align:center}.text-right{text-align:right}.font-display{font-family:Marcellus,Georgia,serif}.font-mono{font-family:IBM Plex Mono,ui-monospace,Menlo,monospace}.\!text-\[10\.5px\]{font-size:10.5px!important}.text-\[10\.5px\]{font-size:10.5px}.text-\[10px\]{font-size:10px}.text-\[11\.5px\]{font-size:11.5px}.text-\[11px\]{font-size:11px}.text-\[12\.5px\]{font-size:12.5px}.text-\[12px\]{font-size:12px}.text-\[13\.5px\]{font-size:13.5px}.text-\[13px\]{font-size:13px}.text-\[14\.5px\]{font-size:14.5px}.text-\[14px\]{font-size:14px}.text-\[15\.5px\]{font-size:15.5px}.text-\[15px\]{font-size:15px}.text-\[16\.5px\]{font-size:16.5px}.text-\[16px\]{font-size:16px}.text-\[17px\]{font-size:17px}.text-\[18px\]{font-size:18px}.text-\[19px\]{font-size:19px}.text-\[20px\]{font-size:20px}.text-\[21px\]{font-size:21px}.text-\[22px\]{font-size:22px}.text-\[24px\]{font-size:24px}.text-\[26px\]{font-size:26px}.text-\[30px\]{font-size:30px}.text-\[32px\]{font-size:32px}.text-\[34px\]{font-size:34px}.text-\[54px\]{font-size:54px}.text-\[8\.5px\]{font-size:8.5px}.text-\[9\.5px\]{font-size:9.5px}.text-\[clamp\(1\.6rem\2c 3\.4vw\2c 2\.2rem\)\]{font-size:clamp(1.6rem,3.4vw,2.2rem)}.text-\[clamp\(1\.7rem\2c 3\.4vw\2c 2\.3rem\)\]{font-size:clamp(1.7rem,3.4vw,2.3rem)}.text-\[clamp\(1\.7rem\2c 3\.4vw\2c 2\.4rem\)\]{font-size:clamp(1.7rem,3.4vw,2.4rem)}.text-\[clamp\(1\.9rem\2c 4vw\2c 2\.7rem\)\]{font-size:clamp(1.9rem,4vw,2.7rem)}.text-\[clamp\(2\.45rem\2c 6\.2vw\2c 4\.15rem\)\]{font-size:clamp(2.45rem,6.2vw,4.15rem)}.font-medium{font-weight:500}.uppercase{text-transform:uppercase}.leading-\[1\.04\]{line-height:1.04}.leading-\[1\.12\]{line-height:1.12}.leading-none{line-height:1}.leading-relaxed{line-height:1.625}.leading-snug{line-height:1.375}.leading-tight{line-height:1.25}.tracking-\[0\.12em\]{letter-spacing:.12em}.tracking-\[0\.14em\]{letter-spacing:.14em}.tracking-\[0\.16em\]{letter-spacing:.16em}.tracking-\[0\.18em\]{letter-spacing:.18em}.tracking-\[0\.1em\]{letter-spacing:.1em}.tracking-\[0\.22em\]{letter-spacing:.22em}.tracking-\[0\.24em\]{letter-spacing:.24em}.tracking-\[0\.2em\]{letter-spacing:.2em}.tracking-\[0\.3em\]{letter-spacing:.3em}.tracking-wide{letter-spacing:.025em}.tracking-wider{letter-spacing:.05em}.text-charcoal{--tw-text-opacity:1;color:rgb(33 33 33/var(--tw-text-opacity,1))}.text-stone-400{--tw-text-opacity:1;color:rgb(169 164 155/var(--tw-text-opacity,1))}.text-stone-500{--tw-text-opacity:1;color:rgb(110 106 99/var(--tw-text-opacity,1))}.text-stone-600{--tw-text-opacity:1;color:rgb(74 71 65/var(--tw-text-opacity,1))}.underline{text-decoration-line:underline}.line-through{text-decoration-line:line-through}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.accent-\[\#D4AF37\]{accent-color:#d4af37}.opacity-0{opacity:0}.shadow{--tw-shadow:0 1px 3px 0 rgba(0,0,0,.1),0 1px 2px -1px rgba(0,0,0,.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color),0 1px 2px -1px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.outline{outline-style:solid}.ring{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.blur{--tw-blur:blur(8px)}.blur,.filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.backdrop-filter{-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,-webkit-backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter,-webkit-backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-\[background-color\2c border-color\2c box-shadow\]{transition-property:background-color,border-color,box-shadow;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-\[max-height\]{transition-property:max-height;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-colors{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-opacity{transition-property:opacity;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.duration-500{transition-duration:.5s}.ease-in-out{transition-timing-function:cubic-bezier(.4,0,.2,1)}.hover\:bg-linen:hover{--tw-bg-opacity:1;background-color:rgb(250 249 246/var(--tw-bg-opacity,1))}.hover\:text-charcoal:hover{--tw-text-opacity:1;color:rgb(33 33 33/var(--tw-text-opacity,1))}.focus\:not-sr-only:focus{position:static;width:auto;height:auto;padding:0;margin:0;overflow:visible;clip:auto;white-space:normal}.focus\:fixed:focus{position:fixed}.focus\:left-4:focus{left:1rem}.focus\:top-4:focus{top:1rem}.focus\:z-\[95\]:focus{z-index:95}.focus\:rounded-full:focus{border-radius:9999px}.focus\:bg-charcoal:focus{--tw-bg-opacity:1;background-color:rgb(33 33 33/var(--tw-bg-opacity,1))}.focus\:px-4:focus{padding-left:1rem;padding-right:1rem}.focus\:py-2:focus{padding-top:.5rem;padding-bottom:.5rem}.focus\:text-sm:focus{font-size:.875rem;line-height:1.25rem}.focus\:text-white:focus{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}@media (min-width:640px){.sm\:left-2{left:.5rem}.sm\:right-1{right:.25rem}.sm\:block{display:block}.sm\:flex{display:flex}.sm\:min-h-\[380px\]{min-height:380px}.sm\:min-h-\[460px\]{min-height:460px}.sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.sm\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.sm\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.sm\:flex-row{flex-direction:row}.sm\:justify-start{justify-content:flex-start}.sm\:gap-2{gap:.5rem}.sm\:gap-5{gap:1.25rem}.sm\:p-10{padding:2.5rem}.sm\:p-8{padding:2rem}}@media (min-width:768px){.md\:block{display:block}.md\:hidden{display:none}.md\:h-\[76px\]{height:76px}.md\:flex-row{flex-direction:row}.md\:items-center{align-items:center}.md\:py-20{padding-top:5rem;padding-bottom:5rem}.md\:py-24{padding-top:6rem;padding-bottom:6rem}.md\:pt-20{padding-top:5rem}.md\:pt-\[76px\]{padding-top:76px}}@media (min-width:1024px){.lg\:sticky{position:sticky}.lg\:top-28{top:7rem}.lg\:min-h-\[520px\]{min-height:520px}.lg\:w-\[248px\]{width:248px}.lg\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.lg\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.lg\:grid-cols-\[0\.85fr_1\.15fr\]{grid-template-columns:.85fr 1.15fr}.lg\:grid-cols-\[0\.95fr_1\.05fr\]{grid-template-columns:.95fr 1.05fr}.lg\:grid-cols-\[0\.9fr_1\.1fr\]{grid-template-columns:.9fr 1.1fr}.lg\:grid-cols-\[1\.02fr_0\.98fr\]{grid-template-columns:1.02fr .98fr}.lg\:grid-cols-\[1\.1fr_0\.9fr\]{grid-template-columns:1.1fr .9fr}.lg\:grid-cols-\[1\.3fr_repeat\(3\2c 0\.9fr\)\]{grid-template-columns:1.3fr repeat(3,.9fr)}.lg\:grid-cols-\[340px_1fr\]{grid-template-columns:340px 1fr}.lg\:gap-12{gap:3rem}.lg\:gap-14{gap:3.5rem}.lg\:gap-16{gap:4rem}.lg\:gap-8{gap:2rem}.lg\:border-l{border-left-width:1px}.lg\:border-t-0{border-top-width:0}.lg\:py-24{padding-top:6rem;padding-bottom:6rem}}@media (min-width:1280px){.xl\:flex{display:flex}.xl\:hidden{display:none}}</style>
 
 <a href="#collection" class="sr-only focus:not-sr-only focus:fixed focus:z-[95] focus:left-4 focus:top-4 focus:bg-charcoal focus:text-white focus:px-4 focus:py-2 focus:rounded-full focus:text-sm">Skip to the collection</a>
 
@@ -413,7 +480,7 @@ a { color: inherit; }
         </span>
       </a>
 
-      <nav class="hidden lg:flex items-center gap-7 ml-4 text-[13.5px] font-medium text-stone-600" aria-label="Sections">
+      <nav class="hidden xl:flex items-center gap-7 ml-4 text-[13.5px] font-medium text-stone-600" aria-label="Sections">
         <a href="#collection" class="whitespace-nowrap hover:text-charcoal transition-colors">Collection</a>
         <a href="#insulation" class="whitespace-nowrap hover:text-charcoal transition-colors">Insulation</a>
         <a href="#reviews" class="whitespace-nowrap hover:text-charcoal transition-colors">Reviews</a>
@@ -424,12 +491,19 @@ a { color: inherit; }
       <!-- Search: filters the live catalogue as you type. -->
       <div class="relative ml-auto hidden md:block w-[210px] lg:w-[248px]">
         <label for="searchInput" class="sr-only">Search the collection</label>
-        <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6E6A63" stroke-width="2" aria-hidden="true">
+        <svg class="search-icon absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6E6A63" stroke-width="2" aria-hidden="true">
           <circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/>
         </svg>
         <input id="searchInput" type="search" placeholder="Search tumblers, mugs…" autocomplete="off"
                class="field !py-2.5 !pl-10 !pr-3 !rounded-full text-[13px]">
         <div id="searchResults" class="hidden absolute top-[calc(100%+10px)] right-0 w-[320px] panel p-2 z-10" style="box-shadow:var(--shadow-lift)" role="listbox" aria-label="Search results"></div>
+      </div>
+
+      <!-- Language: swaps every string and flips the whole layout to RTL. -->
+      <div class="hidden sm:flex items-center gap-0.5 p-1 rounded-full shrink-0" id="langSwitch"
+           style="background:rgba(255,255,255,.55);border:1px solid var(--hairline)" role="group" aria-label="Language">
+        <button type="button" class="lang-btn" data-lang="en" aria-pressed="true" lang="en">EN</button>
+        <button type="button" class="lang-btn" data-lang="ar" aria-pressed="false" lang="ar">عربي</button>
       </div>
 
       <!-- Currency: every price on the page re-renders from this. -->
@@ -440,8 +514,9 @@ a { color: inherit; }
           <option value="EUR">EUR €</option>
           <option value="GBP">GBP £</option>
           <option value="KWD">KWD د.ك</option>
+          <option value="SAR">SAR ر.س</option>
         </select>
-        <svg class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#6E6A63" stroke-width="2.5" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg>
+        <svg class="sel-chevron absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#6E6A63" stroke-width="2.5" aria-hidden="true"><path d="m5 9 7 7 7-7"/></svg>
       </div>
 
       <div class="flex items-center gap-1.5 sm:gap-2">
@@ -460,7 +535,7 @@ a { color: inherit; }
           <span id="cartCount" class="cart-count tnum" aria-hidden="true">0</span>
         </button>
 
-        <button type="button" id="menuBtn" class="icon-btn lg:hidden" aria-label="Menu" aria-expanded="false">
+        <button type="button" id="menuBtn" class="icon-btn xl:hidden" aria-label="Menu" aria-expanded="false">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#212121" stroke-width="1.8" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
         </button>
       </div>
@@ -468,7 +543,7 @@ a { color: inherit; }
   </div>
 
   <!-- Mobile sheet -->
-  <div id="mobileMenu" class="lg:hidden overflow-hidden max-h-0 transition-[max-height] duration-500 bg-porcelain border-b" style="border-color:var(--hairline);transition-timing-function:cubic-bezier(0.22,1,0.36,1)">
+  <div id="mobileMenu" class="xl:hidden overflow-hidden max-h-0 transition-[max-height] duration-500 bg-porcelain border-b" style="border-color:var(--hairline);transition-timing-function:cubic-bezier(0.22,1,0.36,1)">
     <div class="shell py-5 flex flex-col gap-1">
       <div class="relative mb-3 md:hidden">
         <label for="searchInputMobile" class="sr-only">Search the collection</label>
@@ -480,12 +555,20 @@ a { color: inherit; }
       <a href="#story" class="py-2.5 font-display text-[19px] border-b" style="border-color:var(--hairline)">Our story</a>
       <a href="#faq" class="py-2.5 font-display text-[19px]">Support</a>
       <div class="flex items-center gap-3 pt-4">
+        <span class="eyebrow">Language</span>
+        <div class="flex items-center gap-0.5 p-1 rounded-full" style="background:var(--linen);border:1px solid var(--hairline)" role="group" aria-label="Language">
+          <button type="button" class="lang-btn" data-lang="en" aria-pressed="true" lang="en">EN</button>
+          <button type="button" class="lang-btn" data-lang="ar" aria-pressed="false" lang="ar">عربي</button>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 pt-1">
         <label for="currencySelectMobile" class="eyebrow">Currency</label>
         <select id="currencySelectMobile" class="field !py-2 !w-auto !rounded-full text-[12.5px] font-mono cursor-pointer">
           <option value="USD">USD $</option>
           <option value="EUR">EUR €</option>
           <option value="GBP">GBP £</option>
           <option value="KWD">KWD د.ك</option>
+          <option value="SAR">SAR ر.س</option>
         </select>
       </div>
     </div>
@@ -504,7 +587,7 @@ a { color: inherit; }
     <div class="shell grid lg:grid-cols-[1.02fr_0.98fr] gap-12 lg:gap-8 items-center py-14 md:py-20 lg:py-24">
 
       <div class="flex flex-col items-start gap-7 max-w-[560px]">
-        <div class="glass inline-flex items-center gap-3 pl-2 pr-4 py-2 rounded-full">
+        <div class="glass inline-flex items-center gap-3 px-3.5 py-2 rounded-full">
           <span class="flex items-center gap-0.5" id="heroStars" aria-hidden="true"></span>
           <span class="font-mono text-[11.5px] tracking-wide text-stone-600 tnum">4.8 · 2,417 verified reviews</span>
         </div>
@@ -527,6 +610,12 @@ a { color: inherit; }
           <a href="#collection" class="btn btn-ghost">Explore the collection</a>
         </div>
 
+        <p class="flex items-center gap-2 font-mono text-[10.5px] tracking-[0.14em]" style="color:var(--stone-500)">
+          <span class="pulse-dot" aria-hidden="true"></span>
+          <span id="liveCounter" class="tnum">Line 04 running · 128 shipped today</span>
+          <span style="color:var(--stone-400)">· demo counter</span>
+        </p>
+
         <div class="flex flex-wrap gap-2.5 pt-1">
           <span class="spec-chip"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4F8A5B" stroke-width="2.4" aria-hidden="true"><path d="m4 12.5 5 5L20 6.5"/></svg>BPA-free, no plastic sip path</span>
           <span class="spec-chip"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4F8A5B" stroke-width="2.4" aria-hidden="true"><path d="m4 12.5 5 5L20 6.5"/></svg>Leak-proof SnapSeal lid</span>
@@ -539,7 +628,7 @@ a { color: inherit; }
         <div class="wash" style="inset:12% 14%; background:radial-gradient(circle at 50% 45%, rgba(227,242,253,.95), rgba(232,245,233,.55) 58%, transparent 72%)" data-depth="6"></div>
 
         <div class="stage" id="heroTilt">
-          <div class="absolute -left-2 sm:left-2 top-6 glass rounded-2xl px-4 py-3 flex items-center gap-3" data-depth="26" style="z-index:3">
+          <div class="hero-chip-start absolute -left-2 sm:left-2 top-6 glass rounded-2xl px-4 py-3 flex items-center gap-3" data-depth="26" style="z-index:3">
             <span class="grid place-items-center w-9 h-9 rounded-full" style="background:rgba(226,114,91,.14)">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E2725B" stroke-width="1.9" aria-hidden="true"><path d="M12 3v10.2M12 3c-2 2.6-3.4 4.6-3.4 6.4a3.4 3.4 0 0 0 6.8 0C15.4 7.6 14 5.6 12 3Z"/><path d="M8 17.5c1.2-1.2 2.7-1.2 4 0s2.8 1.2 4 0"/></svg>
             </span>
@@ -549,7 +638,7 @@ a { color: inherit; }
             </span>
           </div>
 
-          <div class="absolute -right-2 sm:right-1 bottom-10 glass rounded-2xl px-4 py-3 flex items-center gap-3" data-depth="34" style="z-index:3">
+          <div class="hero-chip-end absolute -right-2 sm:right-1 bottom-10 glass rounded-2xl px-4 py-3 flex items-center gap-3" data-depth="34" style="z-index:3">
             <span class="grid place-items-center w-9 h-9 rounded-full" style="background:rgba(74,144,194,.14)">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4A90C2" stroke-width="1.9" aria-hidden="true"><path d="M12 3v18M4.2 7.5l15.6 9M19.8 7.5 4.2 16.5"/></svg>
             </span>
@@ -683,6 +772,27 @@ a { color: inherit; }
 
             <hr class="rule">
 
+            <!-- The custom bench: free laser engraving, previewed live on the vessel -->
+            <div class="flex flex-col gap-3">
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <span class="eyebrow">The custom bench · free engraving</span>
+                <label class="flex items-center gap-2 text-[13px]" style="color:var(--stone-600)">
+                  <input id="engraveOn" type="checkbox" class="w-4 h-4 accent-[#D4AF37]"> Engrave this one
+                </label>
+              </div>
+              <div class="engrave-row">
+                <div class="flex-1">
+                  <label for="engraveText" class="sr-only">Engraving text</label>
+                  <input id="engraveText" type="text" maxlength="14" autocomplete="off" disabled
+                         class="field !py-2.5 uppercase font-mono tracking-[0.18em] text-[13px]" placeholder="LAYLA">
+                </div>
+                <span class="engrave-count pt-4 tnum" id="engraveCount">0 / 14</span>
+              </div>
+              <p class="text-[12.5px]" style="color:var(--stone-500)">Laser-etched onto the body at no charge, up to fourteen characters, numbered on the base. Engraved vessels are final sale.</p>
+            </div>
+
+            <hr class="rule">
+
             <!-- Purchase -->
             <div class="flex flex-col sm:flex-row gap-3">
               <div class="flex items-center justify-between sm:justify-start gap-1 rounded-full p-1" style="background:var(--linen);border:1px solid var(--hairline-firm)">
@@ -698,9 +808,9 @@ a { color: inherit; }
             </div>
 
             <div class="grid sm:grid-cols-3 gap-3 font-mono text-[10.5px] tracking-[0.14em]" style="color:var(--stone-500)">
-              <span class="flex items-center gap-2"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6E6A63" stroke-width="1.8" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.8"/><circle cx="17.5" cy="18" r="1.8"/></svg>FREE OVER $50</span>
+              <span class="flex items-center gap-2"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6E6A63" stroke-width="1.8" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.8"/><circle cx="17.5" cy="18" r="1.8"/></svg>FREE DELIVERY IN KUWAIT</span>
               <span class="flex items-center gap-2"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6E6A63" stroke-width="1.8" aria-hidden="true"><path d="M12 3l7 3v5.5c0 4.3-2.9 7.6-7 9.5-4.1-1.9-7-5.2-7-9.5V6l7-3Z"/></svg>LIFETIME WARRANTY</span>
-              <span class="flex items-center gap-2"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6E6A63" stroke-width="1.8" aria-hidden="true"><path d="M4 12a8 8 0 1 0 8-8"/><path d="M4 5v7h7"/></svg>60-DAY RETURNS</span>
+              <span class="flex items-center gap-2"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6E6A63" stroke-width="1.8" aria-hidden="true"><path d="M4 12a8 8 0 1 0 8-8"/><path d="M4 5v7h7"/></svg>30-DAY RETURNS</span>
             </div>
           </div>
         </div>
@@ -768,6 +878,82 @@ a { color: inherit; }
           <p class="text-[14.5px]" style="color:var(--stone-500)">水 — the name is a reminder of what a reusable vessel is really for: one fewer paper cup, every single morning.</p>
         </article>
       </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       Mug of the Month — one café, one colourway, four hundred numbered.
+       ======================================================================== -->
+  <section id="drop" class="scroll-mt-24 py-16 md:py-24" style="background:
+      radial-gradient(660px 460px at 84% 14%, rgba(255,106,31,.10), transparent 62%),
+      var(--porcelain)">
+    <div class="shell">
+      <div class="panel overflow-hidden reveal" style="box-shadow:var(--shadow-lift)">
+        <div class="grid lg:grid-cols-[0.9fr_1.1fr]">
+          <div class="relative grid place-items-center p-8" style="background:linear-gradient(160deg,#FFF6EE,#FFE9D6)">
+            <span class="absolute top-4 left-4 card-badge font-mono text-[9.5px] tracking-[0.16em] px-2.5 py-1 rounded-full" style="background:var(--charcoal);color:#fff">DROP 01</span>
+            <div id="dropArt"></div>
+          </div>
+          <div class="p-7 sm:p-10 flex flex-col gap-5 border-t lg:border-t-0 lg:border-l" style="border-color:var(--hairline)">
+            <div class="flex flex-col gap-3">
+              <p class="eyebrow">Mug of the Month</p>
+              <h2 class="font-display text-[clamp(1.7rem,3.4vw,2.4rem)] leading-tight text-charcoal">Ember Orange, made with a Kuwait café</h2>
+              <p class="text-[15.5px] leading-relaxed" style="color:var(--stone-600)">
+                Every month we hand one colourway to a café here and let them design it.
+                Four hundred pieces, numbered on the base, and then it is gone for good —
+                this one is a hand-applied powder coat over the T16 body.
+              </p>
+            </div>
+            <div class="flex flex-wrap gap-2.5">
+              <span class="spec-chip">400 numbered pieces</span>
+              <span class="spec-chip">Free engraving included</span>
+              <span class="spec-chip">Sticker set in the box</span>
+              <span class="spec-chip">One free café drink</span>
+            </div>
+            <div class="flex flex-col gap-2">
+              <div class="flex items-center justify-between text-[13px]">
+                <span style="color:var(--stone-500)">Claimed this month</span>
+                <span class="font-mono tnum" id="dropClaimed">263 / 400</span>
+              </div>
+              <div class="thermal-track"><span class="thermal-fill" id="dropFill" style="background:linear-gradient(90deg,#FFC53D,var(--hot))"></span></div>
+            </div>
+            <div class="flex flex-wrap gap-3 mt-auto">
+              <button type="button" class="btn btn-gold" id="dropAdd">Reserve the drop · <span class="tnum" data-price-for="tumbler-16">$31.99</span></button>
+              <button type="button" class="btn btn-ghost" data-configure="tumbler-16">Open on the bench</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       The Mizu Club — points, tiers, and the café drink pass.
+       ======================================================================== -->
+  <section id="club" class="scroll-mt-24 py-16 md:py-24" style="background:var(--linen)">
+    <div class="shell grid lg:grid-cols-[0.95fr_1.05fr] gap-8 lg:gap-14 items-start">
+      <div class="flex flex-col gap-5">
+        <p class="eyebrow">The Mizu Club</p>
+        <h2 class="font-display text-[clamp(1.9rem,4vw,2.7rem)] leading-[1.12] text-charcoal">Points for drinking better</h2>
+        <p class="text-[16px]" style="color:var(--stone-600)">
+          Every order earns points. Write a review of a vessel you actually use and that
+          earns more. Points buy engraving on gifts, early access to the monthly drop,
+          and drink passes at partner cafés.
+        </p>
+        <div class="panel p-6 flex flex-col gap-4" style="background:linear-gradient(150deg,var(--porcelain),var(--mist))">
+          <div class="flex items-end justify-between gap-4">
+            <div>
+              <p class="eyebrow mb-1">Your balance</p>
+              <p class="font-display text-[34px] leading-none text-charcoal tnum" id="clubPoints">380</p>
+            </div>
+            <p class="font-mono text-[11px] text-right tnum" style="color:var(--stone-500)" id="clubNext">120 points to Steel tier</p>
+          </div>
+          <div class="thermal-track"><span class="thermal-fill" id="clubFill" style="background:linear-gradient(90deg,var(--gold-lit),var(--gold))"></span></div>
+          <p class="text-[12.5px]" style="color:var(--stone-500)">Reviews earn 150 points. Sign in to collect them — balances are simulated in this demo.</p>
+        </div>
+      </div>
+
+      <div class="grid sm:grid-cols-3 gap-4" id="clubTiers"></div>
     </div>
   </section>
 
@@ -1118,7 +1304,7 @@ a { color: inherit; }
         </div>
         <div class="relative">
           <input id="signinPassword" name="password" type="password" autocomplete="current-password" class="field !pr-12" placeholder="••••••••">
-          <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 font-mono text-[10px] tracking-[0.1em]" style="color:var(--stone-500)" data-toggle-pw="signinPassword">SHOW</button>
+          <button type="button" class="pw-toggle absolute right-3 top-1/2 -translate-y-1/2 font-mono text-[10px] tracking-[0.1em]" style="color:var(--stone-500)" data-toggle-pw="signinPassword">SHOW</button>
         </div>
         <p class="field-error" data-error-for="signinPassword">Passwords are at least 8 characters.</p>
       </div>
@@ -1145,7 +1331,7 @@ a { color: inherit; }
         <label for="signupPassword" class="eyebrow block mb-2">Password</label>
         <div class="relative">
           <input id="signupPassword" name="password" type="password" autocomplete="new-password" class="field !pr-12" placeholder="At least 8 characters">
-          <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 font-mono text-[10px] tracking-[0.1em]" style="color:var(--stone-500)" data-toggle-pw="signupPassword">SHOW</button>
+          <button type="button" class="pw-toggle absolute right-3 top-1/2 -translate-y-1/2 font-mono text-[10px] tracking-[0.1em]" style="color:var(--stone-500)" data-toggle-pw="signupPassword">SHOW</button>
         </div>
         <div class="flex items-center gap-2 mt-2.5">
           <span class="flex-1 thermal-track !h-1.5"><span class="thermal-fill" id="pwStrengthFill"></span></span>
@@ -1261,11 +1447,12 @@ a { color: inherit; }
      maths, `lid` the cap, and `matte` damps the specular highlights so a
      powder-coated finish does not read like polished steel. */
   const FINISHES = {
-    stainless: { name: 'Stainless',      hex: '#C4C9CE', lid: '#3A3F44', matte: false },
-    black:     { name: 'Midnight Black', hex: '#24262A', lid: '#141619', matte: true },
-    green:     { name: 'Army Green',     hex: '#4E5B40', lid: '#2B3226', matte: true },
-    ocean:     { name: 'Ocean Blue',     hex: '#2F5C7B', lid: '#1B384A', matte: true },
-    sand:      { name: 'Sand Desert',    hex: '#C7AD88', lid: '#6A5941', matte: true },
+    stainless: { name: 'Stainless',      nameAr: 'فولاذ طبيعي',      hex: '#C4C9CE', lid: '#3A3F44', matte: false },
+    black:     { name: 'Midnight Black', nameAr: 'أسود منتصف الليل', hex: '#24262A', lid: '#141619', matte: true },
+    green:     { name: 'Army Green',     nameAr: 'أخضر عسكري',       hex: '#4E5B40', lid: '#2B3226', matte: true },
+    ocean:     { name: 'Ocean Blue',     nameAr: 'أزرق محيطي',       hex: '#2F5C7B', lid: '#1B384A', matte: true },
+    sand:      { name: 'Sand Desert',    nameAr: 'رملي صحراوي',      hex: '#C7AD88', lid: '#6A5941', matte: true },
+    ember:     { name: 'Ember Orange',   nameAr: 'برتقالي الجمر',    hex: '#FF6A1F', lid: '#200C00', matte: true },
   };
 
   const CATALOGUE = [
@@ -1285,7 +1472,7 @@ a { color: inherit; }
       price: 31.99, compare: 36.0, capacity: '16 oz / 450 ml',
       dims: { height: '155 mm', base: '87 mm', weight: '249 g' }, hot: 12, cold: 24,
       rating: 4.8, reviews: 738, badge: 'Best seller',
-      finishes: ['stainless', 'black', 'ocean', 'green', 'sand'],
+      finishes: ['stainless', 'black', 'ember', 'ocean', 'green', 'sand'],
       blurb: 'The everyday size. Wide mouth for ice and a matching sip-through lid, in 18/8 stainless with the sip path kept entirely plastic-free.',
       specs: ['Double-wall vacuum', 'Wide mouth', 'BPA-free', 'Leak-proof SnapSeal lid', 'Cup-holder base'],
     },
@@ -1315,7 +1502,7 @@ a { color: inherit; }
       price: 29.99, compare: 34.0, capacity: '14 oz / 415 ml',
       dims: { height: '112 mm', base: '96 mm', weight: '310 g' }, hot: 6, cold: 12,
       rating: 4.7, reviews: 286, badge: 'Desk favourite',
-      finishes: ['stainless', 'black', 'green', 'sand'],
+      finishes: ['stainless', 'black', 'ember', 'green', 'sand'],
       blurb: 'A proper handled mug that happens to be vacuum insulated — the last coffee is as warm as the first, whether the desk is an office or a tailgate.',
       specs: ['Double-wall vacuum', 'Cast steel handle', 'BPA-free', 'Splash-resistant sip lid'],
     },
@@ -1366,10 +1553,11 @@ a { color: inherit; }
 
   /* Indicative conversion, quoted from a USD price list. */
   const CURRENCIES = {
-    USD: { symbol: '$',    rate: 1,     dp: 2, before: true },
-    EUR: { symbol: '€',    rate: 0.92,  dp: 2, before: true },
-    GBP: { symbol: '£',    rate: 0.79,  dp: 2, before: true },
-    KWD: { symbol: 'KD ',  rate: 0.307, dp: 3, before: true },
+    USD: { symbol: '$',   symbolAr: '$ ',   rate: 1,     dp: 2 },
+    EUR: { symbol: '€',   symbolAr: '€ ',   rate: 0.92,  dp: 2 },
+    GBP: { symbol: '£',   symbolAr: '£ ',   rate: 0.79,  dp: 2 },
+    KWD: { symbol: 'KD ', symbolAr: 'د.ك ', rate: 0.307, dp: 3 },
+    SAR: { symbol: 'SR ', symbolAr: 'ر.س ', rate: 3.75,  dp: 2 },
   };
 
   const PROMOS = {
@@ -1384,11 +1572,12 @@ a { color: inherit; }
   /* --------------------------------------------------------------- state --- */
 
   const store = {
+    lang: 'en',
     currency: 'USD',
     cart: [],
     promo: null,
     user: null,
-    cfg: { id: 'tumbler-16-ceramic', finish: 'black', qty: 1 },
+    cfg: { id: 'tumbler-16-ceramic', finish: 'black', qty: 1, engrave: '' },
     thermal: 'hot',
     filter: 'all',
     query: '',
@@ -1401,7 +1590,7 @@ a { color: inherit; }
   function save() {
     try {
       localStorage.setItem(KEY, JSON.stringify({
-        currency: store.currency, cart: store.cart, promo: store.promo, user: store.user,
+        lang: store.lang, currency: store.currency, cart: store.cart, promo: store.promo, user: store.user,
       }));
     } catch (e) { /* private mode: the page still works, it just forgets. */ }
   }
@@ -1412,6 +1601,7 @@ a { color: inherit; }
       if (!raw) return;
       const saved = JSON.parse(raw);
       if (saved && typeof saved === 'object') {
+        if (saved.lang === 'ar' || saved.lang === 'en') store.lang = saved.lang;
         if (CURRENCIES[saved.currency]) store.currency = saved.currency;
         if (Array.isArray(saved.cart)) store.cart = saved.cart.filter(l => product(l.id) && FINISHES[l.finish]);
         if (saved.promo && PROMOS[saved.promo]) store.promo = saved.promo;
@@ -1430,8 +1620,10 @@ a { color: inherit; }
   function money(usd) {
     const c = CURRENCIES[store.currency];
     const v = usd * c.rate;
-    const s = v.toLocaleString('en-US', { minimumFractionDigits: c.dp, maximumFractionDigits: c.dp });
-    return c.before ? c.symbol + s : s + c.symbol;
+    const n = v.toLocaleString('en-US', { minimumFractionDigits: c.dp, maximumFractionDigits: c.dp });
+    /* Western digits in both languages — what Gulf storefronts actually use —
+       but the currency mark itself follows the language. */
+    return (store.lang === 'ar' ? c.symbolAr : c.symbol) + n;
   }
 
   function escapeHtml(str) {
@@ -1463,6 +1655,565 @@ a { color: inherit; }
     const l = Math.max(4, Math.min(97, c.l + dl));
     const s = Math.max(0, Math.min(100, c.s + (ds || 0)));
     return 'hsl(' + c.h.toFixed(1) + ' ' + s.toFixed(1) + '% ' + l.toFixed(1) + '%)';
+  }
+
+
+  /* ============================================================== language ===
+     Two dictionaries. AR_TEXT maps the exact English of a static string to its
+     Arabic, and applyLang() walks the DOM swapping text nodes, placeholders and
+     aria-labels — so markup carries no translation keys and dynamic templates
+     get translated after every render. MSG holds the strings JS builds itself,
+     where word order matters and a text swap would not survive interpolation.
+     ========================================================================= */
+
+  const AR_TEXT = {
+    /* Header, navigation, controls */
+    'COFFEE ATELIER': 'أتيليه القهوة',
+    'Collection': 'المجموعة',
+    'Insulation': 'العزل الحراري',
+    'Reviews': 'التقييمات',
+    'Our story': 'قصتنا',
+    'Support': 'المساعدة',
+    'Language': 'اللغة',
+    'Currency': 'العملة',
+    'Search the collection': 'ابحث في المجموعة',
+    'Search results': 'نتائج البحث',
+    'Skip to the collection': 'تخطَّ إلى المجموعة',
+    'Sections': 'أقسام الموقع',
+    'Menu': 'القائمة',
+    'Account': 'الحساب',
+    'Account actions': 'إجراءات الحساب',
+    'Open cart': 'افتح السلة',
+    'Close cart': 'أغلق السلة',
+    'Close': 'إغلاق',
+    'Back to top': 'إلى الأعلى',
+    'Mizu — home': 'ميزو — الصفحة الرئيسية',
+    'Search tumblers, mugs…': 'ابحث في الترامس والأكواب…',
+    'Kuwait City': 'مدينة الكويت',
+    'Repeat it': 'أعدها',
+    'At least 8 characters': '8 أحرف على الأقل',
+    '4.8 · 2,417 verified reviews': '4.8 · 2,417 تقييماً موثّقاً',
+    'T16 · CERAMIC LINED · 450 ML': 'T16 · ببطانة سيراميك · 450 مل',
+
+    /* Hero */
+    'Coffee stays coffee.': 'قهوتك تبقى قهوة.',
+    'For twelve hours.': 'لاثنتي عشرة ساعة.',
+    'Mizu means water. Our double-wall vacuum flasks and mugs are pressed from 18/8 stainless steel, sealed without a plastic sip path, and built to outlive the habit — every one carries a lifetime warranty.':
+      'ميزو تعني الماء. أكوابنا وترامسنا مزدوجة الجدار ومعزولة بتفريغ الهواء، مشكّلة من فولاذ 18/8 المقاوم للصدأ، بمسار شرب خالٍ تماماً من البلاستيك، ومصنوعة لتدوم أطول من العادة نفسها — وكلها بضمان مدى الحياة.',
+    'Buy now —': 'اشترِ الآن —',
+    'Explore the collection': 'استعرض المجموعة',
+    'BPA-free, no plastic sip path': 'خالٍ من BPA، بلا مسار شرب بلاستيكي',
+    'Leak-proof SnapSeal lid': 'غطاء SnapSeal مانع للتسريب',
+    'Fits a car cup holder': 'يناسب حمّالة أكواب السيارة',
+    'Line 04 running · 128 shipped today': 'الخط 04 يعمل · 128 قطعة شُحنت اليوم',
+    '· demo counter': '· عدّاد تجريبي',
+    'HOT': 'ساخن',
+    'COLD': 'بارد',
+
+    /* Collection */
+    'The coffee collection': 'مجموعة القهوة',
+    'Six vessels, one obsession with temperature': 'ستة أوعية، وهوسٌ واحد بدرجة الحرارة',
+    'Filter by type': 'التصفية بحسب النوع',
+    'All': 'الكل',
+    'Tumblers': 'ترامس',
+    'Mugs': 'أكواب',
+    'Cups': 'أكواب رحلات',
+    'Nothing matches that search. Try “tumbler”, “ceramic” or “14”.': 'لا نتائج مطابقة. جرّب «ترمس» أو «سيراميك» أو «14».',
+    'Details': 'التفاصيل',
+    'Add to cart': 'أضف إلى السلة',
+    'Add to cart ·': 'أضف إلى السلة ·',
+
+    /* Configurator */
+    'Configure · T16 Ceramic': 'التخصيص · T16 سيراميك',
+    'In stock · ships today': 'متوفر · يُشحن اليوم',
+    'Finish': 'اللون',
+    'Choose a finish': 'اختر اللون',
+    'Thermal performance': 'الأداء الحراري',
+    'Show hot or cold retention': 'اعرض حفظ السخونة أو البرودة',
+    'Hot': 'ساخن',
+    'Cold': 'بارد',
+    'Retention relative to a 24 hour day': 'مدة الحفظ مقارنة بيوم كامل',
+    'Save 14%': 'خصم 14%',
+    'Decrease quantity': 'إنقاص الكمية',
+    'Increase quantity': 'زيادة الكمية',
+    'The custom bench · free engraving': 'طاولة التخصيص · نقش مجاني',
+    'Engrave this one': 'انقش هذه القطعة',
+    'Engraving text': 'نص النقش',
+    'Laser-etched onto the body at no charge, up to fourteen characters, numbered on the base. Engraved vessels are final sale.':
+      'نقش بالليزر على الجسم مجاناً، حتى أربعة عشر حرفاً، ورقم تسلسلي على القاعدة. القطع المنقوشة غير قابلة للإرجاع.',
+    'FREE DELIVERY IN KUWAIT': 'توصيل مجاني داخل الكويت',
+    'LIFETIME WARRANTY': 'ضمان مدى الحياة',
+    '30-DAY RETURNS': 'إرجاع خلال 30 يوماً',
+
+    /* Why Mizu */
+    'Why Mizu': 'لماذا ميزو',
+    'Engineering you can taste — or rather, can’t': 'هندسة تتذوّقها… أو بالأصح، لا تتذوّقها',
+    'Steel that adds nothing to the cup, a seal that survives a tote bag, and a body that fits the holder in your car. The rest is coffee.':
+      'فولاذ لا يضيف شيئاً إلى الفنجان، وإغلاق يتحمّل حقيبتك، وجسم يناسب حمّالة سيارتك. وما بقي فهو قهوة.',
+    'Double-wall vacuum': 'جدار مزدوج مفرّغ من الهواء',
+    'Two walls of 18/8 stainless with the air drawn out between them. No condensation on the outside, no heat leaving the inside.':
+      'جدارَان من فولاذ 18/8 سُحب الهواء من بينهما. لا تعرّق من الخارج، ولا حرارة تهرب من الداخل.',
+    'Nothing plastic touches the drink': 'لا شيء بلاستيكي يلامس الشراب',
+    'BPA-free throughout, and the sip path is steel or ceramic — so an oat latte tastes like an oat latte on day 400.':
+      'خالٍ من BPA بالكامل، ومسار الشرب من الفولاذ أو السيراميك — فيبقى طعم اللاتيه بحليب الشوفان كما هو في اليوم الأربعمئة.',
+    'Leak-proof, pressure-tested': 'مانع للتسريب ومُختبر بالضغط',
+    'The SnapSeal lid closes with one press and holds upside-down at 6 kPa — tested for 10,000 open-and-close cycles.':
+      'يُغلق غطاء SnapSeal بضغطة واحدة ويثبت مقلوباً عند 6 كيلوباسكال — مُختبر على 10,000 دورة فتح وإغلاق.',
+    'Lifetime warranty': 'ضمان مدى الحياة',
+    'If the vacuum fails, we replace the vessel. Lids and gaskets are sold separately so one worn seal never retires a flask.':
+      'إذا فقد الوعاء تفريغه استبدلناه. الأغطية والحلقات المطاطية تُباع منفصلة، فلا تُحال قطعة إلى التقاعد بسبب حلقة تالفة.',
+    'Built to the cup holder': 'مصمم على مقاس حمّالة الأكواب',
+    'Every tumbler tapers to 87 mm at the base — the dimension that decides whether a flask lives in your car or your cupboard.':
+      'كل ترمس يضيق إلى 87 مم عند القاعدة — وهو المقاس الذي يحدد إن كان مكانه سيارتك أم خزانتك.',
+    'Mizu means water': 'ميزو تعني الماء',
+    '水 — the name is a reminder of what a reusable vessel is really for: one fewer paper cup, every single morning.':
+      '水 — الاسم تذكيرٌ بالغاية من وعاء يُعاد استخدامه: كوب ورقي أقل، كل صباح.',
+
+    /* Monthly drop */
+    'Mug of the Month': 'كوب الشهر',
+    'DROP 01': 'الإصدار 01',
+    'Ember Orange, made with a Kuwait café': 'برتقالي الجمر، بالتعاون مع مقهى كويتي',
+    'Every month we hand one colourway to a café here and let them design it. Four hundred pieces, numbered on the base, and then it is gone for good — this one is a hand-applied powder coat over the T16 body.':
+      'كل شهر نمنح مقهى محلياً لوناً واحداً ليصمّمه كما يريد. أربعمئة قطعة مرقّمة على القاعدة، ثم لا تعود أبداً — وهذه بطلاء بودرة يُطبَّق يدوياً على جسم T16.',
+    '400 numbered pieces': '400 قطعة مرقّمة',
+    'Free engraving included': 'النقش مجاني',
+    'Sticker set in the box': 'طقم ملصقات داخل العلبة',
+    'One free café drink': 'مشروب مجاني من المقهى',
+    'Claimed this month': 'المحجوز هذا الشهر',
+    'Reserve the drop ·': 'احجز الإصدار ·',
+    'Open on the bench': 'افتحه على الطاولة',
+
+    /* Club */
+    'The Mizu Club': 'نادي ميزو',
+    'Points for drinking better': 'نقاط مقابل قهوة أفضل',
+    'Every order earns points. Write a review of a vessel you actually use and that earns more. Points buy engraving on gifts, early access to the monthly drop, and drink passes at partner cafés.':
+      'كل طلب يمنحك نقاطاً، وكل تقييم لقطعة تستخدمها فعلاً يمنحك المزيد. تُستبدل النقاط بنقش على الهدايا، ووصول مبكر إلى إصدار الشهر، وبطاقات مشروبات في المقاهي الشريكة.',
+    'Your balance': 'رصيدك',
+    'Reviews earn 150 points. Sign in to collect them — balances are simulated in this demo.':
+      'كل تقييم يمنحك 150 نقطة. سجّل الدخول لجمعها — الأرصدة محاكاة في هذا العرض التجريبي.',
+
+    /* Reviews */
+    'Owner reviews': 'تقييمات المُلّاك',
+    '2,417 reviews · 96% verified': '2,417 تقييماً · 96% موثّق',
+    'Every review below comes from an order we shipped. Photo and video reviews are checked before they publish.':
+      'كل تقييم بالأسفل من طلب شحنّاه بأنفسنا. وتُراجَع تقييمات الصور والفيديو قبل نشرها.',
+    'Filter reviews': 'تصفية التقييمات',
+    '5 stars': '5 نجوم',
+    '4 stars': '4 نجوم',
+    '3 and under': '3 وأقل',
+    'With photo or video': 'مع صورة أو فيديو',
+    'Previous review': 'التقييم السابق',
+    'Next review': 'التقييم التالي',
+    'Review position': 'موضع التقييم',
+    'Customer reviews, use arrow keys': 'تقييمات العملاء، استخدم مفاتيح الأسهم',
+
+    /* Story */
+    'Founded by athletes who were tired of throwing cups away': 'أسّسها رياضيون تعبوا من رمي الأكواب',
+    'Mizu started with a simple frustration: a surf trip, a thermos that tasted of last week, and a bin full of paper cups. We rebuilt the vessel around one rule — the drink only ever touches steel, ceramic or glass.':
+      'بدأت ميزو من ضيقٍ بسيط: رحلة تجديف، وترمس بطعم الأسبوع الماضي، وسلةٍ ممتلئة بالأكواب الورقية. فأعدنا بناء الوعاء حول قاعدة واحدة — ألا يلامس الشراب سوى الفولاذ أو السيراميك أو الزجاج.',
+    'Today the same principle runs through every tumbler, mug and flask we make, and it is why our products are backed for life rather than for a season. Fewer, better vessels. That is the whole idea.':
+      'واليوم يسري المبدأ نفسه في كل ترمس وكوب نصنعه، ولذلك نضمن منتجاتنا مدى الحياة لا لموسم واحد. أوعية أقل وأفضل. هذه هي الفكرة كلها.',
+    'FOOD-GRADE STEEL': 'فولاذ غذائي',
+    'PLASTIC SIP PATHS': 'مسارات شرب بلاستيكية',
+    'WARRANTY, IN YEARS': 'سنوات الضمان',
+    'Concentric ripples around the character for water': 'دوائر متداخلة حول رمز الماء',
+
+    /* FAQ */
+    'Questions we get every week': 'أسئلة تتكرر كل أسبوع',
+    'Still stuck? Our team answers in under four hours, Sunday to Thursday.': 'ما زال الأمر غامضاً؟ يجيب فريقنا في أقل من أربع ساعات، من الأحد إلى الخميس.',
+    'Talk to a human': 'تحدّث إلى شخص حقيقي',
+    'Are the lids and vessels dishwasher safe?': 'هل الأغطية والأوعية آمنة في غسّالة الأطباق؟',
+    'Lids, gaskets and straws go on the top rack. Wash the vessel itself by hand with warm water and a bottle brush — dishwasher detergent is abrasive enough to dull a powder-coated finish over a few hundred cycles, and the vacuum seal lasts longer without the heat cycle.':
+      'الأغطية والحلقات والشفّاطات في الرف الأعلى. أما الوعاء نفسه فاغسله يدوياً بماء دافئ وفرشاة قوارير — فمنظّف الغسّالة كاشط بما يكفي ليُبهت طلاء البودرة بعد بضع مئات من الدورات، والتفريغ يعيش أطول بعيداً عن دورة الحرارة.',
+    'What does the ceramic lining actually change?': 'ما الذي يغيّره البطانة السيراميكية فعلاً؟',
+    'A fired ceramic layer inside the steel gives coffee a completely neutral surface — no metallic edge on a light roast, and coffee oils rinse off instead of building up. It is the finish we recommend if you drink filter coffee or anything fermented, and the one to avoid if you routinely drop your flask on concrete.':
+      'طبقة سيراميك محروقة داخل الفولاذ تمنح القهوة سطحاً محايداً تماماً — بلا حدّة معدنية في التحميص الفاتح، وزيوت القهوة تُشطف بدل أن تتراكم. نوصي بها لمن يشرب القهوة المفلترة أو أي شيء مخمَّر، ونتجنّبها لمن يُسقط ترمسه على الأسفلت باستمرار.',
+    'Is the SnapSeal lid really leak-proof in a bag?': 'هل غطاء SnapSeal مانع للتسريب فعلاً داخل الحقيبة؟',
+    'Yes, when the slider is closed. One press shuts the sip channel against a silicone gasket, and we test each lid design upside-down under pressure. The open position is splash-resistant, not sealed — treat that as the difference between a desk and a backpack.':
+      'نعم، إذا كان المزلاج مغلقاً. ضغطة واحدة تُغلق قناة الشرب على حلقة سيليكون، ونختبر كل تصميم غطاء مقلوباً تحت الضغط. أما وضع الفتح فهو مقاوم للرشّ لا محكم — واعتبر ذلك الفرق بين المكتب وحقيبة الظهر.',
+    'How long does it really keep coffee hot?': 'كم تبقى القهوة ساخنة فعلاً؟',
+    'Filled to the shoulder with 93 °C water and closed, a 16 oz tumbler is above 60 °C at the twelve-hour mark and iced drinks hold below 8 °C for a full day. Two things halve those numbers: filling it half full, and pre-chilling nothing — rinse with boiling water first and you buy back about an hour.':
+      'إذا مُلئ ترمس 16 أونصة إلى الكتف بماء عند 93 °م وأُغلق، يبقى فوق 60 °م عند الساعة الثانية عشرة، وتحفظ المشروبات المثلجة أقل من 8 °م يوماً كاملاً. أمران يُنصّفان هذه الأرقام: ملؤه إلى النصف، وعدم تهيئته مسبقاً — اشطفه بماء مغلي أولاً تستعد نحو ساعة.',
+    'What does the lifetime warranty cover?': 'ماذا يغطي ضمان مدى الحياة؟',
+    'The vessel, against manufacturing defects and vacuum failure, for as long as you own it. Finishes, gaskets and lids wear with use, so those are stocked as spare parts instead — a replacement gasket costs less than a flat white.':
+      'يغطي الوعاء ضد عيوب التصنيع وفقد التفريغ، ما دام في ملكك. أما الطلاء والحلقات والأغطية فتتآكل بالاستخدام، ولذلك نوفّرها كقطع غيار — وثمن حلقة بديلة أقل من فنجان فلات وايت.',
+    'Which size fits a car cup holder?': 'أي مقاس يناسب حمّالة أكواب السيارة؟',
+    'All three tumblers — T10, T16 and T20 — taper to an 87 mm base and drop into a standard holder. The 14 oz Coffee Mug has a handle and a wider footprint, so it is a desk and campsite vessel rather than a commuting one.':
+      'الترامس الثلاثة — T10 و T16 و T20 — تضيق إلى قاعدة 87 مم وتدخل الحمّالة القياسية. أما كوب القهوة 14 أونصة فله مقبض وقاعدة أوسع، فهو وعاء مكتب ومخيّم أكثر منه وعاء تنقّل.',
+
+    /* Cart */
+    'Your cart': 'سلتك',
+    'Nothing in the cart yet': 'لا شيء في السلة بعد',
+    'Pick a finish from the collection and it will land here.': 'اختر لوناً من المجموعة وسيظهر هنا.',
+    'Browse the collection': 'تجوّل في المجموعة',
+    'Promo code': 'رمز الخصم',
+    'Apply': 'تطبيق',
+    'Subtotal': 'المجموع الفرعي',
+    'Discount': 'الخصم',
+    'Shipping': 'الشحن',
+    'Total': 'الإجمالي',
+    'Checkout': 'إتمام الشراء',
+    'DEMO STORE · NO PAYMENT IS TAKEN': 'متجر تجريبي · لا تُستوفى أي مبالغ',
+    'Progress toward free shipping': 'التقدّم نحو الشحن المجاني',
+
+    /* Auth */
+    'Mizu account': 'حساب ميزو',
+    'Welcome back': 'أهلاً بعودتك',
+    'Sign in to track orders and warranty claims.': 'سجّل الدخول لمتابعة طلباتك وطلبات الضمان.',
+    'Sign in': 'تسجيل الدخول',
+    'Create account': 'إنشاء حساب',
+    'Reset': 'استعادة',
+    'Email': 'البريد الإلكتروني',
+    'Email address': 'البريد الإلكتروني',
+    'Password': 'كلمة المرور',
+    'Confirm password': 'تأكيد كلمة المرور',
+    'Full name': 'الاسم الكامل',
+    'FORGOT?': 'نسيتها؟',
+    'SHOW': 'إظهار',
+    'Keep me signed in': 'أبقني مسجّلاً',
+    'I agree to the terms and the privacy notice.': 'أوافق على الشروط وإشعار الخصوصية.',
+    'Back to sign in': 'رجوع إلى تسجيل الدخول',
+    'Send reset link': 'أرسل رابط الاستعادة',
+    'We will send a single-use link. It expires after 30 minutes.': 'سنرسل رابطاً لمرة واحدة، ينتهي بعد 30 دقيقة.',
+    'Enter an email address in the form name@domain.com.': 'أدخل بريداً إلكترونياً بالصيغة name@domain.com.',
+    'Passwords are at least 8 characters.': 'كلمة المرور 8 أحرف على الأقل.',
+    'Use 8 characters or more, with a number.': 'استخدم 8 أحرف أو أكثر، مع رقم.',
+    'Both passwords need to match.': 'يجب أن تتطابق كلمتا المرور.',
+    'Tell us the name we should put on your orders.': 'أخبرنا بالاسم الذي نضعه على طلباتك.',
+    'Tick the box to create an account.': 'أشّر على المربع لإنشاء الحساب.',
+    'WEAK': 'ضعيفة',
+    'DEMO — ANY VALID EMAIL AND AN 8-CHARACTER PASSWORD WORK': 'تجريبي — أي بريد صحيح وكلمة مرور من 8 أحرف تعمل',
+
+    /* Checkout */
+    'Secure checkout': 'إتمام شراء آمن',
+    'Review and pay': 'المراجعة والدفع',
+    'Email for the receipt': 'البريد لإرسال الفاتورة',
+    'City': 'المدينة',
+    'Payment method': 'طريقة الدفع',
+    'Card ending 4242 (demo)': 'بطاقة تنتهي بـ 4242 (تجريبي)',
+    'Apple Pay (demo)': 'Apple Pay (تجريبي)',
+    'KNET (demo)': 'كي-نت (تجريبي)',
+    'Cash on delivery': 'الدفع عند الاستلام',
+    'Place order ·': 'إتمام الطلب ·',
+    'We need a city to quote delivery.': 'نحتاج المدينة لتحديد التوصيل.',
+    'DEMO CHECKOUT · NO CARD DETAILS ARE COLLECTED OR CHARGED': 'شراء تجريبي · لا تُجمع بيانات بطاقة ولا يُخصم مبلغ',
+    'Order placed': 'تم إنشاء الطلب',
+    'We emailed a confirmation to': 'أرسلنا تأكيداً إلى',
+    '. Dispatch is same-day on orders before 15:00.': '. الشحن في اليوم نفسه للطلبات قبل الساعة 15:00.',
+    'Keep shopping': 'تابع التسوّق',
+
+    /* Newsletter + footer */
+    'The Brew Letter': 'رسالة التحضير',
+    'One email a month: a recipe, a colourway, no noise': 'رسالة واحدة شهرياً: وصفة، ولون جديد، بلا إزعاج',
+    'New subscribers get 10% off their first vessel with the code we send back.': 'يحصل المشتركون الجدد على خصم 10% على أول قطعة برمز نرسله إليهم.',
+    'Get the code': 'أرسل الرمز',
+    'NO RESALE. UNSUBSCRIBE IN ONE CLICK.': 'لا نبيع بياناتك. إلغاء الاشتراك بضغطة واحدة.',
+    'Vacuum-insulated steel for coffee, tea and everything you would rather not drink from paper.':
+      'فولاذ معزول بتفريغ الهواء، للقهوة والشاي وكل ما تفضّل ألا تشربه من كوب ورقي.',
+    'Shop': 'المتجر',
+    'Coffee mugs': 'أكواب القهوة',
+    'Camp cups': 'أكواب الرحلات',
+    'Lids and spare parts': 'الأغطية وقطع الغيار',
+    'Gift sets': 'أطقم الهدايا',
+    'Help': 'المساعدة',
+    'Shipping and delivery': 'الشحن والتوصيل',
+    '60-day returns': 'إرجاع خلال 60 يوماً',
+    'Warranty claim': 'طلب الضمان',
+    'Care and cleaning': 'العناية والتنظيف',
+    'Contact us': 'اتصل بنا',
+    'Company': 'الشركة',
+    'Sustainability': 'الاستدامة',
+    'Wholesale': 'البيع بالجملة',
+    'Careers': 'الوظائف',
+    'Accepted payment methods': 'طرق الدفع المقبولة',
+    'PRIVACY': 'الخصوصية',
+    'TERMS': 'الشروط',
+    'ACCESSIBILITY': 'إمكانية الوصول',
+    '© 2026 MIZU LIFE': '© 2026 ميزو لايف',
+    'Mizu on Instagram': 'ميزو على إنستغرام',
+    'Mizu on YouTube': 'ميزو على يوتيوب',
+    'Mizu on Pinterest': 'ميزو على بنترست',
+    'Mizu on TikTok': 'ميزو على تيك توك',
+  };
+
+  /* Strings JS assembles, where the order of the parts changes per language. */
+  const MSG = {
+    en: {
+      shipRemaining: 'Spend <span class="font-medium tnum">{v}</span> more for free shipping.',
+      shipUnlocked: '<span class="font-medium">Free shipping unlocked.</span> Dispatch is same-day before 15:00.',
+      free: 'Free',
+      added: '{name} in {finish} added to your cart.',
+      removed: '{name} removed.',
+      promoApplied: '{label} applied.',
+      promoUnknown: 'That code is not one of ours. Try MIZU10.',
+      promoMin: '{code} applies from {v} — add one more vessel.',
+      cartEmpty: 'Your cart is empty — pick a finish first.',
+      orderPlaced: 'Order placed. Confirmation on its way.',
+      signedIn: 'Signed in as {email}.',
+      signedOut: 'Signed out.',
+      accountCreated: 'Account created. Welcome to Mizu, {name}.',
+      resetSent: 'Reset link sent to {email}. It expires in 30 minutes.',
+      noOrders: 'No orders yet on this account — this is a demo store.',
+      subscribed: 'You are on the list. Use MIZU10 for 10% off your first vessel.',
+      currencyNote: 'Prices now shown in {code}. Conversion is indicative.',
+      langNote: 'Site language set to English.',
+      hours: '{n} hours',
+      hotCopy: 'Poured at 93 °C, still above 60 °C when hour {n} comes around.',
+      coldCopy: 'Filled with ice at 4 °C, still under 8 °C at hour {n} — no condensation on the outside.',
+      singleWall: 'Single-wall',
+      singleWallCopy: 'No vacuum layer: it warms with the drink and cools with it. Made for a camp stove, not a commute.',
+      ratingLine: '{rating} · {n} reviews',
+      configure: 'Configure · {short}',
+      hotBadge: '{n}H HOT',
+      singleWallBadge: 'SINGLE WALL',
+      verified: 'Verified buyer',
+      photoReview: 'Photo review',
+      videoReview: 'Video review',
+      customerPhoto: 'CUSTOMER PHOTO',
+      customerVideo: 'CUSTOMER VIDEO · 0:24',
+      noReviewMatch: 'No reviews match that filter yet.',
+      capacity: 'Capacity', height: 'Height', base: 'Base', weight: 'Weight',
+      engraved: 'Engraved “{text}”',
+      engraveCount: '{n} / 14',
+      liveCounter: 'Line 04 running · {n} shipped today',
+      dropClaimed: '{n} / 400',
+      clubNext: '{n} points to {tier} tier',
+      searchNoMatch: 'No match. Try “ceramic” or “mug”.',
+      stars: '{n} stars',
+      itemsCount: '({n})',
+      openCartCount: 'Open cart, {n} item(s)',
+      marquee: ['DOUBLE-WALL VACUUM INSULATION', 'BPA-FREE THROUGHOUT', 'LEAK-PROOF SNAPSEAL LID',
+                '18/8 FOOD-GRADE STAINLESS', 'LIFETIME WARRANTY', 'FREE DELIVERY IN KUWAIT',
+                'FREE ENGRAVING, 14 CHARACTERS', 'CERAMIC-LINED OPTIONS'],
+      tiers: [
+        { name: 'Bare Steel', at: '0 points', line: 'Free delivery in Kuwait and a sticker set in every box.' },
+        { name: 'Steel', at: '500 points', line: 'Early access to the monthly café drop, before it is listed.' },
+        { name: 'Gold', at: '1,500 points', line: 'A drink pass at a partner café, and engraving on gifts.' },
+      ],
+    },
+    ar: {
+      shipRemaining: 'أضف <span class="font-medium tnum">{v}</span> للحصول على شحن مجاني.',
+      shipUnlocked: '<span class="font-medium">تم تفعيل الشحن المجاني.</span> الشحن في اليوم نفسه قبل الساعة 15:00.',
+      free: 'مجاني',
+      added: 'تمت إضافة {name} بلون {finish} إلى سلتك.',
+      removed: 'تمت إزالة {name}.',
+      promoApplied: 'تم تطبيق {label}.',
+      promoUnknown: 'هذا الرمز ليس من رموزنا. جرّب MIZU10.',
+      promoMin: 'يبدأ تطبيق {code} من {v} — أضف قطعة أخرى.',
+      cartEmpty: 'سلتك فارغة — اختر لوناً أولاً.',
+      orderPlaced: 'تم إنشاء الطلب. التأكيد في الطريق.',
+      signedIn: 'تم تسجيل الدخول بـ {email}.',
+      signedOut: 'تم تسجيل الخروج.',
+      accountCreated: 'تم إنشاء الحساب. أهلاً بك في ميزو، {name}.',
+      resetSent: 'أُرسل رابط الاستعادة إلى {email}. ينتهي بعد 30 دقيقة.',
+      noOrders: 'لا طلبات على هذا الحساب بعد — هذا متجر تجريبي.',
+      subscribed: 'أنت على القائمة. استخدم MIZU10 لخصم 10% على أول قطعة.',
+      currencyNote: 'الأسعار تُعرض الآن بـ {code}. التحويل تقديري.',
+      langNote: 'تم تعيين لغة الموقع إلى العربية.',
+      hours: '{n} ساعة',
+      hotCopy: 'صُبّت عند 93 °م، وتبقى فوق 60 °م عند الساعة {n}.',
+      coldCopy: 'مُلئت بالثلج عند 4 °م، وتبقى تحت 8 °م عند الساعة {n} — بلا تعرّق من الخارج.',
+      singleWall: 'جدار واحد',
+      singleWallCopy: 'بلا طبقة تفريغ: يسخن مع الشراب ويبرد معه. صُنع لموقد المخيّم لا لطريق العمل.',
+      ratingLine: '{rating} · {n} تقييماً',
+      configure: 'التخصيص · {short}',
+      hotBadge: 'ساخن {n} ساعة',
+      singleWallBadge: 'جدار واحد',
+      verified: 'مشترٍ موثّق',
+      photoReview: 'تقييم بصورة',
+      videoReview: 'تقييم بفيديو',
+      customerPhoto: 'صورة من عميل',
+      customerVideo: 'فيديو من عميل · 0:24',
+      noReviewMatch: 'لا تقييمات تطابق هذه التصفية بعد.',
+      capacity: 'السعة', height: 'الارتفاع', base: 'القاعدة', weight: 'الوزن',
+      engraved: 'منقوش «{text}»',
+      engraveCount: '{n} / 14',
+      liveCounter: 'الخط 04 يعمل · {n} قطعة شُحنت اليوم',
+      dropClaimed: '{n} / 400',
+      clubNext: '{n} نقطة للوصول إلى فئة {tier}',
+      searchNoMatch: 'لا تطابق. جرّب «سيراميك» أو «كوب».',
+      stars: '{n} نجوم',
+      itemsCount: '({n})',
+      openCartCount: 'افتح السلة، {n} قطعة',
+      marquee: ['عزل بجدار مزدوج مفرّغ', 'خالٍ من BPA بالكامل', 'غطاء SnapSeal مانع للتسريب',
+                'فولاذ غذائي 18/8', 'ضمان مدى الحياة', 'توصيل مجاني داخل الكويت',
+                'نقش مجاني حتى 14 حرفاً', 'خيارات ببطانة سيراميك'],
+      tiers: [
+        { name: 'فولاذ خام', at: '0 نقطة', line: 'توصيل مجاني داخل الكويت وطقم ملصقات في كل علبة.' },
+        { name: 'فولاذ', at: '500 نقطة', line: 'وصول مبكر إلى إصدار المقهى الشهري قبل طرحه.' },
+        { name: 'ذهبي', at: '1,500 نقطة', line: 'بطاقة مشروب في مقهى شريك، ونقش مجاني على الهدايا.' },
+      ],
+    },
+  };
+
+  /* Arabic for the catalogue and the reviews, kept beside the data rather than
+     inside it so the English literals stay readable. */
+  const AR_PRODUCTS = {
+    'tumbler-16-ceramic': {
+      name: 'ترمس 16 · ببطانة سيراميك', short: 'T16 سيراميك', capacity: '16 أونصة / 450 مل',
+      blurb: 'ترمس القهوة المفلترة: بطانة سيراميك محروقة فوق فولاذ مزدوج الجدار مفرّغ من الهواء، فيبقى طعم التحميص الفاتح كما أراده المحمّص — بلا أي أثر معدني تحته.',
+      specs: ['بطانة سيراميك', 'جدار مزدوج مفرّغ', 'خالٍ من BPA', 'غطاء SnapSeal مانع للتسريب', 'قاعدة تناسب الحمّالة'],
+      badge: 'الأكثر تفضيلاً',
+    },
+    'tumbler-16': {
+      name: 'ترمس 16', short: 'T16', capacity: '16 أونصة / 450 مل',
+      blurb: 'مقاس كل يوم. فتحة واسعة تكفي للثلج وغطاء شرب مطابق، من فولاذ 18/8 مع مسار شرب خالٍ تماماً من البلاستيك.',
+      specs: ['جدار مزدوج مفرّغ', 'فتحة واسعة', 'خالٍ من BPA', 'غطاء SnapSeal مانع للتسريب', 'قاعدة تناسب الحمّالة'],
+      badge: 'الأكثر مبيعاً',
+    },
+    'tumbler-10': {
+      name: 'ترمس 10', short: 'T10', capacity: '10 أونصة / 295 مل',
+      blurb: 'بمقاس الكورتادو، وقصير بما يكفي ليقف تحت رأس ماكينة الإسبريسو. القطعة التي يشتريها الناس ثانياً ثم يستخدمونها أكثر من غيرها.',
+      specs: ['جدار مزدوج مفرّغ', 'يقف تحت رأس الماكينة', 'خالٍ من BPA', 'غطاء SnapSeal مانع للتسريب'],
+    },
+    'tumbler-20': {
+      name: 'ترمس 20', short: 'T20', capacity: '20 أونصة / 590 مل',
+      blurb: 'دفعة تحضير كاملة، أو يوم من القهوة المثلجة. القاعدة نفسها 87 مم كبقية الترامس، فيدخل حمّالة السيارة بلا عناء.',
+      specs: ['جدار مزدوج مفرّغ', 'يتسع لدفعة V60 كاملة', 'خالٍ من BPA', 'غطاء SnapSeal مانع للتسريب', 'قاعدة تناسب الحمّالة'],
+    },
+    'coffee-mug-14': {
+      name: 'كوب قهوة 14', short: 'كوب 14', capacity: '14 أونصة / 415 مل',
+      blurb: 'كوب بمقبض حقيقي، لكنه معزول بتفريغ الهواء — فآخر رشفة بحرارة أولها، سواء كان مكتبك في شركة أو على صندوق سيارة.',
+      specs: ['جدار مزدوج مفرّغ', 'مقبض فولاذي مصبوب', 'خالٍ من BPA', 'غطاء شرب مقاوم للرشّ'],
+      badge: 'المفضّل على المكتب',
+    },
+    'camp-cup-12': {
+      name: 'كوب رحلات 12', short: 'كوب الرحلات', capacity: '12 أونصة / 350 مل',
+      blurb: 'فولاذ بجدار واحد بحافة ملفوفة ومقبض يُطوى. يوضع مباشرة على موقد المخيّم، وهو الشيء الوحيد الذي لا يقدر عليه أي ترمس مفرّغ.',
+      specs: ['فولاذ بجدار واحد', 'آمن على الموقد والنار', 'خالٍ من BPA', 'حافة ملفوفة', 'مقبض يُطوى'],
+      badge: 'كلاسيكي المخيّم',
+    },
+  };
+
+  const AR_REVIEWS = {
+    'Dana R.': { name: 'دانة ر.', city: 'مدينة الكويت', date: 'قبل أسبوعين', title: 'قهوة الرابعة عصراً ما زالت قهوة',
+      body: 'أملؤه السابعة صباحاً، وآخر رشفة قبل العودة إلى البيت ساخنة فعلاً. المفاجأة كانت البطانة السيراميكية — لا حدّة معدنية في الإثيوبية الفاتحة أبداً.' },
+    'Marcus B.': { name: 'ماركوس ب.', city: 'بورتلاند', date: 'قبل شهر', title: 'سقط من صندوق السيارة. ولا شيء',
+      body: 'انبعج الطلاء، والتفريغ سليم، والغطاء ما زال يُحكم. أحفظ فيه الأمريكانو المثلج في الدوامات الطويلة ولا أثر لحلقة ماء على المقعد.' },
+    'Aiko T.': { name: 'آيكو ت.', city: 'أوساكا', date: 'قبل ثلاثة أسابيع', title: 'يقف تحت ماكينة الإسبريسو',
+      body: 'الكوب الوحيد عندي الذي يدخل تحت رأس الماكينة بلا حركات بهلوانية. صغير، وثقيل بالمعنى الجيد، والغطاء يُغلق بإبهام واحد.' },
+    'Priya S.': { name: 'بريا س.', city: 'لندن', date: 'قبل خمسة أيام', title: 'كوب المكتب الذي حلّ مشكلة القهوة الباردة',
+      body: 'أربع نجوم فقط لأن المقبض يسخن قليلاً مع الماء المغلي. أما العزل فكما هو موصوف تماماً، واللون الأبيض أجمل من الصور.' },
+    'Omar K.': { name: 'عمر ك.', city: 'دبي', date: 'قبل شهرين', title: 'ثماني عشرة ساعة ليست دعاية',
+      body: 'ملأته السادسة صباحاً قبل رحلة صحراوية، وصببت فنجاناً ساخناً في منتصف الليل. الفتحة الضيقة تصبّ بلا تقطّع، وهذا أهم مما توقعت.' },
+    'Elise M.': { name: 'إليز م.', city: 'ليون', date: 'قبل ثلاثة أسابيع', title: 'اشتريت واحداً ثم ثلاثة هدايا',
+      body: 'اللون الأزرق الجليدي هادئ وطباشيري لا لامع. كل من استعاره سأل من أين جاء.' },
+    'Tom H.': { name: 'توم هـ.', city: 'ملبورن', date: 'قبل أسبوع', title: 'ترمس ممتاز، لكن اغسل الغطاء يومياً',
+      body: 'لا ملاحظة على الفولاذ ولا على الإغلاق. لكن إن كنت تشرب القهوة بالحليب وتركت الغطاء ليلة كاملة فستعرف ذلك. أخرج الحلقة أسبوعياً.' },
+    'Sara L.': { name: 'سارة ل.', city: 'ستوكهولم', date: 'قبل ستة أسابيع', title: 'كولد برو ليومين متتاليين',
+      body: 'تركته في السيارة في الصيف والثلج لم يكد يذوب. السيراميك يجعل التنظيف تافهاً — شطفة وتذهب زيوت القهوة.' },
+  };
+
+  /* -------------------------------------------------------------- helpers --- */
+
+  function t(key, vars) {
+    const table = MSG[store.lang] || MSG.en;
+    let out = table[key];
+    if (out === undefined) out = MSG.en[key];
+    if (typeof out !== 'string') return out;
+    if (vars) Object.keys(vars).forEach(k => { out = out.split('{' + k + '}').join(vars[k]); });
+    return out;
+  }
+
+  /* A product or review field in the active language. */
+  function px(p, key) {
+    if (store.lang === 'ar') {
+      const alt = AR_PRODUCTS[p.id];
+      if (alt && alt[key] !== undefined) return alt[key];
+    }
+    return p[key];
+  }
+
+  function rx(r, key) {
+    if (store.lang === 'ar') {
+      const alt = AR_REVIEWS[r.name];
+      if (alt && alt[key] !== undefined) return alt[key];
+    }
+    return r[key];
+  }
+
+  function finishName(key) {
+    const f = FINISHES[key];
+    if (!f) return '';
+    return store.lang === 'ar' && f.nameAr ? f.nameAr : f.name;
+  }
+
+  /* Millimetres and grams read wrong in Arabic with Latin unit marks. */
+  function unit(value) {
+    if (store.lang !== 'ar') return value;
+    return String(value).replace(/\bmm\b/g, 'مم').replace(/\bg\b/g, 'جم')
+      .replace(/\boz\b/g, 'أونصة').replace(/\bml\b/g, 'مل');
+  }
+
+  /* Static strings live in the markup, so the switch walks the DOM and swaps
+     text nodes, placeholders and aria-labels — and remembers the English so
+     switching back is exact rather than a reverse lookup. */
+  const ORIGINAL = new WeakMap();
+  const ORIGINAL_ATTRS = new WeakMap();
+  const SKIP_TAGS = { SCRIPT: 1, STYLE: 1, NOSCRIPT: 1 };
+
+  function translateIn(root) {
+    const toArabic = store.lang === 'ar';
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode: node => (node.parentElement && !SKIP_TAGS[node.parentElement.tagName] && node.nodeValue.trim())
+        ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT,
+    });
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+
+    nodes.forEach(node => {
+      if (!ORIGINAL.has(node)) ORIGINAL.set(node, node.nodeValue);
+      const english = ORIGINAL.get(node);
+      const key = english.trim();
+      if (!toArabic) { node.nodeValue = english; return; }
+      const arabic = AR_TEXT[key];
+      if (arabic) node.nodeValue = english.replace(key, arabic);
+    });
+
+    ['placeholder', 'aria-label', 'title'].forEach(attr => {
+      $$('[' + attr + ']', root).forEach(el => {
+        let seen = ORIGINAL_ATTRS.get(el);
+        if (!seen) { seen = {}; ORIGINAL_ATTRS.set(el, seen); }
+        if (seen[attr] === undefined) seen[attr] = el.getAttribute(attr);
+        const english = seen[attr];
+        if (!toArabic) { el.setAttribute(attr, english); return; }
+        const arabic = AR_TEXT[english.trim()];
+        if (arabic) el.setAttribute(attr, arabic);
+      });
+    });
+  }
+
+  /* Freshly rendered markup needs both passes: photo fallbacks wired, and the
+     static text inside the template translated. Every renderer calls this, so
+     a filter click in Arabic cannot bring English labels back. */
+  function hydrate(root) {
+    wireArtFallbacks(root);
+    translateIn(root);
+  }
+
+  function applyLang(notify) {
+    const ar = store.lang === 'ar';
+    const root = document.documentElement;
+    root.setAttribute('lang', ar ? 'ar' : 'en');
+    root.setAttribute('dir', ar ? 'rtl' : 'ltr');
+    document.body.setAttribute('dir', ar ? 'rtl' : 'ltr');
+
+    $$('[data-lang]').forEach(btn => btn.setAttribute('aria-pressed', String(btn.getAttribute('data-lang') === store.lang)));
+
+    /* Rebuild everything JS owns first — templates emit their own static text,
+       so the page-wide sweep has to come after them, not before. */
+    renderMarquee();
+    renderGrid();
+    renderConfigurator();
+    renderReviews();
+    renderCart();
+    renderClub();
+    renderDrop();
+    renderLiveCounter();
+    refreshPrices();
+    translateIn(document.body);
+    save();
+    if (notify) toast(t('langNote'));
   }
 
   /* ------------------------------------------------------- product artwork --- */
@@ -1567,9 +2318,14 @@ a { color: inherit; }
       ? '<rect x="' + (tl + 4).toFixed(1) + '" y="' + (bodyTop + 4).toFixed(1) + '" width="' + (topW - 8).toFixed(1) + '" height="5" rx="2.5" fill="#F4EFE4" opacity=".9"/>'
       : '';
 
-    const wordmark = '<text x="' + cx + '" y="' + (bodyTop + (floor - bodyTop) * 0.46).toFixed(1) + '"' +
+    const wordmark = '<text x="' + cx + '" y="' + (bodyTop + (floor - bodyTop) * 0.44).toFixed(1) + '"' +
       ' text-anchor="middle" font-family="Marcellus, Georgia, serif" font-size="12"' +
-      ' letter-spacing="3.6" fill="' + deboss + '">MIZU</text>';
+      ' letter-spacing="3.6" fill="' + deboss + '">MIZU</text>' +
+      /* Laser engraving, etched live from the custom bench. */
+      (opts.engrave ? '<text x="' + cx + '" y="' + (bodyTop + (floor - bodyTop) * 0.62).toFixed(1) + '"' +
+        ' text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="' + (opts.engrave.length > 9 ? 8.5 : 10.5) + '"' +
+        ' letter-spacing="2.2" fill="' + deboss + '" opacity=".92">' +
+        escapeHtml(String(opts.engrave).toUpperCase().slice(0, 14)) + '</text>' : '');
 
     const steamMarkup = steam
       ? '<g stroke="#93A8B6" stroke-width="3.2" stroke-linecap="round" fill="none" opacity=".65">' +
@@ -1589,7 +2345,7 @@ a { color: inherit; }
 
     return '' +
       '<svg viewBox="0 0 240 372" width="' + w + '" style="width:' + w + 'px;max-width:100%;height:auto;display:block"' +
-      ' role="img" aria-label="' + escapeHtml(p.name + ' in ' + f.name) + '">' +
+      ' role="img" aria-label="' + escapeHtml(px(p, 'name') + ' · ' + finishName(finishKey)) + '">' +
         '<defs>' +
           /* Nine stops: shadowed edges, two specular bands, a lit centre. */
           '<linearGradient id="' + g + 'b" x1="0" y1="0" x2="1" y2="0">' +
@@ -1667,7 +2423,7 @@ a { color: inherit; }
     if (!url) return vesselSVG(p, finishKey, opts);
     const w = opts.width || 220;
     const f = FINISHES[finishKey] || FINISHES.stainless;
-    return '<img src="' + escapeHtml(url) + '" alt="' + escapeHtml(p.name + ' in ' + f.name) + '"' +
+    return '<img src="' + escapeHtml(url) + '" alt="' + escapeHtml(px(p, 'name') + ' · ' + finishName(finishKey)) + '"' +
       ' data-art-fallback="' + p.id + '|' + finishKey + '|' + w + (opts.steam ? '|steam' : '') + '"' +
       ' style="width:' + w + 'px;max-width:100%;height:auto;display:block" loading="lazy" decoding="async">';
   }
@@ -1788,12 +2544,8 @@ a { color: inherit; }
   }
 
   function renderMarquee() {
-    const claims = [
-      'DOUBLE-WALL VACUUM INSULATION', 'BPA-FREE THROUGHOUT', 'LEAK-PROOF SNAPSEAL LID',
-      '18/8 FOOD-GRADE STAINLESS', 'LIFETIME WARRANTY', 'FREE SHIPPING OVER $50',
-      'FITS A CAR CUP HOLDER', 'CERAMIC-LINED OPTIONS',
-    ];
-    const run = claims.map(c => '<span>' + c + '</span>').join('<span aria-hidden="true">·</span>');
+    const claims = t('marquee');
+    const run = claims.map(c => '<span>' + escapeHtml(c) + '</span>').join('<span aria-hidden="true">·</span>');
     $('#marquee').innerHTML = run + '<span aria-hidden="true">·</span>' + run;
   }
 
@@ -1805,7 +2557,10 @@ a { color: inherit; }
   function matchesQuery(p) {
     if (!store.query) return true;
     const q = store.query.toLowerCase();
-    return [p.name, p.short, p.type, p.capacity, p.blurb].concat(p.specs).join(' ').toLowerCase().indexOf(q) > -1;
+    const ar = AR_PRODUCTS[p.id] || {};
+    /* Search matches either language, whichever the shopper types. */
+    return [p.name, p.short, p.type, p.capacity, p.blurb, ar.name, ar.short, ar.blurb, ar.capacity]
+      .concat(p.specs).concat(ar.specs || []).join(' ').toLowerCase().indexOf(q) > -1;
   }
 
   function visibleProducts() {
@@ -1828,15 +2583,15 @@ a { color: inherit; }
       return '' +
         '<article class="card p-5 flex flex-col gap-4 reveal" data-product-card="' + p.id + '" aria-current="' + (store.cfg.id === p.id) + '">' +
           '<div class="relative rounded-2xl grid place-items-center px-4 py-3 overflow-hidden" style="background:linear-gradient(160deg,var(--porcelain),' + (p.ceramic ? 'var(--sage)' : 'var(--mist)') + ')">' +
-            (p.badge ? '<span class="absolute top-3 left-3 font-mono text-[9.5px] tracking-[0.16em] px-2.5 py-1 rounded-full" style="background:var(--charcoal);color:#fff">' + escapeHtml(p.badge.toUpperCase()) + '</span>' : '') +
-            '<span class="absolute top-3 right-3 font-mono text-[10px] tnum" style="color:var(--stone-500)">' + (p.hot ? escapeHtml(p.hot) + 'H HOT' : 'SINGLE WALL') + '</span>' +
+            (px(p, 'badge') ? '<span class="card-badge absolute top-3 left-3 font-mono text-[9.5px] tracking-[0.16em] px-2.5 py-1 rounded-full" style="background:var(--charcoal);color:#fff">' + escapeHtml(store.lang === 'ar' ? px(p, 'badge') : p.badge.toUpperCase()) + '</span>' : '') +
+            '<span class="card-hot absolute top-3 right-3 font-mono text-[10px] tnum" style="color:var(--stone-500)">' + escapeHtml(p.hot ? t('hotBadge', { n: p.hot }) : t('singleWallBadge')) + '</span>' +
             '<div data-card-art="' + p.id + '">' + artFor(p, finish, { width: 156 }) + '</div>' +
           '</div>' +
 
           '<div class="flex items-start justify-between gap-3">' +
             '<div>' +
-              '<h3 class="font-display text-[19px] leading-tight text-charcoal">' + escapeHtml(p.name) + '</h3>' +
-              '<p class="font-mono text-[10.5px] tracking-[0.12em] mt-1" style="color:var(--stone-500)">' + escapeHtml(p.capacity.toUpperCase()) + '</p>' +
+              '<h3 class="font-display text-[19px] leading-tight text-charcoal">' + escapeHtml(px(p, 'name')) + '</h3>' +
+              '<p class="font-mono text-[10.5px] tracking-[0.12em] mt-1" style="color:var(--stone-500)">' + escapeHtml(store.lang === 'ar' ? px(p, 'capacity') : p.capacity.toUpperCase()) + '</p>' +
             '</div>' +
             '<div class="text-right shrink-0">' +
               '<p class="font-display text-[20px] text-charcoal tnum" data-price-for="' + p.id + '">' + money(p.price) + '</p>' +
@@ -1849,7 +2604,7 @@ a { color: inherit; }
             '<span class="font-mono text-[10.5px] tnum" style="color:var(--stone-500)">' + p.rating.toFixed(1) + ' · ' + p.reviews + '</span>' +
           '</div>' +
 
-          '<div class="flex flex-wrap gap-2 mt-auto" role="group" aria-label="Finishes for ' + escapeHtml(p.name) + '">' + swatches + '</div>' +
+          '<div class="flex flex-wrap gap-2 mt-auto" role="group" aria-label="' + escapeHtml(px(p, 'name')) + '">' + swatches + '</div>' +
 
           '<div class="flex gap-2">' +
             '<button type="button" class="btn btn-ghost btn-sm flex-1" data-configure="' + p.id + '">Details</button>' +
@@ -1858,7 +2613,7 @@ a { color: inherit; }
         '</article>';
     }).join('');
 
-    wireArtFallbacks(grid);
+    hydrate(grid);
     armReveals();
   }
 
@@ -1872,36 +2627,37 @@ a { color: inherit; }
     const art = $('#cfgArt');
     art.classList.add('swapping');
     setTimeout(() => {
-      art.innerHTML = artFor(p, store.cfg.finish, { width: 300, steam: store.thermal === 'hot' && !!p.hot, cold: store.thermal === 'cold' && !!p.cold });
-      wireArtFallbacks(art);
+      art.innerHTML = artFor(p, store.cfg.finish, { width: 300, steam: store.thermal === 'hot' && !!p.hot, cold: store.thermal === 'cold' && !!p.cold, engrave: store.cfg.engrave });
+      hydrate(art);
       art.classList.remove('swapping');
     }, reduceMotion() ? 0 : 180);
 
-    $('#cfgEyebrow').textContent = 'Configure · ' + p.short;
-    $('#cfgName').textContent = p.name;
-    $('#cfgBlurb').textContent = p.blurb;
+    $('#cfgEyebrow').textContent = t('configure', { short: px(p, 'short') });
+    $('#cfgName').textContent = px(p, 'name');
+    $('#cfgBlurb').textContent = px(p, 'blurb');
     $('#cfgPrice').textContent = money(p.price);
     $('#cfgCompare').textContent = money(p.compare);
-    $('#cfgColorName').textContent = f.name;
-    $('#cfgRating').textContent = p.rating.toFixed(1) + ' · ' + p.reviews + ' reviews';
+    $('#cfgColorName').textContent = finishName(store.cfg.finish);
+    $('#cfgRating').textContent = t('ratingLine', { rating: p.rating.toFixed(1), n: p.reviews });
     $('#cfgStars').innerHTML = stars(p.rating, 14);
     $('#cfgQty').textContent = store.cfg.qty;
     $('#cfgAddTotal').textContent = money(p.price * store.cfg.qty);
     $('#cfgMeta').innerHTML = [
-      ['Capacity', p.capacity], ['Height', p.dims.height],
-      ['Base', p.dims.base], ['Weight', p.dims.weight],
+      [t('capacity'), px(p, 'capacity')], [t('height'), unit(p.dims.height)],
+      [t('base'), unit(p.dims.base)], [t('weight'), unit(p.dims.weight)],
     ]
       .map(pair => '<div class="flex flex-col gap-0.5">' +
-        '<dt class="font-mono text-[9.5px] tracking-[0.16em]" style="color:var(--stone-400)">' + escapeHtml(String(pair[0]).toUpperCase()) + '</dt>' +
+        '<dt class="font-mono text-[9.5px] tracking-[0.16em]" style="color:var(--stone-400)">' + escapeHtml(store.lang === 'ar' ? pair[0] : String(pair[0]).toUpperCase()) + '</dt>' +
         '<dd class="text-[13px] tnum" style="color:var(--stone-600)">' + escapeHtml(pair[1]) + '</dd></div>').join('');
 
+    hydrate($('#cfgSpecs'));
     $('#cfgSwatches').innerHTML = p.finishes.map(key =>
       '<button type="button" class="swatch swatch-lg" data-cfg-swatch="' + key + '"' +
       ' aria-pressed="' + (key === store.cfg.finish) + '" aria-label="' + escapeHtml(FINISHES[key].name) + '"' +
       ' style="background:linear-gradient(140deg,' + shade(FINISHES[key].hex, 12) + ',' + FINISHES[key].hex + ' 55%,' + shade(FINISHES[key].hex, -14) + ')"></button>'
     ).join('');
 
-    $('#cfgSpecs').innerHTML = p.specs.map(s =>
+    $('#cfgSpecs').innerHTML = px(p, 'specs').map(s =>
       '<span class="spec-chip"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4F8A5B" stroke-width="2.6" aria-hidden="true"><path d="m4 12.5 5 5L20 6.5"/></svg>' + escapeHtml(s) + '</span>'
     ).join('');
 
@@ -1926,8 +2682,8 @@ a { color: inherit; }
     if (!p.hot) {
       fill.className = 'thermal-fill';
       fill.style.width = '0%';
-      $('#thermalHours').textContent = 'Single-wall';
-      $('#thermalCopy').textContent = 'No vacuum layer: it warms with the drink and cools with it. Made for a camp stove, not a commute.';
+      $('#thermalHours').textContent = t('singleWall');
+      $('#thermalCopy').textContent = t('singleWallCopy');
       $('#thermalOrb').style.background = 'rgba(110,106,99,.12)';
       $('#thermalGlyph').innerHTML = '<g fill="none" stroke="#6E6A63" stroke-width="2.6" stroke-linecap="round">' +
         '<path d="M9 12h22v18a4 4 0 0 1-4 4H13a4 4 0 0 1-4-4V12Z"/><path d="M31 16h4v7h-4"/></g>';
@@ -1939,10 +2695,8 @@ a { color: inherit; }
     fill.className = 'thermal-fill ' + (hot ? 'hot' : 'cold');
     requestAnimationFrame(() => { fill.style.width = Math.min(100, (hours / THERMAL_SCALE) * 100) + '%'; });
 
-    $('#thermalHours').textContent = hours + ' hours';
-    $('#thermalCopy').textContent = hot
-      ? 'Poured at 93 °C, still above 60 °C when hour ' + hours + ' comes around.'
-      : 'Filled with ice at 4 °C, still under 8 °C at hour ' + hours + ' — no condensation on the outside.';
+    $('#thermalHours').textContent = t('hours', { n: hours });
+    $('#thermalCopy').textContent = hot ? t('hotCopy', { n: hours }) : t('coldCopy', { n: hours });
 
     $('#thermalOrb').style.background = hot ? 'rgba(226,114,91,.13)' : 'rgba(74,144,194,.13)';
     $('#thermalGlyph').innerHTML = hot
@@ -1963,10 +2717,25 @@ a { color: inherit; }
 
     const marks = $$('#thermalCard .flex.justify-between.font-mono span');
     if (marks.length === 3) {
-      marks[0].textContent = '0 H';
-      marks[1].textContent = (THERMAL_SCALE / 2) + ' H';
-      marks[2].textContent = THERMAL_SCALE + ' H';
+      const suffix = store.lang === 'ar' ? ' س' : ' H';
+      marks[0].textContent = '0' + suffix;
+      marks[1].textContent = (THERMAL_SCALE / 2) + suffix;
+      marks[2].textContent = THERMAL_SCALE + suffix;
     }
+  }
+
+  /* Repaints only the vessel — used while someone is typing an engraving,
+     where re-rendering the whole panel would flicker on every keystroke. */
+  function paintCfgArt() {
+    const p = product(store.cfg.id);
+    const art = $('#cfgArt');
+    art.innerHTML = artFor(p, store.cfg.finish, {
+      width: 300,
+      steam: store.thermal === 'hot' && !!p.hot,
+      cold: store.thermal === 'cold' && !!p.cold,
+      engrave: store.cfg.engrave,
+    });
+    hydrate(art);
   }
 
   /* ------------------------------------------------------------------- cart --- */
@@ -1985,16 +2754,18 @@ a { color: inherit; }
     return { sub: sub, discount: discount, ship: ship, total: Math.max(0, sub - discount) + ship, promo: promoActive ? promo : null };
   }
 
-  function addToCart(id, finish, qty) {
-    const line = store.cart.find(l => l.id === id && l.finish === finish);
+  function addToCart(id, finish, qty, engrave) {
+    const mark = (engrave || '').trim().toUpperCase().slice(0, 14);
+    /* Two of the same flask with different engraving are different lines. */
+    const line = store.cart.find(l => l.id === id && l.finish === finish && (l.engrave || '') === mark);
     if (line) line.qty = Math.min(20, line.qty + qty);
-    else store.cart.push({ id: id, finish: finish, qty: qty });
+    else store.cart.push({ id: id, finish: finish, qty: qty, engrave: mark });
     save();
     renderCart();
     const badge = $('#cartCount');
     badge.classList.add('bump');
     setTimeout(() => badge.classList.remove('bump'), 520);
-    toast(product(id).name + ' in ' + FINISHES[finish].name + ' added to your cart.');
+    toast(t('added', { name: px(product(id), 'name'), finish: finishName(finish) }));
     openOverlay('cart');
   }
 
@@ -2003,8 +2774,10 @@ a { color: inherit; }
     const badge = $('#cartCount');
     badge.textContent = count;
     badge.classList.toggle('on', count > 0);
-    $('#cartItemCount').textContent = '(' + count + ')';
-    $('#cartBtn').setAttribute('aria-label', count ? 'Open cart, ' + count + ' item' + (count === 1 ? '' : 's') : 'Open cart');
+    $('#cartItemCount').textContent = t('itemsCount', { n: count });
+    $('#cartBtn').setAttribute('aria-label',
+      count ? t('openCartCount', { n: count })
+            : (store.lang === 'ar' ? AR_TEXT['Open cart'] : 'Open cart'));
 
     const empty = store.cart.length === 0;
     $('#cartEmpty').style.display = empty ? 'grid' : 'none';
@@ -2015,14 +2788,16 @@ a { color: inherit; }
       const p = product(l.id);
       return '' +
         '<div class="flex gap-3 pb-4" style="border-bottom:1px solid var(--hairline)">' +
-          '<div class="w-[62px] shrink-0 rounded-xl grid place-items-center py-1" style="background:var(--linen)">' + artFor(p, l.finish, { width: 48 }) + '</div>' +
+          '<div class="w-[62px] shrink-0 rounded-xl grid place-items-center py-1" style="background:var(--linen)">' + artFor(p, l.finish, { width: 48, engrave: l.engrave }) + '</div>' +
           '<div class="flex-1 min-w-0 flex flex-col gap-1.5">' +
             '<div class="flex items-start justify-between gap-2">' +
               '<div class="min-w-0">' +
-                '<p class="font-display text-[16px] leading-tight text-charcoal truncate">' + escapeHtml(p.name) + '</p>' +
-                '<p class="font-mono text-[10px] tracking-[0.12em] mt-1" style="color:var(--stone-500)">' + escapeHtml(FINISHES[l.finish].name.toUpperCase()) + '</p>' +
+                '<p class="font-display text-[16px] leading-tight text-charcoal truncate">' + escapeHtml(px(p, 'name')) + '</p>' +
+                '<p class="font-mono text-[10px] tracking-[0.12em] mt-1" style="color:var(--stone-500)">' +
+                  escapeHtml(store.lang === 'ar' ? finishName(l.finish) : finishName(l.finish).toUpperCase()) +
+                  (l.engrave ? ' · ' + escapeHtml(t('engraved', { text: l.engrave })) : '') + '</p>' +
               '</div>' +
-              '<button type="button" class="shrink-0 p-1" data-remove="' + i + '" aria-label="Remove ' + escapeHtml(p.name) + '">' +
+              '<button type="button" class="shrink-0 p-1" data-remove="' + i + '" aria-label="' + escapeHtml(px(p, 'name')) + '">' +
                 '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A9A49B" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>' +
               '</button>' +
             '</div>' +
@@ -2040,43 +2815,44 @@ a { color: inherit; }
         '</div>';
     }).join('');
 
-    wireArtFallbacks($('#cartItems'));
+    hydrate($('#cartItems'));
 
-    const t = totals();
-    $('#sumSubtotal').textContent = money(t.sub);
-    $('#sumShipping').textContent = t.ship === 0 ? 'Free' : money(t.ship);
-    $('#sumTotal').textContent = money(t.total);
-    $('#discountRow').hidden = t.discount <= 0;
-    $('#sumDiscount').textContent = '−' + money(t.discount);
-    if (t.promo) $('#discountLabel').textContent = t.promo.label;
+    const tot = totals();
+    $('#sumSubtotal').textContent = money(tot.sub);
+    $('#sumShipping').textContent = tot.ship === 0 ? t('free') : money(tot.ship);
+    $('#sumTotal').textContent = money(tot.total);
+    $('#discountRow').hidden = tot.discount <= 0;
+    $('#sumDiscount').textContent = '−' + money(tot.discount);
+    if (tot.promo) $('#discountLabel').textContent = tot.promo.label;
 
-    const remaining = Math.max(0, FREE_SHIPPING_AT - t.sub);
-    $('#shipFill').style.width = Math.min(100, (t.sub / FREE_SHIPPING_AT) * 100) + '%';
+    const remaining = Math.max(0, FREE_SHIPPING_AT - tot.sub);
+    $('#shipFill').style.width = Math.min(100, (tot.sub / FREE_SHIPPING_AT) * 100) + '%';
     $('#shipMessage').innerHTML = remaining > 0
-      ? 'Spend <span class="font-medium tnum">' + money(remaining) + '</span> more for free shipping.'
-      : '<span class="font-medium">Free shipping unlocked.</span> Dispatch is same-day before 15:00.';
+      ? t('shipRemaining', { v: money(remaining) })
+      : t('shipUnlocked');
   }
 
   /* --------------------------------------------------------------- checkout --- */
 
   function renderCheckout() {
-    const t = totals();
+    const tot = totals();
     $('#checkoutLines').innerHTML = store.cart.map(l => {
       const p = product(l.id);
       return '<div class="flex items-center gap-3">' +
-        '<div class="w-[52px] shrink-0 rounded-lg grid place-items-center py-1" style="background:var(--linen)">' + artFor(p, l.finish, { width: 40 }) + '</div>' +
-        '<div class="flex-1 min-w-0"><p class="text-[14.5px] font-medium truncate">' + escapeHtml(p.name) + '</p>' +
-        '<p class="font-mono text-[10px] tracking-[0.12em]" style="color:var(--stone-500)">' + escapeHtml(FINISHES[l.finish].name.toUpperCase()) + ' · ×' + l.qty + '</p></div>' +
+        '<div class="w-[52px] shrink-0 rounded-lg grid place-items-center py-1" style="background:var(--linen)">' + artFor(p, l.finish, { width: 40, engrave: l.engrave }) + '</div>' +
+        '<div class="flex-1 min-w-0"><p class="text-[14.5px] font-medium truncate">' + escapeHtml(px(p, 'name')) + '</p>' +
+        '<p class="font-mono text-[10px] tracking-[0.12em]" style="color:var(--stone-500)">' + escapeHtml(finishName(l.finish)) +
+          (l.engrave ? ' · ' + escapeHtml(t('engraved', { text: l.engrave })) : '') + ' · ×' + l.qty + '</p></div>' +
         '<span class="font-mono text-[13px] tnum">' + money(p.price * l.qty) + '</span></div>';
     }).join('');
 
-    wireArtFallbacks($('#checkoutLines'));
-    $('#coSubtotal').textContent = money(t.sub);
-    $('#coShipping').textContent = t.ship === 0 ? 'Free' : money(t.ship);
-    $('#coTotal').textContent = money(t.total);
-    $('#payTotal').textContent = money(t.total);
-    $('#coDiscountRow').hidden = t.discount <= 0;
-    $('#coDiscount').textContent = '−' + money(t.discount);
+    hydrate($('#checkoutLines'));
+    $('#coSubtotal').textContent = money(tot.sub);
+    $('#coShipping').textContent = tot.ship === 0 ? t('free') : money(tot.ship);
+    $('#coTotal').textContent = money(tot.total);
+    $('#payTotal').textContent = money(tot.total);
+    $('#coDiscountRow').hidden = tot.discount <= 0;
+    $('#coDiscount').textContent = '−' + money(tot.discount);
     if (store.user && store.user.email) $('#coEmail').value = store.user.email;
   }
 
@@ -2097,15 +2873,15 @@ a { color: inherit; }
 
     $('#reviewRail').innerHTML = list.length ? list.map(r => {
       const mediaBadge = r.media === 'photo'
-        ? '<span class="spec-chip !bg-white"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2B4F63" stroke-width="1.9" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="3.4"/><path d="M8 6l1.5-2h5L16 6"/></svg>Photo review</span>'
+        ? '<span class="spec-chip !bg-white"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2B4F63" stroke-width="1.9" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="3.4"/><path d="M8 6l1.5-2h5L16 6"/></svg>' + t('photoReview') + '</span>'
         : (r.media === 'video'
-          ? '<span class="spec-chip !bg-white"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2B4F63" stroke-width="1.9" aria-hidden="true"><rect x="3" y="6" width="12" height="12" rx="3"/><path d="m15 11 6-3v8l-6-3z"/></svg>Video review</span>'
+          ? '<span class="spec-chip !bg-white"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2B4F63" stroke-width="1.9" aria-hidden="true"><rect x="3" y="6" width="12" height="12" rx="3"/><path d="m15 11 6-3v8l-6-3z"/></svg>' + t('videoReview') + '</span>'
           : '');
 
       const mediaTile = r.media
         ? '<div class="rounded-xl h-[92px] grid place-items-center relative overflow-hidden" style="background:linear-gradient(150deg,var(--mist),var(--sage))">' +
             (r.media === 'video' ? '<span class="grid place-items-center w-10 h-10 rounded-full" style="background:rgba(255,255,255,.85)"><svg width="14" height="14" viewBox="0 0 24 24" fill="#212121" aria-hidden="true"><path d="M8 5l12 7-12 7z"/></svg></span>' : '') +
-            '<span class="absolute bottom-2 left-3 font-mono text-[9.5px] tracking-[0.2em]" style="color:var(--stone-500)">' + (r.media === 'video' ? 'CUSTOMER VIDEO · 0:24' : 'CUSTOMER PHOTO') + '</span>' +
+            '<span class="media-caption absolute bottom-2 left-3 font-mono text-[9.5px] tracking-[0.2em]" style="color:var(--stone-500)">' + (r.media === 'video' ? t('customerVideo') : t('customerPhoto')) + '</span>' +
           '</div>'
         : '';
 
@@ -2113,31 +2889,32 @@ a { color: inherit; }
         '<article class="card p-6 flex flex-col gap-4">' +
           '<div class="flex items-center justify-between gap-3">' +
             '<span class="flex gap-0.5">' + stars(r.rating, 13) + '</span>' +
-            '<span class="font-mono text-[10px] tracking-[0.12em]" style="color:var(--stone-400)">' + escapeHtml(r.date.toUpperCase()) + '</span>' +
+            '<span class="font-mono text-[10px] tracking-[0.12em]" style="color:var(--stone-400)">' + escapeHtml(store.lang === 'ar' ? rx(r, 'date') : r.date.toUpperCase()) + '</span>' +
           '</div>' +
-          '<div><h3 class="font-display text-[19px] leading-snug text-charcoal">' + escapeHtml(r.title) + '</h3>' +
-          '<p class="text-[14.5px] mt-2" style="color:var(--stone-600)">' + escapeHtml(r.body) + '</p></div>' +
+          '<div><h3 class="font-display text-[19px] leading-snug text-charcoal">' + escapeHtml(rx(r, 'title')) + '</h3>' +
+          '<p class="text-[14.5px] mt-2" style="color:var(--stone-600)">' + escapeHtml(rx(r, 'body')) + '</p></div>' +
           mediaTile +
           '<div class="flex flex-wrap items-center gap-2 mt-auto">' +
-            (r.verified ? '<span class="spec-chip" style="background:rgba(79,138,91,.10);border-color:rgba(79,138,91,.28);color:#3C6B46"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3C6B46" stroke-width="2.6" aria-hidden="true"><path d="m4 12.5 5 5L20 6.5"/></svg>Verified buyer</span>' : '') +
+            (r.verified ? '<span class="spec-chip" style="background:rgba(79,138,91,.10);border-color:rgba(79,138,91,.28);color:#3C6B46"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3C6B46" stroke-width="2.6" aria-hidden="true"><path d="m4 12.5 5 5L20 6.5"/></svg>' + t('verified') + '</span>' : '') +
             mediaBadge +
             '<span class="spec-chip">' + escapeHtml(r.product) + '</span>' +
           '</div>' +
           '<div class="flex items-center gap-3 pt-1" style="border-top:1px solid var(--hairline)">' +
-            '<span class="grid place-items-center w-9 h-9 rounded-full font-mono text-[12px] mt-3" style="background:var(--linen);color:var(--stone-600)">' + escapeHtml(r.name.charAt(0)) + '</span>' +
-            '<span class="mt-3"><span class="block text-[14px] font-medium">' + escapeHtml(r.name) + '</span>' +
-            '<span class="block font-mono text-[10px] tracking-[0.12em]" style="color:var(--stone-500)">' + escapeHtml(r.city.toUpperCase()) + '</span></span>' +
+            '<span class="grid place-items-center w-9 h-9 rounded-full font-mono text-[12px] mt-3" style="background:var(--linen);color:var(--stone-600)">' + escapeHtml(rx(r, 'name').charAt(0)) + '</span>' +
+            '<span class="mt-3"><span class="block text-[14px] font-medium">' + escapeHtml(rx(r, 'name')) + '</span>' +
+            '<span class="block font-mono text-[10px] tracking-[0.12em]" style="color:var(--stone-500)">' + escapeHtml(store.lang === 'ar' ? rx(r, 'city') : r.city.toUpperCase()) + '</span></span>' +
           '</div>' +
         '</article>';
-    }).join('') : '<p class="py-10 text-center w-full" style="color:var(--stone-500)">No reviews match that filter yet.</p>';
+    }).join('') : '<p class="py-10 text-center w-full" style="color:var(--stone-500)">' + t('noReviewMatch') + '</p>';
 
     $('#reviewDots').innerHTML = list.map((_, i) =>
-      '<button type="button" class="dot" data-review-dot="' + i + '" role="tab" aria-current="' + (i === store.reviewIndex) + '" aria-label="Review ' + (i + 1) + ' of ' + list.length + '"></button>'
+      '<button type="button" class="dot" data-review-dot="' + i + '" role="tab" aria-current="' + (i === store.reviewIndex) + '" aria-label="' + (i + 1) + ' / ' + list.length + '"></button>'
     ).join('');
 
     $$('[data-review-filter]').forEach(chip => {
       chip.setAttribute('aria-pressed', String(chip.getAttribute('data-review-filter') === store.reviewFilter));
     });
+    hydrate($('#reviewRail'));
   }
 
   function goToReview(index) {
@@ -2161,6 +2938,62 @@ a { color: inherit; }
         '<span class="font-mono text-[11px] w-12 text-right tnum" style="color:var(--stone-500)">' + d.count.toLocaleString('en-US') + '</span>' +
       '</div>';
     }).join('');
+  }
+
+  /* --------------------------------------------- drop, club, live counter --- */
+
+  const DROP = { finish: 'ember', product: 'tumbler-16', made: 400, claimed: 263 };
+
+  function renderDrop() {
+    const p = product(DROP.product);
+    const art = $('#dropArt');
+    art.innerHTML = artFor(p, DROP.finish, { width: 250 });
+    hydrate(art);
+    $('#dropClaimed').textContent = t('dropClaimed', { n: DROP.claimed });
+    $('#dropFill').style.width = ((DROP.claimed / DROP.made) * 100).toFixed(1) + '%';
+  }
+
+  /* Club balances are simulated; signing in is what would make them yours. */
+  const CLUB = { points: 380, next: 500, tier: 1, thresholds: [0, 500, 1500] };
+
+  function renderClub() {
+    const tiers = t('tiers');
+    $('#clubPoints').textContent = CLUB.points.toLocaleString('en-US');
+    $('#clubNext').textContent = t('clubNext', { n: CLUB.next - CLUB.points, tier: tiers[CLUB.tier].name });
+    $('#clubFill').style.width = Math.min(100, (CLUB.points / CLUB.next) * 100).toFixed(1) + '%';
+
+    $('#clubTiers').innerHTML = tiers.map((tier, i) => {
+      const reached = CLUB.points >= CLUB.thresholds[i];
+      return '<article class="card p-5 flex flex-col gap-2.5"' + (reached ? ' style="border-color:var(--charcoal)"' : '') + '>' +
+        '<span class="flex items-center justify-between gap-2">' +
+          '<span class="font-display text-[19px] text-charcoal">' + escapeHtml(tier.name) + '</span>' +
+          (reached
+            ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4F8A5B" stroke-width="2.6" aria-hidden="true"><path d="m4 12.5 5 5L20 6.5"/></svg>'
+            : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A9A49B" stroke-width="1.9" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2.5"/><path d="M8.5 11V8a3.5 3.5 0 0 1 7 0v3"/></svg>') +
+        '</span>' +
+        '<span class="font-mono text-[10.5px] tracking-[0.14em] tnum" style="color:var(--stone-500)">' + escapeHtml(tier.at) + '</span>' +
+        '<span class="text-[14px]" style="color:var(--stone-600)">' + escapeHtml(tier.line) + '</span>' +
+      '</article>';
+    }).join('');
+    hydrate($('#clubTiers'));
+  }
+
+  /* The source brand runs a live line counter. This one only ever counts up
+     within a plausible day's output, and the label beside it says it is a demo. */
+  let shippedToday = 128;
+
+  function renderLiveCounter() {
+    $('#liveCounter').textContent = t('liveCounter', { n: shippedToday });
+  }
+
+  function startLiveCounter() {
+    if (reduceMotion()) return;
+    setInterval(() => {
+      if (document.visibilityState !== 'visible') return;
+      shippedToday += Math.floor(Math.random() * 3) + 1;
+      if (shippedToday > 940) shippedToday = 128;
+      renderLiveCounter();
+    }, 7000);
   }
 
   /* ------------------------------------------------------------- price sweep --- */
@@ -2271,13 +3104,13 @@ a { color: inherit; }
     searchResults.innerHTML = hits.length ? hits.map(p =>
       '<button type="button" class="w-full flex items-center gap-3 p-2 rounded-xl text-left hover:bg-linen transition-colors" data-configure="' + p.id + '" role="option">' +
         '<span class="w-[42px] shrink-0 rounded-lg grid place-items-center py-1" style="background:var(--linen)">' + artFor(p, cardFinish[p.id], { width: 32 }) + '</span>' +
-        '<span class="flex-1 min-w-0"><span class="block text-[14px] font-medium truncate">' + escapeHtml(p.name) + '</span>' +
-        '<span class="block font-mono text-[10px] tracking-[0.1em]" style="color:var(--stone-500)">' + escapeHtml(p.capacity.toUpperCase()) + '</span></span>' +
+        '<span class="flex-1 min-w-0"><span class="block text-[14px] font-medium truncate">' + escapeHtml(px(p, 'name')) + '</span>' +
+        '<span class="block font-mono text-[10px] tracking-[0.1em]" style="color:var(--stone-500)">' + escapeHtml(px(p, 'capacity')) + '</span></span>' +
         '<span class="font-mono text-[12px] tnum">' + money(p.price) + '</span>' +
       '</button>'
-    ).join('') : '<p class="p-3 text-[13.5px]" style="color:var(--stone-500)">No match. Try “ceramic” or “mug”.</p>';
+    ).join('') : '<p class="p-3 text-[13.5px]" style="color:var(--stone-500)">' + escapeHtml(t('searchNoMatch')) + '</p>';
     searchResults.classList.remove('hidden');
-    wireArtFallbacks(searchResults);
+    hydrate(searchResults);
   }
 
   searchInputs.forEach(input => {
@@ -2310,7 +3143,7 @@ a { color: inherit; }
       save();
       refreshPrices();
       renderGrid();
-      toast('Prices now shown in ' + store.currency + '. Conversion is indicative.');
+      toast(t('currencyNote', { code: store.currency }));
     });
   });
 
@@ -2325,7 +3158,7 @@ a { color: inherit; }
         holder.classList.add('stage-art', 'swapping');
         setTimeout(() => {
           holder.innerHTML = artFor(product(id), cardFinish[id], { width: 156 });
-          wireArtFallbacks(holder);
+          hydrate(holder);
           holder.classList.remove('swapping');
         }, reduceMotion() ? 0 : 160);
       }
@@ -2396,7 +3229,7 @@ a { color: inherit; }
       store.cart.splice(i, 1);
       save();
       renderCart();
-      if (gone) toast(product(gone.id).name + ' removed.');
+      if (gone) toast(t('removed', { name: px(product(gone.id), 'name') }));
       return;
     }
 
@@ -2425,12 +3258,53 @@ a { color: inherit; }
     }
 
     if (e.target.closest('[data-buy-now]')) {
-      addToCart(store.cfg.id, store.cfg.finish, store.cfg.qty);
+      addToCart(store.cfg.id, store.cfg.finish, store.cfg.qty, store.cfg.engrave);
       return;
     }
   });
 
-  $('#cfgAdd').addEventListener('click', () => addToCart(store.cfg.id, store.cfg.finish, store.cfg.qty));
+  $('#cfgAdd').addEventListener('click', () => addToCart(store.cfg.id, store.cfg.finish, store.cfg.qty, store.cfg.engrave));
+
+  /* The custom bench */
+  const engraveOn = $('#engraveOn');
+  const engraveText = $('#engraveText');
+
+  function syncEngrave(repaint) {
+    const on = engraveOn.checked;
+    engraveText.disabled = !on;
+    const clean = on
+      ? engraveText.value.replace(/[^\p{L}\p{N} .&'-]/gu, '').toUpperCase().slice(0, 14)
+      : '';
+    if (engraveText.value !== clean) engraveText.value = clean;
+    store.cfg.engrave = clean;
+    $('#engraveCount').textContent = t('engraveCount', { n: clean.length });
+    if (repaint !== false) paintCfgArt();
+  }
+
+  engraveOn.addEventListener('change', () => {
+    syncEngrave();
+    if (engraveOn.checked) engraveText.focus();
+  });
+  engraveText.addEventListener('input', () => syncEngrave());
+
+  /* Monthly drop */
+  $('#dropAdd').addEventListener('click', () => {
+    store.cfg.id = DROP.product;
+    store.cfg.finish = DROP.finish;
+    renderConfigurator();
+    addToCart(DROP.product, DROP.finish, 1, store.cfg.engrave);
+  });
+
+  /* Language */
+  $$('[data-lang]').forEach(btn => btn.addEventListener('click', () => {
+    const lang = btn.getAttribute('data-lang');
+    if (lang === store.lang) return;
+    store.lang = lang;
+    applyLang(true);
+    if (mobileMenu.style.maxHeight && mobileMenu.style.maxHeight !== '0px') {
+      mobileMenu.style.maxHeight = mobileMenu.scrollHeight + 'px';
+    }
+  }));
   $('#cartBtn').addEventListener('click', () => openOverlay('cart'));
 
   /* Reviews: arrows, autoplay, swipe position tracking */
@@ -2482,12 +3356,12 @@ a { color: inherit; }
     const code = $('#promoInput').value.trim().toUpperCase();
     const promo = PROMOS[code];
     if (!promo) {
-      note.textContent = 'That code is not one of ours. Try MIZU10.';
+      note.textContent = t('promoUnknown');
       note.classList.add('on');
       return;
     }
     if (subtotal() < promo.min) {
-      note.textContent = code + ' applies from ' + money(promo.min) + ' — add one more vessel.';
+      note.textContent = t('promoMin', { code: code, v: money(promo.min) });
       note.classList.add('on');
       return;
     }
@@ -2495,12 +3369,12 @@ a { color: inherit; }
     note.classList.remove('on');
     save();
     renderCart();
-    toast(promo.label + ' applied.');
+    toast(t('promoApplied', { label: promo.label }));
   });
 
   /* Checkout */
   $('#checkoutBtn').addEventListener('click', () => {
-    if (!store.cart.length) { toast('Your cart is empty — pick a finish first.', 'error'); return; }
+    if (!store.cart.length) { toast(t('cartEmpty'), 'error'); return; }
     $('#checkoutReview').style.display = 'flex';
     $('#checkoutDone').classList.add('hidden');
     $('#checkoutDone').classList.remove('flex');
@@ -2544,7 +3418,7 @@ a { color: inherit; }
       $('#promoInput').value = '';
       save();
       renderCart();
-      toast('Order placed. Confirmation on its way.');
+      toast(t('orderPlaced'));
     }, 1100);
   });
 
@@ -2622,7 +3496,7 @@ a { color: inherit; }
       btn.textContent = 'Sign in';
       signIn(email.split('@')[0].replace(/[._-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase()), email);
       closeOverlays();
-      toast('Signed in as ' + email + '.');
+      toast(t('signedIn', { email: email }));
     }, 800);
   });
 
@@ -2645,7 +3519,7 @@ a { color: inherit; }
       btn.textContent = 'Create account';
       signIn(name, email);
       closeOverlays();
-      toast('Account created. Welcome to Mizu, ' + name.split(' ')[0] + '.');
+      toast(t('accountCreated', { name: name.split(' ')[0] }));
     }, 900);
   });
 
@@ -2654,7 +3528,7 @@ a { color: inherit; }
     const email = $('#resetEmail').value.trim();
     if (!setError('resetEmail', !emailRe.test(email))) return;
     closeOverlays();
-    toast('Reset link sent to ' + email + '. It expires in 30 minutes.');
+    toast(t('resetSent', { email: email }));
   });
 
   /* Account button: modal when signed out, a small menu when signed in. */
@@ -2671,7 +3545,13 @@ a { color: inherit; }
     if (!store.user) { showAuthPane('signin'); openOverlay('auth'); return; }
     const rect = $('#accountBtn').getBoundingClientRect();
     accountMenu.style.top = (rect.bottom + 10) + 'px';
-    accountMenu.style.right = Math.max(12, window.innerWidth - rect.right) + 'px';
+    if (store.lang === 'ar') {
+      accountMenu.style.right = 'auto';
+      accountMenu.style.left = Math.max(12, rect.left) + 'px';
+    } else {
+      accountMenu.style.left = 'auto';
+      accountMenu.style.right = Math.max(12, window.innerWidth - rect.right) + 'px';
+    }
     accountMenu.innerHTML =
       '<p class="px-3 py-2"><span class="block text-[14px] font-medium">' + escapeHtml(store.user.name) + '</span>' +
       '<span class="block font-mono text-[10.5px] truncate" style="color:var(--stone-500)">' + escapeHtml(store.user.email) + '</span></p>' +
@@ -2687,9 +3567,9 @@ a { color: inherit; }
       store.user = null;
       save();
       renderAccount();
-      toast('Signed out.');
+      toast(t('signedOut'));
     } else {
-      toast('No orders yet on this account — this is a demo store.');
+      toast(t('noOrders'));
     }
     closeAccountMenu();
   });
@@ -2718,7 +3598,7 @@ a { color: inherit; }
       btn.disabled = false;
       btn.textContent = 'Get the code';
       input.value = '';
-      toast('You are on the list. Use MIZU10 for 10% off your first vessel.');
+      toast(t('subscribed'));
     }, 700);
   });
 
@@ -2733,13 +3613,21 @@ a { color: inherit; }
   renderConfigurator();
   renderReviews();
   renderCart();
+  renderDrop();
+  renderClub();
+  renderLiveCounter();
   refreshPrices();
   renderAccount();
   $('.faq-item').classList.add('open');
   $('.faq-item .faq-q').setAttribute('aria-expanded', 'true');
   onScroll();
+  /* Paints the stored language over everything above, and is a no-op for the
+     English default beyond one re-render. */
+  applyLang(false);
+  syncEngrave(false);
   armReveals();
   startAutoplay();
+  startLiveCounter();
   window.addEventListener('resize', () => { if (mobileMenu.style.maxHeight && mobileMenu.style.maxHeight !== '0px') mobileMenu.style.maxHeight = mobileMenu.scrollHeight + 'px'; });
 })();
 </script>

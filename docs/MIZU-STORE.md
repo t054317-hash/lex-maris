@@ -138,3 +138,57 @@ That last check exists because of a real bug: the closed modals kept
 swallowed clicks behind it. On a phone it covered almost the whole screen.
 Closed overlays are now inert and untabbable, and the harness fails if that
 ever regresses.
+
+## Content synced from the Tum2Go artifact
+
+The store absorbed the ideas and content of a second artifact
+(`3c4252c6-5ea4-48b3-bbef-dec375998cfd`, a Kuwait tumbler brand) without
+adopting its visual identity, which is a candy-bright Baloo/Outfit system that
+contradicts the minimal-luxury direction set for Mizu. What came across:
+
+| From the source | How it lands here |
+| --- | --- |
+| Ember Orange colourway | A sixth finish, and this month's café drop |
+| Ember / frost palette (`#FF6A1F`, `#22C6E8`) | The hot and cold thermal semantics |
+| Free engraving, 14 characters, numbered base | The custom bench, etched live onto the vessel artwork |
+| Free delivery in Kuwait · 30-day returns · lifetime warranty | The purchase-panel promises |
+| Sticker set, café drink voucher | Drop inclusions and club perks |
+| One café, one colourway, 400 numbered pieces | The Mug of the Month section |
+| Points, tiers, 150 points per review | The Mizu Club section |
+| A live line counter | The hero ticker, labelled as a demo counter |
+| 95 °C in, 68 °C twelve hours later | The thermal copy and the FAQ answer |
+
+Named third-party cafés were deliberately not carried over: a partnership claim
+about a real business does not belong in a demo storefront. The drop and the
+club describe an unnamed partner café instead.
+
+## Arabic and RTL
+
+`AR_TEXT` maps the exact English of every static string to its Arabic, and
+`applyLang()` walks the DOM swapping text nodes, `placeholder`, `aria-label` and
+`title` — so the markup carries no translation keys and templates rendered by JS
+are translated after every render. The English is remembered per node in a
+`WeakMap`, so switching back is the original text rather than a reverse lookup.
+
+Strings JS assembles itself go through `t(key, vars)` against `MSG.en` / `MSG.ar`,
+because word order moves between the languages: `Spend {v} more for free shipping`
+is not a text swap. Catalogue and review copy live in `AR_PRODUCTS` and
+`AR_REVIEWS`, keyed by product id and reviewer name, read through `px()` and
+`rx()`. Search matches either language.
+
+Switching sets `lang` and `dir` on the root element. Type changes with it —
+Amiri for display, Tajawal for body, both loaded from Google Fonts — and the
+`.eyebrow` and `.uppercase` treatments stand down, since Arabic has neither case
+nor letter-spaced small caps. Only the direction-dependent CSS is restated under
+`[dir="rtl"]`: the cart drawer changes side and slide direction, the search icon,
+select chevron, password toggle, hero chips, card badges and back-to-top button
+mirror, and the marquee reverses. Everything laid out with flex, grid or logical
+centring mirrors on its own. Prices keep Western digits in both languages —
+that is what Gulf storefronts use — while the currency mark follows the language
+(`KD` / `د.ك`).
+
+## Currency
+
+USD, EUR, GBP, KWD and SAR, converted from a USD price list at indicative
+rates, with KWD carrying three decimals. The selector re-renders every price on
+the page, the cart totals and the checkout summary from one `money()` call.
