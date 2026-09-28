@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import { useI18n } from '@/i18n/I18nProvider';
+import type { TranslationKey } from '@/i18n/dictionaries';
 
 type Mode = 'signIn' | 'signUp';
 
@@ -126,9 +127,8 @@ export function AuthDialog({
           body: JSON.stringify(payload),
         });
 
-        const result = (await res.json()) as {
+        const result = (await res.json().catch(() => ({}))) as {
           ok?: boolean;
-          error?: string;
           confirmationRequired?: boolean;
         };
 
@@ -137,12 +137,14 @@ export function AuthDialog({
           // message. Offer the fix as well as the error: flip to sign-in and
           // keep the address they already typed.
           if (res.status === 409 && mode === 'signUp') {
-            setError(result.error ?? t('auth.duplicate'));
+            setError(t('auth.duplicate'));
             setMode('signIn');
             setPassword('');
             return;
           }
-          throw new Error(result.error ?? `Request failed (${res.status})`);
+          // The API answers in English; the visitor reads their own language.
+          // Map by status, which the routes keep stable.
+          throw new Error(authErrorText(res.status, mode, t));
         }
 
         if (result.confirmationRequired) {
@@ -155,7 +157,7 @@ export function AuthDialog({
         await getSupabaseBrowserClient().auth.getSession();
         onClose();
       } catch (err) {
-        setError(err instanceof Error ? err.message : String(err));
+        setError(err instanceof Error && err.message ? err.message : t('auth.error.generic'));
       } finally {
         setBusy(false);
       }
@@ -165,7 +167,7 @@ export function AuthDialog({
 
   const resetPassword = useCallback(async () => {
     if (!email) {
-      setError(t('auth.email'));
+      setError(t('auth.error.emailFirst'));
       return;
     }
     setBusy(true);
@@ -177,8 +179,8 @@ export function AuthDialog({
       });
       if (resetError) throw resetError;
       setNotice(t('auth.reset.sent'));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+    } catch {
+      setError(t('auth.error.generic'));
     } finally {
       setBusy(false);
     }
@@ -242,7 +244,7 @@ export function AuthDialog({
                   },
                 });
                 if (oauthError) {
-                  setError(oauthError.message);
+                  setError(t('auth.error.generic'));
                   setBusy(false);
                 }
                 // On success the browser leaves for Google; nothing to reset.
@@ -255,13 +257,13 @@ export function AuthDialog({
                 <path fill="#FBBC05" d="M3.97 10.72a5.4 5.4 0 0 1 0-3.44V4.94H.96a9 9 0 0 0 0 8.12l3.01-2.34Z" />
                 <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.59C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.94l3.01 2.34C4.68 5.16 6.66 3.58 9 3.58Z" />
               </svg>
-              Continue with Google
+              {t('auth.google')}
             </button>
 
             <div aria-hidden className="my-5 flex items-center gap-3">
               <span className="h-px flex-1 bg-ink-500/20" />
               <span className="text-[10px] uppercase tracking-[0.16em] text-ink-500">
-                or
+                {t('auth.or')}
               </span>
               <span className="h-px flex-1 bg-ink-500/20" />
             </div>
@@ -368,6 +370,22 @@ export function AuthDialog({
 }
 
 /* -------------------------------------------------------------------------- */
+
+function authErrorText(
+  status: number,
+  mode: Mode,
+  t: (key: TranslationKey) => string,
+): string {
+  if (status === 429) return t('auth.error.rateLimited');
+  if (mode === 'signIn') {
+    if (status === 400 || status === 401) return t('auth.error.invalid');
+    if (status === 403) return t('auth.error.unconfirmed');
+    if (status === 409) return t('auth.error.notProvisioned');
+  } else if (status === 400 || status === 422) {
+    return t('auth.error.check');
+  }
+  return t('auth.error.generic');
+}
 
 interface AuthFieldProps {
   label: string;

@@ -191,6 +191,7 @@ export interface Database {
         Row: {
           id: string;
           organisation_id: string;
+          email: string;
           full_name: string;
           role: UserRole;
           locale: string;
@@ -208,7 +209,12 @@ export interface Database {
           locale?: string;
           phone?: string | null;
         };
-        Update: Partial<Database['public']['Tables']['profiles']['Insert']>;
+        Update: Partial<
+          Database['public']['Tables']['profiles']['Insert'] & {
+            last_seen_at: string | null;
+            deleted_at: string | null;
+          }
+        >;
         Relationships: [];
       };
       organisations: {

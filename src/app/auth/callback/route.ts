@@ -14,6 +14,10 @@ import { getSupabaseServerClient } from '@/lib/supabase/server';
  * "create if new, log in if existing" branch lives in the database trigger,
  * not in this handler, so it cannot be bypassed by hitting a different route.
  */
+function isLocalPath(value: string | null): value is string {
+  return !!value && /^\/(?![/\\])/.test(value) && !value.includes('\\');
+}
+
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const code = url.searchParams.get('code');
@@ -22,15 +26,15 @@ export async function GET(request: Request) {
 
   // Only ever redirect to a path on this origin. Echoing back a full URL from
   // the query string is an open redirect.
-  const next = rawNext && rawNext.startsWith('/') && !rawNext.startsWith('//')
-    ? rawNext
-    : '/dashboard';
+  // `/\evil.com` is normalised to `//evil.com` by browsers, so backslashes
+  // are refused as well as a leading double slash.
+  const next = isLocalPath(rawNext) ? rawNext : '/dashboard';
 
   const fail = (reason: string) =>
     NextResponse.redirect(new URL(`/login?error=${encodeURIComponent(reason)}`, url.origin));
 
   // The user declined consent, or Google rejected the request.
-  if (oauthError) return fail(oauthError);
+  if (oauthError) return fail(/^[a-z_]{1,40}$/.test(oauthError) ? oauthError : 'oauth_error');
   if (!code) return fail('missing_code');
 
   const supabase = getSupabaseServerClient();
@@ -39,7 +43,7 @@ export async function GET(request: Request) {
   if (error) {
     // Most often a reused or expired code -- someone refreshing the callback
     // URL. Send them back to sign in rather than showing a raw error.
-    return fail(error.message);
+    return fail('exchange_failed');
   }
 
   return NextResponse.redirect(new URL(next, url.origin));

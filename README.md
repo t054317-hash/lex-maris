@@ -20,10 +20,18 @@ when you change a rule in `src/lib/`, port it there too or drop the prototype.
 
 **The Next.js app** is the production path.
 
-> **Status:** the app source has not yet been compiled — there was no Node
-> toolchain on the machine it was written on, so `tsc` and `next build` have not
-> been run against it. Expect to fix small type or import errors on first
-> install. The prototype has no build step and is unaffected.
+> **Status:** `npm run typecheck` and `next build` pass.
+
+## Languages
+
+English, Arabic (RTL) and French. The header toggle switches **everything**:
+chrome, every select option, risk findings, the dashboard, and the generated
+contract itself, which is drafted clause by clause in the chosen language
+(`src/lib/document-engine.ts` holds one complete text table per locale). UI
+strings live in `src/i18n/dictionaries.ts`; finding translations in
+`src/i18n/findings.ts`, keyed by `Finding.code`. The engine's English finding
+text remains the audit record. A native legal reviewer should read the Arabic
+and French contract text before either is used for an executed instrument.
 
 ## Quick start
 

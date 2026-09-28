@@ -1,17 +1,11 @@
 import type { Metadata, Viewport } from 'next';
 import { Cinzel, Inter, Tajawal } from 'next/font/google';
-import { cookies } from 'next/headers';
 import './globals.css';
 import { CursorSpotlight } from '@/components/ui/CursorSpotlight';
 import { SiteHeader } from '@/components/ui/SiteHeader';
 import { I18nProvider } from '@/i18n/I18nProvider';
-import {
-  DEFAULT_LOCALE,
-  DIRECTION,
-  LOCALE_COOKIE,
-  isLocale,
-  type Locale,
-} from '@/i18n/config';
+import { DIRECTION } from '@/i18n/config';
+import { getServerT } from '@/i18n/server';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -33,21 +27,23 @@ const tajawal = Tajawal({
   display: 'swap',
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: 'LEX MARIS — Commercial, Corporate & Maritime Trade Law',
-    template: '%s · LEX MARIS',
-  },
-  description:
-    'Contract automation, clause-level risk analysis and cryptographic execution for commercial, corporate and maritime trade counsel.',
-  openGraph: {
-    title: 'LEX MARIS',
-    description:
-      'Contract automation, clause-level risk analysis and cryptographic execution.',
-    type: 'website',
-  },
-  robots: { index: true, follow: true },
-};
+export function generateMetadata(): Metadata {
+  const { t, locale } = getServerT();
+  return {
+    title: {
+      default: t('meta.title'),
+      template: `%s · ${t('brand.name')}`,
+    },
+    description: t('meta.description'),
+    openGraph: {
+      title: t('brand.name'),
+      description: t('meta.description'),
+      type: 'website',
+      locale: { en: 'en_US', ar: 'ar_KW', fr: 'fr_FR' }[locale],
+    },
+    robots: { index: true, follow: true },
+  };
+}
 
 export const viewport: Viewport = {
   themeColor: '#0A1128',
@@ -63,8 +59,7 @@ export const viewport: Viewport = {
  * a normal hydration mismatch -- the whole layout jumps.
  */
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const cookieLocale = cookies().get(LOCALE_COOKIE)?.value;
-  const locale: Locale = isLocale(cookieLocale) ? cookieLocale : DEFAULT_LOCALE;
+  const { t, locale } = getServerT();
 
   return (
     <html
@@ -77,7 +72,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           href="#main"
           className="sr-only focus:not-sr-only focus:absolute focus:start-4 focus:top-4 focus:z-[110] focus:rounded-md focus:bg-navy-800 focus:px-4 focus:py-2 focus:text-gold-500"
         >
-          Skip to content
+          {t('common.skip')}
         </a>
         <I18nProvider initialLocale={locale}>
           <CursorSpotlight />

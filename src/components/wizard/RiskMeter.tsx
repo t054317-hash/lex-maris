@@ -3,13 +3,7 @@
 import { motion } from 'framer-motion';
 import { THEME } from '@/lib/theme';
 import type { RiskBand, RiskReport } from '@/lib/risk-engine';
-
-const BAND_LABEL: Record<RiskBand, string> = {
-  safe: 'Acceptable',
-  watch: 'Watch',
-  risk: 'Elevated',
-  critical: 'Critical',
-};
+import { useI18n } from '@/i18n/I18nProvider';
 
 const BAND_COLOR: Record<RiskBand, string> = {
   safe: THEME.status.safe,
@@ -29,6 +23,7 @@ const CIRCUMFERENCE = 2 * Math.PI * 54;
  * the same real-time signal as sighted users, rather than a silent graphic.
  */
 export function RiskMeter({ report }: { report: RiskReport }) {
+  const { t, formatNumber } = useI18n();
   const color = BAND_COLOR[report.band];
   const offset = CIRCUMFERENCE * (1 - report.score / 100);
 
@@ -64,22 +59,22 @@ export function RiskMeter({ report }: { report: RiskReport }) {
             className="font-display text-3xl tabular-nums"
             style={{ color }}
           >
-            {report.score}
+            {formatNumber(report.score)}
           </span>
           <span className="text-[10px] uppercase tracking-[0.16em] text-ink-500">
-            exposure
+            {t('risk.exposure')}
           </span>
         </div>
       </div>
 
       <div className="min-w-0">
-        <p className="eyebrow">Aggregate risk</p>
+        <p className="eyebrow">{t('risk.aggregate')}</p>
         <p
           className="mt-1 font-display text-xl"
           style={{ color }}
           aria-live="polite"
         >
-          {BAND_LABEL[report.band]}
+          {t(`risk.band.${report.band}`)}
         </p>
         <dl className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-300">
           {(['critical', 'high', 'medium', 'low'] as const).map((sev) =>
@@ -98,7 +93,7 @@ export function RiskMeter({ report }: { report: RiskReport }) {
                             : THEME.ink500,
                   }}
                 />
-                <dt className="capitalize">{sev}</dt>
+                <dt>{t(`severity.${sev}`)}</dt>
                 <dd className="tabular-nums text-ink-100">
                   {report.tally[sev]}
                 </dd>
@@ -106,7 +101,7 @@ export function RiskMeter({ report }: { report: RiskReport }) {
             ) : null,
           )}
           {report.findings.length === 0 && (
-            <span className="text-status-safe">No findings</span>
+            <span className="text-status-safe">{t('risk.noFindings')}</span>
           )}
         </dl>
       </div>

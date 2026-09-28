@@ -8,20 +8,23 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import { useRouter } from 'next/navigation';
 import {
-  DEFAULT_LOCALE,
   DIRECTION,
   LOCALE_COOKIE,
   NUMBER_LOCALE,
   type Locale,
 } from './config';
-import { DICTIONARIES, type TranslationKey } from './dictionaries';
+import { translate, type TranslationKey, type TranslationVars } from './dictionaries';
 
 interface I18nValue {
   locale: Locale;
   dir: 'ltr' | 'rtl';
-  /** Translate. A key absent from the dictionary is a compile error. */
-  t: (key: TranslationKey) => string;
+  /**
+   * Translate. A key absent from the dictionary is a compile error. `{name}`
+   * placeholders are filled from `vars`.
+   */
+  t: (key: TranslationKey, vars?: TranslationVars) => string;
   setLocale: (next: Locale) => void;
   /** Locale-correct number and currency formatting. */
   formatNumber: (value: number, options?: Intl.NumberFormatOptions) => string;
@@ -37,9 +40,9 @@ const I18nContext = createContext<I18nValue | null>(null);
  * first paint is already in the right language and direction and there is no
  * flash of LTR before hydration.
  *
- * Switching writes the cookie and mutates documentElement directly rather than
- * calling router.refresh(). The whole UI reads direction from CSS logical
- * properties, so flipping the attribute is enough and avoids a round trip.
+ * Switching writes the cookie, mutates documentElement directly (the UI reads
+ * direction from CSS logical properties, so flipping the attribute re-lays
+ * the page instantly), then refreshes the server components in the background.
  */
 export function I18nProvider({
   initialLocale,
@@ -49,6 +52,7 @@ export function I18nProvider({
   children: ReactNode;
 }) {
   const [locale, setLocaleState] = useState<Locale>(initialLocale);
+  const router = useRouter();
 
   const setLocale = useCallback((next: Locale) => {
     setLocaleState(next);
@@ -59,15 +63,18 @@ export function I18nProvider({
     const root = document.documentElement;
     root.lang = next;
     root.dir = DIRECTION[next];
-  }, []);
+
+    // Server components (checkout header, dashboard, <title>) render from the
+    // cookie; refresh re-renders them in the new language. Client state --
+    // a half-filled form -- survives, because refresh keeps the React tree.
+    router.refresh();
+  }, [router]);
 
   const value = useMemo<I18nValue>(() => {
-    const dictionary = DICTIONARIES[locale] ?? DICTIONARIES[DEFAULT_LOCALE];
-
     return {
       locale,
       dir: DIRECTION[locale],
-      t: (key) => dictionary[key] ?? DICTIONARIES[DEFAULT_LOCALE][key] ?? key,
+      t: (key, vars) => translate(locale, key, vars),
       setLocale,
       formatNumber: (v, options) =>
         new Intl.NumberFormat(NUMBER_LOCALE[locale], options).format(v),
@@ -93,6 +100,6 @@ export function useI18n(): I18nValue {
 }
 
 /** Shorthand for the common case. */
-export function useT(): (key: TranslationKey) => string {
+export function useT(): I18nValue['t'] {
   return useI18n().t;
 }

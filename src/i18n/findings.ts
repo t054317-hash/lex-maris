@@ -1,0 +1,286 @@
+import type { Locale } from './config';
+import { NUMBER_LOCALE } from './config';
+import type { Finding, FindingCode } from '@/lib/risk-engine';
+
+/**
+ * Risk-finding translations.
+ *
+ * The engine writes its findings in English, because the English text is what
+ * goes into the audit record and must not depend on who was looking at the
+ * screen. The UI translates each finding by its `code` at render time. English
+ * is therefore absent here: it is already on the finding.
+ *
+ * `detail` may be a function of the finding's `params` for the one message
+ * that carries a number.
+ */
+interface FindingText {
+  title: string;
+  detail: string | ((p: Record<string, string>) => string);
+  remediation: string;
+  authority?: string;
+}
+
+type Table = Record<FindingCode, FindingText>;
+
+const ar: Table = {
+  'gov-law-silent': {
+    title: 'لم يُحدَّد القانون الواجب التطبيق',
+    detail:
+      'في غياب اختيار صريح للقانون، يُحدَّد القانون الواجب التطبيق وفق قواعد تنازع القوانين لدى جهة النظر في النزاع، ولا يستطيع أي من الطرفين تقدير هذه النتيجة عند التوقيع.',
+    remediation:
+      'أدرج بنداً صريحاً للقانون الواجب التطبيق. في التجارة العابرة للحدود، يُعدّ القانون الإنجليزي أو قانون مركز دبي المالي العالمي الخيارين المحايدين المعتادين.',
+    authority: 'لائحة روما الأولى (EC) 593/2008، المادة 3',
+  },
+  'forum-silent': {
+    title: 'لا توجد آلية لتسوية النزاعات',
+    detail:
+      'في غياب جهة متفق عليها لتسوية النزاع، يمكن رفع الدعوى في أي دولة يتوافر فيها ضابط اختصاص، مما يفتح الباب لدعاوى متوازية وسباق نحو الحكم.',
+    remediation:
+      'اعتمد شرط تحكيم محدد المقر، مع النص صراحة على المقر واللغة والقواعد وعدد المحكّمين.',
+    authority: 'اتفاقية نيويورك لعام 1958، المادة الثانية',
+  },
+  'forum-adhoc': {
+    title: 'تحكيم حرّ دون دعم مؤسسي',
+    detail:
+      'يترك التحكيم الحرّ آليات التعيين والردّ والأتعاب للطرفين، ويتعثّر بمجرد توقّف أحدهما عن التعاون.',
+    remediation:
+      'اعتمد قواعد الأونسيترال مع تسمية سلطة تعيين، أو انتقل إلى شرط تحكيم مؤسسي (LCIA أو ICC أو DIFC-LCIA).',
+  },
+  'forum-foreign-courts': {
+    title: 'قد يتعذّر تنفيذ الحكم حيث توجد الأصول',
+    detail:
+      'يجب الاعتراف بالحكم القضائي في الدولة التي توجد فيها أصول الطرف المقابل، وهذا المسار أضعف هنا بكثير من تنفيذ أحكام التحكيم.',
+    remediation: 'انتقل إلى التحكيم ليُنفَّذ الحكم بموجب اتفاقية نيويورك.',
+    authority: 'اتفاقية نيويورك لعام 1958، المادة الثالثة',
+  },
+  'liability-uncapped': {
+    title: 'المسؤولية غير محدودة',
+    detail:
+      'التعرّض غير محدود، وعند هذه القيمة التعاقدية يتعذّر عملياً التأمين عليه ضمن الحدود التي يقبلها المؤمِّنون.',
+    remediation:
+      'حدّد سقف المسؤولية الإجمالية بما بين 100% و150% من قيمة العقد، مع الاستثناءات المعتادة: الوفاة أو الإصابة الشخصية، والغش، والتعدي على الملكية الفكرية.',
+  },
+  'liability-excessive': {
+    title: 'سقف المسؤولية غير متناسب مع قيمة العقد',
+    detail: (p) =>
+      `سقف يعادل ${p.multiple} ضعف القيمة يتجاوز النطاق السائد في السوق، ولن يستوعبه غطاء تأمين المسؤولية المهنية المعتاد.`,
+    remediation:
+      'فاوض لخفض السقف إلى ما بين ضعف وضعفي القيمة، أو احصل على ملحق تأمين خاص للشريحة الزائدة.',
+  },
+  'payment-over-90': {
+    title: 'مدة السداد تتجاوز 90 يوماً',
+    detail:
+      'تعرّض رأس المال العامل لهذه المدة يحوّل العقد التجاري إلى ائتمان غير مضمون، وقد يخالف تشريعات التأخر في السداد في دولة المشتري.',
+    remediation:
+      'خفّض المدة إلى 30–60 يوماً، أو سعّر الائتمان صراحة عبر فائدة التأخير مع ضمان.',
+  },
+  'payment-over-60': {
+    title: 'مدة سداد ممتدة',
+    detail:
+      'المدد التي تتجاوز 60 يوماً تستوجب النص صراحة على سعر فائدة التأخير، حتى لا تُستوعب تكلفة التأخير بصمت.',
+    remediation: 'أضف فائدة بهامش محدد فوق السعر المرجعي المعني، تُركَّب شهرياً.',
+  },
+  'security-missing': {
+    title: 'لا يوجد ضمان للسداد رغم أهمية قيمة العقد',
+    detail:
+      'تعتمد قيمة العقد بالكامل على الملاءة المالية للطرف المقابل، دون أي أداة يمكن تسييلها عند الإخلال.',
+    remediation:
+      'اشترط خطاب اعتماد مستندي معزَّزاً وغير قابل للإلغاء، أو خطاب ضمان من بنك ذي تصنيف استثماري.',
+    authority: 'UCP 600',
+  },
+  'force-majeure-missing': {
+    title: 'لا يوجد بند للقوة القاهرة',
+    detail:
+      'مبدأ استحالة التنفيذ في القانون العام أضيق بكثير من بند قوة قاهرة مصاغ، ونادراً ما يُعفي من التأخير ما لم يبلغ حد الاستحالة.',
+    remediation:
+      'أضف بند قوة قاهرة يتضمن آلية الإخطار، وواجب التخفيف من الأضرار، وحقاً نهائياً في الإنهاء.',
+  },
+  'sanctions-missing': {
+    title: 'لا يوجد بند للعقوبات وضوابط التجارة',
+    detail:
+      'التجارة العابرة للحدود دون إقرار بشأن العقوبات أو تعهّد بالفحص أو حق في التعليق تعرّض الطرف لعقوبات قائمة على المسؤولية المطلقة ولتقليص البنوك المراسلة لتعاملاتها معه.',
+    remediation:
+      'أضف إقرارات وضمانات بشأن العقوبات، وتعهّداً بالفحص المستمر، وحقاً في التعليق أو الإنهاء دون مسؤولية.',
+    authority: 'OFAC 31 CFR Part 500 وما يليها؛ لائحة الاتحاد الأوروبي 833/2014',
+  },
+  'termination-convenience': {
+    title: 'لا يوجد حق في الإنهاء للملاءمة',
+    detail:
+      'يقتصر الخروج من العقد على حالات الإخلال والإعسار، مما يُفقد الطرف المرونة إذا تغيّرت الظروف التجارية في غير صالحه.',
+    remediation: 'فكّر في حق إنهاء للملاءمة بعد فترة التزام أولية، مقابل رسم إنهاء محدد.',
+  },
+  'indemnity-missing': {
+    title: 'لا يوجد تعويض صريح',
+    detail:
+      'يقتصر الاسترداد على التعويض عن الإخلال، رهناً بقواعد التوقع والسببية وواجب التخفيف من الضرر.',
+    remediation:
+      'أضف تعويضات محددة عن مطالبات الغير المتعلقة بالملكية الفكرية، والجزاءات التنظيمية، والأضرار التي تلحق بالبضائع أو الممتلكات.',
+  },
+  'insurance-unallocated': {
+    title: 'لم تُحدَّد مسؤولية التأمين',
+    detail:
+      'عند سكوت العقد، يتبع التأمين انتقال المخاطر وفق قاعدة الإنكوترمز المطبَّقة، وهو ما يُساء فهمه كثيراً، فتنشأ فجوة في التغطية أثناء النقل.',
+    remediation:
+      'حدّد من يتولى التأمين، وبأي قيمة (عادةً 110% من قيمة CIF)، وسمِّ الطرف الآخر مستفيداً من التعويض.',
+    authority: 'قواعد إنكوترمز 2020، البندان A5/B5',
+  },
+  'laytime-undefined': {
+    title: 'لم تُحدَّد مدة التحميل والتفريغ',
+    detail:
+      'في غياب هذه المدة، يصبح موعد بدء احتساب غرامة التأخير غير محدد. وهذا أكثر عيوب صياغة مشارطات الإيجار عرضاً على التحكيم.',
+    remediation:
+      'حدّد المدة بالساعات المتواصلة، وعرّف إشعار الجاهزية، وبيّن الفترات المستثناة.',
+    authority: 'تعريفات مدد التحميل والتفريغ لمشارطات الإيجار 2013',
+  },
+  'demurrage-undefined': {
+    title: 'لم يُحدَّد سعر غرامة التأخير',
+    detail:
+      'في غياب سعر متفق عليه، لا يُسترد التأخير إلا بوصفه تعويضاً عن الاحتجاز، وهو أصعب إثباتاً وأبطأ استرداداً.',
+    remediation:
+      'حدّد سعراً يومياً لغرامة التأخير يُستحق بنسبة جزء اليوم، مع مدة سقوط صريحة للمطالبات.',
+  },
+};
+
+const fr: Table = {
+  'gov-law-silent': {
+    title: 'Aucun droit applicable choisi',
+    detail:
+      "À défaut de choix exprès, la loi applicable est déterminée par les règles de conflit du for saisi. Aucune des parties ne peut évaluer cette issue au moment de la signature.",
+    remediation:
+      'Insérez une clause expresse de droit applicable. Pour le commerce international, le droit anglais ou le droit du DIFC sont les choix neutres usuels.',
+    authority: 'Règlement Rome I (CE) n° 593/2008, art. 3',
+  },
+  'forum-silent': {
+    title: 'Aucun mode de règlement des différends',
+    detail:
+      "Faute de for convenu, une action peut être engagée dans toute juridiction présentant un lien de rattachement, ce qui favorise les procédures parallèles et la course au jugement.",
+    remediation:
+      "Adoptez une clause compromissoire précisant expressément le siège, la langue, le règlement et le nombre d'arbitres.",
+    authority: 'Convention de New York de 1958, art. II',
+  },
+  'forum-adhoc': {
+    title: 'Arbitrage ad hoc sans soutien institutionnel',
+    detail:
+      "L'arbitrage ad hoc laisse aux parties la nomination, la récusation et les honoraires. Il se bloque dès qu'une partie cesse de coopérer.",
+    remediation:
+      "Adoptez le Règlement de la CNUDCI avec une autorité de nomination désignée, ou optez pour une clause institutionnelle (LCIA, CCI, DIFC-LCIA).",
+  },
+  'forum-foreign-courts': {
+    title: 'Jugement potentiellement inexécutable là où se trouvent les actifs',
+    detail:
+      "Un jugement doit être reconnu dans l'État où se situent les actifs du cocontractant. Cette voie est ici nettement plus fragile que l'exécution d'une sentence arbitrale.",
+    remediation:
+      "Passez à l'arbitrage afin que la sentence circule sous l'empire de la Convention de New York.",
+    authority: 'Convention de New York de 1958, art. III',
+  },
+  'liability-uncapped': {
+    title: 'Responsabilité illimitée',
+    detail:
+      "L'exposition est illimitée et, à cette valeur contractuelle, pratiquement inassurable aux plafonds que les assureurs acceptent de couvrir.",
+    remediation:
+      'Plafonnez la responsabilité globale entre 100 et 150 % de la valeur du contrat, avec les exclusions usuelles : décès ou dommage corporel, fraude et contrefaçon.',
+  },
+  'liability-excessive': {
+    title: 'Plafond de responsabilité disproportionné',
+    detail: (p) =>
+      `Un plafond de ${p.multiple} fois la valeur dépasse la fourchette de marché et n'entre pas dans un programme standard d'assurance responsabilité civile professionnelle.`,
+    remediation:
+      "Négociez un plafond de 1 à 2 fois la valeur, ou obtenez un avenant d'assurance spécifique pour la tranche excédentaire.",
+  },
+  'payment-over-90': {
+    title: 'Délai de paiement supérieur à 90 jours',
+    detail:
+      "Une exposition du fonds de roulement de cette durée transforme un contrat commercial en crédit non garanti et peut enfreindre la réglementation sur les retards de paiement dans le pays de l'acheteur.",
+    remediation:
+      'Ramenez le délai à 30–60 jours, ou valorisez explicitement le crédit par des intérêts de retard assortis d’une sûreté.',
+  },
+  'payment-over-60': {
+    title: 'Délai de paiement étendu',
+    detail:
+      "Au-delà de 60 jours, un taux d'intérêt de retard exprès s'impose pour que le coût du retard ne soit pas absorbé silencieusement.",
+    remediation:
+      'Prévoyez des intérêts à une marge déterminée au-dessus du taux de référence pertinent, capitalisés mensuellement.',
+  },
+  'security-missing': {
+    title: 'Aucune garantie de paiement pour un contrat significatif',
+    detail:
+      "La totalité de la valeur du contrat repose sur le bilan du cocontractant, sans instrument mobilisable en cas de défaillance.",
+    remediation:
+      'Exigez un crédit documentaire irrévocable et confirmé, ou une garantie bancaire émise par une banque de catégorie investissement.',
+    authority: 'RUU 600',
+  },
+  'force-majeure-missing': {
+    title: 'Aucune clause de force majeure',
+    detail:
+      "La théorie de la frustration en common law est bien plus étroite qu'une clause de force majeure rédigée et n'excuse que rarement un retard en deçà de l'impossibilité.",
+    remediation:
+      "Ajoutez une clause de force majeure prévoyant les modalités de notification, une obligation d'atténuation et un droit de résiliation à terme.",
+  },
+  'sanctions-missing': {
+    title: 'Aucune clause de sanctions ni de contrôle des échanges',
+    detail:
+      "Un commerce international sans déclaration relative aux sanctions, sans engagement de filtrage et sans droit de suspension expose la partie à des pénalités de responsabilité objective et au désengagement des banques correspondantes.",
+    remediation:
+      "Ajoutez des déclarations et garanties relatives aux sanctions, un engagement de filtrage continu et un droit de suspendre ou de résilier sans responsabilité.",
+    authority: 'OFAC 31 CFR Part 500 et s. ; Règlement (UE) n° 833/2014',
+  },
+  'termination-convenience': {
+    title: 'Aucune résiliation pour convenance',
+    detail:
+      "La sortie est limitée aux cas de manquement et d'insolvabilité, ce qui prive la partie de souplesse si les conditions commerciales évoluent en sa défaveur.",
+    remediation:
+      "Envisagez un droit de résiliation pour convenance après une période d'engagement initiale, moyennant une indemnité de rupture définie.",
+  },
+  'indemnity-missing': {
+    title: 'Aucune garantie d’indemnisation expresse',
+    detail:
+      "La réparation est limitée aux dommages-intérêts pour inexécution, sous réserve de la prévisibilité, du lien de causalité et de l'obligation de minimiser le dommage.",
+    remediation:
+      'Ajoutez des garanties ciblées pour les réclamations de tiers en propriété intellectuelle, les sanctions réglementaires et les dommages aux marchandises ou aux biens.',
+  },
+  'insurance-unallocated': {
+    title: "Responsabilité d'assurance non répartie",
+    detail:
+      "Lorsque le contrat est muet, la couverture suit le transfert des risques selon l'Incoterm applicable, souvent mal interprété, laissant une lacune pendant le transport.",
+    remediation:
+      "Précisez qui assure, pour quelle valeur (usuellement 110 % de la valeur CIF), et désignez l'autre partie comme bénéficiaire.",
+    authority: 'Incoterms 2020, A5/B5',
+  },
+  'laytime-undefined': {
+    title: 'Staries non définies',
+    detail:
+      "Sans staries, le point de départ des surestaries est indéterminé. C'est le défaut de rédaction de charte-partie le plus fréquemment soumis à l'arbitrage.",
+    remediation:
+      "Fixez les staries en heures consécutives, définissez l'avis de disponibilité et précisez les périodes exceptées.",
+    authority: 'Laytime Definitions for Charter Parties 2013',
+  },
+  'demurrage-undefined': {
+    title: 'Taux de surestaries non précisé',
+    detail:
+      "Sans taux convenu, le retard n'est indemnisable qu'au titre de dommages-intérêts pour immobilisation, plus difficiles à prouver et plus lents à recouvrer.",
+    remediation:
+      'Fixez un taux journalier de surestaries, dû au prorata, assorti d’un délai de forclusion exprès pour les réclamations.',
+  },
+};
+
+const TABLES: Partial<Record<Locale, Table>> = { ar, fr };
+
+/** Returns the finding's user-facing text in `locale`; English passes through. */
+export function localiseFinding(f: Finding, locale: Locale): Finding {
+  const table = TABLES[locale];
+  const entry = table?.[f.code];
+  if (!entry) return f;
+
+  const fmt = new Intl.NumberFormat(NUMBER_LOCALE[locale], { maximumFractionDigits: 2 });
+  const params = Object.fromEntries(
+    Object.entries(f.params ?? {}).map(([k, v]) => [k, fmt.format(v)]),
+  );
+
+  return {
+    ...f,
+    title: entry.title,
+    detail: typeof entry.detail === 'function' ? entry.detail(params) : entry.detail,
+    remediation: entry.remediation,
+    authority: entry.authority ?? f.authority,
+  };
+}

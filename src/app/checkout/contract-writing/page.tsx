@@ -3,12 +3,12 @@ import Link from 'next/link';
 import { CheckoutForm } from '@/components/checkout/CheckoutForm';
 import { getSupabaseServerClient } from '@/lib/supabase/server';
 import type { ServiceRow } from '@/lib/database.types';
+import { getServerT } from '@/i18n/server';
 
-export const metadata: Metadata = {
-  title: 'Contract Writing',
-  description:
-    'Commission a commercial or maritime instrument, drafted by counsel and returned with a clause-level risk report.',
-};
+export function generateMetadata(): Metadata {
+  const { t } = getServerT();
+  return { title: t('checkout.title'), description: t('meta.checkout.description') };
+}
 
 /**
  * Contract Writing checkout.
@@ -35,6 +35,7 @@ const FALLBACK: ServiceRow = {
 };
 
 export default async function ContractWritingCheckoutPage() {
+  const { t } = getServerT();
   let service: ServiceRow = FALLBACK;
   let offline = false;
 
@@ -60,22 +61,21 @@ export default async function ContractWritingCheckoutPage() {
       <div className="mx-auto max-w-6xl">
         <nav className="mb-8 text-[11px] uppercase tracking-[0.16em] text-ink-500">
           <Link href="/" data-cursor="hover" className="transition-colors hover:text-gold-400">
-            Lex Maris
+            {t('brand.name')}
           </Link>
           <span aria-hidden className="mx-2 opacity-40">
             /
           </span>
-          <span className="text-ink-300">Contract writing</span>
+          <span className="text-ink-300">{t('checkout.breadcrumb')}</span>
         </nav>
 
         <header className="max-w-2xl">
-          <p className="eyebrow">Commission</p>
+          <p className="eyebrow">{t('checkout.eyebrow')}</p>
           <h1 className="mt-4 text-balance font-display text-3xl leading-tight sm:text-4xl">
-            Contract Writing
+            {t('checkout.title')}
           </h1>
           <p className="mt-5 text-base font-light leading-relaxed text-ink-300">
-            Tell us the terms. Counsel drafts the instrument and returns it with a
-            clause-level risk report.
+            {t('checkout.subtitle')}
           </p>
         </header>
 
@@ -84,9 +84,7 @@ export default async function ContractWritingCheckoutPage() {
             role="status"
             className="mt-8 rounded-lg border border-status-watch/40 bg-status-watch/5 px-4 py-3 text-sm text-status-watch"
           >
-            Showing the default catalogue price — the live pricing service is not
-            reachable. Configure <code className="font-mono">NEXT_PUBLIC_SUPABASE_URL</code> to
-            fetch current rates.
+            {t('checkout.offline')}
           </p>
         )}
 
@@ -95,9 +93,7 @@ export default async function ContractWritingCheckoutPage() {
         </div>
 
         <p className="mt-12 border-t border-ink-500/15 pt-6 text-xs leading-relaxed text-ink-500">
-          Submitting this form creates an instruction, not a retainer. An engagement
-          letter follows before work begins. Output is a triage signal for a qualified
-          practitioner, not legal advice.
+          {t('checkout.disclaimer')}
         </p>
       </div>
     </main>

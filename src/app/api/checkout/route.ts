@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 import { getSupabaseServerClient, getSupabaseAdminClient } from '@/lib/supabase/server';
 
 /**
@@ -17,18 +18,30 @@ import { getSupabaseServerClient, getSupabaseAdminClient } from '@/lib/supabase/
  * Stripe is called over its REST API with `fetch` instead of the SDK -- one
  * form-encoded POST, no extra dependency in the bundle.
  */
+const CheckoutBody = z.object({
+  orderId: z.string().uuid(),
+  method: z.enum(['card', 'knet', 'transfer']).default('card'),
+});
+
+/** Log the detail server-side; never hand a database message to the browser. */
+function internalError(context: string, detail: unknown) {
+  console.error(`[checkout] ${context}`, detail);
+  return NextResponse.json({ error: 'The order could not be processed.' }, { status: 500 });
+}
+
 export async function POST(request: Request) {
-  let body: { orderId?: string; method?: string };
+  let raw: unknown;
   try {
-    body = await request.json();
+    raw = await request.json();
   } catch {
     return NextResponse.json({ error: 'Malformed request body.' }, { status: 400 });
   }
 
-  const { orderId, method = 'card' } = body;
-  if (!orderId) {
-    return NextResponse.json({ error: 'orderId is required.' }, { status: 400 });
+  const parsed = CheckoutBody.safeParse(raw);
+  if (!parsed.success) {
+    return NextResponse.json({ error: 'Invalid order request.' }, { status: 400 });
   }
+  const { orderId, method } = parsed.data;
 
   // Read the order through the USER's client, so RLS proves they own it.
   const supabase = getSupabaseServerClient();
@@ -71,24 +84,21 @@ export async function POST(request: Request) {
       amount: order.total,
       currency: order.currency,
     });
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
+    if (error) return internalError('manual payment insert', error);
     await admin
       .from('service_orders')
       .update({ status: 'awaiting_payment' })
       .eq('id', order.id);
 
-    return NextResponse.json({ url: `/checkout/transfer/${order.reference}` });
+    return NextResponse.json({
+      url: `/checkout/transfer/${encodeURIComponent(order.reference)}`,
+    });
   }
 
   const stripeKey = process.env.STRIPE_SECRET_KEY;
   if (!stripeKey) {
     return NextResponse.json(
-      {
-        error:
-          'No payment gateway is configured. Set STRIPE_SECRET_KEY (or wire TAP/MyFatoorah for KNET) in your environment.',
-      },
+      { error: 'Card payment is not available yet.' },
       { status: 501 },
     );
   }
@@ -108,8 +118,8 @@ export async function POST(request: Request) {
     customer_email: order.contact_email,
     client_reference_id: order.reference,
     'metadata[order_id]': order.id,
-    success_url: `${origin}/checkout/success?ref=${order.reference}`,
-    cancel_url: `${origin}/checkout/contract-writing?cancelled=${order.reference}`,
+    success_url: `${origin}/checkout/success?ref=${encodeURIComponent(order.reference)}`,
+    cancel_url: `${origin}/checkout/contract-writing?cancelled=${encodeURIComponent(order.reference)}`,
   });
 
   const stripeRes = await fetch('https://api.stripe.com/v1/checkout/sessions', {
@@ -130,8 +140,9 @@ export async function POST(request: Request) {
   };
 
   if (!stripeRes.ok || !session.url) {
+    console.error('[checkout] stripe rejected session', session.error?.message);
     return NextResponse.json(
-      { error: session.error?.message ?? 'The payment provider rejected the request.' },
+      { error: 'The payment provider rejected the request.' },
       { status: 502 },
     );
   }
@@ -144,9 +155,7 @@ export async function POST(request: Request) {
     amount: order.total,
     currency: order.currency,
   });
-  if (paymentError) {
-    return NextResponse.json({ error: paymentError.message }, { status: 500 });
-  }
+  if (paymentError) return internalError('stripe payment insert', paymentError);
 
   await admin
     .from('service_orders')

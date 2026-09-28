@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useI18n } from '@/i18n/I18nProvider';
 
 export type StageState = 'done' | 'active' | 'pending' | 'blocked';
 
@@ -29,6 +30,7 @@ export function ContractTimeline({
   stages: readonly TimelineStage[];
   reference: string;
 }) {
+  const { t, formatNumber } = useI18n();
   const completed = stages.filter((s) => s.state === 'done').length;
   const progress = (completed / Math.max(stages.length - 1, 1)) * 100;
 
@@ -36,12 +38,14 @@ export function ContractTimeline({
     <div>
       <div className="mb-6 flex flex-wrap items-baseline justify-between gap-2">
         <div>
-          <p className="eyebrow">Matter progress</p>
+          <p className="eyebrow">{t('timeline.title')}</p>
           <p className="mt-1 font-mono text-sm text-ink-300">{reference}</p>
         </div>
         <p className="text-xs text-ink-500">
-          <span className="tabular-nums text-gold-400">{completed}</span> of{' '}
-          <span className="tabular-nums">{stages.length}</span> stages complete
+          {t('timeline.complete', {
+            done: formatNumber(completed),
+            total: formatNumber(stages.length),
+          })}
         </p>
       </div>
 
@@ -49,11 +53,11 @@ export function ContractTimeline({
         {/* Rail: a dim track with a gold fill that animates to `progress`. */}
         <span
           aria-hidden
-          className="absolute left-[7px] top-2 bottom-2 w-px bg-ink-500/25"
+          className="absolute start-[7px] top-2 bottom-2 w-px bg-ink-500/25"
         />
         <motion.span
           aria-hidden
-          className="absolute left-[7px] top-2 w-px origin-top bg-gold-500"
+          className="absolute start-[7px] top-2 w-px origin-top bg-gold-500"
           style={{ bottom: 8, boxShadow: '0 0 10px rgba(212,175,55,0.6)' }}
           initial={{ scaleY: 0 }}
           animate={{ scaleY: progress / 100 }}
@@ -63,7 +67,7 @@ export function ContractTimeline({
         {stages.map((s, i) => (
           <motion.li
             key={s.id}
-            className="relative flex gap-4 pb-7 pl-0 last:pb-0"
+            className="relative flex gap-4 pb-7 ps-0 last:pb-0"
             initial={{ opacity: 0, x: -8 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: i * 0.07, duration: 0.4 }}
@@ -91,7 +95,7 @@ export function ContractTimeline({
             </div>
             {s.state === 'blocked' && (
               <span className="mt-1 rounded-full border border-status-risk/40 bg-status-risk/10 px-2.5 py-0.5 text-[10px] uppercase tracking-[0.14em] text-status-risk">
-                Action required
+                {t('timeline.action')}
               </span>
             )}
           </motion.li>

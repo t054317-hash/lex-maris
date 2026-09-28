@@ -7,6 +7,7 @@ import { ParticleBurst } from './ParticleBurst';
 import { useGavelAudio } from './useGavelAudio';
 import type { GavelPhase } from './GavelScene';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
+import { useT } from '@/i18n/I18nProvider';
 
 /**
  * The 3D scene is code-split and client-only: it must never reach the SSR
@@ -22,6 +23,7 @@ const SESSION_KEY = 'lexmaris.intro.seen';
 const DISSOLVE_MS = 1150;
 
 export function GavelIntro({ onComplete }: { onComplete?: () => void }) {
+  const t = useT();
   const reduced = useReducedMotion();
   const [open, setOpen] = useState(true);
   const [phase, setPhase] = useState<GavelPhase>('idle');
@@ -86,7 +88,7 @@ export function GavelIntro({ onComplete }: { onComplete?: () => void }) {
         <motion.div
           key="intro"
           role="dialog"
-          aria-label="Introduction"
+          aria-label={t('intro.label')}
           className="fixed inset-0 z-[80] bg-navy-950"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0, filter: 'blur(14px)', scale: 1.06 }}
@@ -96,10 +98,12 @@ export function GavelIntro({ onComplete }: { onComplete?: () => void }) {
           <button
             type="button"
             onClick={handleStrike}
-            aria-label="Strike the gavel to enter"
+            aria-label={t('intro.strike')}
             className="absolute inset-0 h-full w-full cursor-none focus:outline-none"
           >
-            <span className="sr-only">Strike the gavel to enter LEX MARIS</span>
+            <span className="sr-only">
+              {t('intro.strike')} — {t('brand.name')}
+            </span>
           </button>
 
           <div className="pointer-events-none absolute inset-0">
@@ -124,11 +128,11 @@ export function GavelIntro({ onComplete }: { onComplete?: () => void }) {
             transition={{ duration: 0.35 }}
           >
             <h1 className="font-display text-3xl tracking-[0.34em] text-gold-500 sm:text-5xl">
-              LEX MARIS
+              {t('brand.name')}
             </h1>
-            <p className="eyebrow">Commercial · Corporate · Maritime</p>
+            <p className="eyebrow">{t('brand.tagline')}</p>
             <p className="mt-4 animate-floatSlow text-sm text-ink-300">
-              Click anywhere to convene
+              {t('intro.convene')}
             </p>
           </motion.div>
 
@@ -136,9 +140,9 @@ export function GavelIntro({ onComplete }: { onComplete?: () => void }) {
             type="button"
             onClick={finish}
             data-cursor="hover"
-            className="glass glass-interactive absolute bottom-6 right-6 z-10 px-4 py-2 text-xs uppercase tracking-[0.18em] text-ink-300 hover:text-gold-400"
+            className="glass glass-interactive absolute bottom-6 end-6 z-10 px-4 py-2 text-xs uppercase tracking-[0.18em] text-ink-300 hover:text-gold-400"
           >
-            Skip intro
+            {t('intro.skip')}
           </button>
         </motion.div>
       )}

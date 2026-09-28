@@ -16,6 +16,14 @@ import {
   type DisputeForum,
 } from '@/lib/risk-engine';
 import type { ServiceRow } from '@/lib/database.types';
+import {
+  BILLING_JURISDICTIONS,
+  CONTRACT_TYPES,
+  DISPUTE_FORUMS,
+  GOVERNING_LAWS,
+  SECURITIES,
+  options,
+} from '@/i18n/options';
 
 type PayMethod = 'card' | 'knet' | 'transfer';
 
@@ -36,7 +44,7 @@ type PayMethod = 'card' | 'knet' | 'transfer';
  *    scope. The buttons below choose a *method*; they never collect a number.
  */
 export function CheckoutForm({ service }: { service: ServiceRow }) {
-  const { t, dir, formatMoney, formatNumber } = useI18n();
+  const { t, locale, formatMoney, formatNumber } = useI18n();
   const { session } = useSession();
 
   const [authOpen, setAuthOpen] = useState(false);
@@ -102,13 +110,13 @@ export function CheckoutForm({ service }: { service: ServiceRow }) {
             contact_email: contactEmail,
             contact_phone: contactPhone || null,
             billing_country: country,
-            locale: dir === 'rtl' ? 'ar' : 'en',
+            locale,
             subtotal,
             tax,
             total,
             currency: service.currency,
             brief: {
-              terms,
+              terms: { ...terms },
               firstParty,
               secondParty,
               deadline,
@@ -123,7 +131,9 @@ export function CheckoutForm({ service }: { service: ServiceRow }) {
           .select('id, reference')
           .single();
 
-        if (orderError) throw orderError;
+        // The database's own message is English and can leak schema detail;
+        // the visitor gets a translated, generic one.
+        if (orderError) throw new Error(t('auth.error.generic'));
 
         // Hand off to the server, which talks to the gateway with the secret
         // key and writes the payments row as service_role.
@@ -133,21 +143,26 @@ export function CheckoutForm({ service }: { service: ServiceRow }) {
           body: JSON.stringify({ orderId: order.id, method }),
         });
 
-        const payload = (await res.json()) as { url?: string; error?: string };
-        if (!res.ok) throw new Error(payload.error ?? `Checkout failed (${res.status})`);
-        if (payload.url) {
+        const payload = (await res.json().catch(() => ({}))) as { url?: string };
+        if (!res.ok) {
+          throw new Error(t('checkout.error.failed', { status: res.status }));
+        }
+        // Only ever leave for an https gateway page or a path on this site.
+        // Refusing anything else means a compromised or misconfigured
+        // response cannot turn this into a javascript: sink.
+        if (payload.url && isSafeRedirect(payload.url)) {
           window.location.assign(payload.url);
           return;
         }
-        throw new Error('The payment provider returned no redirect URL.');
+        throw new Error(t('checkout.error.noRedirect'));
       } catch (err) {
-        setError(err instanceof Error ? err.message : String(err));
+        setError(err instanceof Error ? err.message : t('auth.error.generic'));
       } finally {
         setBusy(false);
       }
     },
     [
-      session, service, contactName, contactEmail, contactPhone, country, dir,
+      session, service, contactName, contactEmail, contactPhone, country, locale, t,
       subtotal, tax, total, terms, firstParty, secondParty, deadline,
       instructions, report, method,
     ],
@@ -170,14 +185,7 @@ export function CheckoutForm({ service }: { service: ServiceRow }) {
                 <Select
                   value={terms.type}
                   onChange={(v) => patch('type', v as ContractType)}
-                  options={[
-                    ['charterparty', 'Voyage charterparty'],
-                    ['bill-of-lading', 'Bill of lading terms'],
-                    ['supply', 'Supply of goods'],
-                    ['distribution', 'Exclusive distribution'],
-                    ['shareholders', 'Shareholders agreement'],
-                    ['jv', 'Joint venture'],
-                  ]}
+                  options={options(t, 'opt.type', CONTRACT_TYPES)}
                 />
               </Field>
               <Field label={t('checkout.field.deadline')}>
@@ -214,14 +222,14 @@ export function CheckoutForm({ service }: { service: ServiceRow }) {
                 <Select
                   value={terms.counterpartyJurisdiction}
                   onChange={(v) => patch('counterpartyJurisdiction', v)}
-                  options={JURISDICTIONS}
+                  options={options(t, 'opt.country', BILLING_JURISDICTIONS)}
                 />
               </Field>
               <Field label={t('checkout.field.governingLaw')}>
                 <Select
                   value={terms.governingLaw}
                   onChange={(v) => patch('governingLaw', v)}
-                  options={GOVERNING_LAWS}
+                  options={options(t, 'opt.law', GOVERNING_LAWS)}
                 />
               </Field>
             </div>
@@ -254,25 +262,20 @@ export function CheckoutForm({ service }: { service: ServiceRow }) {
                 <Select
                   value={terms.disputeForum}
                   onChange={(v) => patch('disputeForum', v as DisputeForum)}
-                  options={FORUMS}
+                  options={options(t, 'opt.forum', DISPUTE_FORUMS)}
                 />
               </Field>
-              <Field label="Payment security">
+              <Field label={t('wizard.field.security')}>
                 <Select
                   value={terms.security}
                   onChange={(v) => patch('security', v as ContractInput['security'])}
-                  options={[
-                    ['lc', 'Confirmed irrevocable LC'],
-                    ['bank-guarantee', 'On-demand bank guarantee'],
-                    ['parent-guarantee', 'Parent company guarantee'],
-                    ['none', 'None'],
-                  ]}
+                  options={options(t, 'opt.security', SECURITIES)}
                 />
               </Field>
 
               {isMaritime && (
                 <>
-                  <Field label="Laytime (running hours)">
+                  <Field label={t('checkout.field.laytime')}>
                     <input
                       type="number"
                       min={0}
@@ -282,7 +285,7 @@ export function CheckoutForm({ service }: { service: ServiceRow }) {
                       className={INPUT}
                     />
                   </Field>
-                  <Field label="Demurrage (USD / day)">
+                  <Field label={t('checkout.field.demurrage')}>
                     <input
                       type="number"
                       min={0}
@@ -345,7 +348,11 @@ export function CheckoutForm({ service }: { service: ServiceRow }) {
                 <Select
                   value={country}
                   onChange={setCountry}
-                  options={JURISDICTIONS.filter(([c]) => c !== 'XX')}
+                  options={options(
+                    t,
+                    'opt.country',
+                    BILLING_JURISDICTIONS.filter((c) => c !== 'XX'),
+                  )}
                 />
               </Field>
             </div>
@@ -476,38 +483,17 @@ export function CheckoutForm({ service }: { service: ServiceRow }) {
 
 /* -------------------------------------------------------------------------- */
 
+function isSafeRedirect(url: string): boolean {
+  if (/^\/(?![/\\])/.test(url)) return true;
+  try {
+    return new URL(url).protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
 const INPUT =
   'w-full rounded-lg border border-ink-500/25 bg-navy-800/70 px-3.5 py-2.5 text-sm text-ink-100 transition-colors duration-300 hover:border-gold-500/50 focus:border-gold-500';
-
-const JURISDICTIONS: ReadonlyArray<readonly [string, string]> = [
-  ['KW', 'Kuwait'],
-  ['AE', 'United Arab Emirates'],
-  ['SA', 'Saudi Arabia'],
-  ['QA', 'Qatar'],
-  ['GB', 'United Kingdom'],
-  ['SG', 'Singapore'],
-  ['XX', 'Not stated'],
-];
-
-const GOVERNING_LAWS: ReadonlyArray<readonly [string, string]> = [
-  ['GB', 'England & Wales'],
-  ['AE', 'United Arab Emirates'],
-  ['KW', 'Kuwait'],
-  ['SG', 'Singapore'],
-  ['CH', 'Switzerland'],
-  ['US', 'New York'],
-  ['XX', 'Not stated'],
-];
-
-const FORUMS: ReadonlyArray<readonly [string, string]> = [
-  ['arbitration-lcia', 'LCIA arbitration, London'],
-  ['arbitration-icc', 'ICC arbitration'],
-  ['arbitration-difc', 'DIFC-LCIA arbitration'],
-  ['arbitration-adhoc', 'Ad hoc arbitration'],
-  ['local-courts', 'Courts — your seat'],
-  ['foreign-courts', 'Courts — counterparty seat'],
-  ['silent', 'Not stated'],
-];
 
 function Field({
   label,

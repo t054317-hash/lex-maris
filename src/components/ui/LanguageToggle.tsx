@@ -6,8 +6,8 @@ import { useI18n } from '@/i18n/I18nProvider';
 /**
  * Language switch.
  *
- * A segmented control rather than a dropdown: with exactly two locales, a
- * select costs an extra interaction and hides the alternative. Each language is
+ * A segmented control rather than a dropdown: with three locales, a select
+ * costs an extra interaction and hides the alternatives. Each language is
  * labelled in its own script, which is the convention that lets a reader find
  * their language without being able to read the other one.
  */

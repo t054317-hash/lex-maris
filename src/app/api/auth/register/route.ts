@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
+import { LOCALES } from '@/i18n/config';
 import { getSupabaseServerClient, getSupabaseAdminClient } from '@/lib/supabase/server';
 
 /**
@@ -31,7 +32,7 @@ const RegisterBody = z.object({
   fullName: z.string().trim().max(160).optional(),
   organisationName: z.string().trim().max(200).optional(),
   inviteToken: z.string().trim().max(200).optional(),
-  locale: z.enum(['en', 'ar']).optional(),
+  locale: z.enum(LOCALES).optional(),
 });
 
 /**
@@ -138,7 +139,8 @@ export async function POST(request: Request) {
       );
     }
 
-    return NextResponse.json({ error: error.message }, { status: 400 });
+    console.error('[register] signUp failed', error.message);
+    return NextResponse.json({ error: 'Registration failed.' }, { status: 400 });
   }
 
   /**

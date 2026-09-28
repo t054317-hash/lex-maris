@@ -1,9 +1,12 @@
 'use client';
 
 import { AnimatePresence, motion } from 'framer-motion';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { THEME } from '@/lib/theme';
 import type { Finding, Severity } from '@/lib/risk-engine';
+import { clauseHeading } from '@/lib/document-engine';
+import { useI18n } from '@/i18n/I18nProvider';
+import { localiseFinding } from '@/i18n/findings';
 
 const SEVERITY_COLOR: Record<Severity, string> = {
   critical: THEME.status.critical,
@@ -17,18 +20,22 @@ const SEVERITY_COLOR: Record<Severity, string> = {
  * Findings register. Collapsed by default so a 12-finding report stays scannable;
  * expanding one reveals the drafting note and the authority relied on.
  */
-export function FindingsList({ findings }: { findings: readonly Finding[] }) {
+export function FindingsList({ findings: raw }: { findings: readonly Finding[] }) {
+  const { t, locale } = useI18n();
+  const findings = useMemo(
+    () => raw.map((f) => localiseFinding(f, locale)),
+    [raw, locale],
+  );
   const [open, setOpen] = useState<string | null>(findings[0]?.id ?? null);
 
   if (findings.length === 0) {
     return (
       <div className="rounded-lg border border-status-safe/30 bg-status-safe/5 p-6">
         <p className="font-display text-lg text-status-safe">
-          No findings raised
+          {t('findings.none.title')}
         </p>
         <p className="mt-2 text-sm leading-relaxed text-ink-300">
-          Every rule in the current model passed. The draft is ready for
-          partner review and execution.
+          {t('findings.none.body')}
         </p>
       </div>
     );
@@ -48,7 +55,7 @@ export function FindingsList({ findings }: { findings: readonly Finding[] }) {
               data-cursor="hover"
               aria-expanded={isOpen}
               onClick={() => setOpen(isOpen ? null : f.id)}
-              className="flex w-full items-start gap-3 px-4 py-3 text-left transition-colors duration-300 hover:bg-navy-700/40"
+              className="flex w-full items-start gap-3 px-4 py-3 text-start transition-colors duration-300 hover:bg-navy-700/40"
             >
               <span
                 aria-hidden
@@ -61,10 +68,10 @@ export function FindingsList({ findings }: { findings: readonly Finding[] }) {
               <span className="min-w-0 flex-1">
                 <span className="block text-sm text-ink-100">{f.title}</span>
                 <span className="mt-0.5 block text-[11px] uppercase tracking-[0.14em] text-ink-500">
-                  {f.clause}
+                  {clauseHeading(f.clauseId, locale)}
                   <span className="mx-1.5 opacity-40">/</span>
                   <span style={{ color: SEVERITY_COLOR[f.severity] }}>
-                    {f.severity}
+                    {t(`severity.${f.severity}`)}
                   </span>
                 </span>
               </span>
@@ -78,18 +85,18 @@ export function FindingsList({ findings }: { findings: readonly Finding[] }) {
                   exit={{ height: 0, opacity: 0 }}
                   transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  <div className="space-y-3 border-t border-ink-500/15 px-4 py-4 pl-9">
+                  <div className="space-y-3 border-t border-ink-500/15 px-4 py-4 ps-9">
                     <p className="text-sm leading-relaxed text-ink-300">
                       {f.detail}
                     </p>
                     <div>
-                      <p className="eyebrow">Recommended amendment</p>
+                      <p className="eyebrow">{t('findings.remedy')}</p>
                       <p className="mt-1 text-sm leading-relaxed text-ink-100">
                         {f.remediation}
                       </p>
                     </div>
                     {f.authority && (
-                      <p className="font-mono text-[11px] text-gold-500/80">
+                      <p dir="auto" className="font-mono text-[11px] text-gold-500/80">
                         {f.authority}
                       </p>
                     )}

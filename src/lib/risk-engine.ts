@@ -19,6 +19,8 @@
  * NOT LEGAL ADVICE: output is a triage signal for a qualified practitioner.
  */
 
+import { clauseHeading, type ClauseId } from './document-engine';
+
 export const SCORE_MODEL_VERSION = '1.0.0';
 
 export type Severity = 'info' | 'low' | 'medium' | 'high' | 'critical';
@@ -77,9 +79,19 @@ export interface ContractInput {
 
 export interface Finding {
   id: string;
+  /**
+   * Stable message key for this exact outcome (a rule can trip in more than
+   * one way). The UI translates by code; the English text below stays the
+   * record written to the audit log.
+   */
+  code: FindingCode;
   severity: Severity;
-  /** Clause heading the finding attaches to, for the marked-up draft. */
+  /** Clause the finding attaches to, for the marked-up draft. */
+  clauseId: ClauseId;
+  /** English clause heading, kept for the audit record. */
   clause: string;
+  /** Numbers interpolated into the message, so translations can reuse them. */
+  params?: Record<string, number>;
   title: string;
   detail: string;
   remediation: string;
@@ -119,25 +131,44 @@ const WEAK_JUDGMENT_ENFORCEMENT: ReadonlySet<string> = new Set([
   'XX',
 ]);
 
+export type FindingCode =
+  | 'gov-law-silent'
+  | 'forum-silent'
+  | 'forum-adhoc'
+  | 'forum-foreign-courts'
+  | 'liability-uncapped'
+  | 'liability-excessive'
+  | 'payment-over-90'
+  | 'payment-over-60'
+  | 'security-missing'
+  | 'force-majeure-missing'
+  | 'sanctions-missing'
+  | 'termination-convenience'
+  | 'indemnity-missing'
+  | 'insurance-unallocated'
+  | 'laytime-undefined'
+  | 'demurrage-undefined';
+
 interface Rule {
   id: string;
-  clause: string;
+  clauseId: ClauseId;
   weight: number;
   /** Omit to apply to every contract type. */
   appliesTo?: (c: ContractInput) => boolean;
   /** Returns a finding when the rule trips, otherwise null. */
-  evaluate: (c: ContractInput) => Omit<Finding, 'id' | 'clause'> | null;
+  evaluate: (c: ContractInput) => Omit<Finding, 'id' | 'clause' | 'clauseId'> | null;
 }
 
 const RULES: readonly Rule[] = [
   {
     id: 'gov-law-silent',
-    clause: 'Governing Law',
+    clauseId: 'governing-law',
     weight: 1,
     evaluate: (c) =>
       c.governingLaw === 'XX'
         ? {
             severity: 'critical',
+            code: 'gov-law-silent',
             title: 'No governing law selected',
             detail:
               'Without an express choice of law, the applicable law falls to be decided by the forum conflict rules. Neither party can price that outcome at signature.',
@@ -149,12 +180,13 @@ const RULES: readonly Rule[] = [
   },
   {
     id: 'forum-defect',
-    clause: 'Dispute Resolution',
+    clauseId: 'dispute-resolution',
     weight: 1,
     evaluate: (c) => {
       if (c.disputeForum === 'silent') {
         return {
           severity: 'critical',
+          code: 'forum-silent',
           title: 'No dispute-resolution mechanism',
           detail:
             'Absent an agreed forum, proceedings can be commenced in any jurisdiction with a hook, inviting parallel actions and a race to judgment.',
@@ -166,6 +198,7 @@ const RULES: readonly Rule[] = [
       if (c.disputeForum === 'arbitration-adhoc') {
         return {
           severity: 'medium',
+          code: 'forum-adhoc',
           title: 'Ad hoc arbitration without institutional support',
           detail:
             'Ad hoc arbitration leaves appointment, challenge and fee mechanics to the parties. It stalls as soon as one party stops cooperating.',
@@ -179,6 +212,7 @@ const RULES: readonly Rule[] = [
       ) {
         return {
           severity: 'high',
+          code: 'forum-foreign-courts',
           title: 'Judgment may be unenforceable where the assets sit',
           detail:
             'A court judgment must be recognised in the jurisdiction holding the counterparty assets. That route is materially weaker here than arbitral enforcement.',
@@ -192,12 +226,13 @@ const RULES: readonly Rule[] = [
   },
   {
     id: 'liability-cap',
-    clause: 'Limitation of Liability',
+    clauseId: 'liability',
     weight: 1,
     evaluate: (c) => {
       if (c.liabilityCapMultiple === 0) {
         return {
           severity: 'high',
+          code: 'liability-uncapped',
           title: 'Liability is uncapped',
           detail:
             'Exposure is unbounded and, at this contract value, effectively uninsurable at the limits underwriters will write.',
@@ -208,7 +243,9 @@ const RULES: readonly Rule[] = [
       if (c.liabilityCapMultiple > 3) {
         return {
           severity: 'medium',
+          code: 'liability-excessive',
           title: 'Liability cap is disproportionate to contract value',
+          params: { multiple: c.liabilityCapMultiple },
           detail: `A cap of ${c.liabilityCapMultiple}x value sits above the market range and will not fit inside a standard professional-indemnity tower.`,
           remediation:
             'Negotiate the cap toward 1-2x value, or obtain a bespoke insurance endorsement for the excess layer.',
@@ -219,12 +256,13 @@ const RULES: readonly Rule[] = [
   },
   {
     id: 'payment-terms',
-    clause: 'Payment',
+    clauseId: 'payment',
     weight: 0.8,
     evaluate: (c) => {
       if (c.paymentTermsDays > 90) {
         return {
           severity: 'high',
+          code: 'payment-over-90',
           title: 'Payment terms exceed 90 days',
           detail:
             'Working-capital exposure of this length turns a trading contract into unsecured credit, and may breach late-payment statutes in the buyer jurisdiction.',
@@ -235,6 +273,7 @@ const RULES: readonly Rule[] = [
       if (c.paymentTermsDays > 60) {
         return {
           severity: 'low',
+          code: 'payment-over-60',
           title: 'Extended payment terms',
           detail:
             'Terms beyond 60 days warrant an express late-payment interest rate so the cost of delay is not absorbed silently.',
@@ -247,13 +286,14 @@ const RULES: readonly Rule[] = [
   },
   {
     id: 'security-missing',
-    clause: 'Security',
+    clauseId: 'security',
     weight: 1,
     appliesTo: (c) => c.valueUsd >= 500_000,
     evaluate: (c) =>
       c.security === 'none'
         ? {
             severity: c.valueUsd >= 5_000_000 ? 'high' : 'medium',
+            code: 'security-missing',
             title: 'No payment security for a material contract value',
             detail:
               'The full contract value rides on the counterparty balance sheet, with no instrument to call on default.',
@@ -265,12 +305,13 @@ const RULES: readonly Rule[] = [
   },
   {
     id: 'force-majeure-missing',
-    clause: 'Force Majeure',
+    clauseId: 'force-majeure',
     weight: 0.9,
     evaluate: (c) =>
       !c.hasForceMajeure
         ? {
             severity: 'medium',
+            code: 'force-majeure-missing',
             title: 'No force majeure clause',
             detail:
               'Common-law frustration is far narrower than a drafted force majeure clause and rarely excuses delay short of impossibility.',
@@ -281,12 +322,13 @@ const RULES: readonly Rule[] = [
   },
   {
     id: 'sanctions-missing',
-    clause: 'Sanctions and Trade Controls',
+    clauseId: 'sanctions',
     weight: 1,
     evaluate: (c) =>
       !c.hasSanctionsClause
         ? {
             severity: 'high',
+            code: 'sanctions-missing',
             title: 'No sanctions or trade-control clause',
             detail:
               'Cross-border trade with no sanctions representation, no screening covenant and no suspension right exposes the party to strict-liability penalties and correspondent-bank de-risking.',
@@ -298,12 +340,13 @@ const RULES: readonly Rule[] = [
   },
   {
     id: 'termination-convenience',
-    clause: 'Termination',
+    clauseId: 'termination',
     weight: 0.6,
     evaluate: (c) =>
       !c.hasTerminationForConvenience
         ? {
             severity: 'low',
+            code: 'termination-convenience',
             title: 'No termination for convenience',
             detail:
               'Exit is limited to breach and insolvency events, removing flexibility if commercial conditions move against the party.',
@@ -314,12 +357,13 @@ const RULES: readonly Rule[] = [
   },
   {
     id: 'indemnity-missing',
-    clause: 'Indemnities',
+    clauseId: 'indemnity',
     weight: 0.6,
     evaluate: (c) =>
       !c.hasIndemnity
         ? {
             severity: 'low',
+            code: 'indemnity-missing',
             title: 'No express indemnity',
             detail:
               'Recovery is confined to damages for breach, subject to remoteness, causation and the duty to mitigate.',
@@ -330,13 +374,14 @@ const RULES: readonly Rule[] = [
   },
   {
     id: 'insurance-unallocated',
-    clause: 'Insurance',
+    clauseId: 'insurance',
     weight: 0.8,
     appliesTo: (c) => MARITIME_TYPES.has(c.type) || GOODS_TYPES.has(c.type),
     evaluate: (c) =>
       !c.insuranceAllocated
         ? {
             severity: 'medium',
+            code: 'insurance-unallocated',
             title: 'Insurance responsibility not allocated',
             detail:
               'Where the contract is silent, cover follows risk under the applicable Incoterm, which parties routinely misread, leaving a gap in transit.',
@@ -350,13 +395,14 @@ const RULES: readonly Rule[] = [
   // --- Maritime-specific -------------------------------------------------
   {
     id: 'laytime-undefined',
-    clause: 'Laytime',
+    clauseId: 'laytime',
     weight: 1,
     appliesTo: (c) => MARITIME_TYPES.has(c.type),
     evaluate: (c) =>
       !c.laytimeHours
         ? {
             severity: 'high',
+            code: 'laytime-undefined',
             title: 'Laytime not defined',
             detail:
               'With no laytime, the moment demurrage starts to run is indeterminate. This is the most frequently arbitrated defect in charterparty drafting.',
@@ -368,13 +414,14 @@ const RULES: readonly Rule[] = [
   },
   {
     id: 'demurrage-undefined',
-    clause: 'Demurrage',
+    clauseId: 'demurrage',
     weight: 1,
     appliesTo: (c) => MARITIME_TYPES.has(c.type),
     evaluate: (c) =>
       !c.demurrageRateUsd
         ? {
             severity: 'high',
+            code: 'demurrage-undefined',
             title: 'Demurrage rate unstated',
             detail:
               'Without an agreed rate, delay is recoverable only as damages for detention, which is harder to prove and slower to recover.',
@@ -414,7 +461,12 @@ export function analyseContract(input: ContractInput): RiskReport {
     const probe = rule.evaluate(input);
     if (!probe) continue;
 
-    findings.push({ id: rule.id, clause: rule.clause, ...probe });
+    findings.push({
+      id: rule.id,
+      clauseId: rule.clauseId,
+      clause: clauseHeading(rule.clauseId, 'en'),
+      ...probe,
+    });
     earned += rule.weight * SEVERITY_WEIGHT[probe.severity];
   }
 

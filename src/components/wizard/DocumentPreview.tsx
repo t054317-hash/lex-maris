@@ -4,9 +4,10 @@ import { motion } from 'framer-motion';
 import { useMemo } from 'react';
 import { THEME } from '@/lib/theme';
 import type { Finding } from '@/lib/risk-engine';
-import type { assembleDocument } from '@/lib/document-engine';
-
-type Doc = ReturnType<typeof assembleDocument>;
+import type { AssembledDocument, ClauseId } from '@/lib/document-engine';
+import { DIRECTION } from '@/i18n/config';
+import { useI18n } from '@/i18n/I18nProvider';
+import { localiseFinding } from '@/i18n/findings';
 
 /**
  * Instant document preview.
@@ -16,42 +17,51 @@ type Doc = ReturnType<typeof assembleDocument>;
  * sign should look like the document, not like the tool.
  *
  * Clauses carrying a risk finding get a gold margin marker. Matching is by
- * clause heading, which is why `document-engine` and `risk-engine` must keep
- * their `clause` strings in step.
+ * clause id, never by heading, so it holds in every language.
+ *
+ * The paper takes its language and direction from the document itself, not
+ * from the page, so an Arabic draft reads right-to-left end to end.
  */
 export function DocumentPreview({
   doc,
   findings,
 }: {
-  doc: Doc;
+  doc: AssembledDocument;
   findings: readonly Finding[];
 }) {
-  // Heading -> worst severity, so the margin marker reflects the top issue.
+  const { t, formatNumber } = useI18n();
+
+  // Clause id -> worst severity, so the margin marker reflects the top issue.
   const flagged = useMemo(() => {
     const rank = { info: 0, low: 1, medium: 2, high: 3, critical: 4 } as const;
-    const map = new Map<string, Finding>();
-    for (const f of findings) {
-      const existing = map.get(f.clause);
+    const map = new Map<ClauseId, Finding>();
+    for (const raw of findings) {
+      const f = localiseFinding(raw, doc.locale);
+      const existing = map.get(f.clauseId);
       if (!existing || rank[f.severity] > rank[existing.severity]) {
-        map.set(f.clause, f);
+        map.set(f.clauseId, f);
       }
     }
     return map;
-  }, [findings]);
+  }, [findings, doc.locale]);
 
   return (
     <div>
       <div className="flex items-center justify-between border-b border-ink-500/15 px-5 py-3">
-        <p className="eyebrow">Live draft</p>
-        <p className="font-mono text-[11px] text-ink-500">
-          {doc.clauses.length} clauses
+        <p className="eyebrow">{t('doc.live')}</p>
+        <p dir={DIRECTION[doc.locale]} className="font-mono text-[11px] text-ink-500">
+          {t('doc.clauses', { n: formatNumber(doc.clauses.length) })}
         </p>
       </div>
 
-      <div className="max-h-[520px] overflow-y-auto bg-[#F6F3EA] px-6 py-7 text-[#1A1A1A] sm:px-8">
+      <div
+        lang={doc.locale}
+        dir={DIRECTION[doc.locale]}
+        className="max-h-[520px] overflow-y-auto bg-[#F6F3EA] px-6 py-7 text-[#1A1A1A] sm:px-8"
+      >
         <header className="mb-6 text-center">
           <p className="text-[10px] uppercase tracking-[0.3em] text-[#8A6F1F]">
-            Lex Maris
+            {t('brand.name')}
           </p>
           <h3 className="mt-2 font-display text-lg uppercase tracking-[0.06em]">
             {doc.title}
@@ -67,7 +77,7 @@ export function DocumentPreview({
 
         <ol className="mt-7 space-y-5">
           {doc.clauses.map((c) => {
-            const finding = flagged.get(c.heading);
+            const finding = flagged.get(c.id);
             const color = finding
               ? finding.severity === 'critical'
                 ? THEME.status.critical
@@ -84,11 +94,11 @@ export function DocumentPreview({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3 }}
-                className="relative pl-4"
+                className="relative ps-4"
                 style={
                   color
-                    ? { borderLeft: `2px solid ${color}`, marginLeft: '-2px' }
-                    : { borderLeft: '2px solid transparent' }
+                    ? { borderInlineStart: `2px solid ${color}`, marginInlineStart: '-2px' }
+                    : { borderInlineStart: '2px solid transparent' }
                 }
               >
                 <h4 className="text-[12.5px] font-semibold uppercase tracking-[0.05em]">
@@ -99,13 +109,13 @@ export function DocumentPreview({
                     className="mt-1 text-[10.5px] font-medium uppercase tracking-[0.1em]"
                     style={{ color }}
                   >
-                    {finding.severity} — {finding.title}
+                    {t(`severity.${finding.severity}`)} — {finding.title}
                   </p>
                 )}
                 <div className="mt-1.5 space-y-2 text-[12.5px] leading-relaxed text-[#2A2A2A]">
                   {c.body.map((p, i) => (
                     <p key={i}>
-                      <span className="mr-1.5 text-[#8A6F1F]">
+                      <span className="me-1.5 text-[#8A6F1F]">
                         {c.number}.{i + 1}
                       </span>
                       {p}
@@ -118,7 +128,7 @@ export function DocumentPreview({
         </ol>
 
         <footer className="mt-8 border-t border-[#1A1A1A]/15 pt-4 text-[10px] uppercase tracking-[0.14em] text-[#6A6A6A]">
-          Draft — not for execution. Generated by the Lex Maris document engine.
+          {t('doc.footer')}
         </footer>
       </div>
     </div>

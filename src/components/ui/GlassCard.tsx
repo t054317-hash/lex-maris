@@ -40,7 +40,7 @@ export const GlassCard = forwardRef<HTMLDivElement, GlassCardProps>(
             }}
           />
         )}
-        {children}
+        {children as React.ReactNode}
       </motion.div>
     );
   },

@@ -12,18 +12,22 @@ import {
   type ContractInput,
 } from '@/lib/risk-engine';
 import { assembleDocument, type DocumentMeta } from '@/lib/document-engine';
+import { useI18n } from '@/i18n/I18nProvider';
+import { NUMBER_LOCALE, type Locale } from '@/i18n/config';
+import {
+  CONTRACT_TYPES,
+  COUNTERPARTY_JURISDICTIONS,
+  DISPUTE_FORUMS,
+  GOVERNING_LAWS,
+  SECURITIES,
+  options,
+} from '@/i18n/options';
 
-const STEPS = [
-  { id: 'instrument', label: 'Instrument' },
-  { id: 'commercial', label: 'Commercial' },
-  { id: 'allocation', label: 'Risk Allocation' },
-  { id: 'forum', label: 'Law & Forum' },
-  { id: 'execute', label: 'Review' },
-] as const;
+const STEPS = ['instrument', 'commercial', 'allocation', 'forum', 'execute'] as const;
 
 const DEMO_META: DocumentMeta = {
   reference: 'LM-2026-0417',
-  executionDate: '8 September 2026',
+  executionDate: '2026-09-08',
   parties: {
     first: {
       name: 'Meridian Trading DMCC',
@@ -41,6 +45,33 @@ const DEMO_META: DocumentMeta = {
 };
 
 /**
+ * The demo parties as an Arabic draft would name them. Registered names keep
+ * their legal Latin form in brackets, as Gulf practice does, so the party is
+ * still identifiable against the register.
+ */
+const DEMO_META_AR: DocumentMeta = {
+  ...DEMO_META,
+  parties: {
+    first: {
+      ...DEMO_META.parties.first,
+      name: 'ميريديان للتجارة م.م.ح (Meridian Trading DMCC)',
+      address: 'الوحدة 3402، برج الماس، أبراج بحيرات جميرا، دبي',
+    },
+    second: {
+      ...DEMO_META.parties.second,
+      name: 'نورثغيت للسلع المحدودة (Northgate Commodities Ltd)',
+      address: '12 شارع ليدنهول، لندن EC3V 1LP',
+    },
+  },
+};
+
+const META_FOR: Record<Locale, DocumentMeta> = {
+  en: DEMO_META,
+  ar: DEMO_META_AR,
+  fr: DEMO_META,
+};
+
+/**
  * The Live Contract Builder.
  *
  * Two panes, one state atom. Every keystroke re-derives (a) the exposure report
@@ -52,6 +83,7 @@ const DEMO_META: DocumentMeta = {
  * evaluations and assembly is a single map, so there is no need for a worker.
  */
 export function ContractWizard() {
+  const { t, locale, dir } = useI18n();
   const [step, setStep] = useState(0);
   const [input, setInput] = useState<ContractInput>(defaultContractInput);
 
@@ -62,7 +94,11 @@ export function ContractWizard() {
   );
 
   const report = useMemo(() => analyseContract(input), [input]);
-  const doc = useMemo(() => assembleDocument(input, DEMO_META), [input]);
+  const doc = useMemo(
+    () => assembleDocument(input, META_FOR[locale], locale),
+    [input, locale],
+  );
+  const usd = useMemo(() => usdFormatter(locale), [locale]);
 
   const isMaritime =
     input.type === 'charterparty' || input.type === 'bill-of-lading';
@@ -73,9 +109,9 @@ export function ContractWizard() {
       {/* Left: wizard                                                     */}
       {/* ---------------------------------------------------------------- */}
       <GlassCard interactive={false} className="p-6 sm:p-8">
-        <ol className="mb-8 flex flex-wrap gap-x-1 gap-y-2" aria-label="Progress">
+        <ol className="mb-8 flex flex-wrap gap-x-1 gap-y-2" aria-label={t('wizard.progress')}>
           {STEPS.map((s, i) => (
-            <li key={s.id} className="flex items-center">
+            <li key={s} className="flex items-center">
               <button
                 type="button"
                 onClick={() => setStep(i)}
@@ -89,7 +125,7 @@ export function ContractWizard() {
                       : 'text-ink-500 hover:text-ink-300'
                 }`}
               >
-                {s.label}
+                {t(`wizard.step.${s}`)}
               </button>
               {i < STEPS.length - 1 && (
                 <span aria-hidden className="mx-1 h-px w-4 bg-ink-500/30" />
@@ -110,81 +146,67 @@ export function ContractWizard() {
             >
               {step === 0 && (
                 <>
-                  <Field label="Instrument type">
+                  <Field label={t('checkout.field.instrumentType')}>
                     <Select
                       value={input.type}
                       onChange={(v) => patch('type', v as ContractInput['type'])}
-                      options={[
-                        ['supply', 'Supply of goods'],
-                        ['distribution', 'Exclusive distribution'],
-                        ['charterparty', 'Voyage charterparty'],
-                        ['bill-of-lading', 'Bill of lading terms'],
-                        ['shareholders', 'Shareholders agreement'],
-                        ['jv', 'Joint venture'],
-                      ]}
+                      options={options(t, 'opt.type', CONTRACT_TYPES)}
                     />
                   </Field>
-                  <Field label="Counterparty jurisdiction">
+                  <Field label={t('checkout.field.counterpartyJurisdiction')}>
                     <Select
                       value={input.counterpartyJurisdiction}
                       onChange={(v) => patch('counterpartyJurisdiction', v)}
-                      options={[
-                        ['AE', 'United Arab Emirates'],
-                        ['KW', 'Kuwait'],
-                        ['SA', 'Saudi Arabia'],
-                        ['GB', 'United Kingdom'],
-                        ['SG', 'Singapore'],
-                        ['TW', 'Taiwan'],
-                        ['XX', 'Not stated'],
-                      ]}
+                      options={options(t, 'opt.country', COUNTERPARTY_JURISDICTIONS)}
                     />
                   </Field>
                   <p className="text-xs leading-relaxed text-ink-500">
-                    Party details are drawn from the matter record. Registry data
-                    is verified against the relevant commercial register before
-                    execution.
+                    {t('wizard.partyNote')}
                   </p>
                 </>
               )}
 
               {step === 1 && (
                 <>
-                  <Field label={`Contract value — ${usd(input.valueUsd)}`}>
+                  <Field label={t('wizard.field.value', { value: usd(input.valueUsd) })}>
                     <Range
                       min={50_000}
                       max={50_000_000}
                       step={50_000}
                       value={input.valueUsd}
                       onChange={(v) => patch('valueUsd', v)}
+                      dir={dir}
                     />
                   </Field>
-                  <Field label={`Payment terms — ${input.paymentTermsDays} days`}>
+                  <Field
+                    label={t('wizard.field.paymentTerms', { n: input.paymentTermsDays })}
+                  >
                     <Range
                       min={7}
                       max={180}
                       step={1}
                       value={input.paymentTermsDays}
                       onChange={(v) => patch('paymentTermsDays', v)}
+                      dir={dir}
                     />
                   </Field>
-                  <Field label="Payment security">
+                  <Field label={t('wizard.field.security')}>
                     <Select
                       value={input.security}
                       onChange={(v) =>
                         patch('security', v as ContractInput['security'])
                       }
-                      options={[
-                        ['lc', 'Confirmed irrevocable LC'],
-                        ['bank-guarantee', 'On-demand bank guarantee'],
-                        ['parent-guarantee', 'Parent company guarantee'],
-                        ['none', 'None'],
-                      ]}
+                      options={options(t, 'opt.security', SECURITIES)}
                     />
                   </Field>
                   {isMaritime && (
                     <>
                       <Field
-                        label={`Laytime — ${input.laytimeHours ? `${input.laytimeHours} hours` : 'not stated'}`}
+                        label={t('wizard.field.laytime', {
+                          value: input.laytimeHours
+                            ? t('wizard.laytime.hours', { n: input.laytimeHours })
+                            : t('wizard.notStated'),
+                        })}
                       >
                         <Range
                           min={0}
@@ -192,10 +214,17 @@ export function ContractWizard() {
                           step={6}
                           value={input.laytimeHours ?? 0}
                           onChange={(v) => patch('laytimeHours', v)}
+                          dir={dir}
                         />
                       </Field>
                       <Field
-                        label={`Demurrage — ${input.demurrageRateUsd ? `${usd(input.demurrageRateUsd)} / day` : 'not stated'}`}
+                        label={t('wizard.field.demurrage', {
+                          value: input.demurrageRateUsd
+                            ? t('wizard.demurrage.perDay', {
+                                amount: usd(input.demurrageRateUsd),
+                              })
+                            : t('wizard.notStated'),
+                        })}
                       >
                         <Range
                           min={0}
@@ -203,6 +232,7 @@ export function ContractWizard() {
                           step={1_000}
                           value={input.demurrageRateUsd ?? 0}
                           onChange={(v) => patch('demurrageRateUsd', v)}
+                          dir={dir}
                         />
                       </Field>
                     </>
@@ -213,11 +243,16 @@ export function ContractWizard() {
               {step === 2 && (
                 <>
                   <Field
-                    label={`Liability cap — ${
-                      input.liabilityCapMultiple === 0
-                        ? 'uncapped'
-                        : `${input.liabilityCapMultiple}× value`
-                    }`}
+                    label={t('wizard.field.cap', {
+                      value:
+                        input.liabilityCapMultiple === 0
+                          ? t('wizard.cap.uncapped')
+                          : t('wizard.cap.multiple', {
+                              n: new Intl.NumberFormat(NUMBER_LOCALE[locale]).format(
+                                input.liabilityCapMultiple,
+                              ),
+                            }),
+                    })}
                   >
                     <Range
                       min={0}
@@ -225,32 +260,33 @@ export function ContractWizard() {
                       step={0.5}
                       value={input.liabilityCapMultiple}
                       onChange={(v) => patch('liabilityCapMultiple', v)}
+                      dir={dir}
                     />
                   </Field>
                   <Toggle
-                    label="Force majeure clause"
+                    label={t('wizard.toggle.forceMajeure')}
                     checked={input.hasForceMajeure}
                     onChange={(v) => patch('hasForceMajeure', v)}
                   />
                   <Toggle
-                    label="Sanctions & trade-control clause"
+                    label={t('wizard.toggle.sanctions')}
                     checked={input.hasSanctionsClause}
                     onChange={(v) => patch('hasSanctionsClause', v)}
                   />
                   <Toggle
-                    label="Express indemnities"
+                    label={t('wizard.toggle.indemnity')}
                     checked={input.hasIndemnity}
                     onChange={(v) => patch('hasIndemnity', v)}
                   />
                   <Toggle
-                    label="Termination for convenience"
+                    label={t('wizard.toggle.convenience')}
                     checked={input.hasTerminationForConvenience}
                     onChange={(v) =>
                       patch('hasTerminationForConvenience', v)
                     }
                   />
                   <Toggle
-                    label="Insurance responsibility allocated"
+                    label={t('wizard.toggle.insurance')}
                     checked={input.insuranceAllocated}
                     onChange={(v) => patch('insuranceAllocated', v)}
                   />
@@ -259,41 +295,24 @@ export function ContractWizard() {
 
               {step === 3 && (
                 <>
-                  <Field label="Governing law">
+                  <Field label={t('wizard.field.governingLaw')}>
                     <Select
                       value={input.governingLaw}
                       onChange={(v) => patch('governingLaw', v)}
-                      options={[
-                        ['GB', 'England & Wales'],
-                        ['AE', 'United Arab Emirates'],
-                        ['KW', 'Kuwait'],
-                        ['SG', 'Singapore'],
-                        ['CH', 'Switzerland'],
-                        ['US', 'New York'],
-                        ['XX', 'Not stated'],
-                      ]}
+                      options={options(t, 'opt.law', GOVERNING_LAWS)}
                     />
                   </Field>
-                  <Field label="Dispute resolution">
+                  <Field label={t('wizard.field.forum')}>
                     <Select
                       value={input.disputeForum}
                       onChange={(v) =>
                         patch('disputeForum', v as ContractInput['disputeForum'])
                       }
-                      options={[
-                        ['arbitration-lcia', 'LCIA arbitration, London'],
-                        ['arbitration-icc', 'ICC arbitration'],
-                        ['arbitration-difc', 'DIFC-LCIA arbitration'],
-                        ['arbitration-adhoc', 'Ad hoc arbitration'],
-                        ['local-courts', 'Courts — first party seat'],
-                        ['foreign-courts', 'Courts — counterparty seat'],
-                        ['silent', 'Not stated'],
-                      ]}
+                      options={options(t, 'opt.forum', DISPUTE_FORUMS)}
                     />
                   </Field>
                   <p className="text-xs leading-relaxed text-ink-500">
-                    Enforceability is assessed against the counterparty asset
-                    jurisdiction, not the seat.
+                    {t('wizard.forumNote')}
                   </p>
                 </>
               )}
@@ -313,7 +332,7 @@ export function ContractWizard() {
             disabled={step === 0}
             className="text-xs uppercase tracking-[0.16em] text-ink-500 transition-colors hover:text-ink-100 disabled:opacity-30"
           >
-            Back
+            {t('common.back')}
           </button>
           <button
             type="button"
@@ -324,7 +343,7 @@ export function ContractWizard() {
             disabled={step === STEPS.length - 1}
             className="rounded-full border border-gold-500/45 bg-gold-500/10 px-6 py-2.5 text-xs uppercase tracking-[0.16em] text-gold-400 transition-all duration-300 hover:border-gold-500 hover:bg-gold-500/20 disabled:opacity-30"
           >
-            {step === STEPS.length - 2 ? 'Review findings' : 'Continue'}
+            {step === STEPS.length - 2 ? t('wizard.reviewFindings') : t('common.continue')}
           </button>
         </div>
       </GlassCard>
@@ -348,8 +367,8 @@ export function ContractWizard() {
 /* Field primitives                                                           */
 /* -------------------------------------------------------------------------- */
 
-const usd = (n: number) =>
-  new Intl.NumberFormat('en-US', {
+const usdFormatter = (locale: Locale) => (n: number) =>
+  new Intl.NumberFormat(NUMBER_LOCALE[locale], {
     style: 'currency',
     currency: 'USD',
     notation: n >= 1_000_000 ? 'compact' : 'standard',
@@ -401,14 +420,18 @@ function Range({
   step,
   value,
   onChange,
+  dir,
 }: {
   min: number;
   max: number;
   step: number;
   value: number;
   onChange: (v: number) => void;
+  dir: 'ltr' | 'rtl';
 }) {
   const pct = ((value - min) / (max - min)) * 100;
+  // A range input fills from the inline-start edge, which is the right in RTL.
+  const angle = dir === 'rtl' ? '270deg' : '90deg';
   return (
     <input
       type="range"
@@ -419,7 +442,7 @@ function Range({
       onChange={(e) => onChange(Number(e.target.value))}
       className="h-1.5 w-full cursor-pointer appearance-none rounded-full outline-none"
       style={{
-        background: `linear-gradient(90deg, #D4AF37 ${pct}%, rgba(195,202,219,0.18) ${pct}%)`,
+        background: `linear-gradient(${angle}, #D4AF37 ${pct}%, rgba(195,202,219,0.18) ${pct}%)`,
       }}
     />
   );
@@ -441,7 +464,7 @@ function Toggle({
       aria-checked={checked}
       data-cursor="hover"
       onClick={() => onChange(!checked)}
-      className="flex w-full items-center justify-between gap-4 rounded-lg border border-ink-500/20 bg-navy-800/40 px-4 py-3 text-left text-sm text-ink-100 transition-colors duration-300 hover:border-gold-500/45"
+      className="flex w-full items-center justify-between gap-4 rounded-lg border border-ink-500/20 bg-navy-800/40 px-4 py-3 text-start text-sm text-ink-100 transition-colors duration-300 hover:border-gold-500/45"
     >
       <span>{label}</span>
       <span
@@ -451,8 +474,10 @@ function Toggle({
         }`}
       >
         <span
-          className={`absolute top-0.5 h-4 w-4 rounded-full bg-ink-100 transition-transform duration-300 ${
-            checked ? 'translate-x-[18px]' : 'translate-x-0.5'
+          className={`absolute start-0 top-0.5 h-4 w-4 rounded-full bg-ink-100 transition-transform duration-300 ${
+            checked
+              ? 'translate-x-[18px] rtl:-translate-x-[18px]'
+              : 'translate-x-0.5 rtl:-translate-x-0.5'
           }`}
         />
       </span>

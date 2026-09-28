@@ -159,7 +159,7 @@ export function Hero() {
           {(
             [
               ['12', 'hero.metric.rules'],
-              ['< 2s', 'hero.metric.turnaround'],
+              [t('hero.metric.turnaround.value'), 'hero.metric.turnaround'],
               ['AES-256', 'hero.metric.sealing'],
               ['4', 'hero.metric.forum'],
             ] as const
