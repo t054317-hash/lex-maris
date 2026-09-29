@@ -39,7 +39,11 @@ export type ContractType =
   | 'charterparty'
   | 'bill-of-lading'
   | 'shareholders'
-  | 'jv';
+  | 'jv'
+  | 'nda'
+  | 'services'
+  | 'agency'
+  | 'lease';
 
 export type DisputeForum =
   | 'local-courts'
@@ -75,6 +79,12 @@ export interface ContractInput {
   laytimeHours?: number;
   /** Maritime only: demurrage rate USD/day; 0 or undefined = unstated. */
   demurrageRateUsd?: number;
+  /** NDA only: years the confidentiality obligation survives; 0 = indefinite. */
+  confidentialityYears?: number;
+  /** Agency only: commission as a percentage of net sales in the territory. */
+  commissionPct?: number;
+  /** Lease only: term in years. */
+  leaseTermYears?: number;
 }
 
 export interface Finding {
@@ -120,6 +130,21 @@ const GOODS_TYPES: ReadonlySet<ContractType> = new Set([
   'distribution',
 ]);
 
+/** Types whose value is a price paid for performance (so caps and credit terms make sense). */
+const PRICED_TYPES: ReadonlySet<ContractType> = new Set([
+  'supply',
+  'distribution',
+  'charterparty',
+  'bill-of-lading',
+  'services',
+  'agency',
+]);
+
+const not =
+  (...types: ContractType[]) =>
+  (c: ContractInput) =>
+    !types.includes(c.type);
+
 /**
  * Jurisdictions where recognition of a foreign *court* judgment is materially
  * harder than enforcement of an arbitral award. 'XX' stands for "unstated".
@@ -142,7 +167,11 @@ export type FindingCode =
   | 'indemnity-missing'
   | 'insurance-unallocated'
   | 'laytime-undefined'
-  | 'demurrage-undefined';
+  | 'demurrage-undefined'
+  | 'nda-term-short'
+  | 'agency-mandatory-law'
+  | 'lease-law-not-situs'
+  | 'lease-arbitration';
 
 interface Rule {
   id: string;
@@ -223,6 +252,8 @@ const RULES: readonly Rule[] = [
     id: 'liability-cap',
     clauseId: 'liability',
     weight: 1,
+    // NDA breach and lease obligations are conventionally uncapped.
+    appliesTo: not('nda', 'lease'),
     evaluate: (c) => {
       if (c.liabilityCapMultiple === 0) {
         return {
@@ -253,6 +284,7 @@ const RULES: readonly Rule[] = [
     id: 'payment-terms',
     clauseId: 'payment',
     weight: 0.8,
+    appliesTo: (c) => PRICED_TYPES.has(c.type),
     evaluate: (c) => {
       if (c.paymentTermsDays > 90) {
         return {
@@ -283,7 +315,8 @@ const RULES: readonly Rule[] = [
     id: 'security-missing',
     clauseId: 'security',
     weight: 1,
-    appliesTo: (c) => c.valueUsd >= 500_000,
+    appliesTo: (c) =>
+      (GOODS_TYPES.has(c.type) || MARITIME_TYPES.has(c.type)) && c.valueUsd >= 500_000,
     evaluate: (c) =>
       c.security === 'none'
         ? {
@@ -302,6 +335,7 @@ const RULES: readonly Rule[] = [
     id: 'force-majeure-missing',
     clauseId: 'force-majeure',
     weight: 0.9,
+    appliesTo: not('nda'),
     evaluate: (c) =>
       !c.hasForceMajeure
         ? {
@@ -319,6 +353,7 @@ const RULES: readonly Rule[] = [
     id: 'sanctions-missing',
     clauseId: 'sanctions',
     weight: 1,
+    appliesTo: not('nda', 'lease'),
     evaluate: (c) =>
       !c.hasSanctionsClause
         ? {
@@ -338,6 +373,8 @@ const RULES: readonly Rule[] = [
     id: 'termination-convenience',
     clauseId: 'termination',
     weight: 0.6,
+    // Agency termination is governed by mandatory law; a lease runs its term.
+    appliesTo: not('nda', 'agency', 'lease'),
     evaluate: (c) =>
       !c.hasTerminationForConvenience
         ? {
@@ -355,6 +392,7 @@ const RULES: readonly Rule[] = [
     id: 'indemnity-missing',
     clauseId: 'indemnity',
     weight: 0.6,
+    appliesTo: not('nda', 'lease'),
     evaluate: (c) =>
       !c.hasIndemnity
         ? {
@@ -426,7 +464,83 @@ const RULES: readonly Rule[] = [
           }
         : null,
   },
+
+  // --- Category-specific ---------------------------------------------------
+  {
+    id: 'nda-term-short',
+    clauseId: 'nda-term',
+    weight: 0.8,
+    appliesTo: (c) => c.type === 'nda',
+    evaluate: (c) =>
+      c.confidentialityYears && c.confidentialityYears < 2
+        ? {
+            code: 'nda-term-short',
+            severity: 'medium',
+            params: { years: c.confidentialityYears },
+            title: 'Confidentiality period is short',
+            detail: `Protection ends ${c.confidentialityYears} year(s) after disclosure. Information that keeps its value longer, such as pricing, customer data or know-how, falls into the public domain for contractual purposes once the period expires.`,
+            remediation:
+              'Extend the period to at least 2–5 years, and keep trade secrets protected for as long as they remain secret.',
+          }
+        : null,
+  },
+  {
+    id: 'agency-mandatory-law',
+    clauseId: 'agency-law',
+    weight: 0.8,
+    appliesTo: (c) => c.type === 'agency',
+    evaluate: () => ({
+      code: 'agency-mandatory-law',
+      severity: 'medium',
+      title: 'Commercial agency law of the territory is mandatory',
+      detail:
+        'GCC commercial agency statutes apply regardless of the chosen law and forum. They typically require the agency to be registered with the ministry of commerce and can entitle the agent to compensation where the principal terminates or declines to renew without justification.',
+      remediation:
+        'Confirm the registration requirements and the termination and compensation rules of the territory before signature, and price the exit accordingly.',
+      authority:
+        'Kuwait Law No. 13 of 2016 on Commercial Agencies; UAE Federal Decree-Law No. 3 of 2022 on Commercial Agencies',
+    }),
+  },
+  {
+    id: 'lease-law-not-situs',
+    clauseId: 'governing-law',
+    weight: 1,
+    appliesTo: (c) => c.type === 'lease',
+    evaluate: (c) =>
+      c.governingLaw !== c.counterpartyJurisdiction
+        ? {
+            code: 'lease-law-not-situs',
+            severity: 'high',
+            title: 'Governing law differs from the location of the premises',
+            detail:
+              'Leases of immovable property are governed by the law of the place where the property is located, and its tenancy legislation applies mandatorily. A different governing law is unlikely to be given effect on matters such as rent, renewal and eviction.',
+            remediation:
+              'Choose the law of the country where the premises are located.',
+          }
+        : null,
+  },
+  {
+    id: 'lease-arbitration',
+    clauseId: 'dispute-resolution',
+    weight: 0.8,
+    appliesTo: (c) => c.type === 'lease',
+    evaluate: (c) =>
+      c.disputeForum.startsWith('arbitration')
+        ? {
+            code: 'lease-arbitration',
+            severity: 'medium',
+            title: 'Tenancy disputes may not be arbitrable',
+            detail:
+              'In several Gulf jurisdictions tenancy disputes are reserved to the local courts or to specialised rental dispute bodies, so an arbitration clause in a lease may be unenforceable for core landlord-and-tenant claims.',
+            remediation:
+              'Refer disputes to the competent courts or rental dispute authority of the place where the premises are located.',
+          }
+        : null,
+  },
 ];
+
+/** Number of rules in the model -- shown on the landing page. */
+export const RULE_COUNT = RULES.length;
 
 const SEVERITY_ORDER: readonly Severity[] = [
   'critical',
@@ -508,5 +622,8 @@ export function defaultContractInput(): ContractInput {
     hasIndemnity: true,
     hasTerminationForConvenience: false,
     insuranceAllocated: true,
+    confidentialityYears: 3,
+    commissionPct: 5,
+    leaseTermYears: 3,
   };
 }

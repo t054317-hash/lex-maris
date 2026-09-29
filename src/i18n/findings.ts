@@ -141,6 +141,35 @@ const ar: Table = {
     remediation:
       'حدّد سعراً يومياً لغرامة التأخير يُستحق بنسبة جزء اليوم، مع مدة سقوط صريحة للمطالبات.',
   },
+  'nda-term-short': {
+    title: 'مدة السرية قصيرة',
+    detail: (p) =>
+      `تنتهي الحماية بعد ${p.years} سنة من الإفصاح. والمعلومات التي تحتفظ بقيمتها مدة أطول، كالأسعار وبيانات العملاء والمعرفة الفنية، تصبح خارج نطاق الحماية التعاقدية بانقضاء هذه المدة.`,
+    remediation:
+      'مدّد المدة إلى سنتين على الأقل وحتى خمس سنوات، وأبقِ الأسرار التجارية محمية ما دامت سرية.',
+  },
+  'agency-mandatory-law': {
+    title: 'قانون الوكالات التجارية في الإقليم قانون آمر',
+    detail:
+      'تسري قوانين الوكالات التجارية في دول مجلس التعاون أياً كان القانون وجهة النزاع المختاران. وهي تشترط عادةً قيد الوكالة لدى وزارة التجارة، وقد تُرتّب للوكيل حقاً في التعويض إذا أنهى الموكّل الوكالة أو امتنع عن تجديدها دون مبرر.',
+    remediation:
+      'تحقّق قبل التوقيع من اشتراطات القيد وأحكام الإنهاء والتعويض في الإقليم، واحسب كلفة الخروج على أساسها.',
+    authority:
+      'القانون الكويتي رقم 13 لسنة 2016 بشأن تنظيم الوكالات التجارية؛ المرسوم بقانون اتحادي إماراتي رقم 3 لسنة 2022 بشأن تنظيم الوكالات التجارية',
+  },
+  'lease-law-not-situs': {
+    title: 'القانون الواجب التطبيق يختلف عن موقع العقار',
+    detail:
+      'يخضع إيجار العقار لقانون الدولة التي يقع فيها العقار، وتسري تشريعات الإيجار فيها بصفة آمرة. ومن المستبعد إعمال قانون آخر في مسائل كالأجرة والتجديد والإخلاء.',
+    remediation: 'اختر قانون الدولة التي يقع فيها العقار المؤجَّر.',
+  },
+  'lease-arbitration': {
+    title: 'قد لا تقبل منازعات الإيجار التحكيم',
+    detail:
+      'في عدد من دول الخليج تختص المحاكم المحلية أو جهات متخصصة في منازعات الإيجار بنظر هذه المنازعات، فقد لا يُعتدّ بشرط التحكيم في عقد الإيجار بالنسبة للمطالبات الجوهرية بين المؤجر والمستأجر.',
+    remediation:
+      'أحِل المنازعات إلى المحاكم أو جهة فض منازعات الإيجار المختصة في مكان العقار.',
+  },
 };
 
 const fr: Table = {
@@ -263,6 +292,35 @@ const fr: Table = {
       "Sans taux convenu, le retard n'est indemnisable qu'au titre de dommages-intérêts pour immobilisation, plus difficiles à prouver et plus lents à recouvrer.",
     remediation:
       'Fixez un taux journalier de surestaries, dû au prorata, assorti d’un délai de forclusion exprès pour les réclamations.',
+  },
+  'nda-term-short': {
+    title: 'Durée de confidentialité courte',
+    detail: (p) =>
+      `La protection prend fin ${p.years} an(s) après la divulgation. Les informations qui conservent leur valeur plus longtemps, comme les prix, les données clients ou le savoir-faire, cessent d'être protégées contractuellement à l'expiration de ce délai.`,
+    remediation:
+      "Portez la durée à au moins 2 à 5 ans et maintenez la protection des secrets d'affaires tant qu'ils restent secrets.",
+  },
+  'agency-mandatory-law': {
+    title: "Le droit des agences commerciales du territoire est impératif",
+    detail:
+      "Les lois des États du Golfe sur les agences commerciales s'appliquent quels que soient le droit et le for choisis. Elles imposent généralement l'enregistrement de l'agence auprès du ministère du Commerce et peuvent ouvrir droit à indemnité pour l'agent lorsque le mandant résilie ou refuse de renouveler sans motif légitime.",
+    remediation:
+      "Vérifiez avant signature les exigences d'enregistrement et les règles de résiliation et d'indemnisation du territoire, et chiffrez la sortie en conséquence.",
+    authority:
+      'Loi koweïtienne n° 13 de 2016 sur les agences commerciales ; décret-loi fédéral émirien n° 3 de 2022 sur les agences commerciales',
+  },
+  'lease-law-not-situs': {
+    title: 'Droit applicable différent du lieu de situation des locaux',
+    detail:
+      "Le bail d'un immeuble est régi par la loi du lieu de situation de l'immeuble, dont la législation locative s'applique de manière impérative. Un autre droit a peu de chances d'être appliqué sur des questions comme le loyer, le renouvellement et l'expulsion.",
+    remediation: 'Choisissez le droit du pays où se situent les locaux.',
+  },
+  'lease-arbitration': {
+    title: "Les litiges locatifs peuvent ne pas être arbitrables",
+    detail:
+      "Dans plusieurs États du Golfe, les litiges locatifs relèvent des juridictions locales ou d'organes spécialisés en matière de baux ; une clause compromissoire dans un bail peut donc être inopposable pour les principales demandes entre bailleur et preneur.",
+    remediation:
+      'Soumettez les litiges aux juridictions ou à l’autorité locative compétentes du lieu de situation des locaux.',
   },
 };
 

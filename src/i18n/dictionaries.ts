@@ -116,7 +116,7 @@ const en = {
   'cap.automation.eyebrow': 'Contract automation',
   'cap.automation.title': 'Draft in minutes, not days',
   'cap.automation.body':
-    "A declarative clause tree assembles supply, exclusive distribution and voyage charterparty drafts from validated inputs. Clause numbering updates automatically as terms are added or removed.",
+    "A declarative clause tree assembles supply, distribution, voyage charterparty, NDA, services, commercial agency and commercial lease drafts from validated inputs, each with its own clause set. Clause numbering updates automatically as terms are added or removed.",
   'cap.analysis.eyebrow': 'Clause-level analysis',
   'cap.analysis.title': 'Exposure scored as you type',
   'cap.analysis.body':
@@ -303,6 +303,19 @@ const en = {
   'dash.stage.done': "Complete",
   'dash.status.cancelled': "Cancelled",
   'dash.status.refunded': "Refunded",
+  'opt.type.nda': "Mutual non-disclosure agreement (NDA)",
+  'opt.type.services': "Services agreement",
+  'opt.type.agency': "Commercial agency",
+  'opt.type.lease': "Commercial lease",
+  'wizard.field.premisesLocation': "Location of the premises",
+  'wizard.field.ndaYears': "Confidentiality period (years) — {value}",
+  'wizard.indefinite': "indefinite",
+  'wizard.field.annualRent': "Annual rent — {value}",
+  'wizard.field.leaseYears': "Lease term (years) — {value}",
+  'wizard.field.commission': "Commission rate — {n}%",
+  'wizard.field.fees': "Fees — {value}",
+  'wizard.ndaNote':
+    "An NDA has no liability cap or commercial risk allocation: a breach is remedied by damages and injunctive relief. Continue to the governing law and forum.",
   // --- Shared --------------------------------------------------------------
   'common.notLegalAdvice':
     'Output is a triage signal for a qualified practitioner, not legal advice.',
@@ -415,7 +428,7 @@ const ar: Record<TranslationKey, string> = {
   'cap.automation.eyebrow': 'آلية صياغة العقود',
   'cap.automation.title': 'صياغة في دقائق، لا في أيام',
   'cap.automation.body':
-    "شجرة بنود وصفية تُركّب مسودات عقود التوريد والتوزيع الحصري ومشارطات الإيجار بالرحلة من مدخلات مُتحقَّق منها. ويتحدّث ترقيم البنود تلقائياً عند إضافة الشروط أو حذفها.",
+    "شجرة بنود وصفية تُركّب مسودات عقود التوريد والتوزيع الحصري ومشارطات الإيجار بالرحلة وعدم الإفصاح وتقديم الخدمات والوكالة التجارية والإيجار التجاري من مدخلات مُتحقَّق منها، لكلٍّ منها بنوده الخاصة. ويتحدّث ترقيم البنود تلقائياً عند إضافة الشروط أو حذفها.",
   'cap.analysis.eyebrow': 'تحليل على مستوى البنود',
   'cap.analysis.title': 'تقييم التعرّض أثناء الكتابة',
   'cap.analysis.body':
@@ -601,6 +614,19 @@ const ar: Record<TranslationKey, string> = {
   'dash.stage.done': "مكتملة",
   'dash.status.cancelled': "ملغى",
   'dash.status.refunded': "مُسترد",
+  'opt.type.nda': "اتفاقية عدم إفصاح متبادلة (NDA)",
+  'opt.type.services': "اتفاقية تقديم خدمات",
+  'opt.type.agency': "وكالة تجارية",
+  'opt.type.lease': "إيجار تجاري",
+  'wizard.field.premisesLocation': "موقع العين المؤجَّرة",
+  'wizard.field.ndaYears': "مدة السرية (بالسنوات) — {value}",
+  'wizard.indefinite': "غير محددة",
+  'wizard.field.annualRent': "الأجرة السنوية — {value}",
+  'wizard.field.leaseYears': "مدة الإيجار (بالسنوات) — {value}",
+  'wizard.field.commission': "نسبة العمولة — {n}%",
+  'wizard.field.fees': "الأتعاب — {value}",
+  'wizard.ndaNote':
+    "لا تتضمن اتفاقية عدم الإفصاح سقفاً للمسؤولية أو توزيعاً تجارياً للمخاطر، إذ يُجبر الإخلال بها بالتعويض والإجراءات الوقتية. تابع إلى القانون الواجب التطبيق وجهة النزاع.",
   // --- Shared --------------------------------------------------------------
   'common.notLegalAdvice':
     'النتيجة مؤشر فرز لممارس مؤهّل، وليست استشارة قانونية.',
@@ -712,7 +738,7 @@ const fr: Record<TranslationKey, string> = {
   'cap.automation.eyebrow': 'Automatisation contractuelle',
   'cap.automation.title': 'Rédiger en minutes, pas en jours',
   'cap.automation.body':
-    "Un arbre de clauses déclaratif assemble des projets de contrats de fourniture, de distribution exclusive et de charte-partie au voyage à partir de données validées. La numérotation se met à jour automatiquement lorsque des conditions sont ajoutées ou retirées.",
+    "Un arbre de clauses déclaratif assemble des projets de contrats de fourniture, de distribution, de charte-partie au voyage, de confidentialité, de prestation de services, d'agence commerciale et de bail commercial à partir de données validées, chacun avec ses propres clauses. La numérotation se met à jour automatiquement lorsque des conditions sont ajoutées ou retirées.",
   'cap.analysis.eyebrow': 'Analyse clause par clause',
   'cap.analysis.title': 'Exposition évaluée pendant la saisie',
   'cap.analysis.body':
@@ -900,6 +926,19 @@ const fr: Record<TranslationKey, string> = {
   'dash.stage.done': "Terminée",
   'dash.status.cancelled': "Annulé",
   'dash.status.refunded': "Remboursé",
+  'opt.type.nda': "Accord de confidentialité réciproque (NDA)",
+  'opt.type.services': "Contrat de prestation de services",
+  'opt.type.agency': "Agence commerciale",
+  'opt.type.lease': "Bail commercial",
+  'wizard.field.premisesLocation': "Lieu de situation des locaux",
+  'wizard.field.ndaYears': "Durée de confidentialité (années) — {value}",
+  'wizard.indefinite': "illimitée",
+  'wizard.field.annualRent': "Loyer annuel — {value}",
+  'wizard.field.leaseYears': "Durée du bail (années) — {value}",
+  'wizard.field.commission': "Taux de commission — {n} %",
+  'wizard.field.fees': "Honoraires — {value}",
+  'wizard.ndaNote':
+    "Un accord de confidentialité ne prévoit ni plafond de responsabilité ni répartition commerciale des risques : un manquement se répare par des dommages-intérêts et des mesures provisoires. Passez au droit applicable et au for.",
   // --- Shared --------------------------------------------------------------
   'common.notLegalAdvice':
     'Le résultat est un signal de tri destiné à un praticien qualifié, et non un conseil juridique.',

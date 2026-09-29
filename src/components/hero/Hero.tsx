@@ -8,6 +8,9 @@ import { LegalMatrixCanvas } from '@/components/ui/LegalMatrixCanvas';
 import { useGavelAudio } from '@/components/intro/useGavelAudio';
 import type { GavelPhase } from '@/components/intro/GavelScene';
 import { useI18n } from '@/i18n/I18nProvider';
+import { LOCALES } from '@/i18n/config';
+import { RULE_COUNT } from '@/lib/risk-engine';
+import { CLAUSE_COUNT } from '@/lib/document-engine';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 
 const GavelScene = dynamic(
@@ -161,9 +164,9 @@ export function Hero() {
               // Each figure is a count of what the code actually does:
               // RULES in risk-engine, locales in i18n/config, ClauseId in
               // document-engine, and the institutional forums offered.
-              ['12', 'hero.metric.rules'],
-              ['3', 'hero.metric.turnaround'],
-              ['16', 'hero.metric.sealing'],
+              [String(RULE_COUNT), 'hero.metric.rules'],
+              [String(LOCALES.length), 'hero.metric.turnaround'],
+              [String(CLAUSE_COUNT), 'hero.metric.sealing'],
               ['3', 'hero.metric.forum'],
             ] as const
           ).map(([value, key]) => (

@@ -21,6 +21,7 @@
 
 import { NUMBER_LOCALE, type Locale } from '@/i18n/config';
 import type { ContractInput, ContractType, DisputeForum, Security } from './risk-engine';
+import { CATEGORY_TEXT, type CategoryClauseId } from './document-categories';
 
 export interface Party {
   name: string;
@@ -39,7 +40,7 @@ export interface DocumentMeta {
   parties: { first: Party; second: Party };
 }
 
-export type ClauseId =
+export type CoreClauseId =
   | 'definitions'
   | 'scope'
   | 'payment'
@@ -56,6 +57,8 @@ export type ClauseId =
   | 'governing-law'
   | 'dispute-resolution'
   | 'execution';
+
+export type ClauseId = CoreClauseId | CategoryClauseId;
 
 export interface Clause {
   /** Stable id, used as the anchor target from risk findings. */
@@ -86,7 +89,7 @@ interface Fmt {
 
 interface DocText {
   typeTitles: Record<ContractType, string>;
-  headings: Record<ClauseId, string>;
+  headings: Record<CoreClauseId, string>;
   lawNames: Record<string, string>;
   lawFallback: (code: string) => string;
   /** Country as it reads after "registered in". */
@@ -166,6 +169,10 @@ const EN: DocText = {
     'bill-of-lading': 'Contract of Carriage (Bill of Lading Terms)',
     shareholders: 'Shareholders Agreement',
     jv: 'Joint Venture Agreement',
+    nda: 'Mutual Non-Disclosure Agreement',
+    services: 'Services Agreement',
+    agency: 'Commercial Agency Agreement',
+    lease: 'Commercial Lease',
   },
   headings: {
     definitions: 'Definitions and Interpretation',
@@ -314,6 +321,10 @@ const AR: DocText = {
     'bill-of-lading': 'عقد نقل بحري (شروط سند الشحن)',
     shareholders: 'اتفاقية مساهمين',
     jv: 'اتفاقية مشروع مشترك',
+    nda: 'اتفاقية عدم إفصاح متبادلة',
+    services: 'اتفاقية تقديم خدمات',
+    agency: 'عقد وكالة تجارية',
+    lease: 'عقد إيجار تجاري',
   },
   headings: {
     definitions: 'التعريفات والتفسير',
@@ -457,6 +468,10 @@ const FR: DocText = {
     'bill-of-lading': 'Contrat de transport (conditions du connaissement)',
     shareholders: "Pacte d'actionnaires",
     jv: 'Contrat de coentreprise',
+    nda: 'Accord de confidentialité réciproque',
+    services: 'Contrat de prestation de services',
+    agency: "Contrat d'agence commerciale",
+    lease: 'Bail commercial',
   },
   headings: {
     definitions: 'Définitions et interprétation',
@@ -598,7 +613,8 @@ const TEXT: Record<Locale, DocText> = { en: EN, ar: AR, fr: FR };
 
 /** Clause heading in the given language -- used by the findings register. */
 export function clauseHeading(id: ClauseId, locale: Locale = 'en'): string {
-  return TEXT[locale].headings[id];
+  const core = TEXT[locale].headings as Record<string, string>;
+  return core[id] ?? CATEGORY_TEXT[locale].headings[id as CategoryClauseId];
 }
 
 /** Instrument title in the given language. */
@@ -648,57 +664,145 @@ export function assembleDocument(
   const isMaritime =
     input.type === 'charterparty' || input.type === 'bill-of-lading';
 
+  const cat = CATEGORY_TEXT[locale] ?? CATEGORY_TEXT.en;
   const clause = (id: ClauseId, body: string[]): Omit<Clause, 'number'> => ({
     id,
-    heading: text.headings[id],
+    heading: clauseHeading(id, locale),
     body,
   });
 
-  const draft: Array<Omit<Clause, 'number'> | null> = [
-    clause('definitions', text.body.definitions),
-    clause('scope', text.body.scope(money(input.valueUsd))),
-    clause(
-      'payment',
-      text.body.payment(input.paymentTermsDays, input.paymentTermsDays > 60),
+  // Clauses every category ends with.
+  const governingLaw = clause(
+    'governing-law',
+    text.body.governingLaw(
+      text.lawNames[input.governingLaw] ?? text.lawFallback(input.governingLaw),
     ),
-    input.security !== 'none'
-      ? clause('security', text.body.security(text.security[input.security]))
-      : null,
-    isMaritime ? clause('laytime', text.body.laytime(input.laytimeHours)) : null,
-    isMaritime
-      ? clause(
-          'demurrage',
-          text.body.demurrage(
-            input.demurrageRateUsd ? money(input.demurrageRateUsd) : null,
+  );
+  const dispute = clause('dispute-resolution', text.body.dispute(text.forum[input.disputeForum]));
+  const execution = clause('execution', text.body.execution);
+  const liability = clause(
+    'liability',
+    text.body.liability(
+      input.liabilityCapMultiple > 0
+        ? {
+            amount: money(input.valueUsd * input.liabilityCapMultiple),
+            multiple: num(input.liabilityCapMultiple),
+          }
+        : null,
+    ),
+  );
+  const optional = (on: boolean, id: ClauseId, body: string[]) => (on ? clause(id, body) : null);
+
+  let draft: Array<Omit<Clause, 'number'> | null>;
+
+  switch (input.type) {
+    case 'nda':
+      draft = [
+        clause('purpose', cat.nda.purpose),
+        clause('nda-obligations', cat.nda.obligations),
+        clause('nda-exceptions', cat.nda.exceptions),
+        clause('nda-term', cat.nda.term(input.confidentialityYears ?? 0)),
+        clause('nda-return', cat.nda.returnDestroy),
+        clause('no-licence', cat.nda.noLicence),
+        clause('remedies', cat.nda.remedies),
+        governingLaw,
+        dispute,
+        execution,
+      ];
+      break;
+
+    case 'services':
+      draft = [
+        clause('definitions', text.body.definitions),
+        clause('services', cat.services.services(money(input.valueUsd))),
+        clause('standard-of-care', cat.services.standardOfCare),
+        clause('payment', text.body.payment(input.paymentTermsDays, input.paymentTermsDays > 60)),
+        clause('ip', cat.services.ip),
+        clause('confidentiality', text.body.confidentiality),
+        liability,
+        optional(input.hasIndemnity, 'indemnity', text.body.indemnity),
+        optional(input.hasForceMajeure, 'force-majeure', text.body.forceMajeure),
+        optional(input.hasSanctionsClause, 'sanctions', text.body.sanctions),
+        clause('termination', text.body.termination(input.hasTerminationForConvenience)),
+        governingLaw,
+        dispute,
+        execution,
+      ];
+      break;
+
+    case 'agency':
+      draft = [
+        clause('definitions', text.body.definitions),
+        clause('appointment', cat.agency.appointment),
+        clause('agent-duties', cat.agency.duties),
+        clause(
+          'commission',
+          cat.agency.commission(
+            input.commissionPct ? num(input.commissionPct) : null,
+            input.paymentTermsDays,
           ),
-        )
-      : null,
-    clause('insurance', text.body.insurance(input.insuranceAllocated)),
-    clause(
-      'liability',
-      text.body.liability(
-        input.liabilityCapMultiple > 0
-          ? {
-              amount: money(input.valueUsd * input.liabilityCapMultiple),
-              multiple: num(input.liabilityCapMultiple),
-            }
+        ),
+        clause('agency-law', cat.agency.law),
+        clause('confidentiality', text.body.confidentiality),
+        liability,
+        optional(input.hasIndemnity, 'indemnity', text.body.indemnity),
+        optional(input.hasForceMajeure, 'force-majeure', text.body.forceMajeure),
+        optional(input.hasSanctionsClause, 'sanctions', text.body.sanctions),
+        // No convenience exit: termination of an agency is governed by the
+        // mandatory law the agency-law clause preserves.
+        clause('termination', text.body.termination(false)),
+        governingLaw,
+        dispute,
+        execution,
+      ];
+      break;
+
+    case 'lease':
+      draft = [
+        clause('definitions', text.body.definitions),
+        clause('premises', cat.lease.premises),
+        clause('lease-term', cat.lease.term(input.leaseTermYears ?? 0)),
+        clause('rent', cat.lease.rent(money(input.valueUsd))),
+        clause('deposit', cat.lease.deposit),
+        clause('use', cat.lease.use),
+        clause('maintenance', cat.lease.maintenance),
+        clause('assignment', cat.lease.assignment),
+        clause('insurance', cat.lease.insurance),
+        optional(input.hasForceMajeure, 'force-majeure', text.body.forceMajeure),
+        clause('termination', text.body.termination(false)),
+        governingLaw,
+        dispute,
+        execution,
+      ];
+      break;
+
+    default:
+      draft = [
+        clause('definitions', text.body.definitions),
+        clause('scope', text.body.scope(money(input.valueUsd))),
+        clause('payment', text.body.payment(input.paymentTermsDays, input.paymentTermsDays > 60)),
+        input.security !== 'none'
+          ? clause('security', text.body.security(text.security[input.security]))
           : null,
-      ),
-    ),
-    input.hasIndemnity ? clause('indemnity', text.body.indemnity) : null,
-    input.hasForceMajeure ? clause('force-majeure', text.body.forceMajeure) : null,
-    input.hasSanctionsClause ? clause('sanctions', text.body.sanctions) : null,
-    clause('termination', text.body.termination(input.hasTerminationForConvenience)),
-    clause('confidentiality', text.body.confidentiality),
-    clause(
-      'governing-law',
-      text.body.governingLaw(
-        text.lawNames[input.governingLaw] ?? text.lawFallback(input.governingLaw),
-      ),
-    ),
-    clause('dispute-resolution', text.body.dispute(text.forum[input.disputeForum])),
-    clause('execution', text.body.execution),
-  ];
+        isMaritime ? clause('laytime', text.body.laytime(input.laytimeHours)) : null,
+        isMaritime
+          ? clause(
+              'demurrage',
+              text.body.demurrage(input.demurrageRateUsd ? money(input.demurrageRateUsd) : null),
+            )
+          : null,
+        clause('insurance', text.body.insurance(input.insuranceAllocated)),
+        liability,
+        optional(input.hasIndemnity, 'indemnity', text.body.indemnity),
+        optional(input.hasForceMajeure, 'force-majeure', text.body.forceMajeure),
+        optional(input.hasSanctionsClause, 'sanctions', text.body.sanctions),
+        clause('termination', text.body.termination(input.hasTerminationForConvenience)),
+        clause('confidentiality', text.body.confidentiality),
+        governingLaw,
+        dispute,
+        execution,
+      ];
+  }
 
   const clauses: Clause[] = draft
     .filter((c): c is Omit<Clause, 'number'> => c !== null)
@@ -716,3 +820,7 @@ export function assembleDocument(
     clauses,
   };
 }
+
+/** Number of distinct standard clauses the engine can draft -- shown on the landing page. */
+export const CLAUSE_COUNT =
+  Object.keys(EN.headings).length + Object.keys(CATEGORY_TEXT.en.headings).length;

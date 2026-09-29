@@ -23,6 +23,12 @@ import {
   options,
 } from '@/i18n/options';
 
+const TRADE_TYPES: ReadonlySet<ContractInput['type']> = new Set([
+  'supply',
+  'distribution',
+  'charterparty',
+]);
+
 const STEPS = ['instrument', 'commercial', 'allocation', 'forum', 'execute'] as const;
 
 /**
@@ -104,6 +110,18 @@ export function ContractWizard() {
 
   const isMaritime =
     input.type === 'charterparty' || input.type === 'bill-of-lading';
+  const isTrade = TRADE_TYPES.has(input.type);
+  const { type } = input;
+  // Which risk-allocation controls a category actually uses.
+  const uses = {
+    cap: type !== 'nda' && type !== 'lease',
+    forceMajeure: type !== 'nda',
+    sanctions: type !== 'nda' && type !== 'lease',
+    indemnity: type !== 'nda' && type !== 'lease',
+    convenience: isTrade || type === 'services',
+    insurance: isTrade,
+  };
+  const pct = (n: number) => new Intl.NumberFormat(NUMBER_LOCALE[locale]).format(n);
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)]">
@@ -151,11 +169,26 @@ export function ContractWizard() {
                   <Field label={t('checkout.field.instrumentType')}>
                     <Select
                       value={input.type}
-                      onChange={(v) => patch('type', v as ContractInput['type'])}
+                      onChange={(v) =>
+                        setInput((prev) => {
+                          const next = { ...prev, type: v as ContractInput['type'] };
+                          // The value slider means annual rent for a lease, with its
+                          // own range; keep the figure inside the range it is shown on.
+                          if (next.type === 'lease' && next.valueUsd > 2_000_000) next.valueUsd = 120_000;
+                          if (next.type !== 'lease' && next.valueUsd < 50_000) next.valueUsd = 50_000;
+                          return next;
+                        })
+                      }
                       options={options(t, 'opt.type', BUILDER_TYPES)}
                     />
                   </Field>
-                  <Field label={t('checkout.field.counterpartyJurisdiction')}>
+                  <Field
+                    label={
+                      type === 'lease'
+                        ? t('wizard.field.premisesLocation')
+                        : t('checkout.field.counterpartyJurisdiction')
+                    }
+                  >
                     <Select
                       value={input.counterpartyJurisdiction}
                       onChange={(v) => patch('counterpartyJurisdiction', v)}
@@ -168,18 +201,83 @@ export function ContractWizard() {
                 </>
               )}
 
-              {step === 1 && (
+              {step === 1 && type === 'nda' && (
+                <Field
+                  label={t('wizard.field.ndaYears', {
+                    value: input.confidentialityYears
+                      ? pct(input.confidentialityYears)
+                      : t('wizard.indefinite'),
+                  })}
+                >
+                  <Range
+                    min={0}
+                    max={10}
+                    step={1}
+                    value={input.confidentialityYears ?? 0}
+                    onChange={(v) => patch('confidentialityYears', v)}
+                    dir={dir}
+                  />
+                </Field>
+              )}
+
+              {step === 1 && type === 'lease' && (
                 <>
-                  <Field label={t('wizard.field.value', { value: usd(input.valueUsd) })}>
+                  <Field label={t('wizard.field.annualRent', { value: usd(input.valueUsd) })}>
                     <Range
-                      min={50_000}
-                      max={50_000_000}
-                      step={50_000}
+                      min={10_000}
+                      max={2_000_000}
+                      step={10_000}
                       value={input.valueUsd}
                       onChange={(v) => patch('valueUsd', v)}
                       dir={dir}
                     />
                   </Field>
+                  <Field
+                    label={t('wizard.field.leaseYears', { value: pct(input.leaseTermYears ?? 0) })}
+                  >
+                    <Range
+                      min={1}
+                      max={15}
+                      step={1}
+                      value={input.leaseTermYears ?? 1}
+                      onChange={(v) => patch('leaseTermYears', v)}
+                      dir={dir}
+                    />
+                  </Field>
+                </>
+              )}
+
+              {step === 1 && (isTrade || type === 'services' || type === 'agency') && (
+                <>
+                  {type === 'agency' ? (
+                    <Field
+                      label={t('wizard.field.commission', { n: pct(input.commissionPct ?? 0) })}
+                    >
+                      <Range
+                        min={0}
+                        max={20}
+                        step={0.5}
+                        value={input.commissionPct ?? 0}
+                        onChange={(v) => patch('commissionPct', v)}
+                        dir={dir}
+                      />
+                    </Field>
+                  ) : (
+                    <Field
+                      label={t(type === 'services' ? 'wizard.field.fees' : 'wizard.field.value', {
+                        value: usd(input.valueUsd),
+                      })}
+                    >
+                      <Range
+                        min={50_000}
+                        max={50_000_000}
+                        step={50_000}
+                        value={input.valueUsd}
+                        onChange={(v) => patch('valueUsd', v)}
+                        dir={dir}
+                      />
+                    </Field>
+                  )}
                   <Field
                     label={t('wizard.field.paymentTerms', { n: input.paymentTermsDays })}
                   >
@@ -192,6 +290,11 @@ export function ContractWizard() {
                       dir={dir}
                     />
                   </Field>
+                </>
+              )}
+
+              {step === 1 && isTrade && (
+                <>
                   <Field label={t('wizard.field.security')}>
                     <Select
                       value={input.security}
@@ -244,6 +347,10 @@ export function ContractWizard() {
 
               {step === 2 && (
                 <>
+                  {type === 'nda' && (
+                    <p className="text-xs leading-relaxed text-ink-500">{t('wizard.ndaNote')}</p>
+                  )}
+                  {uses.cap && (
                   <Field
                     label={t('wizard.field.cap', {
                       value:
@@ -265,21 +372,29 @@ export function ContractWizard() {
                       dir={dir}
                     />
                   </Field>
+                  )}
+                  {uses.forceMajeure && (
                   <Toggle
                     label={t('wizard.toggle.forceMajeure')}
                     checked={input.hasForceMajeure}
                     onChange={(v) => patch('hasForceMajeure', v)}
                   />
+                  )}
+                  {uses.sanctions && (
                   <Toggle
                     label={t('wizard.toggle.sanctions')}
                     checked={input.hasSanctionsClause}
                     onChange={(v) => patch('hasSanctionsClause', v)}
                   />
+                  )}
+                  {uses.indemnity && (
                   <Toggle
                     label={t('wizard.toggle.indemnity')}
                     checked={input.hasIndemnity}
                     onChange={(v) => patch('hasIndemnity', v)}
                   />
+                  )}
+                  {uses.convenience && (
                   <Toggle
                     label={t('wizard.toggle.convenience')}
                     checked={input.hasTerminationForConvenience}
@@ -287,11 +402,14 @@ export function ContractWizard() {
                       patch('hasTerminationForConvenience', v)
                     }
                   />
+                  )}
+                  {uses.insurance && (
                   <Toggle
                     label={t('wizard.toggle.insurance')}
                     checked={input.insuranceAllocated}
                     onChange={(v) => patch('insuranceAllocated', v)}
                   />
+                  )}
                 </>
               )}
 
