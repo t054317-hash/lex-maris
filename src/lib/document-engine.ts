@@ -179,6 +179,8 @@ const EN: DocText = {
     employment: 'Employment Contract',
     mou: 'Memorandum of Understanding',
     settlement: 'Settlement Agreement',
+    construction: 'Construction Contract',
+    'property-sale': 'Contract for the Sale of Real Property',
   },
   headings: {
     definitions: 'Definitions and Interpretation',
@@ -337,6 +339,8 @@ const AR: DocText = {
     employment: 'عقد عمل',
     mou: 'مذكرة تفاهم',
     settlement: 'اتفاقية تسوية (صلح)',
+    construction: 'عقد مقاولة',
+    'property-sale': 'عقد بيع عقار',
   },
   headings: {
     definitions: 'التعريفات والتفسير',
@@ -490,6 +494,8 @@ const FR: DocText = {
     employment: 'Contrat de travail',
     mou: "Protocole d'accord",
     settlement: 'Protocole transactionnel',
+    construction: 'Marché de travaux',
+    'property-sale': 'Contrat de vente immobilière',
   },
   headings: {
     definitions: 'Définitions et interprétation',
@@ -854,6 +860,46 @@ export function assembleDocument(
         clause('release', cat.settlement.release),
         clause('proceedings', cat.settlement.proceedings),
         clause('confidentiality', text.body.confidentiality),
+        governingLaw,
+        dispute,
+        execution,
+      ];
+      break;
+
+    case 'construction':
+      draft = [
+        clause('definitions', text.body.definitions),
+        clause('works', cat.construction.works),
+        clause('contract-price', cat.construction.price(money(input.valueUsd), input.paymentTermsDays)),
+        clause('time-for-completion', cat.construction.time(input.completionMonths ?? 0)),
+        clause('delay-damages', cat.construction.delay),
+        clause('variations', cat.construction.variations),
+        clause('performance-security', cat.construction.security),
+        clause('completion-defects', cat.construction.completion),
+        clause('decennial-liability', cat.construction.decennial),
+        clause('construction-insurance', cat.construction.insurance),
+        clause('subcontracting', cat.construction.subcontracting),
+        liability,
+        optional(input.hasIndemnity, 'indemnity', text.body.indemnity),
+        optional(input.hasForceMajeure, 'force-majeure', text.body.forceMajeure),
+        optional(input.hasSanctionsClause, 'sanctions', text.body.sanctions),
+        clause('termination', text.body.termination(input.hasTerminationForConvenience)),
+        governingLaw,
+        dispute,
+        execution,
+      ];
+      break;
+
+    case 'property-sale':
+      draft = [
+        clause('definitions', text.body.definitions),
+        clause('property', cat.sale.property),
+        clause('purchase-price', cat.sale.price(money(input.valueUsd))),
+        clause('title', cat.sale.title),
+        clause('transfer-registration', cat.sale.transfer),
+        clause('possession-risk', cat.sale.possession),
+        clause('sale-default', cat.sale.default),
+        clause('fees-taxes', cat.sale.fees),
         governingLaw,
         dispute,
         execution,

@@ -35,6 +35,7 @@ const NON_COMMERCIAL: ReadonlySet<ContractInput['type']> = new Set([
   'employment',
   'mou',
   'settlement',
+  'property-sale',
 ]);
 
 const STEPS = ['instrument', 'commercial', 'allocation', 'forum', 'execute'] as const;
@@ -149,10 +150,15 @@ export function ContractWizard() {
     forceMajeure: !nonCommercial,
     sanctions: !nonCommercial && type !== 'lease',
     indemnity: !nonCommercial && type !== 'lease',
-    convenience: isTrade || type === 'services' || type === 'licence',
+    convenience: isTrade || type === 'services' || type === 'licence' || type === 'construction',
     insurance: isTrade,
   };
-  const priced = isTrade || type === 'services' || type === 'agency' || type === 'licence';
+  const priced =
+    isTrade ||
+    type === 'services' ||
+    type === 'agency' ||
+    type === 'licence' ||
+    type === 'construction';
   const pct = (n: number) => new Intl.NumberFormat(NUMBER_LOCALE[locale]).format(n);
 
   return (
@@ -218,6 +224,8 @@ export function ContractWizard() {
                     label={
                       type === 'lease'
                         ? t('wizard.field.premisesLocation')
+                        : type === 'property-sale'
+                          ? t('wizard.field.propertyLocation')
                         : t('checkout.field.counterpartyJurisdiction')
                     }
                   >
@@ -298,6 +306,36 @@ export function ContractWizard() {
                 </Field>
               )}
 
+              {step === 1 && type === 'construction' && (
+                <Field
+                  label={t('wizard.field.completion', {
+                    value: pct(input.completionMonths ?? 0),
+                  })}
+                >
+                  <Range
+                    min={1}
+                    max={60}
+                    step={1}
+                    value={input.completionMonths ?? 1}
+                    onChange={(v) => patch('completionMonths', v)}
+                    dir={dir}
+                  />
+                </Field>
+              )}
+
+              {step === 1 && type === 'property-sale' && (
+                <Field label={t('wizard.field.salePrice', { value: usd(input.valueUsd) })}>
+                  <Range
+                    min={50_000}
+                    max={50_000_000}
+                    step={50_000}
+                    value={input.valueUsd}
+                    onChange={(v) => patch('valueUsd', v)}
+                    dir={dir}
+                  />
+                </Field>
+              )}
+
               {step === 1 && (type === 'employment' || type === 'settlement') && (
                 <p className="text-xs leading-relaxed text-ink-500">
                   {t(type === 'employment' ? 'wizard.employmentNote' : 'wizard.settlementNote')}
@@ -326,7 +364,9 @@ export function ContractWizard() {
                           ? 'wizard.field.fees'
                           : type === 'licence'
                             ? 'wizard.field.licenceFees'
-                            : 'wizard.field.value',
+                            : type === 'construction'
+                              ? 'wizard.field.contractPrice'
+                              : 'wizard.field.value',
                         {
                         value: usd(input.valueUsd),
                       })}

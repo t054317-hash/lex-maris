@@ -199,6 +199,50 @@ const ar: Table = {
     remediation:
       'متى أجازت الإجراءات المحلية ذلك، أثبت الصلح أو صدّق عليه أمام المحكمة أو هيئة التحكيم التي تنظر النزاع، أو أفرغه في حكم تحكيم باتفاق الطرفين.',
   },
+  'construction-decennial': {
+    title: 'لا يجوز الإعفاء من الضمان العشري أو تحديده',
+    detail:
+      'يضمن المقاول والمهندس متضامنين مدة عشر سنوات ما يحدث من تهدّم كلي أو جزئي للبناء ومن عيوب تهدد متانته وسلامته، ويقع باطلاً كل اتفاق يُعفي من هذا الضمان أو يحدّ منه. ولا يشمله سقف المسؤولية الوارد في العقد.',
+    remediation:
+      'احسب كلفة التعرّض لمدة عشر سنوات، وتحقّق من تأمين المسؤولية المهنية للمقاول والمصمّم، وأبقِ الاستثناء قائماً في بند تحديد المسؤولية.',
+    authority: 'قانون المعاملات المدنية الإماراتي (القانون الاتحادي رقم 5 لسنة 1985)، المواد 880–882',
+  },
+  'construction-delay-damages': {
+    title: 'قد تعدّل المحكمة غرامة التأخير المتفق عليها',
+    detail:
+      'تُجيز القوانين المدنية في المنطقة للمحكمة، بناءً على طلب أحد الطرفين، تعديل التعويض المتفق عليه ليساوي الضرر الواقع فعلاً. فالنسبة التي تتجاوز كثيراً الضرر المحتمل قد لا تُنفَّذ كما كُتبت.',
+    remediation:
+      'حدّد النسبة اليومية والحد الأقصى بناءً على تقدير حقيقي لضرر التأخير، ووثّق أساس هذا التقدير.',
+    authority: 'قانون المعاملات المدنية الإماراتي، المادة 390',
+  },
+  'construction-time-undefined': {
+    title: 'لم تُحدَّد مدة الإنجاز',
+    detail:
+      'في غياب مدة محددة للإنجاز لا تستحق غرامة التأخير، ولا يكون لصاحب العمل تاريخ ثابت يقيس عليه التأخر في التنفيذ.',
+    remediation: 'حدّد مدة الإنجاز محسوبةً من تاريخ البدء.',
+  },
+  'property-registration': {
+    title: 'لا تنتقل الملكية إلا بالتسجيل',
+    detail:
+      'لا تنتقل ملكية العقار إلا بتسجيل البيع لدى إدارة التسجيل العقاري المختصة، وحتى ذلك الحين لا يُرتّب العقد إلا التزامات شخصية، وقد يتقدّم عليه مشترٍ لاحق سجّل قبله أو دائن.',
+    remediation:
+      'حدّد موعد التسجيل، واحتجز باقي الثمن حتى إتمامه، واستخرج شهادة بالحقوق العينية والحجوزات على العقار قبيل التوقيع مباشرةً.',
+    authority: 'القانون الكويتي رقم 5 لسنة 1959 بشأن التسجيل العقاري',
+  },
+  'property-law-not-situs': {
+    title: 'القانون الواجب التطبيق يختلف عن موقع العقار',
+    detail:
+      'يخضع نقل ملكية العقار لقانون الدولة التي يقع فيها، وهو الذي يحدد إجراءات التسجيل ومن يحق له التملّك.',
+    remediation: 'اختر قانون الدولة التي يقع فيها العقار.',
+  },
+  'property-foreign-ownership': {
+    title: 'تحقّق من أهلية المشتري لتملّك العقار',
+    detail:
+      'تقيّد عدة دول خليجية تملّك الأجانب والشركات ذات المساهمين الأجانب للعقارات، أو تقصره على مناطق محددة.',
+    remediation:
+      'تحقّق من أهلية المشتري واستخرج أي موافقة لازمة قبل دفع العربون، واجعل البيع معلّقاً على صدورها.',
+    authority: 'القانون الكويتي رقم 74 لسنة 1979 بتنظيم تملّك غير الكويتيين للعقارات',
+  },
 };
 
 const fr: Table = {
@@ -380,6 +424,50 @@ const fr: Table = {
       "Une transaction privée est un contrat : si la partie débitrice fait défaut, l'autre doit agir en justice sur son fondement. Lorsqu'une procédure est pendante, faire constater la transaction par la juridiction ou le tribunal arbitral peut lui conférer force exécutoire.",
     remediation:
       "Lorsque la procédure locale le permet, faites constater ou homologuer la transaction par la juridiction ou le tribunal arbitral saisi, ou consignez-la dans une sentence d'accord parties.",
+  },
+  'construction-decennial': {
+    title: 'La responsabilité décennale ne peut être exclue ni plafonnée',
+    detail:
+      "L'entrepreneur et le concepteur sont solidairement responsables pendant dix ans de l'effondrement de l'ouvrage et des vices menaçant sa solidité, et toute convention excluant ou limitant cette responsabilité est nulle. Le plafond de responsabilité du contrat ne s'y applique pas.",
+    remediation:
+      "Chiffrez l'exposition décennale, vérifiez l'assurance de responsabilité professionnelle de l'entrepreneur et du concepteur, et conservez l'exclusion dans la clause de limitation.",
+    authority: 'Code des transactions civiles des Émirats (loi fédérale n° 5 de 1985), art. 880 à 882',
+  },
+  'construction-delay-damages': {
+    title: 'Les pénalités de retard peuvent être ajustées par le juge',
+    detail:
+      "Les codes civils de la région permettent au juge, sur demande, d'ajuster l'indemnité convenue au préjudice réellement subi. Un taux très supérieur à la perte probable peut ne pas être appliqué tel quel.",
+    remediation:
+      'Fixez le taux journalier et le plafond sur la base d’une estimation sincère du préjudice de retard, et conservez la justification de cette estimation.',
+    authority: 'Code des transactions civiles des Émirats, art. 390',
+  },
+  'construction-time-undefined': {
+    title: "Délai d'exécution non précisé",
+    detail:
+      "Sans délai d'exécution, les pénalités de retard ne peuvent courir et le maître d'ouvrage ne dispose d'aucune date de référence pour mesurer le retard.",
+    remediation: "Fixez le délai d'exécution à compter de la date de démarrage.",
+  },
+  'property-registration': {
+    title: "La propriété n'est transférée qu'à l'inscription",
+    detail:
+      "La propriété d'un immeuble n'est transférée qu'à l'inscription de la vente auprès du service foncier compétent. Jusque-là, le contrat ne crée que des obligations personnelles, et un acquéreur ou créancier inscrit ultérieurement peut primer.",
+    remediation:
+      "Fixez la date d'inscription, conservez le solde du prix jusqu'à celle-ci et consultez le registre (hypothèques, saisies) immédiatement avant la signature.",
+    authority: "Loi koweïtienne n° 5 de 1959 sur l'inscription foncière",
+  },
+  'property-law-not-situs': {
+    title: "Droit applicable différent du lieu de situation de l'immeuble",
+    detail:
+      "Le transfert de propriété d'un immeuble est régi par la loi du lieu de sa situation, qui fixe également les formalités d'inscription et les conditions pour en être propriétaire.",
+    remediation: "Choisissez le droit du pays où se situe l'immeuble.",
+  },
+  'property-foreign-ownership': {
+    title: "Vérifiez que l'acquéreur peut être propriétaire",
+    detail:
+      "Plusieurs États du Golfe restreignent l'acquisition d'immeubles par des étrangers et par des sociétés à actionnariat étranger, ou la limitent à certaines zones.",
+    remediation:
+      "Vérifiez l'éligibilité de l'acquéreur et obtenez toute autorisation requise avant le versement de l'acompte, en faisant de celle-ci une condition de la vente.",
+    authority: 'Loi koweïtienne n° 74 de 1979 sur la propriété immobilière des non-Koweïtiens',
   },
 };
 

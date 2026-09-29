@@ -47,7 +47,9 @@ export type ContractType =
   | 'licence'
   | 'employment'
   | 'mou'
-  | 'settlement';
+  | 'settlement'
+  | 'construction'
+  | 'property-sale';
 
 export type DisputeForum =
   | 'local-courts'
@@ -91,6 +93,8 @@ export interface ContractInput {
   leaseTermYears?: number;
   /** MoU only: exclusivity period in months; 0 = none. */
   exclusivityMonths?: number;
+  /** Construction only: time for completion in months. */
+  completionMonths?: number;
 }
 
 export interface Finding {
@@ -145,10 +149,11 @@ const PRICED_TYPES: ReadonlySet<ContractType> = new Set([
   'services',
   'agency',
   'licence',
+  'construction',
 ]);
 
 /** No commercial risk allocation: rules about caps, credit, sanctions etc. do not apply. */
-const NON_COMMERCIAL: ContractType[] = ['nda', 'employment', 'mou', 'settlement'];
+const NON_COMMERCIAL: ContractType[] = ['nda', 'employment', 'mou', 'settlement', 'property-sale'];
 
 const not =
   (...types: ContractType[]) =>
@@ -185,7 +190,13 @@ export type FindingCode =
   | 'employment-mandatory-law'
   | 'employment-arbitration'
   | 'mou-binding-risk'
-  | 'settlement-enforcement';
+  | 'settlement-enforcement'
+  | 'construction-decennial'
+  | 'construction-delay-damages'
+  | 'construction-time-undefined'
+  | 'property-registration'
+  | 'property-law-not-situs'
+  | 'property-foreign-ownership';
 
 interface Rule {
   id: string;
@@ -616,6 +627,104 @@ const RULES: readonly Rule[] = [
         'Where local procedure allows, have the settlement recorded or ratified by the court or tribunal hearing the dispute, or embodied in a consent award.',
     }),
   },
+  {
+    id: 'construction-decennial',
+    clauseId: 'decennial-liability',
+    weight: 0.8,
+    appliesTo: (c) => c.type === 'construction',
+    evaluate: () => ({
+      code: 'construction-decennial',
+      severity: 'medium',
+      title: 'Decennial liability cannot be excluded or capped',
+      detail:
+        "The contractor and the designer are jointly liable for ten years for collapse of the building and for defects threatening its stability, and any agreement excluding or limiting that liability is void. The contract's liability cap does not reach it.",
+      remediation:
+        "Price the ten-year exposure, confirm the contractor's and designer's professional indemnity cover, and keep the carve-out in the limitation clause.",
+      authority: 'UAE Civil Transactions Law (Federal Law No. 5 of 1985), Arts 880–882',
+    }),
+  },
+  {
+    id: 'construction-delay-damages',
+    clauseId: 'delay-damages',
+    weight: 0.6,
+    appliesTo: (c) => c.type === 'construction',
+    evaluate: () => ({
+      code: 'construction-delay-damages',
+      severity: 'low',
+      title: 'Agreed delay damages may be adjusted by the court',
+      detail:
+        'Under the civil codes of the region the court may, on application, adjust agreed damages so that they equal the loss actually suffered. A rate set far above the likely loss may not be enforced as written.',
+      remediation:
+        'Set the daily rate and the cap by reference to a genuine estimate of the loss from delay, and record the basis of that estimate.',
+      authority: 'UAE Civil Transactions Law, Art. 390',
+    }),
+  },
+  {
+    id: 'construction-time-undefined',
+    clauseId: 'time-for-completion',
+    weight: 1,
+    appliesTo: (c) => c.type === 'construction',
+    evaluate: (c) =>
+      !c.completionMonths
+        ? {
+            code: 'construction-time-undefined',
+            severity: 'high',
+            title: 'Time for completion not stated',
+            detail:
+              'Without a stated time for completion, delay damages cannot run and the employer has no fixed date against which to measure late performance.',
+            remediation: 'State the time for completion as a period from the commencement date.',
+          }
+        : null,
+  },
+  {
+    id: 'property-registration',
+    clauseId: 'transfer-registration',
+    weight: 0.8,
+    appliesTo: (c) => c.type === 'property-sale',
+    evaluate: () => ({
+      code: 'property-registration',
+      severity: 'medium',
+      title: 'Title passes only on registration',
+      detail:
+        'Ownership of real property passes only when the sale is registered with the competent real estate registry. Until then the contract creates personal obligations only, and a later registered buyer or creditor may take priority.',
+      remediation:
+        'Fix the registration date, hold the balance of the price until registration, and search the register for mortgages and attachments immediately before signing.',
+      authority: 'Kuwait Law No. 5 of 1959 on Real Estate Registration',
+    }),
+  },
+  {
+    id: 'property-law-not-situs',
+    clauseId: 'governing-law',
+    weight: 1,
+    appliesTo: (c) => c.type === 'property-sale',
+    evaluate: (c) =>
+      c.governingLaw !== c.counterpartyJurisdiction
+        ? {
+            code: 'property-law-not-situs',
+            severity: 'high',
+            title: 'Governing law differs from the location of the property',
+            detail:
+              'Transfer of ownership of real property is governed by the law of the place where the property is located, which also determines registration formalities and who may own it.',
+            remediation: 'Choose the law of the country where the property is located.',
+          }
+        : null,
+  },
+  {
+    id: 'property-foreign-ownership',
+    clauseId: 'transfer-registration',
+    weight: 0.6,
+    appliesTo: (c) => c.type === 'property-sale',
+    evaluate: () => ({
+      code: 'property-foreign-ownership',
+      severity: 'low',
+      title: 'Check that the buyer may own the property',
+      detail:
+        'Several Gulf states restrict ownership of real property by foreign nationals and by companies with foreign shareholders, or confine it to designated areas.',
+      remediation:
+        "Confirm the buyer's eligibility and obtain any required approval before paying the deposit, and make the sale conditional on it.",
+      authority: 'Kuwait Law No. 74 of 1979 on Real Estate Ownership by Non-Kuwaitis',
+    }),
+  },
 ];
 
 /** Number of rules in the model -- shown on the landing page. */
@@ -705,5 +814,6 @@ export function defaultContractInput(): ContractInput {
     commissionPct: 5,
     leaseTermYears: 3,
     exclusivityMonths: 3,
+    completionMonths: 18,
   };
 }

@@ -69,7 +69,24 @@ export type CategoryClauseId =
   | 'settlement-dispute'
   | 'settlement-sum'
   | 'release'
-  | 'proceedings';
+  | 'proceedings'
+  | 'works'
+  | 'contract-price'
+  | 'time-for-completion'
+  | 'delay-damages'
+  | 'variations'
+  | 'performance-security'
+  | 'completion-defects'
+  | 'decennial-liability'
+  | 'construction-insurance'
+  | 'subcontracting'
+  | 'property'
+  | 'purchase-price'
+  | 'title'
+  | 'transfer-registration'
+  | 'possession-risk'
+  | 'sale-default'
+  | 'fees-taxes';
 
 export interface CategoryText {
   headings: Record<CategoryClauseId, string>;
@@ -132,6 +149,27 @@ export interface CategoryText {
     release: string[];
     proceedings: string[];
   };
+  construction: {
+    works: string[];
+    price: (price: string, days: number) => string[];
+    time: (months: number) => string[];
+    delay: string[];
+    variations: string[];
+    security: string[];
+    completion: string[];
+    decennial: string[];
+    insurance: string[];
+    subcontracting: string[];
+  };
+  sale: {
+    property: string[];
+    price: (price: string) => string[];
+    title: string[];
+    transfer: string[];
+    possession: string[];
+    default: string[];
+    fees: string[];
+  };
 }
 
 const EN: CategoryText = {
@@ -178,6 +216,23 @@ const EN: CategoryText = {
     'settlement-sum': 'Settlement Sum',
     release: 'Release',
     proceedings: 'Withdrawal of Proceedings',
+    works: 'The Works',
+    'contract-price': 'Contract Price and Payment',
+    'time-for-completion': 'Time for Completion',
+    'delay-damages': 'Delay Damages',
+    variations: 'Variations',
+    'performance-security': 'Performance Security',
+    'completion-defects': 'Completion and Defects',
+    'decennial-liability': 'Decennial Liability',
+    'construction-insurance': 'Insurance of the Works',
+    subcontracting: 'Subcontracting',
+    property: 'The Property',
+    'purchase-price': 'Purchase Price',
+    title: 'Title and Encumbrances',
+    'transfer-registration': 'Transfer and Registration',
+    'possession-risk': 'Possession and Risk',
+    'sale-default': 'Default',
+    'fees-taxes': 'Fees and Taxes',
   },
   nda: {
     purpose: [
@@ -348,6 +403,68 @@ const EN: CategoryText = {
       'Within 14 days of receipt of the Settlement Sum, the parties shall take the steps required to withdraw or discontinue any proceedings relating to the Dispute, each bearing its own costs unless Schedule 1 provides otherwise.',
     ],
   },
+  construction: {
+    works: [
+      'The Second Party (the "Contractor") shall execute and complete the works described in the drawings, specifications and bills of quantities in Schedule 2 (the "Works") for the First Party (the "Employer"), in accordance with this Contract, good engineering practice and applicable law, including building regulations.',
+      'The Employer shall give the Contractor possession of the site and shall obtain the planning and building permits stated in Schedule 1 as its responsibility; the Contractor shall obtain all other permits required for execution of the Works.',
+    ],
+    price: (price, days) => [
+      `The contract price is ${price} (the "Contract Price"), subject to adjustment only for variations and as otherwise provided in this Contract.`,
+      `The Employer shall pay interim payments within ${days} days of certification of monthly statements by the engineer named in Schedule 1, less the retention percentage stated there, which shall be released on issue of the final defects certificate.`,
+    ],
+    time: (months) => [
+      months
+        ? `The Contractor shall complete the Works within ${months === 1 ? '1 month' : `${months} months`} from the commencement date stated in Schedule 1, subject to extension of time for delay caused by the Employer, by variations or by force majeure, notified in writing within 28 days of the Contractor becoming aware of the cause.`
+        : '[TIME FOR COMPLETION NOT SPECIFIED - state the period from commencement.]',
+    ],
+    delay: [
+      'If the Contractor fails to complete the Works within the time for completion, it shall pay delay damages at the rate stated in Schedule 1 for each day of delay, up to the maximum stated there. The parties acknowledge that the applicable law may permit a court to adjust agreed damages to the loss actually suffered.',
+    ],
+    variations: [
+      'The Employer may instruct variations to the Works in writing. Each variation shall be valued at the rates in the bills of quantities or, where none apply, at fair rates agreed in writing, with any consequent adjustment to the time for completion. The Contractor shall not make any variation without a written instruction.',
+    ],
+    security: [
+      'Within 28 days of signature, the Contractor shall provide an unconditional performance bond, issued by a bank acceptable to the Employer, for the percentage of the Contract Price stated in Schedule 1, valid until issue of the taking-over certificate.',
+    ],
+    completion: [
+      'The Employer shall take over the Works when they are complete save for minor defects that do not affect their use, and shall issue a taking-over certificate.',
+      'The Contractor shall remedy at its cost any defect notified during the defects liability period of 12 months from taking over, after which the final defects certificate shall be issued.',
+    ],
+    decennial: [
+      'Nothing in this Contract excludes or limits the liability of the Contractor and the designer, under the mandatory provisions of the applicable civil law, for total or partial collapse of the buildings or fixed structures, or for defects threatening their stability or safety, arising within ten years from taking over.',
+    ],
+    insurance: [
+      "From commencement until taking over, the Contractor shall maintain contractors' all-risks insurance for the full reinstatement value of the Works, and third-party liability insurance in the amount stated in Schedule 1, in the joint names of the Employer and the Contractor.",
+    ],
+    subcontracting: [
+      "The Contractor shall not subcontract the whole of the Works, nor any part of them without the Employer's prior written consent. The Contractor remains responsible for the acts and defaults of its subcontractors.",
+    ],
+  },
+  sale: {
+    property: [
+      'The First Party (the "Seller") sells to the Second Party (the "Buyer"), who purchases, the real property described in Schedule 2, together with the title-deed number, area and boundaries stated there (the "Property").',
+    ],
+    price: (price) => [
+      `The purchase price is ${price} (the "Price"). The Buyer shall pay the deposit stated in Schedule 1 on signature, and the balance at the transfer of title before the competent real estate registry.`,
+    ],
+    title: [
+      'The Seller warrants that it is the registered owner of the Property with full power to sell it, and that at transfer the Property will be free of any mortgage, charge, attachment, lease or other right in favour of a third party, except as disclosed in Schedule 1.',
+    ],
+    transfer: [
+      'The parties shall attend before the competent real estate registry on the date stated in Schedule 1, or on another date agreed in writing, to sign the deed of sale and register the transfer. The parties acknowledge that ownership of the Property passes to the Buyer only on registration.',
+      'Each party shall provide the documents and approvals the registry requires of it, including any approval required for ownership by the Buyer under the law of the place where the Property is located.',
+    ],
+    possession: [
+      'Possession of the Property shall be delivered to the Buyer on registration of the transfer. Risk of loss of or damage to the Property remains with the Seller until delivery of possession.',
+    ],
+    default: [
+      'If the Buyer fails to complete in breach of this Contract, the Seller may terminate it by written notice and retain the deposit as agreed compensation, subject to any power of the court under the applicable law to adjust it to the loss actually suffered.',
+      'If the Seller fails to complete in breach of this Contract, the Buyer may require specific performance or terminate it by written notice, in which case the Seller shall refund the deposit forthwith, without prejudice to the Buyer\'s claim for damages.',
+    ],
+    fees: [
+      'Registration fees and any transfer tax or duty shall be borne as stated in Schedule 1 or, failing that, as provided by the law of the place where the Property is located. Each party shall bear its own professional fees.',
+    ],
+  },
 };
 
 const AR: CategoryText = {
@@ -394,6 +511,23 @@ const AR: CategoryText = {
     'settlement-sum': 'مبلغ التسوية',
     release: 'الإبراء',
     proceedings: 'ترك الإجراءات',
+    works: 'الأعمال',
+    'contract-price': 'قيمة العقد والدفعات',
+    'time-for-completion': 'مدة الإنجاز',
+    'delay-damages': 'غرامة التأخير',
+    variations: 'الأوامر التغييرية',
+    'performance-security': 'ضمان حسن التنفيذ',
+    'completion-defects': 'التسليم والعيوب',
+    'decennial-liability': 'الضمان العشري',
+    'construction-insurance': 'التأمين على الأعمال',
+    subcontracting: 'المقاولة من الباطن',
+    property: 'العقار',
+    'purchase-price': 'ثمن البيع',
+    title: 'الملكية والحقوق العينية',
+    'transfer-registration': 'نقل الملكية والتسجيل',
+    'possession-risk': 'التسليم وتبعة الهلاك',
+    'sale-default': 'الإخلال',
+    'fees-taxes': 'الرسوم والضرائب',
   },
   nda: {
     purpose: [
@@ -564,6 +698,68 @@ const AR: CategoryText = {
       'يلتزم الطرفان، خلال 14 يوماً من استلام مبلغ التسوية، باتخاذ الإجراءات اللازمة لترك أي دعاوى أو إجراءات متعلقة بالنزاع أو إنهائها، ويتحمّل كل طرف مصروفاته ما لم ينص الملحق رقم (1) على خلاف ذلك.',
     ],
   },
+  construction: {
+    works: [
+      'يلتزم الطرف الثاني («المقاول») بتنفيذ وإنجاز الأعمال المبيّنة في المخططات والمواصفات وجداول الكميات الواردة في الملحق رقم (2) («الأعمال») لصالح الطرف الأول («صاحب العمل»)، وفقاً لهذا العقد وللأصول الفنية المتعارف عليها وللقانون المعمول به، بما في ذلك اشتراطات البناء.',
+      'يلتزم صاحب العمل بتمكين المقاول من الموقع، وباستخراج تراخيص التخطيط والبناء المبيّنة في الملحق رقم (1) باعتبارها من مسؤوليته، ويلتزم المقاول باستخراج سائر التراخيص اللازمة لتنفيذ الأعمال.',
+    ],
+    price: (price, days) => [
+      `قيمة العقد ${price} («قيمة العقد»)، ولا تُعدَّل إلا بسبب الأوامر التغييرية أو وفقاً لما ينص عليه هذا العقد.`,
+      `يلتزم صاحب العمل بأداء الدفعات المرحلية خلال ${arDays(days)} من اعتماد المستخلصات الشهرية من المهندس المسمّى في الملحق رقم (1)، بعد خصم نسبة المحتجزات المحددة فيه، والتي تُصرف عند إصدار شهادة انتهاء فترة الضمان النهائية.`,
+    ],
+    time: (months) => [
+      months
+        ? `يلتزم المقاول بإنجاز الأعمال خلال ${months === 1 ? 'شهر واحد' : months === 2 ? 'شهرين' : months <= 10 ? `${months} أشهر` : `${months} شهراً`} من تاريخ البدء المحدد في الملحق رقم (1)، مع جواز تمديد المدة بسبب التأخير الناتج عن صاحب العمل أو عن الأوامر التغييرية أو عن القوة القاهرة، بشرط الإخطار الكتابي خلال 28 يوماً من علم المقاول بالسبب.`
+        : '[لم تُحدَّد مدة الإنجاز — يجب بيان المدة من تاريخ البدء.]',
+    ],
+    delay: [
+      'إذا تأخر المقاول في إنجاز الأعمال عن المدة المحددة، التزم بأداء غرامة تأخير بالنسبة المحددة في الملحق رقم (1) عن كل يوم تأخير، وبما لا يجاوز الحد الأقصى المبيّن فيه. ويقرّ الطرفان بأن القانون المعمول به قد يُجيز للمحكمة تعديل التعويض المتفق عليه ليساوي الضرر الواقع فعلاً.',
+    ],
+    variations: [
+      'يجوز لصاحب العمل إصدار أوامر تغييرية كتابية في الأعمال. ويُقيَّم كل أمر تغييري وفق أسعار جداول الكميات، فإن لم تنطبق فبأسعار عادلة يُتَّفق عليها كتابةً، مع ما يترتب على ذلك من تعديل لمدة الإنجاز. ولا يجوز للمقاول إجراء أي تغيير دون أمر كتابي.',
+    ],
+    security: [
+      'يلتزم المقاول، خلال 28 يوماً من التوقيع، بتقديم كفالة حسن تنفيذ غير مشروطة صادرة عن بنك يقبله صاحب العمل، بالنسبة المحددة في الملحق رقم (1) من قيمة العقد، وتبقى سارية حتى إصدار شهادة الاستلام.',
+    ],
+    completion: [
+      'يتسلّم صاحب العمل الأعمال عند إنجازها، باستثناء العيوب البسيطة التي لا تؤثر في الانتفاع بها، ويصدر شهادة الاستلام.',
+      'يلتزم المقاول على نفقته بإصلاح أي عيب يُخطَر به خلال فترة ضمان العيوب ومدتها 12 شهراً من تاريخ الاستلام، وتصدر بعدها شهادة انتهاء فترة الضمان النهائية.',
+    ],
+    decennial: [
+      'ليس في هذا العقد ما يُعفي المقاول والمصمّم من مسؤوليتهما، أو يحدّ منها، وفقاً للأحكام الآمرة في القانون المدني المعمول به، عن التهدّم الكلي أو الجزئي للمباني أو المنشآت الثابتة، أو عن العيوب التي تهدد متانتها وسلامتها، مما يحدث خلال عشر سنوات من تاريخ الاستلام.',
+    ],
+    insurance: [
+      'يلتزم المقاول، من تاريخ البدء حتى الاستلام، بالتأمين على الأعمال تأميناً شاملاً ضد جميع أخطار المقاولين بكامل قيمة إعادتها إلى حالتها، وبالتأمين من المسؤولية تجاه الغير بالمبلغ المحدد في الملحق رقم (1)، باسم صاحب العمل والمقاول معاً.',
+    ],
+    subcontracting: [
+      'لا يجوز للمقاول التعاقد من الباطن على الأعمال كلها، ولا على أي جزء منها دون موافقة صاحب العمل الكتابية المسبقة، ويبقى مسؤولاً عن أفعال مقاوليه من الباطن وتقصيرهم.',
+    ],
+  },
+  sale: {
+    property: [
+      'باع الطرف الأول («البائع») إلى الطرف الثاني («المشتري»)، القابل لذلك، العقار المبيّن في الملحق رقم (2) برقم وثيقة الملكية ومساحته وحدوده الواردة فيه («العقار»).',
+    ],
+    price: (price) => [
+      `ثمن البيع ${price} («الثمن»). ويلتزم المشتري بأداء العربون المحدد في الملحق رقم (1) عند التوقيع، والباقي عند نقل الملكية أمام إدارة التسجيل العقاري المختصة.`,
+    ],
+    title: [
+      'يضمن البائع أنه المالك المسجَّل للعقار وله كامل الصلاحية في بيعه، وأن العقار سيكون عند نقل الملكية خالياً من أي رهن أو حق امتياز أو حجز أو إيجار أو أي حق آخر للغير، عدا ما أُفصح عنه في الملحق رقم (1).',
+    ],
+    transfer: [
+      'يلتزم الطرفان بالحضور أمام إدارة التسجيل العقاري المختصة في التاريخ المحدد في الملحق رقم (1)، أو في أي تاريخ آخر يُتَّفق عليه كتابةً، لتوقيع عقد البيع النهائي وتسجيل نقل الملكية. ويقرّ الطرفان بأن ملكية العقار لا تنتقل إلى المشتري إلا بالتسجيل.',
+      'يلتزم كل طرف بتقديم المستندات والموافقات التي تطلبها الإدارة منه، بما في ذلك أي موافقة لازمة لتملّك المشتري بموجب قانون الدولة التي يقع فيها العقار.',
+    ],
+    possession: [
+      'يُسلَّم العقار إلى المشتري عند تسجيل نقل الملكية، وتبقى تبعة هلاك العقار أو تلفه على البائع حتى التسليم.',
+    ],
+    default: [
+      'إذا امتنع المشتري عن إتمام الصفقة إخلالاً بهذا العقد، جاز للبائع فسخه بإخطار كتابي والاحتفاظ بالعربون تعويضاً متفقاً عليه، مع مراعاة ما قد يُجيزه القانون المعمول به للمحكمة من تعديله ليساوي الضرر الواقع فعلاً.',
+      'إذا امتنع البائع عن إتمام الصفقة إخلالاً بهذا العقد، جاز للمشتري طلب التنفيذ العيني أو فسخ العقد بإخطار كتابي، وفي هذه الحالة يلتزم البائع بردّ العربون فوراً، مع عدم الإخلال بحق المشتري في التعويض.',
+    ],
+    fees: [
+      'تُتحمَّل رسوم التسجيل وأي ضريبة أو رسم على نقل الملكية وفقاً لما هو محدد في الملحق رقم (1)، فإن لم يُحدَّد فوفقاً لقانون الدولة التي يقع فيها العقار، ويتحمّل كل طرف أتعاب مستشاريه.',
+    ],
+  },
 };
 
 const FR: CategoryText = {
@@ -610,6 +806,23 @@ const FR: CategoryText = {
     'settlement-sum': 'Somme transactionnelle',
     release: 'Renonciation',
     proceedings: 'Désistement',
+    works: 'Les Travaux',
+    'contract-price': 'Prix et paiements',
+    'time-for-completion': "Délai d'exécution",
+    'delay-damages': 'Pénalités de retard',
+    variations: 'Modifications',
+    'performance-security': 'Garantie de bonne exécution',
+    'completion-defects': 'Réception et garantie des défauts',
+    'decennial-liability': 'Responsabilité décennale',
+    'construction-insurance': 'Assurance des travaux',
+    subcontracting: 'Sous-traitance',
+    property: "L'Immeuble",
+    'purchase-price': 'Prix de vente',
+    title: 'Propriété et charges',
+    'transfer-registration': 'Transfert et inscription',
+    'possession-risk': 'Entrée en jouissance et risques',
+    'sale-default': 'Défaillance',
+    'fees-taxes': 'Frais et taxes',
   },
   nda: {
     purpose: [
@@ -778,6 +991,68 @@ const FR: CategoryText = {
     ],
     proceedings: [
       "Dans les 14 jours suivant la réception de la Somme Transactionnelle, les parties accomplissent les démarches nécessaires pour se désister de toute procédure relative au Différend ou y mettre fin, chacune supportant ses propres frais sauf stipulation contraire de l'Annexe 1.",
+    ],
+  },
+  construction: {
+    works: [
+      "Le Second Contractant (l'« Entrepreneur ») exécute et achève pour le Premier Contractant (le « Maître d'ouvrage ») les travaux décrits dans les plans, spécifications et devis quantitatifs de l'Annexe 2 (les « Travaux »), conformément au présent Contrat, aux règles de l'art et au droit applicable, y compris la réglementation de la construction.",
+      "Le Maître d'ouvrage met le chantier à la disposition de l'Entrepreneur et obtient, sous sa responsabilité, les autorisations d'urbanisme et de construire indiquées à l'Annexe 1 ; l'Entrepreneur obtient toutes les autres autorisations nécessaires à l'exécution des Travaux.",
+    ],
+    price: (price, days) => [
+      `Le prix du marché s'élève à ${price} (le « Prix »), révisable uniquement au titre des modifications et dans les autres cas prévus au présent Contrat.`,
+      `Le Maître d'ouvrage règle les acomptes dans un délai de ${days} jours à compter de la certification des situations mensuelles par l'ingénieur désigné à l'Annexe 1, sous déduction de la retenue de garantie au taux qui y est indiqué, libérée à la délivrance du certificat final de levée des réserves.`,
+    ],
+    time: (months) => [
+      months
+        ? `L'Entrepreneur achève les Travaux dans un délai de ${months} mois à compter de la date de démarrage indiquée à l'Annexe 1, sous réserve de prolongation pour les retards imputables au Maître d'ouvrage, aux modifications ou à la force majeure, notifiés par écrit dans les 28 jours de la connaissance de leur cause par l'Entrepreneur.`
+        : "[DÉLAI D'EXÉCUTION NON PRÉCISÉ – indiquer le délai à compter du démarrage.]",
+    ],
+    delay: [
+      "Si l'Entrepreneur n'achève pas les Travaux dans le délai d'exécution, il est redevable de pénalités de retard au taux fixé à l'Annexe 1 par jour de retard, dans la limite du plafond qui y est indiqué. Les parties reconnaissent que le droit applicable peut permettre au juge d'ajuster l'indemnité convenue au préjudice réellement subi.",
+    ],
+    variations: [
+      "Le Maître d'ouvrage peut ordonner par écrit des modifications des Travaux. Chaque modification est évaluée aux prix du devis quantitatif ou, à défaut, à des prix équitables convenus par écrit, avec l'ajustement éventuel du délai d'exécution. L'Entrepreneur n'effectue aucune modification sans ordre écrit.",
+    ],
+    security: [
+      "Dans les 28 jours de la signature, l'Entrepreneur remet une garantie de bonne exécution inconditionnelle, émise par une banque agréée par le Maître d'ouvrage, pour le pourcentage du Prix indiqué à l'Annexe 1, valable jusqu'à la délivrance du procès-verbal de réception.",
+    ],
+    completion: [
+      "Le Maître d'ouvrage prononce la réception des Travaux lorsqu'ils sont achevés, sous réserve de défauts mineurs n'affectant pas leur usage, et délivre un procès-verbal de réception.",
+      "L'Entrepreneur remédie à ses frais à tout défaut notifié pendant la période de garantie de 12 mois à compter de la réception, à l'issue de laquelle est délivré le certificat final de levée des réserves.",
+    ],
+    decennial: [
+      "Aucune stipulation du présent Contrat n'exclut ni ne limite la responsabilité de l'Entrepreneur et du concepteur, en vertu des dispositions impératives du droit civil applicable, pour l'effondrement total ou partiel des bâtiments ou ouvrages fixes, ou pour les vices menaçant leur solidité ou leur sécurité, survenant dans les dix ans suivant la réception.",
+    ],
+    insurance: [
+      "Du démarrage jusqu'à la réception, l'Entrepreneur maintient une assurance tous risques chantier pour la valeur totale de reconstruction des Travaux, ainsi qu'une assurance de responsabilité civile à l'égard des tiers pour le montant indiqué à l'Annexe 1, au nom conjoint du Maître d'ouvrage et de l'Entrepreneur.",
+    ],
+    subcontracting: [
+      "L'Entrepreneur ne peut sous-traiter la totalité des Travaux, ni aucune partie de ceux-ci sans l'accord écrit préalable du Maître d'ouvrage. Il demeure responsable des actes et manquements de ses sous-traitants.",
+    ],
+  },
+  sale: {
+    property: [
+      "Le Premier Contractant (le « Vendeur ») vend au Second Contractant (l'« Acquéreur »), qui accepte, l'immeuble décrit à l'Annexe 2, avec le numéro de titre de propriété, la superficie et les limites qui y figurent (l'« Immeuble »).",
+    ],
+    price: (price) => [
+      `Le prix de vente s'élève à ${price} (le « Prix »). L'Acquéreur verse l'acompte indiqué à l'Annexe 1 à la signature et le solde lors du transfert de propriété devant le service de la publicité foncière compétent.`,
+    ],
+    title: [
+      "Le Vendeur garantit qu'il est le propriétaire inscrit de l'Immeuble et qu'il a plein pouvoir de le vendre, et qu'au transfert l'Immeuble sera libre de toute hypothèque, sûreté, saisie, bail ou autre droit au profit d'un tiers, sauf ce qui est déclaré à l'Annexe 1.",
+    ],
+    transfer: [
+      "Les parties comparaissent devant le service de la publicité foncière compétent à la date indiquée à l'Annexe 1, ou à toute autre date convenue par écrit, pour signer l'acte de vente et en requérir l'inscription. Les parties reconnaissent que la propriété de l'Immeuble n'est transférée à l'Acquéreur qu'à l'inscription.",
+      "Chaque partie fournit les documents et autorisations que le service exige d'elle, y compris toute autorisation requise pour l'acquisition par l'Acquéreur en vertu de la loi du lieu de situation de l'Immeuble.",
+    ],
+    possession: [
+      "L'entrée en jouissance a lieu à l'inscription du transfert. Les risques de perte ou de détérioration de l'Immeuble restent à la charge du Vendeur jusqu'à la remise de la possession.",
+    ],
+    default: [
+      "Si l'Acquéreur refuse de réitérer la vente en violation du présent Contrat, le Vendeur peut le résilier par notification écrite et conserver l'acompte à titre d'indemnité convenue, sous réserve du pouvoir que le droit applicable peut reconnaître au juge de l'ajuster au préjudice réellement subi.",
+      "Si le Vendeur refuse de réitérer la vente en violation du présent Contrat, l'Acquéreur peut en exiger l'exécution forcée ou le résilier par notification écrite ; dans ce cas, le Vendeur restitue immédiatement l'acompte, sans préjudice des dommages-intérêts de l'Acquéreur.",
+    ],
+    fees: [
+      "Les frais d'inscription et tout droit ou taxe de mutation sont supportés comme indiqué à l'Annexe 1 ou, à défaut, comme le prévoit la loi du lieu de situation de l'Immeuble. Chaque partie supporte les honoraires de ses propres conseils.",
     ],
   },
 };

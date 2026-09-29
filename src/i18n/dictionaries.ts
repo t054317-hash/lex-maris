@@ -116,7 +116,7 @@ const en = {
   'cap.automation.eyebrow': 'Contract automation',
   'cap.automation.title': 'Draft in minutes, not days',
   'cap.automation.body':
-    "A declarative clause tree assembles eleven kinds of instrument — supply, distribution, voyage charterparty, NDA, services, commercial agency, commercial lease, software licence, employment, MoU and settlement — from validated inputs, each with its own clause set. Clause numbering updates automatically as terms are added or removed.",
+    "A declarative clause tree assembles thirteen kinds of instrument — supply, distribution, voyage charterparty, NDA, services, commercial agency, commercial lease, software licence, employment, MoU, settlement, construction and sale of real property — from validated inputs, each with its own clause set. Clause numbering updates automatically as terms are added or removed.",
   'cap.analysis.eyebrow': 'Clause-level analysis',
   'cap.analysis.title': 'Exposure scored as you type',
   'cap.analysis.body':
@@ -329,6 +329,12 @@ const en = {
   'wizard.noAllocationNote':
     "This category has no commercial risk allocation (liability cap, force majeure, sanctions). Continue to the governing law and forum.",
   'wizard.field.licenceFees': "Licence fees — {value}",
+  'opt.type.construction': "Construction contract",
+  'opt.type.property-sale': "Sale of real property",
+  'wizard.field.propertyLocation': "Location of the property",
+  'wizard.field.completion': "Time for completion (months) — {value}",
+  'wizard.field.salePrice': "Purchase price — {value}",
+  'wizard.field.contractPrice': "Contract price — {value}",
   // --- Shared --------------------------------------------------------------
   'common.notLegalAdvice':
     'Output is a triage signal for a qualified practitioner, not legal advice.',
@@ -441,7 +447,7 @@ const ar: Record<TranslationKey, string> = {
   'cap.automation.eyebrow': 'آلية صياغة العقود',
   'cap.automation.title': 'صياغة في دقائق، لا في أيام',
   'cap.automation.body':
-    "شجرة بنود وصفية تُركّب أحد عشر نوعاً من العقود — التوريد، والتوزيع الحصري، ومشارطة الإيجار بالرحلة، وعدم الإفصاح، وتقديم الخدمات، والوكالة التجارية، والإيجار التجاري، وترخيص البرمجيات، والعمل، ومذكرة التفاهم، والتسوية — من مدخلات مُتحقَّق منها، لكلٍّ منها بنوده الخاصة. ويتحدّث ترقيم البنود تلقائياً عند إضافة الشروط أو حذفها.",
+    "شجرة بنود وصفية تُركّب ثلاثة عشر نوعاً من العقود — التوريد، والتوزيع الحصري، ومشارطة الإيجار بالرحلة، وعدم الإفصاح، وتقديم الخدمات، والوكالة التجارية، والإيجار التجاري، وترخيص البرمجيات، والعمل، ومذكرة التفاهم، والتسوية، والمقاولة، وبيع العقار — من مدخلات مُتحقَّق منها، لكلٍّ منها بنوده الخاصة. ويتحدّث ترقيم البنود تلقائياً عند إضافة الشروط أو حذفها.",
   'cap.analysis.eyebrow': 'تحليل على مستوى البنود',
   'cap.analysis.title': 'تقييم التعرّض أثناء الكتابة',
   'cap.analysis.body':
@@ -653,6 +659,12 @@ const ar: Record<TranslationKey, string> = {
   'wizard.noAllocationNote':
     "لا تتضمن هذه الفئة توزيعاً تجارياً للمخاطر (سقف المسؤولية، القوة القاهرة، العقوبات). تابع إلى القانون الواجب التطبيق وجهة النزاع.",
   'wizard.field.licenceFees': "رسوم الترخيص — {value}",
+  'opt.type.construction': "عقد مقاولة",
+  'opt.type.property-sale': "بيع عقار",
+  'wizard.field.propertyLocation': "موقع العقار",
+  'wizard.field.completion': "مدة الإنجاز (بالأشهر) — {value}",
+  'wizard.field.salePrice': "ثمن البيع — {value}",
+  'wizard.field.contractPrice': "قيمة العقد — {value}",
   // --- Shared --------------------------------------------------------------
   'common.notLegalAdvice':
     'النتيجة مؤشر فرز لممارس مؤهّل، وليست استشارة قانونية.',
@@ -764,7 +776,7 @@ const fr: Record<TranslationKey, string> = {
   'cap.automation.eyebrow': 'Automatisation contractuelle',
   'cap.automation.title': 'Rédiger en minutes, pas en jours',
   'cap.automation.body':
-    "Un arbre de clauses déclaratif assemble onze types d'instruments — fourniture, distribution, charte-partie au voyage, confidentialité, prestation de services, agence commerciale, bail commercial, licence de logiciel, travail, protocole d'accord et transaction — à partir de données validées, chacun avec ses propres clauses. La numérotation se met à jour automatiquement lorsque des conditions sont ajoutées ou retirées.",
+    "Un arbre de clauses déclaratif assemble treize types d'instruments — fourniture, distribution, charte-partie au voyage, confidentialité, prestation de services, agence commerciale, bail commercial, licence de logiciel, travail, protocole d'accord, transaction, marché de travaux et vente immobilière — à partir de données validées, chacun avec ses propres clauses. La numérotation se met à jour automatiquement lorsque des conditions sont ajoutées ou retirées.",
   'cap.analysis.eyebrow': 'Analyse clause par clause',
   'cap.analysis.title': 'Exposition évaluée pendant la saisie',
   'cap.analysis.body':
@@ -978,6 +990,12 @@ const fr: Record<TranslationKey, string> = {
   'wizard.noAllocationNote':
     "Cette catégorie ne comporte pas de répartition commerciale des risques (plafond de responsabilité, force majeure, sanctions). Passez au droit applicable et au for.",
   'wizard.field.licenceFees': "Redevances — {value}",
+  'opt.type.construction': "Marché de travaux",
+  'opt.type.property-sale': "Vente immobilière",
+  'wizard.field.propertyLocation': "Lieu de situation de l'immeuble",
+  'wizard.field.completion': "Délai d'exécution (mois) — {value}",
+  'wizard.field.salePrice': "Prix de vente — {value}",
+  'wizard.field.contractPrice': "Prix du marché — {value}",
   // --- Shared --------------------------------------------------------------
   'common.notLegalAdvice':
     'Le résultat est un signal de tri destiné à un praticien qualifié, et non un conseil juridique.',

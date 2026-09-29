@@ -21,6 +21,8 @@ export const CONTRACT_TYPES: readonly ContractType[] = [
   'employment',
   'mou',
   'settlement',
+  'construction',
+  'property-sale',
 ];
 
 /**
@@ -44,6 +46,8 @@ export const BUILDER_TYPES: readonly ContractType[] = [
   'employment',
   'mou',
   'settlement',
+  'construction',
+  'property-sale',
 ];
 
 export const COUNTERPARTY_JURISDICTIONS = ['AE', 'KW', 'SA', 'QA', 'GB', 'SG', 'XX'] as const;
