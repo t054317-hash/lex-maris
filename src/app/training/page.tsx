@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { TrainingApp } from '@/components/training/TrainingApp';
 
 export const metadata: Metadata = {
-  title: 'منصة تدريب المحامين',
+  title: 'منصة محاكاة التقاضي',
   description: 'قضايا افتراضية، تدقيق إجرائي فوري للصحف والمذكرات، ومحاكاة للمهل والجلسات مع تقرير تقييم.',
 };
 

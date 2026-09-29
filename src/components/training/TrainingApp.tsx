@@ -45,7 +45,7 @@ function Shell() {
     <div className="mx-auto max-w-6xl px-4 pb-24 pt-10 sm:px-10">
       <header className="mb-6">
         <p className="eyebrow">منصة تدريب المحامين</p>
-        <h1 className="mt-2 font-arabic text-3xl font-bold text-ink-100 sm:text-4xl">المحكمة الذكية — بيئة التدريب الإجرائي</h1>
+        <h1 className="mt-2 font-arabic text-3xl font-bold text-ink-100 sm:text-4xl">منصة محاكاة التقاضي — بيئة التدريب الإجرائي</h1>
         <p className="mt-3 max-w-3xl text-sm leading-7 text-ink-300">
           قضايا افتراضية من واقع التقاضي الكويتي: تقيّد الدعوى، وتصوغ الصحيفة أو المذكرة مع تدقيق فوري، وتدير المهل على ساعة تدريبية، ثم تتلقى تقريراً بأخطائك الإجرائية وكيف تتلافاها.
         </p>

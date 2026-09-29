@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>المحكمة الكويتية الذكية</title>
-<meta name="description" content="المحكمة الكويتية الذكية — نموذج مفاهيمي لغرفة قضائية رقمية مدعومة بالذكاء الاصطناعي ومستندة إلى التشريعات الكويتية.">
+<title>منصة محاكاة التقاضي</title>
+<meta name="description" content="منصة محاكاة التقاضي — نموذج مفاهيمي لغرفة قضائية رقمية مدعومة بالذكاء الاصطناعي ومستندة إلى التشريعات الكويتية.">
 <meta name="theme-color" content="#050b16">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -325,7 +325,6 @@ html.ink .seg .pill { background: linear-gradient(135deg, #1d2d50, #13203a); }
 
 /* hearing */
 .ctl { display: inline-flex; align-items: center; gap: .35rem; font-size: .78rem; font-weight: 700; padding: .45rem .75rem; border-radius: 10px; border: 1px solid var(--line-2); color: var(--text-2); background: var(--surface); transition: border-color .3s, color .3s; }
-.ctl[hidden] { display: none; }
 .ctl:hover { border-color: var(--gold); color: var(--gold); }
 .ctl.gold { color: var(--gold-2); border-color: var(--gold); }
 html.ink .ctl.gold { color: var(--gold); }
@@ -500,7 +499,7 @@ html.ink .quick button { color: var(--gold); }
 <div id="preloader" aria-hidden="true">
   <div class="flex flex-col items-center gap-5">
     <div class="logo-badge" style="width:72px;height:72px"><i data-lucide="scale" class="w-8 h-8"></i></div>
-    <div class="font-amiri text-2xl gold-text">المحكمة الكويتية الذكية</div>
+    <div class="font-amiri text-2xl gold-text">منصة محاكاة التقاضي</div>
     <div class="line"></div>
   </div>
 </div>
@@ -508,11 +507,11 @@ html.ink .quick button { color: var(--gold); }
 <!-- ======================= NAVBAR ======================= -->
 <header id="nav" class="fixed top-0 inset-x-0 z-50 border-b border-transparent">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 h-[76px] flex items-center justify-between gap-4">
-    <a href="#home" class="flex items-center gap-3 min-w-0 xl:shrink-0" aria-label="المحكمة الكويتية الذكية — الرئيسية">
+    <a href="#home" class="flex items-center gap-3 min-w-0 xl:shrink-0" aria-label="منصة محاكاة التقاضي — الرئيسية">
       <span class="logo-badge shrink-0"><i data-lucide="scale" class="w-5 h-5"></i></span>
       <span class="leading-tight min-w-0">
-        <span class="block font-amiri text-base sm:text-xl font-bold t-text truncate">المحكمة الكويتية الذكية</span>
-        <span class="hidden sm:block text-[10px] tracking-[.12em] t-gold font-semibold truncate" dir="ltr">KUWAITI SMART JUDICIAL CHAMBER</span>
+        <span class="block font-amiri text-base sm:text-xl font-bold t-text truncate">منصة محاكاة التقاضي</span>
+        <span class="hidden sm:block text-[10px] tracking-[.12em] t-gold font-semibold truncate" dir="ltr">LITIGATION SIMULATION PLATFORM</span>
       </span>
     </a>
 
@@ -824,7 +823,6 @@ html.ink .quick button { color: var(--gold); }
             <div class="flex items-center gap-2 flex-wrap">
               <button type="button" id="pauseBtn" class="ctl"></button>
               <button type="button" id="speedBtn" class="ctl"></button>
-              <button type="button" id="voiceBtn" class="ctl"></button>
               <button type="button" id="skipBtn" class="ctl gold"><i data-lucide="skip-back" class="w-4 h-4"></i> تخطَّ إلى الحكم</button>
             </div>
           </div>
@@ -847,7 +845,6 @@ html.ink .quick button { color: var(--gold); }
           <div class="caption-box mt-4" aria-live="polite">
             <div class="who" id="capWho">—</div>
             <p id="caption" class="caption"></p>
-            <p id="voiceNote" class="text-[11px] t-muted mt-1" hidden>بعض عبارات هذه الدعوى بلا تسجيل صوتي لأنها كُتبت يدوياً؛ النماذج الجاهزة مسموعة بالكامل.</p>
           </div>
 
           <div class="mt-4">
@@ -901,7 +898,7 @@ html.ink .quick button { color: var(--gold); }
       <div class="eyebrow">عن النموذج</div>
       <h2 class="section-title font-amiri font-bold mt-4">نموذج مفاهيمي.. <span class="gold-text">لاستشراف عدالة الغد</span></h2>
       <p class="mt-5 t-text2 leading-9 text-lg">
-        «المحكمة الكويتية الذكية» عرضٌ تجريبي تعليمي (Conceptual Demo) يتصوّر كيف يمكن للذكاء الاصطناعي أن يُعين القضاء الكويتي
+        «منصة محاكاة التقاضي» عرضٌ تجريبي تعليمي (Conceptual Demo) يتصوّر كيف يمكن للذكاء الاصطناعي أن يُعين القضاء الكويتي
         على تسريع الفصل في الدعاوى وتوحيد جودة التسبيب، مع بقاء سلطة الحكم كاملةً في يد القاضي.
       </p>
     </div>
@@ -998,7 +995,7 @@ html.ink .quick button { color: var(--gold); }
         <div class="min-w-0">
           <h3 class="font-bold text-xl t-text">حدود هذا العرض التجريبي</h3>
           <div class="mt-4 grid md:grid-cols-3 gap-5 text-sm t-text2 leading-7">
-            <p><b class="t-text block mb-1">المحاكي يعمل داخل متصفحك</b>يعتمد محاكي التقاضي في هذه الصفحة على قواعد نصية مبسّطة تتعرف على الكلمات والمبالغ والمدد، وليس نموذجاً لغوياً ولا قاعدة تشريعات حقيقية. ولا يُرسَل ما تكتبه إلى أي خادم. أما الجلسة المعروضة فتمثيل درامي مكثّف، إذ تعتمد الجلسات المدنية والتجارية في الواقع غالباً على المذكرات المكتوبة. وأصوات الجلسة مولَّدة آلياً بنموذج Piper مفتوح المصدر (صوت kareem).</p>
+            <p><b class="t-text block mb-1">المحاكي يعمل داخل متصفحك</b>يعتمد محاكي التقاضي في هذه الصفحة على قواعد نصية مبسّطة تتعرف على الكلمات والمبالغ والمدد، وليس نموذجاً لغوياً ولا قاعدة تشريعات حقيقية. ولا يُرسَل ما تكتبه إلى أي خادم. أما الجلسة المعروضة فتمثيل درامي مكثّف، إذ تعتمد الجلسات المدنية والتجارية في الواقع غالباً على المذكرات المكتوبة.</p>
             <p><b class="t-text block mb-1">الإشارات التشريعية للاسترشاد</b>أُعدّت المراجع القانونية بعناية، لكنها لا تغني عن النص الرسمي النافذ. ويجب التحقق منها من الجريدة الرسمية «الكويت اليوم» أو المصادر المعتمدة قبل أي استخدام.</p>
             <p><b class="t-text block mb-1">الحسابات تقديرية</b>تُحتسب مكافأة نهاية الخدمة على أساس الأجر الشهري مقسوماً على 26 يوماً، وهو افتراض تبسيطي. ويتوقف المبلغ الفعلي على عناصر الأجر وظروف كل حالة.</p>
           </div>
@@ -1016,7 +1013,7 @@ html.ink .quick button { color: var(--gold); }
     <div class="flex flex-col md:flex-row items-center justify-between gap-6">
       <div class="flex items-center gap-3">
         <span class="logo-badge"><i data-lucide="scale" class="w-5 h-5"></i></span>
-        <div class="leading-tight"><div class="font-amiri text-lg font-bold t-text">المحكمة الكويتية الذكية</div><div class="text-[11px] t-gold tracking-[.18em]" dir="ltr">KUWAITI SMART JUDICIAL CHAMBER</div></div>
+        <div class="leading-tight"><div class="font-amiri text-lg font-bold t-text">منصة محاكاة التقاضي</div><div class="text-[11px] t-gold tracking-[.18em]" dir="ltr">LITIGATION SIMULATION PLATFORM</div></div>
       </div>
       <div class="divider-star"><span></span><i data-lucide="sparkle" class="w-4 h-4"></i><span></span></div>
       <div class="text-sm t-muted">© <span id="year"></span> نموذج مفاهيمي تجريبي</div>
@@ -1853,7 +1850,7 @@ function words(n) {
 }
 
 // The hearing, line by line. Built from the same analysis as the draft so the pleas heard in court are the ones the reasons answer.
-// FNV-1a — names the recorded clip for a (speaker, text) pair.
+// FNV-1a — a stable hash, used to give a template the same case number every run.
 function clipKey(who, text) {
   let h = 0x811c9dc5;
   for (const ch of who + '|' + text) { h ^= ch.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; }
@@ -1894,72 +1891,25 @@ const ROLES_COURT = {
 };
 const STAGES = ['الافتتاح', 'المرافعة', 'الدفاع', 'التعقيب', 'المداولة', 'النطق بالحكم'];
 
-// Recorded clips (Piper "kareem" voice, generated offline) keyed by clipKey → duration in seconds.
-const CLIPS = /*CLIPS*/{"05942408":0.79,"48809197":10.63,"375f82bf":4.55,"8ba326f0":6.65,"9c40b8f1":5.25,"3c450e3d":17.89,"9fa593c3":13.28,"a75eb47c":1.5,"4c630ccc":1.55,"70e7a2b6":9.95,"6246fb2f":5.99,"5a8dd39a":3.86,"de8db07f":9.74,"49b952be":6.85,"e00d9e0c":1.47,"2483e00f":5.05,"5121a4a4":8.63,"c85c8e61":20.57,"8f46b38f":7.35,"6f75cf8e":2.5,"0afd5c1f":11.22,"46128b1a":23.56,"31fc1957":1.5,"bc357259":9.92,"d57d349d":14.6,"75d4384c":13.45,"c08d6f11":7.66,"f5246446":10.01,"5e885482":21.01,"7cd3cddb":24.01,"159af9a5":9.6,"1f6859f7":15.04,"eb61ca94":13.82,"ed1a9d2e":12.88,"067a2228":7.88,"8d2bdef2":10.04,"8a08d2a1":8.23,"02ec19af":23.33,"e5d20912":20.04,"fdc10209":10.45,"e0e55e46":14.04,"fbeb1bd4":15.88,"facf02ab":9.15,"5420cc73":8.71,"ac1adeae":19.76,"f89167e9":27.12,"2a62ab17":10.52,"3a3a36c2":12.74,"a430041c":13.73,"7b0ad265":7.39,"7a2a482f":9.2,"86b6c5b5":24.26,"4d97bc8e":9.1,"4c4efe29":14.68,"829ebf1d":12.9,"32722693":8.55,"7c3045a0":10.06,"5a51b3fb":20.98,"6e9f307e":23.15,"49518288":10.06,"d820f16e":4.84,"e952ee05":14.5,"4b7ffc81":17.31,"188132ba":9.01,"35b9bef7":6.8,"41302e1d":8.88,"7112bdc6":9.98,"c9305a14":21.56,"4b77ccb6":27.88,"50fd53a5":9.86,"dc451c92":14.03,"25e5e38b":16.15,"c8332372":9.82,"53800bf7":9.3,"bb7c9fe6":15.06,"668e7288":7.24,"d2d0792d":22.4,"79771259":10.54,"ba7be614":13.46,"4f63c98f":16.78,"813bb22b":7.41,"8797062c":8.98,"9c2eec1f":21.1,"760965d5":23.25,"e42c5931":9.92,"ba84afdb":14.17,"d46f50e2":14.17,"465bee9f":8.04,"1637bfc8":9.26,"79b43535":20.36,"27871feb":7.15,"bcaf30ca":20.54,"8c25e9af":10.45,"9e386e93":15.48,"908f68ff":16.67,"7a251637":20.43,"01df605d":7.4,"3069ad0c":27.4,"37f61e7b":10.31,"6f9c9cad":14.17,"94a444c6":15.18,"aac0e334":8.84,"1ef75ede":10.37,"b110e59c":22.18,"19de0258":21.72,"7406b1aa":6.31,"ab5e71ea":8.9,"5c201311":5.07,"6f71e63f":6.1}/*/CLIPS*/;
-const player = { paused: false, skip: false, speed: 1, voice: true, arVoice: null, audio: new Audio() };
-player.audio.preload = 'auto';
-function pickVoice() {
-  if (!('speechSynthesis' in window)) return;
-  player.arVoice = speechSynthesis.getVoices().find(x => /^ar/i.test(x.lang)) || null;
-}
-if ('speechSynthesis' in window) { pickVoice(); speechSynthesis.addEventListener?.('voiceschanged', pickVoice); }
-// Called inside the click that starts the hearing, so later playback is allowed on iOS and Chrome.
-function unlockAudio() {
-  const a = player.audio;
-  a.src = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA=';
-  a.play().then(() => a.pause()).catch(() => {});
-}
+const player = { paused: false, skip: false, speed: 1 };
 
 async function wait(ms) {
   let left = reduced ? 0 : ms;
   while (left > 0 && !player.skip) { await new Promise(r => setTimeout(r, 50)); if (!player.paused) left -= 50 * player.speed; }
 }
-function playClip(key) {
-  return new Promise(res => {
-    const a = player.audio;
-    let done = false; const end = ok => { if (done) return; done = true; clearInterval(guard); res(ok); };
-    a.onended = () => end(true); a.onerror = () => end(false);
-    const guard = setInterval(() => {
-      if (player.skip) { a.pause(); end(true); }
-      else if (player.paused && !a.paused) a.pause();
-      else if (!player.paused && a.paused && !a.ended && a.dataset.started) a.play().catch(() => {});
-    }, 100);
-    a.src = `audio/${key}.mp3`; a.playbackRate = player.speed; delete a.dataset.started;
-    a.play().then(() => { a.dataset.started = '1'; }).catch(() => end(false));
-  });
-}
-function speakSystem(text, who) {
-  return new Promise(res => {
-    if (!player.arVoice || player.skip) return res(false);
-    const u = new SpeechSynthesisUtterance(text);
-    u.voice = player.arVoice; u.lang = player.arVoice.lang; u.pitch = ROLES_COURT[who].pitch; u.rate = Math.min(1.6, 0.95 * player.speed);
-    const done = () => { clearInterval(guard); res(true); };
-    u.onend = done; u.onerror = done;
-    const guard = setInterval(() => { if (player.skip) { speechSynthesis.cancel(); done(); } }, 120);
-    speechSynthesis.speak(u);
-  });
-}
-// Types one segment while its voice plays, pacing the text to the audio's length.
-async function playSegment(cap, before, seg, who) {
-  const key = clipKey(who, seg), dur = CLIPS[key];
-  let voice = Promise.resolve(false), perChar = 26;
-  if (player.voice && !player.skip) {
-    if (dur) { voice = playClip(key); perChar = Math.max(12, (dur * 1000) / seg.length); }
-    else if (player.arVoice) { voice = speakSystem(seg, who); perChar = 55; }
-    else $('#voiceNote').hidden = false;
-  }
+// Types one segment of a speaker's line into the caption.
+async function playSegment(cap, before, seg) {
   for (let i = 0; i <= seg.length && !player.skip; i += 1) {
     cap.textContent = before + seg.slice(0, i);
-    await wait(perChar);
+    await wait(26);
   }
   cap.textContent = before + seg;
-  await voice;
 }
 
 function setupCourt(v) {
   $('#courtCase').textContent = `${v.caseNo} · ${v.court}`;
   $$('.seat').forEach(s => s.classList.remove('speaking', 'spoke'));
-  $('#transcript').innerHTML = ''; $('#voiceNote').hidden = true;
+  $('#transcript').innerHTML = '';
   $('#caption').innerHTML = '<span class="t-muted">القاعة تستعد لانعقاد الجلسة…</span>';
   $('#capWho').textContent = '—';
   $('#stageDots').innerHTML = STAGES.map((st, i) => `<li data-i="${i}"><span></span>${st}</li>`).join('');
@@ -1968,7 +1918,6 @@ function setupCourt(v) {
 function syncPlayerUI() {
   $('#pauseBtn').innerHTML = `<i data-lucide="${player.paused ? 'play' : 'pause'}" class="w-4 h-4"></i> ${player.paused ? 'استئناف' : 'إيقاف مؤقت'}`;
   $('#speedBtn').textContent = `السرعة ×${player.speed}`;
-  $('#voiceBtn').innerHTML = `<i data-lucide="${player.voice ? 'volume-2' : 'volume-x'}" class="w-4 h-4"></i> ${player.voice ? 'كتم الصوت' : 'تشغيل الصوت'}`;
   $('#courtState').classList.toggle('is-paused', player.paused);
   icons();
 }
@@ -1992,7 +1941,7 @@ async function playSession(v, lines) {
     let shown = '';
     for (const seg of ln.segs) {
       if (player.skip) break;
-      await playSegment(cap, shown, seg, ln.who);
+      await playSegment(cap, shown, seg);
       shown += seg + ' ';
       await wait(120);
     }
@@ -2005,12 +1954,10 @@ async function playSession(v, lines) {
     await wait(ln.who === 'usher' ? 900 : 650);
     $('#courtroom').classList.remove('rise');
   }
-  player.audio.pause();
   if (player.skip) {
     // fill in the rest of the minutes so the record stays complete
     const tr = $('#transcript'), have = tr.children.length;
     lines.slice(have).forEach(ln => { const li = document.createElement('li'); li.innerHTML = `<span class="ts">—</span><div><b>${ROLES_COURT[ln.who].name}:</b> ${esc(ln.text)}</div>`; li.dataset.who = ln.who; tr.appendChild(li); });
-    window.speechSynthesis?.cancel?.();
   }
   $$('.seat').forEach(s => s.classList.remove('speaking'));
   $$('#stageDots li').forEach(li => { li.classList.add('done'); li.classList.remove('now'); });
@@ -2020,17 +1967,9 @@ async function playSession(v, lines) {
 
 $('#pauseBtn').addEventListener('click', () => {
   player.paused = !player.paused;
-  if (player.paused) player.audio.pause(); else if (player.audio.dataset.started && !player.audio.ended) player.audio.play().catch(() => {});
-  if ('speechSynthesis' in window) player.paused ? speechSynthesis.pause() : speechSynthesis.resume();
   syncPlayerUI();
 });
-$('#speedBtn').addEventListener('click', () => { player.speed = player.speed === 1 ? 1.5 : player.speed === 1.5 ? 2 : 1; player.audio.playbackRate = player.speed; syncPlayerUI(); });
-$('#voiceBtn').addEventListener('click', () => {
-  player.voice = !player.voice;
-  if (!player.voice) { player.audio.pause(); player.audio.volume = 0; window.speechSynthesis?.cancel?.(); }
-  else { player.audio.volume = 1; if (player.audio.dataset.started && !player.audio.ended && !player.paused) player.audio.play().catch(() => {}); }
-  syncPlayerUI();
-});
+$('#speedBtn').addEventListener('click', () => { player.speed = player.speed === 1 ? 1.5 : player.speed === 1.5 ? 2 : 1; syncPlayerUI(); });
 $('#skipBtn').addEventListener('click', () => { player.skip = true; player.paused = false; });
 
 const LOG = {
@@ -2067,7 +2006,7 @@ function drawNeural() {
 const hexChars = '0123456789ABCDEF';
 const hexLine = () => Array.from({ length: 140 }, (_, i) => (i % 5 === 4 ? ' ' : hexChars[Math.floor(Math.random() * 16)])).join('');
 
-$('#runBtn').addEventListener('click', () => { unlockAudio(); run(); });
+$('#runBtn').addEventListener('click', run);
 let lastHearing = null;
 async function run() {
   if (running) return;
@@ -2204,7 +2143,6 @@ function renderVerdict(v, text) {
   $('#newV').onclick = () => { wrap.classList.add('hidden'); $('#idleState').classList.remove('hidden'); ta.value = ''; ta.dispatchEvent(new Event('input')); $('#runBtn').innerHTML = '<i data-lucide="sparkles" class="w-5 h-5"></i> تشغيل التحليل القانوني الذكي'; icons(); ta.focus(); };
   $('#replayV').onclick = async () => {
     if (running || !lastHearing) return;
-    unlockAudio();
     running = true; $('#runBtn').disabled = true;
     wrap.classList.add('hidden');
     await playSession(lastHearing.v, lastHearing.lines);
@@ -2239,7 +2177,7 @@ const ROLES = {
 };
 
 const KB = [
-  { k: /^(السلام|سلام|مرحب|أهلا|اهلا|هلا|صباح|مساء)/, a: () => `وعليكم السلام ورحمة الله وبركاته، أهلاً بك في رحاب المحكمة الكويتية الذكية. ${role ? '' : 'هلّا أخبرتني بصفتك لأخاطبك بما يناسبك؟'}`, q: () => role ? ['كيف أرفع دعوى؟', 'مواعيد الطعن'] : Object.keys(ROLES) },
+  { k: /^(السلام|سلام|مرحب|أهلا|اهلا|هلا|صباح|مساء)/, a: () => `وعليكم السلام ورحمة الله وبركاته، أهلاً بك في منصة محاكاة التقاضي. ${role ? '' : 'هلّا أخبرتني بصفتك لأخاطبك بما يناسبك؟'}`, q: () => role ? ['كيف أرفع دعوى؟', 'مواعيد الطعن'] : Object.keys(ROLES) },
   { k: /حدثني عن|حدّثني عن/, a: m => {
       const c = CHAMBERS.find(x => m.includes(x.title));
       if (!c) return 'يسرّني ذلك؛ أيّ الدوائر تقصد؟';
@@ -2258,7 +2196,7 @@ const KB = [
   { k: /محاكاة|تجربة|جرّب|جرب|المحاكي/, a: () => { setTimeout(() => $('#trial').scrollIntoView({ behavior: 'smooth' }), 600); return 'بكل سرور، سأنقلك الآن إلى <b>محاكي التقاضي الحي</b>. اختر نوع الدعوى، واكتب ملخص النزاع أو استخدم نموذجاً جاهزاً، ثم اضغط «تشغيل التحليل القانوني الذكي».'; }, q: () => ['مواعيد الطعن'] },
   { k: /عن النموذج|مفاهيمي|حقيقي|رسمي|تجريبي|هل هذه محكمة/, a: () => { setTimeout(() => $('#about').scrollIntoView({ behavior: 'smooth' }), 600); return 'هذا الموقع <b>نموذج مفاهيمي تعليمي</b> يستشرف مستقبل العدالة الرقمية، وليس جهة قضائية رسمية. والمحاكي فيه يعمل بقواعد نصية مبسّطة داخل متصفحك. سأنقلك الآن إلى قسم «عن النموذج» لتفاصيل المنهجية وضمانات الإشراف البشري.'; }, q: () => ['كيف يعمل الذكاء الاصطناعي هنا؟', 'جرّب المحاكاة'] },
   { k: /شكر|شكراً|يعطيك|مشكور|جزاك/, a: () => 'العفو، وهذا واجبنا. أسأل الله لك التوفيق والسداد، وأنا حاضر لأي استفسار آخر.', q: () => ['كيف أرفع دعوى؟'] },
-  { k: /من أنت|مين انت|من انت|اسمك|جسار|جسّار/, a: () => 'أنا <b>جسّار</b>، المساعد القضائي الذكي للمحكمة الكويتية الذكية. أُرشد ولا أحكم، وأُعين ولا أحلّ محل المحامي أو القاضي.', q: () => ['كيف يعمل الذكاء الاصطناعي هنا؟', 'كيف أرفع دعوى؟'] },
+  { k: /من أنت|مين انت|من انت|اسمك|جسار|جسّار/, a: () => 'أنا <b>جسّار</b>، المساعد القضائي الذكي لمنصة محاكاة التقاضي. أُرشد ولا أحكم، وأُعين ولا أحلّ محل المحامي أو القاضي.', q: () => ['كيف يعمل الذكاء الاصطناعي هنا؟', 'كيف أرفع دعوى؟'] },
 ];
 
 function addMsg(html, who = 'bot') {
@@ -2294,7 +2232,7 @@ function userSays(text) {
 }
 function greet() {
   msgs.innerHTML = ''; role = null;
-  botSays('السلام عليكم ورحمة الله وبركاته،<br>أنا <b>جسّار</b>، المساعد القضائي الذكي للمحكمة الكويتية الذكية. أتشرّف بخدمتك في كل ما يتصل بإجراءات التقاضي.<br><br>هلّا تكرّمت بتعريفي بصفتك لأخاطبك بما يليق؟', Object.keys(ROLES));
+  botSays('السلام عليكم ورحمة الله وبركاته،<br>أنا <b>جسّار</b>، المساعد القضائي الذكي لمنصة محاكاة التقاضي. أتشرّف بخدمتك في كل ما يتصل بإجراءات التقاضي.<br><br>هلّا تكرّمت بتعريفي بصفتك لأخاطبك بما يليق؟', Object.keys(ROLES));
 }
 function toggleChat(force) {
   const open = force ?? !chatPanel.classList.contains('open');
