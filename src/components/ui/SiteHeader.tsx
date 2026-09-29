@@ -54,6 +54,7 @@ export function SiteHeader() {
           <nav className="ms-auto hidden items-center gap-7 md:flex">
             <HeaderLink href="/#services">{t('nav.services')}</HeaderLink>
             <HeaderLink href="/#bench">{t('nav.bench')}</HeaderLink>
+            <HeaderLink href="/training">{t('nav.training')}</HeaderLink>
             {session && <HeaderLink href="/dashboard">{t('nav.dashboard')}</HeaderLink>}
           </nav>
 

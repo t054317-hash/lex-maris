@@ -78,6 +78,40 @@ src/
     └── document-crypto.ts      AES-256-GCM sealing, HMAC attestation (server)
 ```
 
+## Lawyer-training module (`/training`)
+
+An Arabic, RTL practice environment built on Kuwaiti procedure. Public route,
+no account needed; progress is stored in the browser under the user-scoped
+prefix, so signing out clears it.
+
+```
+src/lib/training/          pure logic — no React, no clock, no storage
+├── types.ts               shared types
+├── scenarios.ts           six fictional matters (2 commercial, 2 labour, 2 maritime)
+├── catalog.ts             labels, partial-court value cap (single constant)
+├── deadlines.ts           procedural periods; day-of-event excluded, Fri/Sat and
+│                          fixed holidays rolled over
+├── brief-audit.ts         petition / defence-memo audit → graded findings + fixes
+└── case-engine.ts         case state machine, judgment outcome, procedural report
+src/components/training/
+├── TrainingProvider.tsx   virtual clock + cases (useReducer, localStorage)
+├── TrainingApp.tsx        shell and tabs; mounted by src/app/training/page.tsx
+├── OfficeDashboard.tsx    hearings schedule, deadline board, alerts, case list
+├── ScenarioLibrary.tsx    filterable library
+├── CaseWorkspace.tsx      intake → filing → hearing → judgment → report
+├── BriefEditor.tsx        drafting surface with live audit
+├── FeedbackPanel.tsx      instant feedback with drafting examples
+├── DeadlineCalculator.tsx deadline drill
+├── ProceduralReportView.tsx
+├── VirtualClock.tsx
+└── ui.tsx                 panel, badges, score dial, button classes
+```
+
+The periods, the partial-court cap and the scenario law references are
+training material: each is marked in the UI as something to verify against the
+text in force. The audit is pattern-based and says so — it flags what is
+visibly missing, it does not certify a pleading.
+
 ## The two things worth understanding first
 
 **The risk engine and the document engine are both pure functions of the same
