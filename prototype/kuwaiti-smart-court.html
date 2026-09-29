@@ -1,0 +1,1733 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>المحكمة الكويتية الذكية</title>
+<meta name="description" content="المحكمة الكويتية الذكية — نموذج مفاهيمي لغرفة قضائية رقمية مدعومة بالذكاء الاصطناعي ومستندة إلى التشريعات الكويتية.">
+<meta name="theme-color" content="#050b16">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  window.tailwind = window.tailwind || {};
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          cairo: ['Cairo', 'system-ui', 'sans-serif'],
+          amiri: ['Amiri', 'Georgia', 'serif'],
+          mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+        },
+      },
+    },
+  };
+</script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+<style>
+/* ==========================================================================
+   Theme tokens — "الوضع الملكي" (dark, default) and "الحبر القانوني" (ink)
+   ========================================================================== */
+:root {
+  --bg:        #050b16;
+  --bg-2:      #0a1628;
+  --bg-3:      #0f1f38;
+  --graphite:  #1a2030;
+  --surface:   rgba(13, 26, 48, 0.62);
+  --surface-2: rgba(20, 36, 64, 0.55);
+  --line:      rgba(201, 165, 90, 0.18);
+  --line-2:    rgba(201, 165, 90, 0.38);
+  --gold:      #c9a55a;
+  --gold-2:    #e8cf94;
+  --gold-3:    #8f7236;
+  --text:      #ebe6da;
+  --text-2:    #c3c6cf;
+  --muted:     #8c96a8;
+  --ok:        #4fc398;
+  --warn:      #e0a458;
+  --danger:    #e0735a;
+  --glow:      rgba(201, 165, 90, 0.28);
+  --shadow:    0 30px 80px -30px rgba(0, 0, 0, 0.8);
+  --pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'%3E%3Cg fill='none' stroke='%23c9a55a' stroke-opacity='0.075' stroke-width='1'%3E%3Crect x='27' y='27' width='42' height='42'/%3E%3Crect x='27' y='27' width='42' height='42' transform='rotate(45 48 48)'/%3E%3Ccircle cx='48' cy='48' r='10'/%3E%3Cpath d='M0 0L27 27M96 0L69 27M0 96L27 69M96 96L69 69M48 0v18M48 96V78M0 48h18M96 48H78'/%3E%3C/g%3E%3C/svg%3E");
+  --lux: cubic-bezier(0.22, 1, 0.36, 1);
+  color-scheme: dark;
+}
+html.ink {
+  --bg:        #f3eee2;
+  --bg-2:      #ece5d4;
+  --bg-3:      #e3dac5;
+  --graphite:  #d8cfba;
+  --surface:   rgba(255, 252, 244, 0.78);
+  --surface-2: rgba(250, 245, 233, 0.9);
+  --line:      rgba(20, 33, 61, 0.14);
+  --line-2:    rgba(122, 92, 32, 0.4);
+  --gold:      #8a6a2a;
+  --gold-2:    #6b4f18;
+  --gold-3:    #b5934e;
+  --text:      #13203a;
+  --text-2:    #2c3a55;
+  --muted:     #5d6678;
+  --ok:        #1f7a57;
+  --warn:      #9a5f14;
+  --danger:    #a4402a;
+  --glow:      rgba(138, 106, 42, 0.18);
+  --shadow:    0 30px 60px -30px rgba(40, 30, 10, 0.35);
+  --pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'%3E%3Cg fill='none' stroke='%2313203a' stroke-opacity='0.06' stroke-width='1'%3E%3Crect x='27' y='27' width='42' height='42'/%3E%3Crect x='27' y='27' width='42' height='42' transform='rotate(45 48 48)'/%3E%3Ccircle cx='48' cy='48' r='10'/%3E%3Cpath d='M0 0L27 27M96 0L69 27M0 96L27 69M96 96L69 69M48 0v18M48 96V78M0 48h18M96 48H78'/%3E%3C/g%3E%3C/svg%3E");
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+.grid > * { min-width: 0; }
+html, body { overflow-x: clip; }
+html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+body {
+  margin: 0;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(1200px 600px at 85% -10%, var(--glow), transparent 60%),
+    radial-gradient(900px 500px at 0% 40%, rgba(40, 70, 130, 0.14), transparent 65%),
+    var(--pattern);
+  background-attachment: fixed;
+  color: var(--text);
+  font-family: 'Cairo', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  transition: background-color .6s var(--lux), color .6s var(--lux);
+}
+::selection { background: var(--gold); color: var(--bg); }
+.font-amiri { font-family: 'Amiri', Georgia, serif; }
+h1, h2, h3 { text-wrap: balance; }
+
+/* --- utility tokens ---------------------------------------------------- */
+.t-text  { color: var(--text); }
+.t-text2 { color: var(--text-2); }
+.t-muted { color: var(--muted); }
+.t-gold  { color: var(--gold); }
+.b-line  { border-color: var(--line); }
+.bg-surface { background: var(--surface); }
+
+.gold-text {
+  background: linear-gradient(100deg, var(--gold-3) 0%, var(--gold-2) 35%, var(--gold) 55%, var(--gold-2) 80%, var(--gold-3) 100%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: sheen 7s linear infinite;
+}
+@keyframes sheen { to { background-position: -220% 0; } }
+
+.glass {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  transition: background .6s var(--lux), border-color .4s var(--lux);
+}
+.frame { position: relative; border-radius: 22px; }
+.frame::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none;
+  background: linear-gradient(140deg, var(--line-2), transparent 35%, transparent 65%, var(--line-2));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+}
+
+/* spotlight card — follows the pointer */
+.spot { position: relative; overflow: hidden; }
+.spot::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .4s;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), var(--glow), transparent 45%);
+}
+.spot:hover::after { opacity: 1; }
+
+/* corner ornaments on premium frames */
+.corners > .c { position: absolute; width: 14px; height: 14px; border-color: var(--gold); opacity: .7; }
+.corners > .c.tl { top: 10px; right: 10px; border-top: 1px solid; border-right: 1px solid; }
+.corners > .c.tr { top: 10px; left: 10px; border-top: 1px solid; border-left: 1px solid; }
+.corners > .c.bl { bottom: 10px; right: 10px; border-bottom: 1px solid; border-right: 1px solid; }
+.corners > .c.br { bottom: 10px; left: 10px; border-bottom: 1px solid; border-left: 1px solid; }
+
+/* --- buttons ----------------------------------------------------------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .6rem;
+  border-radius: 14px; padding: .95rem 1.6rem; font-weight: 700; font-size: 1rem;
+  transition: transform .35s var(--lux), box-shadow .35s var(--lux), background .35s, color .35s, border-color .35s;
+  cursor: pointer; white-space: nowrap; user-select: none;
+}
+.btn:active { transform: scale(.97); }
+.btn-gold {
+  color: #0b1424;
+  background: linear-gradient(135deg, #f0d9a0, #c9a55a 45%, #a8853f);
+  box-shadow: 0 10px 30px -10px rgba(201,165,90,.7), inset 0 1px 0 rgba(255,255,255,.45);
+  position: relative; overflow: hidden;
+}
+html.ink .btn-gold { color: #fffaf0; background: linear-gradient(135deg, #1d2d50, #13203a 60%, #0b1426); box-shadow: 0 10px 30px -12px rgba(19,32,58,.6), inset 0 1px 0 rgba(255,255,255,.15); }
+.btn-gold::before {
+  content: ""; position: absolute; top: 0; bottom: 0; width: 40%; left: -60%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.55), transparent);
+  transform: skewX(-20deg); transition: left .8s var(--lux);
+}
+.btn-gold:hover::before { left: 120%; }
+.btn-gold:hover { transform: translateY(-2px); box-shadow: 0 18px 40px -12px rgba(201,165,90,.85), inset 0 1px 0 rgba(255,255,255,.45); }
+.btn-ghost { color: var(--text); border: 1px solid var(--line-2); background: var(--surface); backdrop-filter: blur(10px); }
+.btn-ghost:hover { border-color: var(--gold); color: var(--gold-2); transform: translateY(-2px); }
+html.ink .btn-ghost:hover { color: var(--gold); }
+.btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 8px; }
+
+/* --- navbar ------------------------------------------------------------ */
+#nav { transition: background .5s var(--lux), border-color .5s, box-shadow .5s, padding .4s var(--lux); }
+#nav.scrolled { background: color-mix(in srgb, var(--bg) 78%, transparent); border-color: var(--line); box-shadow: 0 10px 40px -20px rgba(0,0,0,.6); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
+.nav-link { position: relative; white-space: nowrap; color: var(--text-2); padding: .45rem .8rem; border-radius: 10px; font-weight: 600; font-size: .94rem; transition: color .3s; }
+.nav-link::after { content: ""; position: absolute; bottom: 2px; right: 50%; left: 50%; height: 2px; border-radius: 2px; background: var(--gold); transition: right .4s var(--lux), left .4s var(--lux); }
+.nav-link:hover { color: var(--gold-2); }
+html.ink .nav-link:hover { color: var(--gold); }
+.nav-link.active { color: var(--gold-2); }
+html.ink .nav-link.active { color: var(--gold); }
+.nav-link.active::after { right: 22%; left: 22%; }
+
+.logo-badge {
+  width: 46px; height: 46px; display: grid; place-items: center; position: relative;
+  clip-path: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%);
+  background: linear-gradient(145deg, #f0d9a0, #c9a55a 50%, #7d6230);
+}
+.logo-badge::after { content: ""; position: absolute; inset: 2px; clip-path: inherit; background: linear-gradient(160deg, #0f1f38, #050b16); }
+.logo-badge svg { position: relative; z-index: 1; color: #e8cf94; }
+html.ink .logo-badge::after { background: linear-gradient(160deg, #fffaf0, #efe6d1); }
+html.ink .logo-badge svg { color: #7a5c20; }
+
+/* theme switch */
+.theme-switch { width: 64px; height: 34px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--surface); position: relative; cursor: pointer; transition: background .5s; }
+.theme-switch .knob { position: absolute; top: 3px; right: 3px; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(135deg, #f0d9a0, #c9a55a); color: #0b1424; transition: right .5s var(--lux), background .5s; }
+html.ink .theme-switch .knob { right: 33px; background: linear-gradient(135deg, #1d2d50, #13203a); color: #f3eee2; }
+
+/* --- hero -------------------------------------------------------------- */
+#hero { min-height: 100svh; }
+#heroCanvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hero-vignette { position: absolute; inset: 0; pointer-events: none; background:
+  radial-gradient(ellipse at 50% 40%, transparent 30%, color-mix(in srgb, var(--bg) 70%, transparent) 75%, var(--bg) 100%),
+  linear-gradient(to bottom, transparent 70%, var(--bg)); }
+.hero-title { font-size: clamp(2.3rem, 6.2vw, 5.4rem); line-height: 1.22; }
+.chip { display: inline-flex; align-items: center; gap: .5rem; padding: .4rem .95rem; border-radius: 999px; font-size: .82rem; font-weight: 600; border: 1px solid var(--line-2); background: var(--surface); color: var(--gold-2); backdrop-filter: blur(10px); }
+html.ink .chip { color: var(--gold); }
+.dot-live { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 0 rgba(79,195,152,.7); animation: live 1.8s infinite; }
+@keyframes live { 70% { box-shadow: 0 0 0 10px rgba(79,195,152,0); } 100% { box-shadow: 0 0 0 0 rgba(79,195,152,0); } }
+.scroll-cue { width: 26px; height: 42px; border: 1.5px solid var(--line-2); border-radius: 14px; position: relative; }
+.scroll-cue::after { content: ""; position: absolute; top: 8px; left: 50%; width: 4px; height: 8px; margin-left: -2px; border-radius: 2px; background: var(--gold); animation: cue 1.8s var(--lux) infinite; }
+@keyframes cue { 0% { opacity: 0; transform: translateY(0); } 30% { opacity: 1; } 100% { opacity: 0; transform: translateY(14px); } }
+
+/* --- reveal on scroll -------------------------------------------------- */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 1s var(--lux), transform 1s var(--lux); }
+.reveal.in { opacity: 1; transform: none; }
+.reveal[data-delay="1"] { transition-delay: .08s; } .reveal[data-delay="2"] { transition-delay: .16s; }
+.reveal[data-delay="3"] { transition-delay: .24s; } .reveal[data-delay="4"] { transition-delay: .32s; }
+
+/* --- section headings ------------------------------------------------- */
+.eyebrow { display: inline-flex; align-items: center; gap: .7rem; color: var(--gold); font-weight: 700; letter-spacing: .02em; font-size: .9rem; }
+.eyebrow::before, .eyebrow::after { content: ""; width: 34px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold)); }
+.eyebrow::after { transform: scaleX(-1); }
+.section-title { font-size: clamp(1.9rem, 4vw, 3.1rem); line-height: 1.3; }
+.divider-star { display: flex; align-items: center; justify-content: center; gap: 14px; color: var(--gold); }
+.divider-star span { height: 1px; width: 90px; background: linear-gradient(90deg, transparent, var(--line-2)); }
+.divider-star span:last-child { transform: scaleX(-1); }
+
+/* --- dashboard --------------------------------------------------------- */
+.stat-value { font-size: clamp(2rem, 3.4vw, 2.9rem); font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+.spark path { fill: none; stroke: var(--gold); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 400; stroke-dashoffset: 400; transition: stroke-dashoffset 2.2s var(--lux); }
+.in .spark path, .spark.in path { stroke-dashoffset: 0; }
+.ring-bg { stroke: var(--line); }
+.ring-fg { stroke: url(#goldGrad); stroke-linecap: round; transition: stroke-dashoffset 2.4s var(--lux); }
+
+.radar { position: relative; overflow: hidden; aspect-ratio: 1; width: 100%; max-width: 420px; margin-inline: auto; border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--bg-3) 80%, transparent) 0%, transparent 72%); }
+.radar svg.grid { position: absolute; inset: 0; }
+.radar svg.grid circle, .radar svg.grid line { stroke: var(--line-2); fill: none; }
+.radar .sweep { position: absolute; inset: 0; border-radius: 50%; animation: spin 4.5s linear infinite;
+  background: conic-gradient(from 0deg, color-mix(in srgb, var(--gold) 45%, transparent), transparent 55deg, transparent 360deg); mix-blend-mode: screen; }
+html.ink .radar .sweep { mix-blend-mode: multiply; background: conic-gradient(from 0deg, color-mix(in srgb, var(--gold) 30%, transparent), transparent 55deg, transparent 360deg); }
+@keyframes spin { to { transform: rotate(360deg); } }
+.blip { position: absolute; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: 50%; background: var(--gold-2); box-shadow: 0 0 14px var(--gold); animation: blip 3.2s var(--lux) forwards; }
+html.ink .blip { background: var(--gold); }
+.blip::after { content: ""; position: absolute; inset: -6px; border: 1px solid var(--gold); border-radius: 50%; animation: ping 1.6s ease-out infinite; }
+@keyframes blip { 0% { transform: scale(0); opacity: 0; } 12% { transform: scale(1.3); opacity: 1; } 25% { transform: scale(1); } 85% { opacity: 1; } 100% { opacity: 0; transform: scale(.6); } }
+@keyframes ping { to { transform: scale(2.4); opacity: 0; } }
+.radar-label { position: absolute; font-size: .72rem; font-weight: 700; color: var(--muted); white-space: nowrap; transform: translate(50%, -50%); }
+
+.feed li { animation: feedIn .7s var(--lux); }
+@keyframes feedIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: none; } }
+.bar { height: 10px; border-radius: 99px; background: var(--line); overflow: hidden; }
+.bar > i { display: block; height: 100%; border-radius: inherit; width: 0; background: linear-gradient(90deg, var(--gold-3), var(--gold-2)); transition: width 2s var(--lux); }
+html.ink .bar > i { background: linear-gradient(90deg, var(--gold), var(--gold-3)); }
+
+/* --- chambers ---------------------------------------------------------- */
+.chamber { cursor: pointer; transition: transform .6s var(--lux), border-color .4s, box-shadow .6s var(--lux); }
+.chamber:hover { transform: translateY(-8px); border-color: var(--line-2); box-shadow: var(--shadow), 0 0 0 1px var(--line-2); }
+.chamber .icon-hex { width: 64px; height: 64px; display: grid; place-items: center; clip-path: polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0 50%);
+  background: linear-gradient(145deg, color-mix(in srgb, var(--gold) 30%, transparent), color-mix(in srgb, var(--gold) 6%, transparent)); color: var(--gold-2); transition: transform .8s var(--lux); }
+html.ink .chamber .icon-hex { color: var(--gold); }
+.chamber:hover .icon-hex { transform: rotate(-12deg) scale(1.06); }
+.chamber .arrow { transition: transform .5s var(--lux); }
+.chamber:hover .arrow { transform: translateX(-6px); }
+.chamber .num { position: absolute; top: 14px; left: 20px; font-family: 'Amiri', serif; font-size: 4.4rem; line-height: 1; color: var(--gold); opacity: .08; font-weight: 700; }
+
+/* modal */
+.modal { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: 16px; visibility: hidden; opacity: 0; transition: opacity .45s var(--lux), visibility .45s; }
+.modal.open { visibility: visible; opacity: 1; }
+.modal .backdrop { position: absolute; inset: 0; background: rgba(2, 6, 14, .72); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+html.ink .modal .backdrop { background: rgba(40, 32, 15, .38); }
+.modal .panel { position: relative; width: min(880px, 100%); max-height: calc(100svh - 32px); overflow: auto; border-radius: 24px; background: var(--bg-2); border: 1px solid var(--line-2); box-shadow: var(--shadow);
+  transform: translateY(24px) scale(.97); transition: transform .6s var(--lux); overscroll-behavior: contain; }
+.modal.open .panel { transform: none; }
+.law-chip { display: flex; gap: .75rem; align-items: flex-start; padding: .85rem 1rem; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); }
+.step { position: relative; padding-right: 2.6rem; }
+.step::before { content: counter(step); counter-increment: step; position: absolute; right: 0; top: 0; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-size: .8rem; font-weight: 800; color: var(--bg); background: var(--gold); }
+.step:not(:last-child)::after { content: ""; position: absolute; right: 13.5px; top: 32px; bottom: -12px; width: 1px; background: var(--line-2); }
+
+/* --- trial simulator -------------------------------------------------- */
+.seg { display: grid; grid-template-columns: 1fr 1fr; padding: 5px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface); position: relative; }
+.seg button { position: relative; z-index: 1; padding: .8rem 1rem; border-radius: 12px; font-weight: 700; color: var(--muted); transition: color .4s; display: flex; align-items: center; justify-content: center; gap: .5rem; }
+.seg button[aria-pressed="true"] { color: #0b1424; }
+html.ink .seg button[aria-pressed="true"] { color: #fffaf0; }
+.seg .pill { position: absolute; top: 5px; bottom: 5px; right: 5px; width: calc(50% - 5px); border-radius: 12px; background: linear-gradient(135deg, #f0d9a0, #c9a55a); transition: transform .55s var(--lux); box-shadow: 0 8px 22px -10px rgba(201,165,90,.8); }
+html.ink .seg .pill { background: linear-gradient(135deg, #1d2d50, #13203a); }
+.seg[data-v="labour"] .pill { transform: translateX(-100%); }
+
+.textarea-wrap { position: relative; border-radius: 18px; border: 1px solid var(--line); background: var(--surface); transition: border-color .3s, box-shadow .3s; overflow: hidden; }
+.textarea-wrap:focus-within { border-color: var(--gold); box-shadow: 0 0 0 4px var(--glow); }
+.textarea-wrap textarea { width: 100%; min-height: 190px; resize: vertical; background: transparent; border: 0; outline: 0; padding: 1.1rem 1.2rem 2.4rem; color: var(--text); font: 500 1rem/1.9 'Cairo', sans-serif; }
+.textarea-wrap textarea::placeholder { color: var(--muted); }
+.scanline { position: absolute; left: 0; right: 0; height: 60px; top: -60px; pointer-events: none; opacity: 0;
+  background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--gold) 28%, transparent), transparent); }
+.scanning .scanline { opacity: 1; animation: scan 1.6s linear infinite; }
+@keyframes scan { to { top: 100%; } }
+.sample-btn { font-size: .8rem; padding: .35rem .8rem; border-radius: 999px; border: 1px dashed var(--line-2); color: var(--text-2); transition: all .3s; }
+.sample-btn:hover { border-color: var(--gold); color: var(--gold); border-style: solid; }
+
+.console { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .8rem; direction: rtl; }
+.console .ln { display: flex; gap: .6rem; align-items: center; padding: .28rem 0; opacity: 0; transform: translateX(-8px); animation: lnIn .5s var(--lux) forwards; }
+@keyframes lnIn { to { opacity: 1; transform: none; } }
+.console .ln .st { width: 16px; height: 16px; flex: none; display: grid; place-items: center; }
+.spinner { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--line-2); border-top-color: var(--gold); animation: spin .8s linear infinite; }
+.progress { height: 6px; border-radius: 99px; background: var(--line); overflow: hidden; position: relative; }
+.progress > i { position: absolute; inset: 0 0 0 auto; width: 0; background: linear-gradient(270deg, var(--gold-2), var(--gold), var(--gold-3)); border-radius: inherit; transition: width .5s var(--lux); box-shadow: 0 0 18px var(--gold); }
+.hexstream { font-family: 'JetBrains Mono', monospace; font-size: .68rem; color: var(--gold); opacity: .45; direction: ltr; white-space: nowrap; overflow: hidden; }
+.neural { position: relative; height: 120px; }
+.neural svg line { stroke: var(--line-2); stroke-width: 1; }
+.neural svg circle { fill: var(--gold); }
+.neural svg .pulse { animation: npulse 1.4s ease-in-out infinite; }
+@keyframes npulse { 50% { opacity: .2; } }
+
+/* verdict document */
+.verdict { position: relative; border-radius: 22px; overflow: hidden; background:
+  linear-gradient(180deg, color-mix(in srgb, var(--bg-3) 70%, transparent), var(--surface)); border: 1px solid var(--line-2); }
+.verdict .watermark { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; opacity: .045; }
+.verdict .watermark svg { width: 70%; max-width: 420px; color: var(--gold); }
+.verdict .sec { opacity: 0; transform: translateY(14px); transition: opacity .8s var(--lux), transform .8s var(--lux); }
+.verdict .sec.show { opacity: 1; transform: none; }
+.verdict h4 { font-family: 'Amiri', serif; font-size: 1.35rem; color: var(--gold-2); display: flex; align-items: center; gap: .6rem; }
+html.ink .verdict h4 { color: var(--gold); }
+.verdict h4::after { content: ""; flex: 1; height: 1px; background: linear-gradient(270deg, var(--line-2), transparent); }
+.reason { border-right: 2px solid var(--gold); padding: .2rem 1rem .2rem 0; }
+.ref { display: inline-flex; align-items: center; gap: .35rem; font-size: .78rem; font-weight: 700; color: var(--gold-2); background: color-mix(in srgb, var(--gold) 12%, transparent); border: 1px solid var(--line-2); padding: .18rem .6rem; border-radius: 8px; margin: .15rem 0 .15rem .35rem; }
+html.ink .ref { color: var(--gold); }
+.operative { font-family: 'Amiri', serif; font-size: 1.22rem; line-height: 2.1; }
+.caret::after { content: "▍"; color: var(--gold); animation: blink 1s steps(1) infinite; margin-right: 2px; }
+@keyframes blink { 50% { opacity: 0; } }
+.seal { width: 96px; height: 96px; border-radius: 50%; border: 2px dashed var(--gold); display: grid; place-items: center; color: var(--gold); transform: rotate(-12deg); opacity: 0; scale: 1.6; transition: opacity .5s, scale .5s var(--lux); }
+.seal.show { opacity: .9; scale: 1; }
+.conf-bar { height: 8px; border-radius: 99px; background: var(--line); overflow: hidden; }
+.conf-bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--ok), var(--gold)); transition: width 1.6s var(--lux); }
+
+/* --- assistant section ------------------------------------------------- */
+.avatar-orb { width: 220px; height: 220px; border-radius: 50%; position: relative; display: grid; place-items: center; margin-inline: auto; }
+.avatar-orb .ring { position: absolute; inset: 0; border-radius: 50%; border: 1px solid var(--line-2); }
+.avatar-orb .ring.r2 { inset: 18px; border-style: dashed; animation: spin 28s linear infinite; }
+.avatar-orb .ring.r3 { inset: -18px; border-color: var(--line); animation: spin 40s linear infinite reverse; }
+.avatar-orb .ring.r3::before { content: ""; position: absolute; top: -4px; left: 50%; width: 8px; height: 8px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 12px var(--gold); }
+.avatar-orb .core { width: 132px; height: 132px; border-radius: 50%; display: grid; place-items: center; color: var(--gold-2);
+  background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--gold) 40%, transparent), color-mix(in srgb, var(--bg-3) 90%, transparent) 70%);
+  box-shadow: 0 0 60px var(--glow), inset 0 0 30px color-mix(in srgb, var(--gold) 20%, transparent); animation: breathe 4s ease-in-out infinite; }
+html.ink .avatar-orb .core { color: var(--gold); }
+@keyframes breathe { 50% { transform: scale(1.05); box-shadow: 0 0 90px var(--glow), inset 0 0 40px color-mix(in srgb, var(--gold) 26%, transparent); } }
+
+/* --- chat widget ------------------------------------------------------- */
+#chatFab { position: fixed; left: 22px; bottom: 22px; z-index: 70; width: 66px; height: 66px; border-radius: 50%; display: grid; place-items: center; cursor: pointer;
+  background: linear-gradient(145deg, #f0d9a0, #c9a55a 50%, #8f7236); color: #0b1424; box-shadow: 0 16px 40px -10px rgba(201,165,90,.75); transition: transform .5s var(--lux); }
+html.ink #chatFab { background: linear-gradient(145deg, #243761, #13203a); color: #f0d9a0; box-shadow: 0 16px 40px -12px rgba(19,32,58,.6); }
+#chatFab:hover { transform: scale(1.07) rotate(-6deg); }
+#chatFab::before { content: ""; position: absolute; inset: -4px; border-radius: 50%; border: 1px solid var(--gold); animation: fabPing 2.4s ease-out infinite; }
+@keyframes fabPing { to { transform: scale(1.35); opacity: 0; } }
+#chatFab .badge { position: absolute; top: -2px; right: -2px; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; background: var(--danger); color: #fff; font-size: .72rem; font-weight: 800; display: grid; place-items: center; border: 2px solid var(--bg); }
+#chatPanel { position: fixed; left: 22px; bottom: 100px; z-index: 71; width: min(400px, calc(100vw - 32px)); height: min(600px, calc(100svh - 130px)); border-radius: 24px; display: flex; flex-direction: column; overflow: hidden;
+  background: var(--bg-2); border: 1px solid var(--line-2); box-shadow: var(--shadow), 0 0 80px -30px var(--glow);
+  transform-origin: bottom left; transform: translateY(20px) scale(.92); opacity: 0; visibility: hidden; transition: transform .5s var(--lux), opacity .4s, visibility .4s; }
+#chatPanel.open { transform: none; opacity: 1; visibility: visible; }
+@media (max-width: 480px) { #chatPanel { left: 16px; bottom: 96px; } #chatFab { left: 16px; bottom: 16px; } }
+.msgs { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: .75rem; overscroll-behavior: contain; scrollbar-width: thin; }
+.msg { max-width: 88%; padding: .75rem 1rem; border-radius: 18px; line-height: 1.85; font-size: .92rem; animation: feedIn .45s var(--lux); }
+.msg.bot { align-self: flex-start; background: var(--surface); border: 1px solid var(--line); border-top-right-radius: 6px; color: var(--text); }
+.msg.user { align-self: flex-end; background: linear-gradient(135deg, #e8cf94, #c9a55a); color: #0b1424; border-top-left-radius: 6px; font-weight: 600; }
+html.ink .msg.user { background: linear-gradient(135deg, #1d2d50, #13203a); color: #fffaf0; }
+.msg.bot b { color: var(--gold-2); } html.ink .msg.bot b { color: var(--gold); }
+.msg.bot ul { margin: .35rem 0 0; padding-right: 1.1rem; list-style: none; }
+.msg.bot ul li { position: relative; margin: .2rem 0; }
+.msg.bot ul li::before { content: "◆"; position: absolute; right: -1.1rem; color: var(--gold); font-size: .6rem; top: .45rem; }
+.quick { display: flex; flex-wrap: wrap; gap: .4rem; align-self: flex-start; animation: feedIn .5s var(--lux); }
+.quick button { font-size: .8rem; font-weight: 600; padding: .38rem .8rem; border-radius: 999px; border: 1px solid var(--line-2); color: var(--gold-2); background: transparent; transition: all .3s; }
+html.ink .quick button { color: var(--gold); }
+.quick button:hover { background: var(--gold); color: var(--bg); }
+.typing { display: inline-flex; gap: 5px; padding: .9rem 1rem; }
+.typing i { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); animation: bounce 1.2s infinite ease-in-out; }
+.typing i:nth-child(2) { animation-delay: .15s; } .typing i:nth-child(3) { animation-delay: .3s; }
+@keyframes bounce { 0%, 60%, 100% { transform: translateY(0); opacity: .4; } 30% { transform: translateY(-6px); opacity: 1; } }
+
+/* --- preloader --------------------------------------------------------- */
+#preloader { position: fixed; inset: 0; z-index: 100; background: var(--bg); display: grid; place-items: center; transition: opacity .8s var(--lux), visibility .8s; }
+#preloader.done { opacity: 0; visibility: hidden; }
+#preloader .line { width: 180px; height: 1px; background: var(--line); overflow: hidden; position: relative; }
+#preloader .line::after { content: ""; position: absolute; inset: 0; width: 40%; background: linear-gradient(90deg, transparent, var(--gold), transparent); animation: load 1.1s var(--lux) infinite; }
+@keyframes load { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
+
+/* --- misc -------------------------------------------------------------- */
+.marquee { overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); }
+.marquee .track { display: flex; gap: 3rem; width: max-content; animation: marq 40s linear infinite; }
+@keyframes marq { to { transform: translateX(50%); } }
+.toast { position: fixed; bottom: 26px; left: 50%; transform: translate(-50%, 30px); opacity: 0; z-index: 90; padding: .7rem 1.2rem; border-radius: 12px; background: var(--bg-3); border: 1px solid var(--line-2); color: var(--text); font-weight: 600; font-size: .9rem; transition: all .45s var(--lux); pointer-events: none; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
+  .reveal { opacity: 1; transform: none; }
+}
+
+@media print {
+  body { background: #fff !important; color: #000 !important; }
+  body > *:not(main), main > section:not(#trial), #trial .no-print { display: none !important; }
+  #verdictWrap { display: block !important; }
+  .verdict { border: 1px solid #999; background: #fff !important; }
+  .verdict .sec { opacity: 1 !important; transform: none !important; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ======================= PRELOADER ======================= -->
+<div id="preloader" aria-hidden="true">
+  <div class="flex flex-col items-center gap-5">
+    <div class="logo-badge" style="width:72px;height:72px"><i data-lucide="scale" class="w-8 h-8"></i></div>
+    <div class="font-amiri text-2xl gold-text">المحكمة الكويتية الذكية</div>
+    <div class="line"></div>
+  </div>
+</div>
+
+<!-- ======================= NAVBAR ======================= -->
+<header id="nav" class="fixed top-0 inset-x-0 z-50 border-b border-transparent">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 h-[76px] flex items-center justify-between gap-4">
+    <a href="#home" class="flex items-center gap-3 min-w-0" aria-label="المحكمة الكويتية الذكية — الرئيسية">
+      <span class="logo-badge shrink-0"><i data-lucide="scale" class="w-5 h-5"></i></span>
+      <span class="leading-tight min-w-0">
+        <span class="block font-amiri text-base sm:text-xl font-bold t-text truncate">المحكمة الكويتية الذكية</span>
+        <span class="hidden sm:block text-[10px] tracking-[.12em] t-gold font-semibold truncate" dir="ltr">KUWAITI SMART JUDICIAL CHAMBER</span>
+      </span>
+    </a>
+
+    <nav class="hidden lg:flex items-center gap-1" aria-label="التنقل الرئيسي">
+      <a class="nav-link" href="#home" data-sec="home">الرئيسية</a>
+      <a class="nav-link" href="#chambers" data-sec="chambers">الدوائر القضائية</a>
+      <a class="nav-link" href="#trial" data-sec="trial">تجربة التقاضي الحي</a>
+      <a class="nav-link" href="#assistant" data-sec="assistant">المساعد القضائي</a>
+      <a class="nav-link" href="#stats" data-sec="stats">الإحصائيات</a>
+    </nav>
+
+    <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+      <button id="themeToggle" class="theme-switch" role="switch" aria-checked="false" aria-label="التبديل بين الوضع الملكي ووضع الحبر القانوني" title="الوضع الملكي / الحبر القانوني">
+        <span class="knob"><i data-lucide="moon" class="w-3.5 h-3.5" id="themeIcon"></i></span>
+      </button>
+      <span class="hidden md:inline-flex"><a href="#trial" class="btn btn-gold !py-2.5 !px-4 text-sm"><i data-lucide="gavel" class="w-4 h-4"></i> ابدأ المحاكاة</a></span>
+      <button id="menuBtn" class="lg:hidden w-11 h-11 grid place-items-center rounded-xl glass" aria-label="فتح القائمة" aria-expanded="false" aria-controls="mobileMenu">
+        <i data-lucide="menu" class="w-5 h-5 t-gold"></i>
+      </button>
+    </div>
+  </div>
+  <div id="mobileMenu" class="lg:hidden hidden px-4 pb-4">
+    <div class="glass rounded-2xl p-2 flex flex-col">
+      <a class="nav-link !py-3" href="#home" data-sec="home">الرئيسية</a>
+      <a class="nav-link !py-3" href="#chambers" data-sec="chambers">الدوائر القضائية</a>
+      <a class="nav-link !py-3" href="#trial" data-sec="trial">تجربة التقاضي الحي</a>
+      <a class="nav-link !py-3" href="#assistant" data-sec="assistant">المساعد القضائي</a>
+      <a class="nav-link !py-3" href="#stats" data-sec="stats">الإحصائيات</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ======================= HERO ======================= -->
+<section id="home" class="relative overflow-hidden flex items-center" style="min-height:100svh">
+  <canvas id="heroCanvas" aria-hidden="true"></canvas>
+  <div class="hero-vignette"></div>
+
+  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full pt-32 pb-24">
+    <div class="max-w-3xl">
+      <div class="chip reveal"><span class="dot-live"></span> الغرفة القضائية الرقمية العليا · نموذج مفاهيمي 2026</div>
+
+      <h1 class="hero-title font-amiri font-bold mt-7 reveal" data-delay="1">
+        <span class="t-text">عدالة المستقبل..</span><br>
+        <span class="gold-text">سرعة وإتقان في رحاب القانون الكويتي</span>
+      </h1>
+
+      <p class="mt-7 text-lg sm:text-xl leading-9 t-text2 max-w-2xl reveal" data-delay="2">
+        منظومة قضائية ذكية تقرأ التشريعات الكويتية مادةً مادة، وتستحضر مبادئ محكمة التمييز، وتصوغ مسودات الأحكام
+        في دقائق — تحت رقابة قضائية بشرية كاملة لا تتنازل عن هيبة المنصّة ولا عن ضمانات التقاضي.
+      </p>
+
+      <div class="mt-10 flex flex-wrap gap-4 reveal" data-delay="3">
+        <a href="#trial" class="btn btn-gold text-lg"><i data-lucide="gavel" class="w-5 h-5"></i> ابدأ محاكاة دعوى جديدة</a>
+        <a href="#chambers" class="btn btn-ghost text-lg"><i data-lucide="landmark" class="w-5 h-5"></i> استكشاف الدوائر القضائية</a>
+      </div>
+
+      <div class="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl reveal" data-delay="4">
+        <div class="flex items-center gap-3 t-text2 text-sm"><i data-lucide="book-open" class="w-5 h-5 t-gold shrink-0"></i> مرجعية تشريعية كويتية محدّثة</div>
+        <div class="flex items-center gap-3 t-text2 text-sm"><i data-lucide="user-check" class="w-5 h-5 t-gold shrink-0"></i> اعتماد نهائي من قاضٍ بشري</div>
+        <div class="flex items-center gap-3 t-text2 text-sm"><i data-lucide="shield-check" class="w-5 h-5 t-gold shrink-0"></i> تشفير سيادي للبيانات القضائية</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hidden lg:flex absolute bottom-10 left-28 z-10 items-center gap-3 glass rounded-2xl px-4 py-3 reveal" data-delay="4">
+    <i data-lucide="cpu" class="w-5 h-5 t-gold"></i>
+    <div class="leading-tight">
+      <div class="text-xs t-muted" dir="ltr">DIGITAL SUPREME CHAMBER</div>
+      <div class="text-sm font-bold t-text">القاعة العليا الرقمية · متصلة</div>
+    </div>
+    <span class="dot-live mr-2"></span>
+  </div>
+
+  <a href="#stats" class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 t-muted text-xs" aria-label="انتقل إلى الإحصائيات">
+    <span class="scroll-cue"></span>
+  </a>
+</section>
+
+<!-- statute marquee -->
+<div class="border-y b-line py-4 marquee" aria-hidden="true" style="background:var(--surface)">
+  <div class="track t-muted text-sm font-semibold">
+    <span>القانون المدني رقم 67 لسنة 1980</span><span class="t-gold">◆</span>
+    <span>قانون المرافعات المدنية والتجارية رقم 38 لسنة 1980</span><span class="t-gold">◆</span>
+    <span>قانون التجارة رقم 68 لسنة 1980</span><span class="t-gold">◆</span>
+    <span>قانون الشركات رقم 1 لسنة 2016</span><span class="t-gold">◆</span>
+    <span>قانون العمل في القطاع الأهلي رقم 6 لسنة 2010</span><span class="t-gold">◆</span>
+    <span>قانون الأحوال الشخصية رقم 51 لسنة 1984</span><span class="t-gold">◆</span>
+    <span>قانون الجزاء رقم 16 لسنة 1960</span><span class="t-gold">◆</span>
+    <span>قانون الإثبات رقم 39 لسنة 1980</span><span class="t-gold">◆</span>
+    <span>القانون المدني رقم 67 لسنة 1980</span><span class="t-gold">◆</span>
+    <span>قانون المرافعات المدنية والتجارية رقم 38 لسنة 1980</span><span class="t-gold">◆</span>
+    <span>قانون التجارة رقم 68 لسنة 1980</span><span class="t-gold">◆</span>
+    <span>قانون الشركات رقم 1 لسنة 2016</span><span class="t-gold">◆</span>
+    <span>قانون العمل في القطاع الأهلي رقم 6 لسنة 2010</span><span class="t-gold">◆</span>
+    <span>قانون الأحوال الشخصية رقم 51 لسنة 1984</span><span class="t-gold">◆</span>
+    <span>قانون الجزاء رقم 16 لسنة 1960</span><span class="t-gold">◆</span>
+    <span>قانون الإثبات رقم 39 لسنة 1980</span><span class="t-gold">◆</span>
+  </div>
+</div>
+
+<!-- ======================= LIVE DASHBOARD ======================= -->
+<section id="stats" class="relative py-24 sm:py-32">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="text-center max-w-2xl mx-auto reveal">
+      <div class="eyebrow">لوحة المؤشرات الحية</div>
+      <h2 class="section-title font-amiri font-bold mt-4">الرادار القضائي <span class="gold-text">لحظةً بلحظة</span></h2>
+      <p class="mt-4 t-muted leading-8">نبض المنظومة القضائية الذكية على مدار الساعة: القضايا الواردة، دقة التسبيب، وسرعة الفصل.</p>
+    </div>
+
+    <!-- stat cards -->
+    <div class="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <article class="glass frame spot p-6 reveal" data-delay="1">
+        <div class="flex items-center justify-between">
+          <span class="w-11 h-11 rounded-xl grid place-items-center" style="background:color-mix(in srgb,var(--gold) 14%,transparent)"><i data-lucide="folder-check" class="w-5 h-5 t-gold"></i></span>
+          <span class="text-xs font-bold flex items-center gap-1" style="color:var(--ok)"><i data-lucide="trending-up" class="w-3.5 h-3.5"></i> +12.4%</span>
+        </div>
+        <div class="mt-5 stat-value t-text" dir="ltr" style="text-align:right"><span id="casesCounter" class="counter" data-target="128457" data-dec="0">0</span></div>
+        <div class="mt-2 font-bold t-text2">قضية تمّت معالجتها</div>
+        <svg class="spark mt-4 w-full h-10" viewBox="0 0 200 40" preserveAspectRatio="none"><path d="M0 34 L20 30 L40 32 L60 24 L80 26 L100 18 L120 20 L140 12 L160 14 L180 6 L200 4"/></svg>
+      </article>
+
+      <article class="glass frame spot p-6 reveal" data-delay="2">
+        <div class="flex items-center justify-between">
+          <span class="w-11 h-11 rounded-xl grid place-items-center" style="background:color-mix(in srgb,var(--gold) 14%,transparent)"><i data-lucide="target" class="w-5 h-5 t-gold"></i></span>
+          <span class="text-xs font-bold t-muted">مراجعة بشرية مزدوجة</span>
+        </div>
+        <div class="mt-5 stat-value t-text" dir="ltr" style="text-align:right"><span class="counter" data-target="99.4" data-dec="1">0</span><span class="t-gold">%</span></div>
+        <div class="mt-2 font-bold t-text2">دقة أحكام الذكاء الاصطناعي</div>
+        <div class="mt-5 bar"><i data-w="99.4"></i></div>
+        <div class="mt-2 text-xs t-muted">نسبة المسودات المعتمدة دون تعديل جوهري</div>
+      </article>
+
+      <article class="glass frame spot p-6 reveal" data-delay="3">
+        <div class="flex items-center justify-between">
+          <span class="w-11 h-11 rounded-xl grid place-items-center" style="background:color-mix(in srgb,var(--gold) 14%,transparent)"><i data-lucide="timer" class="w-5 h-5 t-gold"></i></span>
+          <span class="text-xs font-bold flex items-center gap-1" style="color:var(--ok)"><i data-lucide="zap" class="w-3.5 h-3.5"></i> فوري</span>
+        </div>
+        <div class="mt-5 stat-value t-text"><span class="counter" data-target="2.7" data-dec="1" dir="ltr">0</span> <span class="text-xl t-gold font-bold">دقيقة</span></div>
+        <div class="mt-2 font-bold t-text2">متوسط زمن الفصل في الدعوى</div>
+        <div class="mt-4 space-y-2 text-xs">
+          <div class="flex items-center gap-2"><span class="w-12 t-muted">سابقاً</span><div class="bar flex-1"><i data-w="100" style="background:var(--muted)"></i></div><span class="t-muted w-16 text-left">8–14 شهراً</span></div>
+          <div class="flex items-center gap-2"><span class="w-12 t-gold font-bold">الآن</span><div class="bar flex-1"><i data-w="2"></i></div><span class="t-gold font-bold w-16 text-left">&lt; 3 دقائق</span></div>
+        </div>
+      </article>
+
+      <article class="glass frame spot p-6 reveal" data-delay="4">
+        <div class="flex items-center gap-4">
+          <svg width="76" height="76" viewBox="0 0 100 100" class="shrink-0 -rotate-90">
+            <defs><linearGradient id="goldGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e8cf94"/><stop offset="1" stop-color="#8f7236"/></linearGradient></defs>
+            <circle cx="50" cy="50" r="42" fill="none" stroke-width="8" class="ring-bg"/>
+            <circle id="satRing" cx="50" cy="50" r="42" fill="none" stroke-width="8" class="ring-fg" stroke-dasharray="263.9" stroke-dashoffset="263.9"/>
+          </svg>
+          <div class="min-w-0">
+            <div class="stat-value t-text" dir="ltr" style="text-align:right;font-size:clamp(1.8rem,2.6vw,2.4rem)"><span class="counter" data-target="96.8" data-dec="1">0</span><span class="t-gold">%</span></div>
+            <div class="mt-2 font-bold t-text2">رضا المتقاضين</div>
+          </div>
+        </div>
+        <div class="mt-5 grid grid-cols-3 gap-2 text-center text-xs">
+          <div class="rounded-lg py-2" style="background:var(--surface-2)"><div class="font-bold t-text">4.9</div><div class="t-muted">الوضوح</div></div>
+          <div class="rounded-lg py-2" style="background:var(--surface-2)"><div class="font-bold t-text">4.8</div><div class="t-muted">العدالة</div></div>
+          <div class="rounded-lg py-2" style="background:var(--surface-2)"><div class="font-bold t-text">5.0</div><div class="t-muted">السرعة</div></div>
+        </div>
+      </article>
+    </div>
+
+    <!-- radar + feed -->
+    <div class="mt-6 grid lg:grid-cols-5 gap-5">
+      <div class="lg:col-span-3 glass frame p-6 sm:p-8 reveal">
+        <div class="flex items-center justify-between flex-wrap gap-3">
+          <div>
+            <h3 class="font-bold text-xl t-text flex items-center gap-2"><i data-lucide="radar" class="w-5 h-5 t-gold"></i> الرادار القضائي</h3>
+            <p class="text-sm t-muted mt-1">رصد لحظي للدعاوى الواردة وتوزيعها على الدوائر المتخصصة</p>
+          </div>
+          <span class="chip"><span class="dot-live"></span> بث مباشر</span>
+        </div>
+        <div class="mt-6 grid sm:grid-cols-2 gap-8 items-center">
+          <div class="radar" id="radar">
+            <svg class="grid" viewBox="0 0 200 200" aria-hidden="true">
+              <circle cx="100" cy="100" r="98"/><circle cx="100" cy="100" r="74"/><circle cx="100" cy="100" r="50"/><circle cx="100" cy="100" r="26"/>
+              <line x1="100" y1="2" x2="100" y2="198"/><line x1="2" y1="100" x2="198" y2="100"/>
+              <line x1="30.7" y1="30.7" x2="169.3" y2="169.3" stroke-dasharray="2 4"/><line x1="169.3" y1="30.7" x2="30.7" y2="169.3" stroke-dasharray="2 4"/>
+            </svg>
+            <div class="sweep"></div>
+            <span class="radar-label" style="top:6%;right:50%">تجاري</span>
+            <span class="radar-label" style="top:50%;right:4%;transform:translate(0,-50%)">مدني</span>
+            <span class="radar-label" style="top:95%;right:50%">جزائي</span>
+            <span class="radar-label" style="top:50%;right:96%;transform:translate(100%,-50%)">أسري</span>
+          </div>
+          <div class="space-y-4" id="loadBars">
+            <div><div class="flex justify-between text-sm mb-2"><span class="font-semibold t-text2">الدائرة التجارية والشركات</span><span class="t-gold font-bold" dir="ltr">38%</span></div><div class="bar"><i data-w="38"></i></div></div>
+            <div><div class="flex justify-between text-sm mb-2"><span class="font-semibold t-text2">الدائرة المدنية والتعويضات</span><span class="t-gold font-bold" dir="ltr">29%</span></div><div class="bar"><i data-w="29"></i></div></div>
+            <div><div class="flex justify-between text-sm mb-2"><span class="font-semibold t-text2">دائرة الأحوال الشخصية</span><span class="t-gold font-bold" dir="ltr">21%</span></div><div class="bar"><i data-w="21"></i></div></div>
+            <div><div class="flex justify-between text-sm mb-2"><span class="font-semibold t-text2">الدائرة الجزائية (مساندة)</span><span class="t-gold font-bold" dir="ltr">12%</span></div><div class="bar"><i data-w="12"></i></div></div>
+            <div class="pt-2 grid grid-cols-2 gap-3 text-center">
+              <div class="rounded-xl py-3 border b-line"><div class="text-2xl font-extrabold t-text" dir="ltr" id="queueNow">42</div><div class="text-xs t-muted">دعوى قيد التحليل الآن</div></div>
+              <div class="rounded-xl py-3 border b-line"><div class="text-2xl font-extrabold t-text" dir="ltr">24/7</div><div class="text-xs t-muted">جاهزية المنظومة</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-2 glass frame p-6 sm:p-8 reveal" data-delay="2">
+        <h3 class="font-bold text-xl t-text flex items-center gap-2"><i data-lucide="activity" class="w-5 h-5 t-gold"></i> سجل الدعاوى الحي</h3>
+        <p class="text-sm t-muted mt-1">آخر الدعاوى التي دخلت المعالجة الذكية</p>
+        <ul id="feed" class="feed mt-5 space-y-2.5" aria-live="off"></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= CHAMBERS ======================= -->
+<section id="chambers" class="relative py-24 sm:py-32" style="background:linear-gradient(180deg,transparent,color-mix(in srgb,var(--bg-2) 70%,transparent),transparent)">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="text-center max-w-2xl mx-auto reveal">
+      <div class="eyebrow">الدوائر القضائية الذكية</div>
+      <h2 class="section-title font-amiri font-bold mt-4">أربع دوائر متخصصة، <span class="gold-text">ومرجعية واحدة: القانون</span></h2>
+      <p class="mt-4 t-muted leading-8">كل دائرة مدرّبة على تشريعاتها ومبادئها القضائية، ومحكومة بدرجة إشراف بشري تتناسب مع خطورة النزاع. انقر على أي دائرة لاستكشاف منهجها.</p>
+    </div>
+    <div id="chamberGrid" class="mt-14 grid sm:grid-cols-2 gap-5"></div>
+  </div>
+</section>
+
+<!-- ======================= TRIAL SIMULATOR ======================= -->
+<section id="trial" class="relative py-24 sm:py-32">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="text-center max-w-2xl mx-auto reveal no-print">
+      <div class="eyebrow">محاكي التقاضي التفاعلي الحي</div>
+      <h2 class="section-title font-amiri font-bold mt-4">اعرض نزاعك.. <span class="gold-text">وشاهد التسبيب يتشكّل</span></h2>
+      <p class="mt-4 t-muted leading-8">اختر نوع الدعوى، واكتب ملخص النزاع، ودع المحرك القضائي يستخرج الوقائع ويطابقها مع النصوص الكويتية ليصوغ مسودة حكم أولي.</p>
+    </div>
+
+    <div class="mt-14 grid lg:grid-cols-5 gap-6 items-start">
+      <!-- input panel -->
+      <div class="lg:col-span-2 glass frame corners p-6 sm:p-8 reveal no-print">
+        <span class="c tl"></span><span class="c tr"></span><span class="c bl"></span><span class="c br"></span>
+        <div class="flex items-center gap-3">
+          <span class="w-10 h-10 rounded-xl grid place-items-center" style="background:color-mix(in srgb,var(--gold) 14%,transparent)"><i data-lucide="file-pen-line" class="w-5 h-5 t-gold"></i></span>
+          <div>
+            <h3 class="font-bold text-lg t-text">صحيفة الدعوى</h3>
+            <div class="text-xs t-muted">بيئة محاكاة تعليمية — لا تُدخل بيانات شخصية حقيقية</div>
+          </div>
+        </div>
+
+        <label class="block mt-7 mb-3 text-sm font-bold t-text2">نوع الدعوى</label>
+        <div class="seg" id="caseType" data-v="commercial" role="group" aria-label="نوع الدعوى">
+          <span class="pill"></span>
+          <button type="button" data-v="commercial" aria-pressed="true"><i data-lucide="building-2" class="w-4 h-4"></i> تجارية</button>
+          <button type="button" data-v="labour" aria-pressed="false"><i data-lucide="hard-hat" class="w-4 h-4"></i> عمالية</button>
+        </div>
+
+        <label for="caseText" class="flex items-center justify-between mt-7 mb-3 text-sm font-bold t-text2">
+          <span>ملخص النزاع</span><span class="text-xs t-muted font-normal" dir="ltr"><span id="charCount">0</span>/1200</span>
+        </label>
+        <div class="textarea-wrap" id="taWrap">
+          <textarea id="caseText" maxlength="1200" placeholder="مثال: أبرمت شركتنا عقد توريد مع المدعى عليه بقيمة 45,000 دينار كويتي، وقمنا بتسليم البضاعة كاملة، إلا أنه امتنع عن سداد الفاتورة رغم المطالبة..."></textarea>
+          <div class="scanline"></div>
+        </div>
+        <div class="mt-3 flex flex-wrap gap-2 items-center">
+          <span class="text-xs t-muted">نماذج جاهزة:</span>
+          <button type="button" class="sample-btn" data-sample="0">عقد توريد</button>
+          <button type="button" class="sample-btn" data-sample="1">شيك مرتجع</button>
+          <button type="button" class="sample-btn" data-sample="2">فصل تعسفي</button>
+          <button type="button" class="sample-btn" data-sample="3">رواتب متأخرة</button>
+        </div>
+
+        <button id="runBtn" type="button" class="btn btn-gold w-full mt-7 text-lg"><i data-lucide="sparkles" class="w-5 h-5"></i> تشغيل التحليل القانوني الذكي</button>
+        <p id="runHint" class="text-xs mt-3 text-center t-muted">يستغرق التحليل بضع ثوانٍ في هذه المحاكاة</p>
+      </div>
+
+      <!-- output panel -->
+      <div class="lg:col-span-3 reveal" data-delay="2">
+        <!-- idle -->
+        <div id="idleState" class="glass frame p-8 sm:p-12 min-h-[520px] flex flex-col items-center justify-center text-center no-print">
+          <div class="avatar-orb" style="width:170px;height:170px"><span class="ring"></span><span class="ring r2"></span><span class="ring r3"></span>
+            <span class="core" style="width:100px;height:100px"><i data-lucide="scale" class="w-10 h-10"></i></span></div>
+          <h3 class="font-amiri text-2xl font-bold mt-10 t-text">المنصّة بانتظار صحيفة الدعوى</h3>
+          <p class="t-muted mt-3 max-w-md leading-8">ستظهر هنا مسودة الحكم الأولي مع الوقائع والأسباب والمواد القانونية ومنطوق الحكم المقترح.</p>
+          <div class="mt-8 grid grid-cols-3 gap-4 w-full max-w-md text-xs t-muted">
+            <div class="flex flex-col items-center gap-2"><i data-lucide="scan-text" class="w-5 h-5 t-gold"></i>استخراج الوقائع</div>
+            <div class="flex flex-col items-center gap-2"><i data-lucide="library" class="w-5 h-5 t-gold"></i>مطابقة النصوص</div>
+            <div class="flex flex-col items-center gap-2"><i data-lucide="pen-tool" class="w-5 h-5 t-gold"></i>صياغة التسبيب</div>
+          </div>
+        </div>
+
+        <!-- loading -->
+        <div id="loadState" class="hidden glass frame p-6 sm:p-8 min-h-[520px] no-print">
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3"><div class="spinner" style="width:22px;height:22px"></div><h3 class="font-bold text-lg t-text">جارٍ التحليل القانوني…</h3></div>
+            <span class="font-mono text-sm t-gold" dir="ltr" id="pct">0%</span>
+          </div>
+          <div class="progress mt-5"><i id="progBar"></i></div>
+          <div class="neural mt-6" aria-hidden="true"><svg id="neuralSvg" class="w-full h-full" viewBox="0 0 600 120" preserveAspectRatio="none"></svg></div>
+          <div class="hexstream mt-2" id="hex1"></div>
+          <div class="console mt-5 t-text2" id="console" aria-live="polite"></div>
+          <div class="hexstream mt-4" id="hex2"></div>
+        </div>
+
+        <!-- result -->
+        <div id="verdictWrap" class="hidden"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= ASSISTANT ======================= -->
+<section id="assistant" class="relative py-24 sm:py-32" style="background:linear-gradient(180deg,transparent,color-mix(in srgb,var(--bg-2) 70%,transparent),transparent)">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-14 items-center">
+    <div class="reveal order-2 lg:order-1">
+      <div class="eyebrow">المساعد القضائي الذكي</div>
+      <h2 class="section-title font-amiri font-bold mt-4">«جسّار».. <span class="gold-text">رفيقك في أروقة المحكمة</span></h2>
+      <p class="mt-5 t-text2 leading-9 text-lg">
+        مساعد قضائي يتحدث العربية الفصحى برصانة، يرشد المحامين والقضاة والباحثين والمتقاضين إلى إجراءات التقاضي،
+        ومواعيد الطعن، واختصاص الدوائر — ويحيلك دائماً إلى النص الرسمي والمختص البشري عند الحاجة.
+      </p>
+      <div class="mt-8 grid sm:grid-cols-2 gap-4">
+        <div class="glass rounded-2xl p-5 spot"><i data-lucide="briefcase" class="w-6 h-6 t-gold"></i><div class="font-bold mt-3 t-text">للمحامين</div><div class="text-sm t-muted mt-1 leading-7">إجراءات القيد والإعلان ومواعيد الطعون.</div></div>
+        <div class="glass rounded-2xl p-5 spot"><i data-lucide="gavel" class="w-6 h-6 t-gold"></i><div class="font-bold mt-3 t-text">للقضاة</div><div class="text-sm t-muted mt-1 leading-7">ملخصات الملفات واستدعاء المبادئ المستقرة.</div></div>
+        <div class="glass rounded-2xl p-5 spot"><i data-lucide="graduation-cap" class="w-6 h-6 t-gold"></i><div class="font-bold mt-3 t-text">للباحثين</div><div class="text-sm t-muted mt-1 leading-7">خريطة التشريعات وآليات عمل المنظومة.</div></div>
+        <div class="glass rounded-2xl p-5 spot"><i data-lucide="users" class="w-6 h-6 t-gold"></i><div class="font-bold mt-3 t-text">للمتقاضين</div><div class="text-sm t-muted mt-1 leading-7">شرح مبسّط للخطوات دون تعقيد.</div></div>
+      </div>
+      <button id="openChatBtn" class="btn btn-gold mt-9"><i data-lucide="message-circle" class="w-5 h-5"></i> تحدّث مع جسّار الآن</button>
+    </div>
+    <div class="reveal order-1 lg:order-2" data-delay="2">
+      <div class="avatar-orb" style="width:min(320px,70vw);height:min(320px,70vw)">
+        <span class="ring"></span><span class="ring r2"></span><span class="ring r3"></span>
+        <span class="core" style="width:58%;height:58%"><i data-lucide="bot" class="w-16 h-16"></i></span>
+      </div>
+      <div class="text-center mt-10">
+        <div class="font-amiri text-3xl font-bold t-text">جسّار</div>
+        <div class="text-sm t-muted mt-1" dir="ltr">AI MAGISTRATE ASSISTANT · v4.2</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ======================= FOOTER ======================= -->
+<footer class="border-t b-line py-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="flex items-center gap-3">
+        <span class="logo-badge"><i data-lucide="scale" class="w-5 h-5"></i></span>
+        <div class="leading-tight"><div class="font-amiri text-lg font-bold t-text">المحكمة الكويتية الذكية</div><div class="text-[11px] t-gold tracking-[.18em]" dir="ltr">KUWAITI SMART JUDICIAL CHAMBER</div></div>
+      </div>
+      <div class="divider-star"><span></span><i data-lucide="sparkle" class="w-4 h-4"></i><span></span></div>
+      <div class="text-sm t-muted">© <span id="year"></span> نموذج مفاهيمي تجريبي</div>
+    </div>
+    <p class="mt-8 text-xs t-muted leading-7 text-center max-w-4xl mx-auto">
+      تنبيه: هذا الموقع نموذج مفاهيمي تعليمي، وليس جهة قضائية رسمية ولا يمثّل أي جهة حكومية. المسودات والإحصاءات المعروضة توضيحية،
+      والإشارات التشريعية للاسترشاد فقط ويجب التحقق منها من المصادر الرسمية. لا يُعدّ أي محتوى هنا استشارة قانونية.
+    </p>
+  </div>
+</footer>
+
+<!-- ======================= CHAMBER MODAL ======================= -->
+<div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="backdrop" data-close></div>
+  <div class="panel frame" id="modalPanel"></div>
+</div>
+
+<!-- ======================= CHAT WIDGET ======================= -->
+<button id="chatFab" aria-label="فتح المساعد القضائي جسّار" aria-expanded="false" aria-controls="chatPanel">
+  <i data-lucide="bot" class="w-7 h-7" id="fabIcon"></i>
+  <span class="badge" id="fabBadge">1</span>
+</button>
+<section id="chatPanel" aria-label="المساعد القضائي جسّار">
+  <header class="px-5 py-4 flex items-center justify-between border-b b-line" style="background:linear-gradient(135deg,color-mix(in srgb,var(--gold) 14%,transparent),transparent)">
+    <div class="flex items-center gap-3">
+      <div class="relative">
+        <div class="w-11 h-11 rounded-full grid place-items-center" style="background:radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--gold) 45%,transparent),var(--bg-3))"><i data-lucide="bot" class="w-5 h-5 t-gold"></i></div>
+        <span class="absolute bottom-0 left-0 w-3 h-3 rounded-full border-2" style="background:var(--ok);border-color:var(--bg-2)"></span>
+      </div>
+      <div class="leading-tight">
+        <div class="font-bold t-text">جسّار <span class="text-xs t-gold font-semibold">· المساعد القضائي</span></div>
+        <div class="text-xs t-muted" id="chatStatus">متصل · يجيب بالفصحى</div>
+      </div>
+    </div>
+    <div class="flex items-center gap-1">
+      <button id="chatReset" class="w-9 h-9 grid place-items-center rounded-lg t-muted hover:t-gold" aria-label="بدء محادثة جديدة" title="محادثة جديدة"><i data-lucide="rotate-ccw" class="w-4 h-4"></i></button>
+      <button id="chatClose" class="w-9 h-9 grid place-items-center rounded-lg t-muted" aria-label="إغلاق المساعد"><i data-lucide="x" class="w-5 h-5"></i></button>
+    </div>
+  </header>
+  <div class="msgs" id="msgs" aria-live="polite"></div>
+  <form id="chatForm" class="p-3 border-t b-line flex items-center gap-2">
+    <input id="chatInput" autocomplete="off" class="flex-1 rounded-xl px-4 py-3 outline-none text-sm border b-line t-text" style="background:var(--surface)" placeholder="اكتب استفسارك القانوني…" aria-label="رسالتك إلى جسّار">
+    <button class="btn btn-gold !p-0 w-12 h-12 !rounded-xl shrink-0" aria-label="إرسال"><i data-lucide="send" class="w-5 h-5 -scale-x-100"></i></button>
+  </form>
+</section>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(() => {
+'use strict';
+
+const $  = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const icons = () => { if (window.lucide) lucide.createIcons(); };
+const rand = (a, b) => a + Math.random() * (b - a);
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+const fmt = (n, d = 0) => Number(n).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+const esc = s => s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const sleep = ms => new Promise(r => setTimeout(r, reduced ? Math.min(ms, 60) : ms));
+
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+/* ------------------------------------------------------------------ */
+/* Theme                                                                */
+/* ------------------------------------------------------------------ */
+const root = document.documentElement;
+let savedTheme = null;
+try { savedTheme = localStorage.getItem('ksc-theme'); } catch (e) {}
+function applyTheme(ink) {
+  root.classList.toggle('ink', ink);
+  $('#themeToggle').setAttribute('aria-checked', String(ink));
+  const knob = $('#themeToggle .knob');
+  knob.innerHTML = `<i data-lucide="${ink ? 'feather' : 'moon'}" class="w-3.5 h-3.5"></i>`;
+  icons();
+  document.querySelector('meta[name="theme-color"]').setAttribute('content', ink ? '#f3eee2' : '#050b16');
+  if (window.__heroTheme) window.__heroTheme();
+}
+applyTheme(savedTheme === 'ink');
+$('#themeToggle').addEventListener('click', () => {
+  const ink = !root.classList.contains('ink');
+  applyTheme(ink);
+  try { localStorage.setItem('ksc-theme', ink ? 'ink' : 'royal'); } catch (e) {}
+  toast(ink ? 'تم التبديل إلى وضع الحبر القانوني' : 'تم التبديل إلى الوضع الملكي');
+});
+
+/* ------------------------------------------------------------------ */
+/* Navbar                                                               */
+/* ------------------------------------------------------------------ */
+const nav = $('#nav');
+addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 30), { passive: true });
+nav.classList.toggle('scrolled', scrollY > 30);
+
+const menuBtn = $('#menuBtn'), mobileMenu = $('#mobileMenu');
+menuBtn.addEventListener('click', () => {
+  const open = mobileMenu.classList.toggle('hidden') === false;
+  menuBtn.setAttribute('aria-expanded', String(open));
+  menuBtn.innerHTML = `<i data-lucide="${open ? 'x' : 'menu'}" class="w-5 h-5 t-gold"></i>`; icons();
+});
+$$('#mobileMenu a').forEach(a => a.addEventListener('click', () => { mobileMenu.classList.add('hidden'); menuBtn.setAttribute('aria-expanded', 'false'); menuBtn.innerHTML = '<i data-lucide="menu" class="w-5 h-5 t-gold"></i>'; icons(); }));
+
+const secObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    $$('.nav-link').forEach(l => l.classList.toggle('active', l.dataset.sec === e.target.id));
+  });
+}, { rootMargin: '-45% 0px -50% 0px' });
+['home', 'stats', 'chambers', 'trial', 'assistant'].forEach(id => secObs.observe(document.getElementById(id)));
+
+/* ------------------------------------------------------------------ */
+/* Reveal + spotlight                                                   */
+/* ------------------------------------------------------------------ */
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); revObs.unobserve(e.target); } });
+}, { threshold: 0.12 });
+function observeReveals() { $$('.reveal:not(.in)').forEach(el => revObs.observe(el)); }
+
+document.addEventListener('pointermove', e => {
+  const card = e.target.closest && e.target.closest('.spot');
+  if (!card) return;
+  const r = card.getBoundingClientRect();
+  card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+  card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+}, { passive: true });
+
+/* ------------------------------------------------------------------ */
+/* Hero — "Digital Supreme Chamber" canvas                              */
+/* ------------------------------------------------------------------ */
+(function hero() {
+  const c = $('#heroCanvas'), ctx = c.getContext('2d');
+  let w = 0, h = 0, t = 0, mx = 0, my = 0, tmx = 0, tmy = 0, visible = true, gold = [201, 165, 90], ink = false;
+  const parts = Array.from({ length: 110 }, () => ({ x: rand(-6, 6), y: rand(-1.3, 3.5), z: rand(3, 18), s: rand(.4, 1.4), r: rand(.6, 1.8) }));
+
+  window.__heroTheme = () => {
+    ink = root.classList.contains('ink');
+    gold = ink ? [122, 92, 32] : [201, 165, 90];
+  };
+  window.__heroTheme();
+
+  function resize() {
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    w = c.clientWidth; h = c.clientHeight;
+    c.width = w * dpr; c.height = h * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  resize(); addEventListener('resize', resize);
+
+  const g = a => `rgba(${gold[0]},${gold[1]},${gold[2]},${a})`;
+  function proj(X, Y, Z) {
+    const f = Math.min(w, h * 1.3) * 0.9;
+    const cx = w / 2, cy = h * 0.44;
+    const s = f / Z;
+    return { x: cx + (X - mx * 0.7) * s, y: cy - (Y - my * 0.35) * s, s };
+  }
+
+  function drawColumn(X, Z) {
+    const top = proj(X, 2.6, Z), bot = proj(X, -1.3, Z);
+    const wd = 0.34 * top.s, a = Math.max(0, 0.5 - Z / 40);
+    const grd = ctx.createLinearGradient(top.x - wd / 2, 0, top.x + wd / 2, 0);
+    grd.addColorStop(0, g(a * 0.15)); grd.addColorStop(0.45, g(a * 0.55)); grd.addColorStop(1, g(a * 0.1));
+    ctx.fillStyle = grd;
+    ctx.fillRect(top.x - wd / 2, top.y, wd, bot.y - top.y);
+    // fluting
+    ctx.strokeStyle = g(a * 0.35); ctx.lineWidth = 1;
+    for (let k = -1; k <= 1; k++) { ctx.beginPath(); ctx.moveTo(top.x + k * wd * 0.25, top.y); ctx.lineTo(top.x + k * wd * 0.25, bot.y); ctx.stroke(); }
+    // capital + base
+    ctx.fillStyle = g(a * 0.7);
+    ctx.fillRect(top.x - wd * 0.75, top.y - 0.1 * top.s, wd * 1.5, 0.1 * top.s);
+    ctx.fillRect(bot.x - wd * 0.7, bot.y - 0.08 * bot.s, wd * 1.4, 0.08 * bot.s);
+  }
+
+  function frame() {
+    if (!visible) { requestAnimationFrame(frame); return; }
+    t += reduced ? 0 : 0.016;
+    mx += (tmx - mx) * 0.04; my += (tmy - my) * 0.04;
+    ctx.clearRect(0, 0, w, h);
+
+    const emX = w >= 1024 ? -2.3 : 0, emY = w >= 1024 ? 0.55 : 0.9, emZ = 9;
+    const e = proj(emX, emY, emZ);
+
+    // ambient glow
+    const rg = ctx.createRadialGradient(e.x, e.y, 0, e.x, e.y, Math.max(w, h) * 0.55);
+    rg.addColorStop(0, g(ink ? 0.12 : 0.16)); rg.addColorStop(1, g(0));
+    ctx.fillStyle = rg; ctx.fillRect(0, 0, w, h);
+
+    // light cone from the dome
+    const cone = ctx.createLinearGradient(0, 0, 0, e.y + 120);
+    cone.addColorStop(0, g(ink ? 0.1 : 0.14)); cone.addColorStop(1, g(0));
+    ctx.fillStyle = cone;
+    ctx.beginPath(); ctx.moveTo(e.x - 40, 0); ctx.lineTo(e.x + 40, 0); ctx.lineTo(e.x + e.s * 2.2, e.y + 120); ctx.lineTo(e.x - e.s * 2.2, e.y + 120); ctx.closePath(); ctx.fill();
+
+    // floor grid
+    ctx.lineWidth = 1;
+    const off = (t * 0.5) % 1;
+    for (let i = 0; i < 26; i++) {
+      const Z = 1.6 + i - off; if (Z < 1.4) continue;
+      const a = Math.max(0, 0.32 * (1 - Z / 27));
+      const p1 = proj(-10, -1.3, Z), p2 = proj(10, -1.3, Z);
+      ctx.strokeStyle = g(a); ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+    }
+    for (let X = -10; X <= 10; X += 1) {
+      const p1 = proj(X, -1.3, 1.4), p2 = proj(X, -1.3, 27);
+      const lg = ctx.createLinearGradient(p1.x, p1.y, p2.x, p2.y);
+      lg.addColorStop(0, g(0.22)); lg.addColorStop(1, g(0));
+      ctx.strokeStyle = lg; ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+    }
+
+    // colonnade (far → near)
+    for (let k = 6; k >= 0; k--) { const Z = 4 + k * 2.6; drawColumn(-3, Z); drawColumn(3, Z); }
+    // architraves
+    [-3, 3].forEach(X => {
+      const a = proj(X, 2.75, 4), b = proj(X, 2.75, 21.6);
+      ctx.strokeStyle = g(0.25); ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+    });
+
+    // emblem — orbital rings
+    const R = 1.25 * e.s;
+    ctx.save(); ctx.translate(e.x, e.y);
+    for (let i = 0; i < 3; i++) {
+      const rx = R * (1 + i * 0.2), tilt = Math.abs(Math.sin(t * 0.3 + i * 1.3)) * 0.85 + 0.12, rot = i * 1.05 + t * 0.06 * (i % 2 ? -1 : 1);
+      ctx.strokeStyle = g(0.4 - i * 0.08); ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.ellipse(0, 0, rx, rx * tilt, rot, 0, Math.PI * 2); ctx.stroke();
+      const an = t * (0.9 + i * 0.35) + i * 2;
+      const px = rx * Math.cos(an), py = rx * tilt * Math.sin(an);
+      const qx = px * Math.cos(rot) - py * Math.sin(rot), qy = px * Math.sin(rot) + py * Math.cos(rot);
+      ctx.fillStyle = g(0.95); ctx.shadowColor = g(1); ctx.shadowBlur = 14;
+      ctx.beginPath(); ctx.arc(qx, qy, 2.6, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0;
+    }
+    // tick ring
+    ctx.rotate(-t * 0.08);
+    for (let i = 0; i < 96; i++) {
+      const a = i / 96 * Math.PI * 2, r1 = R * 0.78, r2 = r1 + (i % 8 === 0 ? 10 : 4);
+      ctx.strokeStyle = g(i % 8 === 0 ? 0.7 : 0.3); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(Math.cos(a) * r1, Math.sin(a) * r1); ctx.lineTo(Math.cos(a) * r2, Math.sin(a) * r2); ctx.stroke();
+    }
+    // 8-point star (Rub el Hizb geometry)
+    ctx.rotate(t * 0.2);
+    const S = R * 0.5;
+    ctx.shadowColor = g(0.9); ctx.shadowBlur = 24;
+    ctx.strokeStyle = g(0.95); ctx.lineWidth = 1.6; ctx.fillStyle = g(ink ? 0.06 : 0.08);
+    for (let k = 0; k < 2; k++) { ctx.save(); ctx.rotate(k * Math.PI / 4); ctx.beginPath(); ctx.rect(-S / 1.41, -S / 1.41, S * 1.41, S * 1.41); ctx.fill(); ctx.stroke(); ctx.restore(); }
+    ctx.shadowBlur = 0;
+    ctx.beginPath(); ctx.arc(0, 0, S * 0.42, 0, Math.PI * 2); ctx.strokeStyle = g(0.8); ctx.stroke();
+    ctx.restore();
+
+    // scales of justice glyph in the core
+    ctx.save(); ctx.translate(e.x, e.y);
+    const k = S * 0.34, sw = Math.sin(t * 1.2) * 0.08;
+    ctx.strokeStyle = g(1); ctx.lineWidth = 1.6; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(0, -k); ctx.lineTo(0, k * 0.9); ctx.moveTo(-k * 0.5, k * 0.9); ctx.lineTo(k * 0.5, k * 0.9); ctx.stroke();
+    ctx.rotate(sw);
+    ctx.beginPath(); ctx.moveTo(-k, -k * 0.6); ctx.lineTo(k, -k * 0.6); ctx.stroke();
+    [-1, 1].forEach(sd => {
+      ctx.save(); ctx.translate(sd * k, -k * 0.6); ctx.rotate(-sw);
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-k * 0.35, k * 0.55); ctx.moveTo(0, 0); ctx.lineTo(k * 0.35, k * 0.55);
+      ctx.moveTo(-k * 0.42, k * 0.55); ctx.quadraticCurveTo(0, k * 0.85, k * 0.42, k * 0.55); ctx.stroke(); ctx.restore();
+    });
+    ctx.restore();
+
+    // rising gold dust
+    for (const p of parts) {
+      p.y += 0.0035 * p.s * (reduced ? 0 : 1);
+      if (p.y > 3.6) { p.y = -1.3; p.x = rand(-6, 6); p.z = rand(3, 18); }
+      const q = proj(p.x, p.y, p.z); if (q.x < 0 || q.x > w || q.y < 0 || q.y > h) continue;
+      const a = Math.max(0, 0.75 - p.z / 22) * (0.5 + 0.5 * Math.sin(t * 2 + p.x * 3));
+      ctx.fillStyle = g(a); ctx.beginPath(); ctx.arc(q.x, q.y, p.r * Math.min(q.s / 60, 2), 0, Math.PI * 2); ctx.fill();
+    }
+
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  $('#home').addEventListener('pointermove', ev => {
+    tmx = (ev.clientX / w - 0.5) * 2; tmy = (ev.clientY / h - 0.5) * -2;
+  }, { passive: true });
+  new IntersectionObserver(([en]) => { visible = en.isIntersecting; }).observe(c);
+})();
+
+/* ------------------------------------------------------------------ */
+/* Dashboard                                                            */
+/* ------------------------------------------------------------------ */
+function animateCounter(el) {
+  const target = parseFloat(el.dataset.target), dec = +el.dataset.dec || 0, dur = reduced ? 1 : 2200, t0 = performance.now();
+  (function step(now) {
+    const p = Math.min(1, (now - t0) / dur), eased = 1 - Math.pow(2, -10 * p);
+    el.textContent = fmt(target * (p === 1 ? 1 : eased), dec);
+    if (p < 1) requestAnimationFrame(step); else el.dataset.done = '1';
+  })(t0);
+}
+const dashObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    $$('.counter', e.target).forEach(animateCounter);
+    $$('.bar > i', e.target).forEach(b => b.style.width = b.dataset.w + '%');
+    const ring = $('#satRing', e.target); if (ring) ring.style.strokeDashoffset = 263.9 * (1 - 0.968);
+    dashObs.unobserve(e.target);
+  });
+}, { threshold: 0.3 });
+$$('#stats article, #stats .lg\\:col-span-3').forEach(el => dashObs.observe(el));
+
+// live incrementing case counter
+let cases = 128457;
+setInterval(() => {
+  const el = $('#casesCounter'); if (!el.dataset.done) return;
+  cases += Math.floor(rand(1, 4)); el.textContent = fmt(cases);
+  $('#queueNow').textContent = Math.floor(rand(34, 58));
+}, 2200);
+
+// radar blips
+const radar = $('#radar');
+function blip() {
+  const a = rand(0, Math.PI * 2), r = rand(0.12, 0.44);
+  const b = document.createElement('span'); b.className = 'blip';
+  b.style.left = (50 + Math.cos(a) * r * 100) + '%'; b.style.top = (50 + Math.sin(a) * r * 100) + '%';
+  radar.appendChild(b); setTimeout(() => b.remove(), 3300);
+}
+setInterval(() => { if (!document.hidden) blip(); }, 900);
+
+// live feed
+const feedTypes = [
+  ['تجاري', 'مطالبة بقيمة فاتورة توريد', 'building-2'],
+  ['تجاري', 'نزاع بين شركاء في شركة ذات مسؤولية محدودة', 'building-2'],
+  ['مدني', 'تعويض عن أضرار حادث مروري', 'scroll'],
+  ['مدني', 'فسخ عقد إيجار وإخلاء', 'scroll'],
+  ['عمالي', 'مكافأة نهاية الخدمة', 'hard-hat'],
+  ['أسري', 'تقدير نفقة وحضانة', 'users'],
+  ['جزائي', 'تحليل أدلة — بانتظار القاضي', 'gavel'],
+];
+const statuses = [['قيد التحليل', 'var(--warn)'], ['مسودة جاهزة', 'var(--ok)'], ['بانتظار الاعتماد', 'var(--gold)']];
+function feedItem() {
+  const [ch, title, ic] = pick(feedTypes), [st, col] = pick(statuses);
+  const id = 'KW-2026-' + Math.floor(rand(10000, 99999));
+  const li = document.createElement('li');
+  li.className = 'flex items-center gap-3 rounded-xl px-3 py-2.5 border b-line';
+  li.style.background = 'var(--surface-2)';
+  li.innerHTML = `<span class="w-9 h-9 shrink-0 rounded-lg grid place-items-center" style="background:color-mix(in srgb,var(--gold) 12%,transparent)"><i data-lucide="${ic}" class="w-4 h-4 t-gold"></i></span>
+    <div class="min-w-0 flex-1"><div class="text-sm font-semibold t-text truncate">${title}</div><div class="text-[11px] t-muted font-mono" dir="ltr" style="text-align:right">${id} · ${ch}</div></div>
+    <span class="text-[11px] font-bold shrink-0" style="color:${col}">● ${st}</span>`;
+  const feed = $('#feed'); feed.prepend(li);
+  while (feed.children.length > 6) feed.lastElementChild.remove();
+  icons();
+}
+for (let i = 0; i < 6; i++) feedItem();
+setInterval(() => { if (!document.hidden) feedItem(); }, 3200);
+
+/* ------------------------------------------------------------------ */
+/* Chambers                                                             */
+/* ------------------------------------------------------------------ */
+const CHAMBERS = [
+  {
+    id: 'commercial', icon: 'building-2', title: 'الدائرة التجارية والشركات', en: 'Commercial & Corporate Chamber',
+    desc: 'عقود التوريد والمقاولات، الأوراق التجارية، نزاعات الشركاء والمساهمين، والإفلاس والصلح الواقي.',
+    stats: [['41,208', 'دعوى'], ['2.4 د', 'متوسط الفصل'], ['99.6%', 'دقة']],
+    oversight: 'إشراف بشري: اعتماد القاضي لكل مسودة', level: 2,
+    laws: [
+      ['قانون التجارة رقم 68 لسنة 1980', 'الأعمال التجارية، الالتزامات والعقود التجارية، الأوراق التجارية والشيك.'],
+      ['قانون الشركات رقم 1 لسنة 2016', 'تأسيس الشركات وإدارتها ومسؤولية المديرين وحقوق الشركاء.'],
+      ['قانون المرافعات المدنية والتجارية رقم 38 لسنة 1980', 'قواعد الاختصاص ورفع الدعوى والإعلان والطعن في الأحكام.'],
+      ['قانون الإثبات رقم 39 لسنة 1980', 'حجية المحررات والدفاتر التجارية وسلطة المحكمة في تقدير الأدلة.'],
+    ],
+    how: [
+      'تُفهرس النصوص التجارية مادةً مادة مع تتبّع التعديلات وتواريخ النفاذ، فلا يُطبَّق نص على واقعة سابقة لسريانه.',
+      'يستخرج المحرك أركان العلاقة التجارية: الأطراف، محل الالتزام، القيمة، تاريخ الاستحقاق، وأدلة التسليم أو الوفاء.',
+      'يطابق الوقائع مع القواعد العامة في العقود (العقد شريعة المتعاقدين وحسن النية في التنفيذ) ثم مع الأحكام التجارية الخاصة.',
+      'يستحضر المبادئ المستقرة لمحكمة التمييز في تقدير الأدلة ويصوغ مسودة مسبّبة تُعرض على القاضي للاعتماد أو التعديل.',
+    ],
+  },
+  {
+    id: 'civil', icon: 'scroll', title: 'الدائرة المدنية والتعويضات', en: 'Civil & Compensation Chamber',
+    desc: 'المسؤولية العقدية والتقصيرية، التعويض عن الأضرار المادية والأدبية، الإيجارات، والملكية والحيازة.',
+    stats: [['33,915', 'دعوى'], ['3.1 د', 'متوسط الفصل'], ['99.3%', 'دقة']],
+    oversight: 'إشراف بشري: اعتماد القاضي لكل مسودة', level: 2,
+    laws: [
+      ['القانون المدني رقم 67 لسنة 1980', 'مصادر الالتزام، العقد، العمل غير المشروع (م227)، والإثراء بلا سبب.'],
+      ['قانون المرافعات المدنية والتجارية رقم 38 لسنة 1980', 'الاختصاص القيمي والنوعي، الخبرة، والطعون.'],
+      ['قانون الإثبات رقم 39 لسنة 1980', 'عبء الإثبات، شهادة الشهود، والقرائن القضائية.'],
+      ['قانون إيجار العقارات رقم 35 لسنة 1978', 'العلاقة الإيجارية وأسباب الإخلاء.'],
+    ],
+    how: [
+      'يحدّد نوع المسؤولية (عقدية أو تقصيرية) من صياغة الوقائع ويختار الإطار النصي المناسب.',
+      'يحلّل أركان المسؤولية الثلاثة: الخطأ، والضرر، وعلاقة السببية، ويبيّن ما ثبت منها وما يحتاج إلى دليل.',
+      'يقترح عناصر التعويض (ما لحق المضرور من خسارة وما فاته من كسب) ويستعين بجداول استرشادية قابلة لتقدير القاضي.',
+      'يوصي بندب خبير متى كانت المسألة فنية، ولا يحلّ محلّ السلطة التقديرية للمحكمة.',
+    ],
+  },
+  {
+    id: 'criminal', icon: 'gavel', title: 'الدائرة الجزائية', en: 'Criminal Chamber — Full Human Oversight',
+    desc: 'دور تحليلي مساند فقط: تنظيم ملف الدعوى، فرز الأدلة، ورصد الدفوع الإجرائية — والحكم للقاضي وحده.',
+    stats: [['9,442', 'ملف مساند'], ['100%', 'قرار بشري'], ['0', 'حكم آلي']],
+    oversight: 'ضمانات قضائية بشرية كاملة — لا حكم جزائياً آلياً', level: 3,
+    laws: [
+      ['قانون الجزاء رقم 16 لسنة 1960', 'أركان الجرائم والعقوبات وموانع المسؤولية.'],
+      ['قانون الإجراءات والمحاكمات الجزائية رقم 17 لسنة 1960', 'ضمانات التحقيق والمحاكمة وحقوق الدفاع.'],
+      ['قانون مكافحة جرائم تقنية المعلومات رقم 63 لسنة 2015', 'الجرائم الإلكترونية والدليل الرقمي.'],
+      ['الدستور الكويتي — المادة 34', 'المتهم بريء حتى تثبت إدانته في محاكمة قانونية تؤمَّن له فيها ضمانات الدفاع.'],
+    ],
+    how: [
+      'لا يُصدر النظام أي حكم إدانة أو براءة أو عقوبة؛ مخرجاته تقارير تحليلية تُعرض على القاضي المختص.',
+      'يرتّب الأدلة زمنياً ويكشف التناقضات بين الأقوال ويشير إلى مواضع الشك التي تُفسَّر لمصلحة المتهم.',
+      'يرصد الدفوع الإجرائية المحتملة (كبطلان الإجراءات) ليتحقق منها القاضي والدفاع على قدم المساواة.',
+      'تُسجَّل كل عملية في سجل تدقيق غير قابل للتعديل، ويحق للدفاع الاطلاع على منهج التحليل.',
+    ],
+  },
+  {
+    id: 'family', icon: 'users', title: 'دائرة الأحوال الشخصية والنزاعات الأسرية', en: 'Personal Status & Family Chamber',
+    desc: 'النفقات والحضانة والرؤية، وتوثيق الصلح الأسري — بلغة رحيمة تحفظ كرامة الأسرة ومصلحة المحضون.',
+    stats: [['27,031', 'دعوى'], ['3.4 د', 'متوسط الفصل'], ['99.1%', 'دقة']],
+    oversight: 'إشراف بشري معزَّز مع إحالة للتسوية الأسرية', level: 2,
+    laws: [
+      ['قانون الأحوال الشخصية رقم 51 لسنة 1984', 'الزواج والنفقة والحضانة والفرقة بين الزوجين.'],
+      ['قانون الأحوال الشخصية الجعفرية رقم 124 لسنة 2019', 'الأحكام الخاصة بالمذهب الجعفري.'],
+      ['قانون إنشاء محكمة الأسرة رقم 12 لسنة 2015', 'مراكز تسوية المنازعات الأسرية وإجراءاتها.'],
+      ['المبدأ الحاكم', 'مصلحة المحضون الفضلى مقدَّمة على كل اعتبار.'],
+    ],
+    how: [
+      'يحدّد المذهب واجب التطبيق وفق بيانات الأطراف، ويطبّق النصوص الخاصة به دون خلط.',
+      'يقترح تقدير النفقة استرشاداً بدخل الملتزم وحاجة المستحق، مع إبراز العوامل ليقدّرها القاضي.',
+      'يوصي بالإحالة إلى مركز تسوية المنازعات الأسرية قبل الفصل متى كانت فرص الصلح قائمة.',
+      'يحجب البيانات الحساسة تلقائياً ويقصر الاطلاع على أطراف الدعوى والقاضي.',
+    ],
+  },
+];
+
+const grid = $('#chamberGrid');
+grid.innerHTML = CHAMBERS.map((c, i) => `
+  <article class="chamber glass frame spot p-7 sm:p-8 reveal" data-delay="${i + 1}" data-id="${c.id}" tabindex="0" role="button" aria-label="استكشاف ${c.title}">
+    <span class="num">0${i + 1}</span>
+    <div class="flex items-start gap-5">
+      <span class="icon-hex shrink-0"><i data-lucide="${c.icon}" class="w-7 h-7"></i></span>
+      <div class="min-w-0">
+        <h3 class="font-amiri text-2xl font-bold t-text">${c.title}</h3>
+        <div class="text-xs t-gold font-semibold mt-1 tracking-wide" dir="ltr" style="text-align:right">${c.en}</div>
+      </div>
+    </div>
+    <p class="mt-5 t-text2 leading-8">${c.desc}</p>
+    <div class="mt-6 grid grid-cols-3 gap-3">
+      ${c.stats.map(s => `<div class="rounded-xl py-3 text-center border b-line" style="background:var(--surface-2)"><div class="font-extrabold t-text" dir="ltr">${s[0]}</div><div class="text-[11px] t-muted mt-0.5">${s[1]}</div></div>`).join('')}
+    </div>
+    <div class="mt-6 flex items-center justify-between gap-3">
+      <span class="text-xs font-bold flex items-center gap-1.5" style="color:${c.level === 3 ? 'var(--danger)' : 'var(--ok)'}"><i data-lucide="${c.level === 3 ? 'shield-alert' : 'shield-check'}" class="w-4 h-4"></i>${c.oversight}</span>
+      <span class="arrow t-gold flex items-center gap-1 text-sm font-bold shrink-0">استكشف <i data-lucide="arrow-left" class="w-4 h-4"></i></span>
+    </div>
+  </article>`).join('');
+
+const modal = $('#modal'), panel = $('#modalPanel');
+let lastFocus = null;
+function openChamber(id) {
+  const c = CHAMBERS.find(x => x.id === id); if (!c) return;
+  lastFocus = document.activeElement;
+  panel.innerHTML = `
+    <div class="relative p-6 sm:p-10" style="background:linear-gradient(160deg,color-mix(in srgb,var(--gold) 10%,transparent),transparent 45%)">
+      <button class="absolute top-5 left-5 w-10 h-10 rounded-xl glass grid place-items-center t-muted" data-close aria-label="إغلاق"><i data-lucide="x" class="w-5 h-5"></i></button>
+      <div class="flex items-center gap-5">
+        <span class="icon-hex shrink-0" style="width:72px;height:72px;display:grid;place-items:center;clip-path:polygon(25% 5%,75% 5%,100% 50%,75% 95%,25% 95%,0 50%);background:linear-gradient(145deg,color-mix(in srgb,var(--gold) 34%,transparent),color-mix(in srgb,var(--gold) 6%,transparent))"><i data-lucide="${c.icon}" class="w-8 h-8 t-gold"></i></span>
+        <div><div class="text-xs t-gold font-bold tracking-wide" dir="ltr" style="text-align:right">${c.en}</div><h3 id="modalTitle" class="font-amiri text-3xl font-bold t-text mt-1">${c.title}</h3></div>
+      </div>
+      ${c.level === 3 ? `<div class="mt-6 rounded-2xl p-4 flex gap-3 items-start border" style="border-color:color-mix(in srgb,var(--danger) 45%,transparent);background:color-mix(in srgb,var(--danger) 10%,transparent)"><i data-lucide="shield-alert" class="w-5 h-5 shrink-0 mt-0.5" style="color:var(--danger)"></i><div class="text-sm leading-7 t-text"><b>ضمانة دستورية:</b> الذكاء الاصطناعي في هذه الدائرة أداة تحليل مساندة فحسب. الإدانة والعقوبة قرار قضائي بشري خالص، ويُكفل للمتهم حق الدفاع والاطلاع على منهج التحليل.</div></div>` : ''}
+
+      <h4 class="mt-9 font-bold text-lg t-text flex items-center gap-2"><i data-lucide="library" class="w-5 h-5 t-gold"></i> المرجعية التشريعية</h4>
+      <div class="mt-4 grid sm:grid-cols-2 gap-3">
+        ${c.laws.map(l => `<div class="law-chip"><i data-lucide="book-marked" class="w-5 h-5 t-gold shrink-0 mt-1"></i><div><div class="font-bold text-sm t-text">${l[0]}</div><div class="text-xs t-muted mt-1 leading-6">${l[1]}</div></div></div>`).join('')}
+      </div>
+
+      <h4 class="mt-9 font-bold text-lg t-text flex items-center gap-2"><i data-lucide="cpu" class="w-5 h-5 t-gold"></i> كيف يتعامل الذكاء الاصطناعي مع النصوص؟</h4>
+      <div class="mt-5 space-y-6" style="counter-reset:step">
+        ${c.how.map(s => `<div class="step t-text2 leading-8">${s}</div>`).join('')}
+      </div>
+
+      <div class="mt-9 flex flex-wrap gap-3">
+        ${c.id === 'commercial' ? `<button class="btn btn-gold" data-go="commercial"><i data-lucide="play" class="w-4 h-4"></i> جرّب محاكاة دعوى تجارية</button>` : ''}
+        <button class="btn btn-ghost" data-ask="${c.title}"><i data-lucide="message-circle" class="w-4 h-4"></i> اسأل جسّار عن هذه الدائرة</button>
+      </div>
+      <p class="mt-6 text-xs t-muted leading-6">الإشارات التشريعية للاسترشاد ضمن نموذج مفاهيمي، ويُرجع في نصوصها النافذة إلى المصادر الرسمية.</p>
+    </div>`;
+  icons();
+  modal.classList.add('open'); document.body.style.overflow = 'hidden';
+  setTimeout(() => $('[data-close]', panel)?.focus(), 50);
+}
+function closeModal() {
+  modal.classList.remove('open'); document.body.style.overflow = '';
+  if (lastFocus) lastFocus.focus();
+}
+grid.addEventListener('click', e => { const card = e.target.closest('.chamber'); if (card) openChamber(card.dataset.id); });
+grid.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('chamber')) { e.preventDefault(); openChamber(e.target.dataset.id); } });
+modal.addEventListener('click', e => {
+  if (e.target.closest('[data-close]')) return closeModal();
+  const go = e.target.closest('[data-go]');
+  if (go) { closeModal(); setType(go.dataset.go); $('#trial').scrollIntoView({ behavior: 'smooth' }); return; }
+  const ask = e.target.closest('[data-ask]');
+  if (ask) { closeModal(); openChat(); userSays('حدّثني عن ' + ask.dataset.ask); }
+});
+addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (modal.classList.contains('open')) closeModal();
+  else if ($('#chatPanel').classList.contains('open')) toggleChat(false);
+});
+modal.addEventListener('keydown', e => {
+  if (e.key !== 'Tab') return;
+  const f = $$('button, a[href], [tabindex]:not([tabindex="-1"])', panel); if (!f.length) return;
+  const first = f[0], last = f[f.length - 1];
+  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+});
+
+/* ------------------------------------------------------------------ */
+/* Trial simulator                                                      */
+/* ------------------------------------------------------------------ */
+const SAMPLES = [
+  ['commercial', 'أبرمت شركتنا عقد توريد مواد بناء مع شركة المدعى عليها بتاريخ 2025/03/10 بقيمة إجمالية قدرها 45,000 دينار كويتي. قمنا بتسليم البضاعة كاملة وفق محاضر الاستلام الموقعة، وأصدرنا الفاتورة، إلا أن المدعى عليها امتنعت عن السداد رغم المطالبة الودية والإنذار الرسمي، وتأخرت أكثر من ستة أشهر عن موعد الاستحقاق.'],
+  ['commercial', 'حرر المدعى عليه لصالحي شيكاً بمبلغ 12,500 دينار كويتي سداداً لقيمة بضاعة اشتراها مني بموجب عقد بيع تجاري، وعند تقديم الشيك للبنك في تاريخ الاستحقاق ارتد لعدم كفاية الرصيد، ولم يسدد المبلغ حتى الآن رغم مطالبته.'],
+  ['labour', 'عملت لدى شركة خاصة بوظيفة محاسب لمدة 8 سنوات براتب شهري قدره 900 دينار كويتي، وفوجئت بإنهاء خدماتي فجأة دون إنذار ودون ذكر سبب مشروع، ولم تصرف لي الشركة مكافأة نهاية الخدمة ولا بدل رصيد الإجازات المستحقة.'],
+  ['labour', 'أعمل لدى مؤسسة مقاولات منذ 3 سنوات براتب 450 دينار، ولم أستلم رواتبي عن الأشهر الأربعة الأخيرة رغم استمراري في العمل، وتقدمت بشكوى إلى الهيئة العامة للقوى العاملة دون نتيجة.'],
+];
+
+let caseType = 'commercial', running = false;
+const seg = $('#caseType'), ta = $('#caseText');
+function setType(v) {
+  caseType = v; seg.dataset.v = v;
+  $$('button', seg).forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === v)));
+  ta.placeholder = v === 'commercial'
+    ? 'مثال: أبرمت شركتنا عقد توريد مع المدعى عليه بقيمة 45,000 دينار كويتي، وقمنا بتسليم البضاعة كاملة، إلا أنه امتنع عن سداد الفاتورة رغم المطالبة...'
+    : 'مثال: عملت لدى شركة لمدة 6 سنوات براتب 800 دينار، وتم فصلي دون إنذار ولم أستلم مكافأة نهاية الخدمة...';
+}
+$$('button', seg).forEach(b => b.addEventListener('click', () => setType(b.dataset.v)));
+ta.addEventListener('input', () => { $('#charCount').textContent = ta.value.length; });
+$$('.sample-btn').forEach(b => b.addEventListener('click', () => {
+  const [type, text] = SAMPLES[+b.dataset.sample];
+  setType(type); ta.value = text; ta.dispatchEvent(new Event('input')); ta.focus();
+}));
+
+const toLatin = s => s.replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/٬/g, ',').replace(/٫/g, '.');
+const num = s => parseFloat(String(s).replace(/,/g, ''));
+const has = (t, re) => re.test(t);
+
+function analyse(type, raw) {
+  const t = toLatin(raw);
+  const amountM = t.match(/(\d[\d,]*(?:\.\d+)?)\s*(?:ألف\s*)?(?:د\.?\s?ك|دينار|KWD)/i);
+  let amount = amountM ? num(amountM[1]) : null;
+  if (amount && /ألف/.test(amountM[0])) amount *= 1000;
+  const salaryM = t.match(/(?:راتب|أجر|الراتب|الأجر|براتب|بأجر|راتبي)[^\d]{0,25}(\d[\d,]*(?:\.\d+)?)/);
+  const salary = salaryM ? num(salaryM[1]) : null;
+  const yearsM = t.match(/(\d+(?:\.\d+)?)\s*(?:سنوات|سنة|سنين|أعوام|عاماً|عاما|عام)/);
+  const years = yearsM ? num(yearsM[1]) : null;
+  const f = {
+    contract: has(t, /عقد|اتفاق|اتفاقية/), supply: has(t, /توريد|بضاع|تسليم|شحن|فاتور/), cheque: has(t, /شيك|شك\b/),
+    delay: has(t, /تأخ|امتنع|مماطل|لم يسدد|عدم سداد|رفض السداد|لم يدفع|لم يتم السداد/), notice: has(t, /إنذار|انذار|مطالبة|أنذر/),
+    company: has(t, /شريك|شركاء|مساهم|الجمعية العامة/), penalty: has(t, /شرط جزائي/), bounced: has(t, /ارتد|رصيد|مرتجع/),
+    dismissal: has(t, /فصل|إنهاء|انهاء|استغناء|طرد|أنهت|إنهاء خدماتي/), noWarning: has(t, /دون إنذار|بدون إنذار|فجأة|دون سابق/),
+    wages: has(t, /رواتب|أجور|لم أستلم|لم استلم|متأخرة|رواتبي/), leave: has(t, /إجاز|اجاز/), indemnity: has(t, /مكافأة|مكافاة|نهاية الخدمة/),
+    pam: has(t, /القوى العاملة|شكوى/),
+  };
+  return { t, amount, salary, years, f };
+}
+
+function indemnity(salary, years) {
+  // Law 6/2010 Art. 51 (monthly-paid): 15 days per year for first 5 years, one month per year thereafter, capped at 1.5 years' pay.
+  const daily = salary / 26;
+  const first = Math.min(years, 5) * 15 * daily;
+  const rest = Math.max(0, years - 5) * salary;
+  return Math.min(first + rest, salary * 18);
+}
+
+function buildVerdict(type, raw) {
+  const { amount, salary, years, f } = analyse(type, raw);
+  const reasons = [], orders = [], warnings = [];
+  const isC = type === 'commercial';
+  const court = isC ? 'المحكمة الكلية — الدائرة التجارية' : 'المحكمة الكلية — الدائرة العمالية';
+  const caseNo = `${Math.floor(rand(1000, 9999))} / 2026 ${isC ? 'تجاري كلي' : 'عمالي كلي'}`;
+  let signals = 0;
+
+  reasons.push({
+    t: 'في الاختصاص وقبول الدعوى',
+    b: `حيث إن الدعوى أُقيمت بالإجراءات المقررة قانوناً، وكانت المنازعة ${isC ? 'ناشئة عن علاقة تجارية تدخل في نطاق الأعمال التجارية' : 'ناشئة عن علاقة عمل في القطاع الأهلي'}، فإن المحكمة تكون مختصة بنظرها${amount ? ` بحسب قيمتها البالغة ${fmt(amount)} د.ك وفق قواعد الاختصاص القيمي` : ''}، ومن ثم فهي مقبولة شكلاً.`,
+    r: ['قانون المرافعات المدنية والتجارية رقم 38 لسنة 1980'],
+  });
+
+  if (isC) {
+    if (f.contract || f.supply) { signals += 2; reasons.push({
+      t: 'في القوة الملزمة للعقد',
+      b: 'وحيث إن العقد شريعة المتعاقدين، فلا يجوز لأحدهما نقضه أو تعديله إلا باتفاق الطرفين أو للأسباب التي يقررها القانون، ويجب تنفيذه طبقاً لما اشتمل عليه وبطريقة تتفق مع ما يوجبه حسن النية. وقد ثبت من الأوراق قيام العلاقة التعاقدية بين الطرفين ووفاء المدعي بالتزامه' + (f.supply ? ' بالتوريد والتسليم.' : '.'),
+      r: ['القانون المدني 67/1980 — م196', 'م197 (حسن النية)'],
+    }); }
+    if (f.supply) { signals++; reasons.push({
+      t: 'في الإثبات',
+      b: 'وحيث إن المحررات المقدمة — من محاضر استلام وفواتير — لم يطعن عليها المدعى عليه بثمة مطعن، فتطمئن إليها المحكمة وتعوّل عليها في ثبوت المديونية، إذ من المقرر أن تحصيل فهم الواقع وتقدير الأدلة من سلطة محكمة الموضوع متى أقامت قضاءها على أسباب سائغة لها أصلها الثابت في الأوراق.',
+      r: ['قانون الإثبات 39/1980', 'مبدأ مستقر — محكمة التمييز'],
+    }); }
+    if (f.cheque) { signals += 2; reasons.push({
+      t: 'في الورقة التجارية',
+      b: `وحيث إن الشيك أداة وفاء تجري مجرى النقود${f.bounced ? '، وقد ثبت ارتداده لعدم كفاية الرصيد' : ''}، وكان المدعى عليه لم يقدّم ما يفيد براءة ذمته من قيمته، فإن المحكمة تقضي بإلزامه بها، وذلك دون إخلال بالمسؤولية الجزائية عن إصدار شيك بدون رصيد التي تختص بها الدائرة الجزائية بضماناتها.`,
+      r: ['قانون التجارة 68/1980 — أحكام الشيك'],
+    }); }
+    if (f.delay) { signals++; reasons.push({
+      t: 'في التأخير والتعويض',
+      b: `وحيث إن المدعى عليه قد تأخر في الوفاء بالتزامه في ميعاد استحقاقه${f.notice ? ' رغم إنذاره' : ''}، وكان محل الالتزام مبلغاً من النقود معلوم المقدار وقت الطلب، فإنه يحق للدائن المطالبة بالتعويض عن التأخير وفقاً للأحكام المقررة في المواد التجارية، على أن تقدّره المحكمة في حدود الطلبات.`,
+      r: ['قانون التجارة 68/1980', 'القانون المدني 67/1980'],
+    }); }
+    if (f.company) { signals++; reasons.push({
+      t: 'في علاقة الشركاء',
+      b: 'وحيث إن النزاع يتصل بحقوق الشركاء، فإن المحكمة تُعمل أحكام قانون الشركات وعقد التأسيس والنظام الأساسي، وتوصي بندب خبير حسابي لتصفية الحساب بين الطرفين.',
+      r: ['قانون الشركات 1/2016'],
+    }); }
+    if (f.penalty) { signals++; reasons.push({ t: 'في الشرط الجزائي', b: 'وحيث إن الطرفين اتفقا مقدماً على قيمة التعويض، فإن للمحكمة أن تخفّضه إذا أثبت المدين أن التقدير كان مبالغاً فيه أو أن الالتزام الأصلي قد نُفّذ في جزء منه.', r: ['القانون المدني 67/1980'] }); }
+
+    orders.push(amount
+      ? `إلزام المدعى عليه بأن يؤدي للمدعي مبلغاً وقدره ${fmt(amount)} د.ك (${words(amount)} ديناراً كويتياً) قيمة المديونية الثابتة`
+      : 'إلزام المدعى عليه بأن يؤدي للمدعي قيمة المديونية الثابتة بالأوراق، على أن يُحدَّد مقدارها بمعرفة خبير حسابي تندبه المحكمة');
+    if (f.delay) orders.push('والتعويض عن التأخير في الوفاء من تاريخ المطالبة القضائية حتى تمام السداد، في حدود ما تقدّره المحكمة');
+    if (!amount) warnings.push('لم يُستدل على قيمة المطالبة في الملخص؛ يُستحسن ذكر المبلغ بالدينار الكويتي.');
+  } else {
+    reasons.push({
+      t: 'في المرحلة السابقة على الدعوى',
+      b: `وحيث إن المنازعات العمالية تُعرض ابتداءً على إدارة علاقات العمل بالهيئة العامة للقوى العاملة لمحاولة تسويتها ودياً، ثم تُحال إلى المحكمة المختصة عند تعذّر ذلك${f.pam ? '، وقد ثبت تقدّم المدعي بشكواه دون تسوية' : ''}، فإن الدعوى تكون قد استوفت شرط قبولها.`,
+      r: ['قانون العمل في القطاع الأهلي 6/2010'],
+    });
+    if (f.dismissal) { signals += 2; reasons.push({
+      t: 'في إنهاء علاقة العمل',
+      b: `وحيث إنه لم يثبت من الأوراق قيام صاحب العمل بإخطار العامل بمهلة الإنذار المقررة قانوناً${f.noWarning ? '، وقد جاء الإنهاء مفاجئاً' : ''}، ولم يقدّم مبرراً مشروعاً للإنهاء، فإن الإنهاء يغدو تعسفياً مستوجباً للتعويض عن مهلة الإنذار وعمّا لحق العامل من ضرر، وهو ما تقدّره المحكمة بحسب ظروف الدعوى ومدة الخدمة.`,
+      r: ['قانون العمل 6/2010 — أحكام الإنذار والإنهاء التعسفي'],
+    }); }
+    if (f.indemnity || f.dismissal) { signals++; reasons.push({
+      t: 'في مكافأة نهاية الخدمة',
+      b: `وحيث إن العامل يستحق عند انتهاء خدمته مكافأة قوامها أجر خمسة عشر يوماً عن كل سنة من السنوات الخمس الأولى، وأجر شهر عن كل سنة من السنوات التالية، بحد أقصى أجر سنة ونصف${salary && years ? `؛ وإذ كانت مدة خدمة المدعي ${fmt(years, years % 1 ? 1 : 0)} سنة بأجر شهري قدره ${fmt(salary)} د.ك، فإن مكافأته تُقدَّر حسابياً بنحو ${fmt(indemnity(salary, years), 3)} د.ك.` : '.'}`,
+      r: ['قانون العمل 6/2010 — م51'],
+    }); }
+    if (f.wages) { signals += 2; reasons.push({
+      t: 'في الأجور المتأخرة',
+      b: 'وحيث إن الأجر هو المقابل الأساسي لالتزام العامل بأداء العمل، ويلتزم صاحب العمل بصرفه في مواعيده دون تأخير، ولم يقدّم المدعى عليه ما يفيد الوفاء به عن المدة المطالب بها، فإنه يُلزم بأدائه.',
+      r: ['قانون العمل 6/2010 — أحكام الأجور'],
+    }); }
+    if (f.leave) { signals++; reasons.push({ t: 'في بدل الإجازات', b: 'وحيث إن للعامل الحق في المقابل النقدي لرصيد إجازاته السنوية التي لم يستنفدها عند انتهاء خدمته، ولم يثبت حصوله عليها، فإنه يستحق بدلها محسوباً على أساس آخر أجر.', r: ['قانون العمل 6/2010 — أحكام الإجازات'] }); }
+
+    if (salary && years && (f.indemnity || f.dismissal)) orders.push(`إلزام المدعى عليها بأن تؤدي للمدعي مكافأة نهاية الخدمة بمبلغ تقديري قدره ${fmt(indemnity(salary, years), 3)} د.ك`);
+    else if (f.indemnity || f.dismissal) orders.push('إلزام المدعى عليها بأن تؤدي للمدعي مكافأة نهاية الخدمة وفق ما يسفر عنه الحساب');
+    if (f.dismissal) orders.push('وبأن تؤدي له بدل مهلة الإنذار والتعويض عن الإنهاء التعسفي بحسب ما تقدّره المحكمة');
+    if (f.wages) { orders.push(`وبأن تؤدي له الأجور المتأخرة${salary ? ` على أساس أجر شهري قدره ${fmt(salary)} د.ك` : ''} عن المدة المطالب بها`); }
+    if (f.leave) orders.push('وبدل رصيد الإجازات السنوية غير المستنفدة');
+    if (!orders.length) orders.push('إلزام المدعى عليها بأن تؤدي للمدعي مستحقاته العمالية الثابتة بالأوراق وفق ما يسفر عنه تقرير الخبير');
+    if (!salary) warnings.push('لم يُذكر الأجر الشهري؛ ذِكره يتيح حساب المكافأة بدقة.');
+    if (!years) warnings.push('لم تُذكر مدة الخدمة بالسنوات.');
+  }
+
+  reasons.push({
+    t: 'في المصروفات',
+    b: 'وحيث إن من يخسر الدعوى يُلزم بمصروفاتها، فإن المحكمة تُلزم المدعى عليه بها وبمقابل أتعاب المحاماة الفعلية.',
+    r: ['قانون المرافعات 38/1980 — أحكام المصروفات'],
+  });
+  orders.push('وألزمت المدعى عليه المصروفات ومقابل أتعاب المحاماة الفعلية');
+
+  if (raw.trim().length < 80) warnings.push('الملخص موجز؛ كلما زادت التفاصيل ارتفعت دقة التسبيب.');
+  if (signals === 0) warnings.push('لم تُرصد وقائع قانونية مميزة؛ جُرّب ذكر العقد أو الفاتورة أو الفصل أو الأجر.');
+  const conf = Math.min(97.8, 84 + signals * 2.3 + (amount || salary ? 3 : 0) + Math.min(raw.length / 120, 4)).toFixed(1);
+
+  return { court, caseNo, reasons, orders, warnings, conf, isC };
+}
+
+// minimal Arabic number-to-words for thousands (verdict flourish)
+function words(n) {
+  n = Math.round(n);
+  const ones = ['', 'واحد', 'اثنان', 'ثلاثة', 'أربعة', 'خمسة', 'ستة', 'سبعة', 'ثمانية', 'تسعة', 'عشرة', 'أحد عشر', 'اثنا عشر', 'ثلاثة عشر', 'أربعة عشر', 'خمسة عشر', 'ستة عشر', 'سبعة عشر', 'ثمانية عشر', 'تسعة عشر'];
+  const tens = ['', '', 'عشرون', 'ثلاثون', 'أربعون', 'خمسون', 'ستون', 'سبعون', 'ثمانون', 'تسعون'];
+  const hundreds = ['', 'مائة', 'مائتان', 'ثلاثمائة', 'أربعمائة', 'خمسمائة', 'ستمائة', 'سبعمائة', 'ثمانمائة', 'تسعمائة'];
+  const below1000 = x => {
+    const parts = [], h = Math.floor(x / 100), r = x % 100;
+    if (h) parts.push(hundreds[h]);
+    if (r) { if (r < 20) parts.push(ones[r]); else { const o = r % 10, t = Math.floor(r / 10); parts.push(o ? `${ones[o]} و${tens[t]}` : tens[t]); } }
+    return parts.join(' و');
+  };
+  if (n === 0) return 'صفر';
+  if (n >= 1e6) return fmt(n);
+  const th = Math.floor(n / 1000), rest = n % 1000, out = [];
+  if (th) out.push(th === 1 ? 'ألف' : th === 2 ? 'ألفان' : th <= 10 ? `${below1000(th)} آلاف` : `${below1000(th)} ألفاً`);
+  if (rest) out.push(below1000(rest));
+  return out.join(' و');
+}
+
+const LOG = {
+  commercial: [
+    'تحليل البنية اللغوية لصحيفة الدعوى وتطبيع النص العربي',
+    'استخراج الأطراف ومحل الالتزام والقيمة وتواريخ الاستحقاق',
+    'تصنيف العلاقة: عمل تجاري ← قانون التجارة 68/1980',
+    'مطابقة الوقائع مع قواعد العقد في القانون المدني 67/1980',
+    'التحقق من الاختصاص والإجراءات وفق قانون المرافعات 38/1980',
+    'استرجاع المبادئ المستقرة لمحكمة التمييز في تقدير الأدلة',
+    'بناء سلسلة التسبيب وفحص الاتساق المنطقي',
+    'صياغة مسودة الحكم الأولي بالأسلوب القضائي',
+  ],
+  labour: [
+    'تحليل البنية اللغوية لصحيفة الدعوى وتطبيع النص العربي',
+    'استخراج مدة الخدمة والأجر وسبب انتهاء العلاقة',
+    'تصنيف النزاع: علاقة عمل أهلي ← قانون العمل 6/2010',
+    'التحقق من شرط العرض على الهيئة العامة للقوى العاملة',
+    'احتساب المستحقات وفق قواعد مكافأة نهاية الخدمة',
+    'استرجاع المبادئ المستقرة لمحكمة التمييز في المواد العمالية',
+    'بناء سلسلة التسبيب وفحص الاتساق المنطقي',
+    'صياغة مسودة الحكم الأولي بالأسلوب القضائي',
+  ],
+};
+
+function drawNeural() {
+  const svg = $('#neuralSvg'); const layers = [4, 7, 9, 7, 3]; const nodes = [];
+  layers.forEach((n, li) => { for (let i = 0; i < n; i++) nodes.push({ x: 40 + li * 130, y: (i + 1) * 120 / (n + 1), li }); });
+  let html = '';
+  nodes.forEach(a => nodes.forEach(b => { if (b.li === a.li + 1 && Math.random() > 0.35) html += `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" opacity="${rand(.25, .8).toFixed(2)}"/>`; }));
+  nodes.forEach(n => html += `<circle cx="${n.x}" cy="${n.y}" r="3.2" class="pulse" style="animation-delay:${rand(0, 1.4).toFixed(2)}s"/>`);
+  svg.innerHTML = html;
+}
+const hexChars = '0123456789ABCDEF';
+const hexLine = () => Array.from({ length: 140 }, (_, i) => (i % 5 === 4 ? ' ' : hexChars[Math.floor(Math.random() * 16)])).join('');
+
+$('#runBtn').addEventListener('click', run);
+async function run() {
+  if (running) return;
+  const text = ta.value.trim();
+  if (text.length < 20) {
+    toast('يُرجى كتابة ملخص للنزاع لا يقل عن 20 حرفاً، أو اختيار نموذج جاهز');
+    $('#taWrap').animate([{ transform: 'translateX(0)' }, { transform: 'translateX(-8px)' }, { transform: 'translateX(8px)' }, { transform: 'translateX(0)' }], { duration: 350 });
+    ta.focus(); return;
+  }
+  running = true;
+  const btn = $('#runBtn'); btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> جارٍ التحليل…';
+  $('#taWrap').classList.add('scanning');
+  $('#idleState').classList.add('hidden'); $('#verdictWrap').classList.add('hidden'); $('#loadState').classList.remove('hidden');
+  if (innerWidth < 1024) $('#loadState').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  drawNeural();
+  const cons = $('#console'); cons.innerHTML = '';
+  const hx = setInterval(() => { $('#hex1').textContent = hexLine(); $('#hex2').textContent = hexLine(); }, 90);
+  const steps = LOG[caseType];
+  for (let i = 0; i < steps.length; i++) {
+    const ln = document.createElement('div'); ln.className = 'ln';
+    ln.innerHTML = `<span class="st"><span class="spinner"></span></span><span class="t-muted" dir="ltr">[${String(i + 1).padStart(2, '0')}]</span><span>${steps[i]}…</span>`;
+    cons.appendChild(ln);
+    const pct = Math.round((i + 1) / steps.length * 100);
+    await sleep(rand(380, 620));
+    ln.querySelector('.st').innerHTML = '<i data-lucide="check" class="w-4 h-4" style="color:var(--ok)"></i>'; icons();
+    $('#progBar').style.width = pct + '%'; $('#pct').textContent = pct + '%';
+  }
+  await sleep(350);
+  clearInterval(hx);
+  $('#taWrap').classList.remove('scanning');
+  renderVerdict(buildVerdict(caseType, text), text);
+  btn.disabled = false; btn.innerHTML = '<i data-lucide="sparkles" class="w-5 h-5"></i> إعادة التحليل'; icons();
+  running = false;
+}
+
+function renderVerdict(v, text) {
+  const now = new Date();
+  const g = now.toLocaleDateString('ar-KW-u-nu-latn', { year: 'numeric', month: 'long', day: 'numeric' });
+  let hj = '';
+  try { hj = now.toLocaleDateString('ar-SA-u-ca-islamic-umalqura-nu-latn', { year: 'numeric', month: 'long', day: 'numeric' }); } catch (e) {}
+  const summary = text.length > 360 ? text.slice(0, 360) + '…' : text;
+  const wrap = $('#verdictWrap');
+  wrap.innerHTML = `
+  <article class="verdict frame p-6 sm:p-10" id="verdict">
+    <div class="watermark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg></div>
+
+    <div class="sec relative text-center">
+      <div class="font-amiri text-xl t-text2">بسم الله الرحمن الرحيم</div>
+      <div class="divider-star my-4"><span></span><i data-lucide="sparkle" class="w-4 h-4"></i><span></span></div>
+      <div class="inline-flex items-center gap-2 text-xs font-bold px-3 py-1 rounded-full border" style="border-color:var(--warn);color:var(--warn)"><i data-lucide="flask-conical" class="w-3.5 h-3.5"></i> مسودة محاكاة تعليمية — غير ملزمة</div>
+      <h3 class="font-amiri text-3xl sm:text-4xl font-bold mt-4 gold-text">مسودة الحكم الأولي</h3>
+      <p class="mt-2 text-sm t-muted">مستندة إلى قانون المرافعات الكويتي ومبادئ محكمة التمييز</p>
+    </div>
+
+    <div class="sec relative mt-8 grid sm:grid-cols-3 gap-3 text-sm">
+      <div class="rounded-xl border b-line p-3" style="background:var(--surface-2)"><div class="text-xs t-muted">المحكمة</div><div class="font-bold t-text mt-1">${v.court}</div></div>
+      <div class="rounded-xl border b-line p-3" style="background:var(--surface-2)"><div class="text-xs t-muted">رقم القيد (افتراضي)</div><div class="font-bold t-text mt-1" dir="ltr" style="text-align:right">${v.caseNo}</div></div>
+      <div class="rounded-xl border b-line p-3" style="background:var(--surface-2)"><div class="text-xs t-muted">التاريخ</div><div class="font-bold t-text mt-1">${g}</div>${hj ? `<div class="text-[11px] t-muted">${hj}</div>` : ''}</div>
+    </div>
+
+    <div class="sec relative mt-9">
+      <h4><i data-lucide="file-text" class="w-5 h-5"></i> الوقائع</h4>
+      <p class="mt-4 t-text2 leading-9">تخلص وقائع الدعوى — حسبما يبين من صحيفتها وسائر الأوراق — في أن المدعي أقامها بطلب الحكم له بطلباته، وذلك على سند من القول إن: <span class="t-text font-semibold">«${esc(summary)}»</span></p>
+    </div>
+
+    <div class="sec relative mt-9">
+      <h4><i data-lucide="scale" class="w-5 h-5"></i> الأسباب</h4>
+      <p class="mt-4 t-text2">بعد الاطلاع على الأوراق، وسماع المرافعة، والمداولة قانوناً:</p>
+      <div class="mt-5 space-y-6">
+        ${v.reasons.map((r, i) => `
+          <div class="reason">
+            <div class="font-bold t-text flex items-center gap-2"><span class="t-gold font-mono text-sm" dir="ltr">${String(i + 1).padStart(2, '0')}</span> ${r.t}</div>
+            <p class="mt-2 t-text2 leading-9">${r.b}</p>
+            <div class="mt-2">${r.r.map(x => `<span class="ref"><i data-lucide="bookmark" class="w-3 h-3"></i>${x}</span>`).join('')}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="sec relative mt-10 rounded-2xl p-6 border" style="border-color:var(--line-2);background:color-mix(in srgb,var(--gold) 7%,transparent)">
+      <h4><i data-lucide="gavel" class="w-5 h-5"></i> المنطوق المقترح</h4>
+      <p class="mt-3 t-text2">فلهذه الأسباب، حكمت المحكمة — بعد اعتماد القاضي المختص:</p>
+      <p class="operative t-text mt-3" id="operative"></p>
+      <div class="flex items-end justify-between mt-6 gap-4 flex-wrap">
+        <div class="text-sm t-muted leading-7">أمين السر: النظام الآلي<br>القاضي: <span class="t-text font-bold">بانتظار الاعتماد البشري</span></div>
+        <div class="seal" id="seal"><div class="text-center leading-tight"><i data-lucide="scale" class="w-6 h-6 mx-auto"></i><div class="text-[10px] font-bold mt-1">مسودة<br>محاكاة</div></div></div>
+      </div>
+    </div>
+
+    <div class="sec relative mt-8 grid sm:grid-cols-2 gap-4">
+      <div class="rounded-2xl border b-line p-5" style="background:var(--surface-2)">
+        <div class="flex items-center justify-between text-sm"><span class="font-bold t-text">مؤشر ثقة التسبيب</span><span class="t-gold font-extrabold" dir="ltr">${v.conf}%</span></div>
+        <div class="conf-bar mt-3"><i id="confBar"></i></div>
+        <div class="text-xs t-muted mt-3 leading-6">يعكس اكتمال الوقائع ووضوح الإسناد التشريعي، ولا يعني ترجيح نتيجة الدعوى.</div>
+      </div>
+      <div class="rounded-2xl border b-line p-5" style="background:var(--surface-2)">
+        <div class="font-bold t-text text-sm flex items-center gap-2"><i data-lucide="lightbulb" class="w-4 h-4 t-gold"></i> ملاحظات المحرك</div>
+        <ul class="mt-3 space-y-1.5 text-xs t-muted leading-6">
+          ${(v.warnings.length ? v.warnings : ['الوقائع كافية لبناء تسبيب أولي متماسك.']).map(w => `<li>• ${w}</li>`).join('')}
+          <li>• المسودة خاضعة لمراجعة القاضي البشري وتعديله واعتماده.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="sec relative mt-8 flex flex-wrap gap-3 no-print">
+      <button class="btn btn-ghost !py-2.5 text-sm" id="copyV"><i data-lucide="copy" class="w-4 h-4"></i> نسخ المسودة</button>
+      <button class="btn btn-ghost !py-2.5 text-sm" id="printV"><i data-lucide="printer" class="w-4 h-4"></i> طباعة</button>
+      <button class="btn btn-ghost !py-2.5 text-sm" id="newV"><i data-lucide="rotate-ccw" class="w-4 h-4"></i> دعوى جديدة</button>
+      <button class="btn btn-ghost !py-2.5 text-sm" id="askV"><i data-lucide="message-circle" class="w-4 h-4"></i> ناقش المسودة مع جسّار</button>
+    </div>
+    <p class="sec relative mt-6 text-[11px] t-muted leading-6">تنبيه: هذه مسودة مولَّدة آلياً ضمن محاكاة تعليمية، والإشارات التشريعية للاسترشاد ويجب التحقق منها من المصادر الرسمية. لا تُعدّ استشارة قانونية ولا حكماً قضائياً.</p>
+  </article>`;
+  icons();
+  $('#loadState').classList.add('hidden'); wrap.classList.remove('hidden');
+  if (innerWidth < 1024) wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  const secs = $$('.sec', wrap);
+  secs.forEach((s, i) => setTimeout(() => s.classList.add('show'), reduced ? 0 : i * 260));
+  const opText = v.orders.join('، ') + '.';
+  setTimeout(() => typewrite($('#operative'), opText, () => {
+    $('#seal').classList.add('show'); $('#confBar').style.width = v.conf + '%';
+  }), reduced ? 0 : 5 * 260);
+
+  $('#copyV').onclick = async () => {
+    const plain = $('#verdict').innerText.replace(/\n{3,}/g, '\n\n');
+    try { await navigator.clipboard.writeText(plain); toast('تم نسخ المسودة'); } catch (e) { toast('تعذّر النسخ في هذا المتصفح'); }
+  };
+  $('#printV').onclick = () => print();
+  $('#newV').onclick = () => { wrap.classList.add('hidden'); $('#idleState').classList.remove('hidden'); ta.value = ''; ta.dispatchEvent(new Event('input')); $('#runBtn').innerHTML = '<i data-lucide="sparkles" class="w-5 h-5"></i> تشغيل التحليل القانوني الذكي'; icons(); ta.focus(); };
+  $('#askV').onclick = () => { openChat(); userSays('كيف تُعتمد مسودة الحكم؟'); };
+}
+
+function typewrite(el, text, done) {
+  if (reduced) { el.textContent = text; done && done(); return; }
+  el.classList.add('caret'); let i = 0;
+  (function tick() {
+    i += 2; el.textContent = text.slice(0, i);
+    if (i < text.length) setTimeout(tick, 16); else { el.classList.remove('caret'); done && done(); }
+  })();
+}
+
+/* ------------------------------------------------------------------ */
+/* Chat — "Jassar"                                                      */
+/* ------------------------------------------------------------------ */
+const chatPanel = $('#chatPanel'), fab = $('#chatFab'), msgs = $('#msgs');
+let role = null, started = false;
+
+const ROLES = {
+  'محامٍ': 'أهلاً بالأستاذ الفاضل، زميلَ رسالة الدفاع. يسعدني أن أعينك في إجراءات القيد والإعلان ومواعيد الطعون وصياغة الطلبات.',
+  'قاضٍ': 'مرحباً بحضرة القاضي الموقّر. تحت تصرّفكم لتلخيص الملفات، واستدعاء المبادئ المستقرة، وبيان منهج المحرك في أي مسودة معروضة عليكم؛ والقرار لكم وحدكم.',
+  'باحث قانوني': 'أهلاً بالباحث الكريم. يسرّني أن أشاركك خريطة التشريعات الكويتية ومنهجية الذكاء الاصطناعي في التسبيب وحدوده الأخلاقية.',
+  'متقاضٍ': 'حيّاك الله، ومرحباً بك. سأشرح لك الخطوات بلغة ميسّرة، مع التنويه بأن الاستعانة بمحامٍ مرخّص هي السبيل الأمثل لحماية حقوقك.',
+};
+
+const KB = [
+  { k: /^(السلام|سلام|مرحب|أهلا|اهلا|هلا|صباح|مساء)/, a: () => `وعليكم السلام ورحمة الله وبركاته، أهلاً بك في رحاب المحكمة الكويتية الذكية. ${role ? '' : 'هلّا أخبرتني بصفتك لأخاطبك بما يناسبك؟'}`, q: () => role ? ['كيف أرفع دعوى؟', 'مواعيد الطعن'] : Object.keys(ROLES) },
+  { k: /حدثني عن|حدّثني عن/, a: m => {
+      const c = CHAMBERS.find(x => m.includes(x.title));
+      if (!c) return 'يسرّني ذلك؛ أيّ الدوائر تقصد؟';
+      return `<b>${c.title}</b>: ${c.desc}<ul>${c.laws.slice(0, 3).map(l => `<li>${l[0]}</li>`).join('')}</ul><div class="mt-2">${c.oversight}.</div>`;
+    }, q: () => ['كيف يعمل الذكاء الاصطناعي هنا؟', 'جرّب المحاكاة'] },
+  { k: /رفع|أرفع|ارفع|قيد|صحيفة|أقيم|اقيم|إقامة دعوى/, a: () => `تُرفع الدعوى — وفق قانون المرافعات المدنية والتجارية رقم 38 لسنة 1980 — عبر الخطوات الآتية:<ul><li>إعداد <b>صحيفة الدعوى</b> متضمّنةً بيانات الخصوم والوقائع والطلبات وأسانيدها.</li><li>إيداعها إدارة الكتاب بالمحكمة المختصة وسداد الرسوم المقررة.</li><li>قيدها وتحديد جلسة، ثم <b>إعلان</b> المدعى عليه بها إعلاناً صحيحاً.</li><li>في المنصة الذكية: تُحلَّل الصحيفة فور قيدها وتُجهَّز مسودة أولية للقاضي.</li></ul>`, q: () => ['ما الرسوم القضائية؟', 'مواعيد الطعن', 'جرّب المحاكاة'] },
+  { k: /رسوم|تكلفة|كم يكلف|مصاريف/, a: () => 'تُقدَّر الرسوم القضائية وفق <b>قانون الرسوم القضائية رقم 17 لسنة 1973</b> وتعديلاته، وتختلف بحسب نوع الدعوى وقيمتها. ويُلزَم خاسر الدعوى بمصروفاتها في الأصل. وتُعفى بعض الدعاوى — كالعمالية المرفوعة من العامل — من الرسوم في مراحل معينة. يُستحسن التحقق من الجدول الرسمي النافذ.', q: () => ['كيف أرفع دعوى؟', 'الدعاوى العمالية'] },
+  { k: /طعن|استئناف|تمييز|ميعاد|مواعيد|مدة الطعن/, a: () => 'وفق القواعد العامة في قانون المرافعات:<ul><li>ميعاد <b>الاستئناف</b> ثلاثون يوماً ما لم ينص القانون على غير ذلك.</li><li>ميعاد <b>الطعن بالتمييز</b> ثلاثون يوماً كذلك.</li><li>تبدأ المواعيد في الأصل من تاريخ صدور الحكم أو إعلانه بحسب الأحوال.</li></ul>وللمواعيد الخاصة (كالمستعجل ودعاوى الأحوال الشخصية) أحكامها، فاحرص على مراجعة النص النافذ مع محاميك؛ ففوات الميعاد يُسقط الحق في الطعن.', q: () => ['كيف تُعتمد مسودة الحكم؟', 'الدائرة الجزائية'] },
+  { k: /عمال|عامل|راتب|رواتب|فصل|مكافأة|نهاية الخدمة|القوى العاملة|كفيل/, a: () => 'تُعرض المنازعة العمالية ابتداءً على <b>إدارة علاقات العمل بالهيئة العامة للقوى العاملة</b> لمحاولة التسوية الودية، فإن تعذّرت أُحيلت إلى المحكمة الكلية — الدائرة العمالية. ويحكمها <b>قانون العمل في القطاع الأهلي رقم 6 لسنة 2010</b>، ومنه أحكام مكافأة نهاية الخدمة (م51): أجر 15 يوماً عن كل سنة من السنوات الخمس الأولى، وأجر شهر عن كل سنة تالية.', q: () => ['جرّب المحاكاة', 'ما الرسوم القضائية؟'] },
+  { k: /تجار|شركة|شركات|شيك|فاتورة|توريد|شريك/, a: () => 'تختص <b>الدائرة التجارية</b> بنزاعات الأعمال التجارية والشركات والأوراق التجارية، مستندةً إلى قانون التجارة رقم 68 لسنة 1980 وقانون الشركات رقم 1 لسنة 2016. ويمكنك تجربة محاكاة دعوى تجارية في قسم «تجربة التقاضي الحي».', q: () => ['جرّب المحاكاة', 'كيف يعمل الذكاء الاصطناعي هنا؟'] },
+  { k: /أحوال|احوال|طلاق|نفقة|حضانة|رؤية|زواج|أسر|اسر/, a: () => 'تنظر <b>دائرة الأحوال الشخصية</b> في النفقة والحضانة والرؤية والفرقة، وفق القانون رقم 51 لسنة 1984، وقانون الأحوال الشخصية الجعفرية رقم 124 لسنة 2019 بحسب المذهب. وتُقدَّم محاولة الصلح عبر مراكز تسوية المنازعات الأسرية، ويبقى <b>مصلحة المحضون</b> المعيار الأعلى.', q: () => ['الخصوصية وحماية البيانات', 'كيف أرفع دعوى؟'] },
+  { k: /جزائ|جنائ|جريمة|متهم|عقوبة|سجن|جنح|جناي/, a: () => 'في <b>الدائرة الجزائية</b> لا يُصدر الذكاء الاصطناعي أي حكم بإدانة أو براءة أو عقوبة إطلاقاً. دوره تنظيم الملف وفرز الأدلة ورصد الدفوع الإجرائية، والقرار للقاضي وحده، مع كفالة ضمانات الدفاع وقرينة البراءة المقررة في المادة 34 من الدستور.', q: () => ['كيف يعمل الذكاء الاصطناعي هنا؟', 'الخصوصية وحماية البيانات'] },
+  { k: /ذكاء|كيف يعمل|خوارزم|دقة|يخطئ|خطأ|موثوق|آلي/, a: () => 'يعمل المحرك على أربع مراحل:<ul><li><b>الفهرسة</b>: تقسيم التشريعات إلى مواد مع تتبّع التعديلات وتواريخ النفاذ.</li><li><b>الاسترجاع</b>: جلب النصوص والمبادئ ذات الصلة بالوقائع المستخرجة.</li><li><b>التسبيب</b>: بناء سلسلة استدلال قابلة للتتبع، لكل نتيجة سندها.</li><li><b>الاعتماد البشري</b>: لا تصير المسودة حكماً إلا بتوقيع القاضي.</li></ul>', q: () => ['كيف تُعتمد مسودة الحكم؟', 'الخصوصية وحماية البيانات'] },
+  { k: /اعتماد|تعتمد|تُعتمد|مسودة|القاضي البشري|توقيع/, a: () => 'تمرّ المسودة بثلاث بوابات:<ul><li>مراجعة القاضي للوقائع والتسبيب، وله التعديل الكامل أو الرفض.</li><li>فحص آلي للاتساق بين الأسباب والمنطوق.</li><li>التوقيع الإلكتروني للقاضي، ثم الإيداع والإعلان.</li></ul>وكل تعديل يُسجَّل في سجل تدقيق يمكن للخصوم الاطلاع على خلاصته.', q: () => ['مواعيد الطعن', 'جرّب المحاكاة'] },
+  { k: /خصوصية|بيانات|أمان|امان|تشفير|سرية|حماية/, a: () => 'تُعامل البيانات القضائية بأعلى درجات السرية: تشفير كامل أثناء النقل والتخزين، واستضافة سيادية داخل دولة الكويت، وحجب تلقائي للبيانات الحساسة، وصلاحيات اطلاع مقصورة على أطراف الدعوى والمحكمة، مع سجل تدقيق غير قابل للتعديل.', q: () => ['كيف يعمل الذكاء الاصطناعي هنا؟'] },
+  { k: /محاكاة|تجربة|جرّب|جرب|المحاكي/, a: () => { setTimeout(() => $('#trial').scrollIntoView({ behavior: 'smooth' }), 600); return 'بكل سرور، سأنقلك الآن إلى <b>محاكي التقاضي الحي</b>. اختر نوع الدعوى، واكتب ملخص النزاع أو استخدم نموذجاً جاهزاً، ثم اضغط «تشغيل التحليل القانوني الذكي».'; }, q: () => ['مواعيد الطعن'] },
+  { k: /شكر|شكراً|يعطيك|مشكور|جزاك/, a: () => 'العفو، وهذا واجبنا. أسأل الله لك التوفيق والسداد، وأنا حاضر لأي استفسار آخر.', q: () => ['كيف أرفع دعوى؟'] },
+  { k: /من أنت|مين انت|من انت|اسمك|جسار|جسّار/, a: () => 'أنا <b>جسّار</b>، المساعد القضائي الذكي للمحكمة الكويتية الذكية. أُرشد ولا أحكم، وأُعين ولا أحلّ محل المحامي أو القاضي.', q: () => ['كيف يعمل الذكاء الاصطناعي هنا؟', 'كيف أرفع دعوى؟'] },
+];
+
+function addMsg(html, who = 'bot') {
+  const d = document.createElement('div'); d.className = `msg ${who}`; d.innerHTML = html; msgs.appendChild(d);
+  msgs.scrollTop = msgs.scrollHeight; return d;
+}
+function addQuick(list) {
+  if (!list || !list.length) return;
+  const q = document.createElement('div'); q.className = 'quick';
+  list.forEach(txt => { const b = document.createElement('button'); b.type = 'button'; b.textContent = txt; b.onclick = () => { q.remove(); userSays(txt); }; q.appendChild(b); });
+  msgs.appendChild(q); msgs.scrollTop = msgs.scrollHeight;
+}
+async function botSays(html, quick) {
+  const ty = addMsg('<span class="typing"><i></i><i></i><i></i></span>'); ty.style.padding = '0';
+  $('#chatStatus').textContent = 'يكتب الآن…';
+  await sleep(Math.min(1500, 450 + html.length * 4));
+  ty.remove(); addMsg(html); addQuick(quick);
+  $('#chatStatus').textContent = 'متصل · يجيب بالفصحى';
+}
+function reply(text) {
+  const clean = text.trim();
+  if (ROLES[clean]) {
+    role = clean;
+    return botSays(`${ROLES[clean]}<br><br>بمَ أستطيع أن أخدمك اليوم؟`, ['كيف أرفع دعوى؟', 'مواعيد الطعن', 'كيف يعمل الذكاء الاصطناعي هنا؟', 'جرّب المحاكاة']);
+  }
+  const hit = KB.find(e => e.k.test(clean));
+  if (hit) return botSays(hit.a(clean), hit.q && hit.q());
+  return botSays('أحسنت السؤال، غير أنه يقع خارج ما أُحيط به في هذا النموذج التجريبي. يمكنني إفادتك في المسائل الآتية، أو يُستحسن عرض استفسارك على محامٍ مرخّص:', ['كيف أرفع دعوى؟', 'مواعيد الطعن', 'الدعاوى العمالية', 'الأحوال الشخصية', 'الدائرة الجزائية']);
+}
+function userSays(text) {
+  $$('.quick', msgs).forEach(q => q.remove());
+  addMsg(esc(text), 'user'); reply(text);
+}
+function greet() {
+  msgs.innerHTML = ''; role = null;
+  botSays('السلام عليكم ورحمة الله وبركاته،<br>أنا <b>جسّار</b>، المساعد القضائي الذكي للمحكمة الكويتية الذكية. أتشرّف بخدمتك في كل ما يتصل بإجراءات التقاضي.<br><br>هلّا تكرّمت بتعريفي بصفتك لأخاطبك بما يليق؟', Object.keys(ROLES));
+}
+function toggleChat(force) {
+  const open = force ?? !chatPanel.classList.contains('open');
+  chatPanel.classList.toggle('open', open);
+  fab.setAttribute('aria-expanded', String(open));
+  fab.innerHTML = `<i data-lucide="${open ? 'x' : 'bot'}" class="w-7 h-7"></i>`; icons();
+  if (open) { if (!started) { started = true; greet(); } setTimeout(() => $('#chatInput').focus(), 300); }
+}
+function openChat() { toggleChat(true); }
+fab.addEventListener('click', () => toggleChat());
+$('#chatClose').addEventListener('click', () => toggleChat(false));
+$('#chatReset').addEventListener('click', greet);
+$('#openChatBtn').addEventListener('click', openChat);
+$('#chatForm').addEventListener('submit', e => {
+  e.preventDefault(); const v = $('#chatInput').value.trim(); if (!v) return;
+  $('#chatInput').value = ''; userSays(v);
+});
+
+/* ------------------------------------------------------------------ */
+/* Boot                                                                 */
+/* ------------------------------------------------------------------ */
+$('#year').textContent = new Date().getFullYear();
+icons();
+observeReveals();
+const hidePre = () => $('#preloader').classList.add('done');
+if (document.readyState === 'complete') setTimeout(hidePre, 500); else addEventListener('load', () => setTimeout(hidePre, reduced ? 0 : 600));
+setTimeout(hidePre, 3500); // never block on a slow CDN
+})();
+</script>
+</body>
+</html>
