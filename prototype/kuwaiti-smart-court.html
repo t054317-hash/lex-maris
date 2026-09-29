@@ -323,6 +323,64 @@ html.ink .seg .pill { background: linear-gradient(135deg, #1d2d50, #13203a); }
 .neural svg .pulse { animation: npulse 1.4s ease-in-out infinite; }
 @keyframes npulse { 50% { opacity: .2; } }
 
+/* hearing */
+.ctl { display: inline-flex; align-items: center; gap: .35rem; font-size: .78rem; font-weight: 700; padding: .45rem .75rem; border-radius: 10px; border: 1px solid var(--line-2); color: var(--text-2); background: var(--surface); transition: border-color .3s, color .3s; }
+.ctl[hidden] { display: none; }
+.ctl:hover { border-color: var(--gold); color: var(--gold); }
+.ctl.gold { color: var(--gold-2); border-color: var(--gold); }
+html.ink .ctl.gold { color: var(--gold); }
+.stages { display: flex; gap: .4rem; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+.stages li { flex: 1 0 auto; display: flex; align-items: center; gap: .4rem; font-size: .72rem; font-weight: 700; color: var(--muted); padding: .35rem .6rem; border-radius: 999px; border: 1px solid var(--line); white-space: nowrap; transition: all .4s var(--lux); }
+.stages li span { width: 7px; height: 7px; border-radius: 50%; background: var(--line-2); transition: background .4s; }
+.stages li.done { color: var(--text-2); } .stages li.done span { background: var(--ok); }
+.stages li.now { color: var(--gold-2); border-color: var(--gold); background: color-mix(in srgb, var(--gold) 10%, transparent); }
+html.ink .stages li.now { color: var(--gold); }
+.stages li.now span { background: var(--gold); box-shadow: 0 0 8px var(--gold); }
+
+.courtroom { position: relative; border-radius: 18px; padding: 2.4rem 1rem 1.2rem; overflow: hidden; border: 1px solid var(--line);
+  background:
+    radial-gradient(ellipse 60% 55% at 50% 0%, color-mix(in srgb, var(--gold) 16%, transparent), transparent 70%),
+    repeating-linear-gradient(90deg, transparent 0 46px, color-mix(in srgb, var(--gold) 7%, transparent) 46px 47px),
+    linear-gradient(180deg, var(--bg-3), var(--bg-2)); }
+.courtroom::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, transparent 40%, color-mix(in srgb, var(--bg) 35%, transparent)); transition: background .6s; }
+.courtroom.rise::after { background: linear-gradient(180deg, color-mix(in srgb, var(--gold) 8%, transparent), transparent); }
+.courtroom .crest { position: absolute; top: .55rem; left: 50%; transform: translateX(-50%); width: 34px; height: 34px; display: grid; place-items: center; color: var(--gold);
+  clip-path: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%); background: color-mix(in srgb, var(--gold) 16%, transparent); }
+.bench { position: relative; z-index: 1; display: flex; justify-content: center; align-items: flex-end; gap: clamp(.6rem, 4vw, 2.6rem); padding: .9rem .6rem .7rem; border-radius: 14px 14px 6px 6px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--gold) 12%, transparent), color-mix(in srgb, var(--gold) 4%, transparent)); border-top: 2px solid var(--gold); box-shadow: inset 0 -1px 0 var(--line-2); }
+.floor { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; gap: .6rem; margin-top: 1.6rem; }
+.desk { display: flex; justify-content: center; padding: .7rem .4rem .6rem; border-radius: 12px; border: 1px solid var(--line); border-bottom: 3px solid var(--line-2); background: color-mix(in srgb, var(--bg) 30%, transparent); }
+.seat { display: flex; flex-direction: column; align-items: center; gap: .35rem; min-width: 0; transition: transform .5s var(--lux), opacity .5s; }
+.seat .av { position: relative; width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; color: var(--text-2); border: 1.5px solid var(--line-2); background: var(--surface-2); transition: all .45s var(--lux); }
+.seat.main .av { width: 60px; height: 60px; color: var(--gold-2); border-color: var(--gold); }
+html.ink .seat.main .av { color: var(--gold); }
+.seat.usher .av { width: 38px; height: 38px; }
+.seat .nm { font-size: .7rem; font-weight: 700; color: var(--muted); text-align: center; line-height: 1.3; }
+.seat .wave { display: flex; gap: 2px; height: 10px; align-items: flex-end; opacity: 0; transition: opacity .3s; }
+.seat .wave i { width: 3px; height: 30%; border-radius: 2px; background: var(--gold); }
+.seat.speaking { transform: translateY(-3px); }
+.seat.speaking .av { color: var(--bg); background: var(--gold); border-color: var(--gold); box-shadow: 0 0 0 6px color-mix(in srgb, var(--gold) 18%, transparent), 0 0 28px var(--glow); }
+.seat.speaking .nm { color: var(--gold-2); } html.ink .seat.speaking .nm { color: var(--gold); }
+.seat.speaking .wave { opacity: 1; }
+.seat.speaking .wave i { animation: wv .9s ease-in-out infinite; }
+.seat.speaking .wave i:nth-child(2) { animation-delay: .15s; } .seat.speaking .wave i:nth-child(3) { animation-delay: .3s; } .seat.speaking .wave i:nth-child(4) { animation-delay: .45s; }
+.is-paused .seat.speaking .wave i { animation-play-state: paused; }
+@keyframes wv { 50% { height: 100%; } }
+.caption-box { border-radius: 14px; border: 1px solid var(--line-2); background: var(--surface-2); padding: .85rem 1rem; min-height: 112px; }
+.caption-box .who { display: inline-flex; align-items: center; gap: .35rem; font-size: .75rem; font-weight: 800; color: var(--gold-2); }
+html.ink .caption-box .who { color: var(--gold); }
+.caption { margin-top: .4rem; font-family: 'Amiri', serif; font-size: 1.12rem; line-height: 2; color: var(--text); }
+.transcript { max-height: 220px; overflow-y: auto; border-radius: 12px; border: 1px solid var(--line); padding: .4rem .8rem; scrollbar-width: thin; }
+.transcript:empty::before { content: "سيُدوَّن هنا ما يدور في الجلسة."; display: block; padding: .6rem 0; font-size: .8rem; color: var(--muted); }
+.transcript li { display: flex; gap: .7rem; padding: .5rem 0; font-size: .82rem; line-height: 1.8; color: var(--text-2); border-bottom: 1px dashed var(--line); animation: feedIn .5s var(--lux); }
+.transcript li:last-child { border-bottom: 0; }
+.transcript li b { color: var(--text); }
+.transcript li[data-who="ai"] b { color: var(--gold-2); } html.ink .transcript li[data-who="ai"] b { color: var(--gold); }
+.transcript .ts { flex: none; font-family: 'JetBrains Mono', monospace; font-size: .7rem; color: var(--muted); padding-top: .2rem; }
+.reason.def { border-right-style: dashed; }
+.def-tag { display: inline-flex; align-items: center; gap: .25rem; font-size: .68rem; font-weight: 700; color: var(--warn); border: 1px solid color-mix(in srgb, var(--warn) 45%, transparent); padding: .1rem .5rem; border-radius: 999px; }
+@media (max-width: 480px) { .seat .av { width: 42px; height: 42px; } .seat.main .av { width: 52px; height: 52px; } .caption { font-size: 1.02rem; } }
+
 /* verdict document */
 .verdict { position: relative; border-radius: 22px; overflow: hidden; background:
   linear-gradient(180deg, color-mix(in srgb, var(--bg-3) 70%, transparent), var(--surface)); border: 1px solid var(--line-2); }
@@ -725,7 +783,7 @@ html.ink .quick button { color: var(--gold); }
         </div>
 
         <button id="runBtn" type="button" class="btn btn-gold w-full mt-7 text-lg"><i data-lucide="sparkles" class="w-5 h-5"></i> تشغيل التحليل القانوني الذكي</button>
-        <p id="runHint" class="text-xs mt-3 text-center t-muted">يستغرق التحليل بضع ثوانٍ في هذه المحاكاة</p>
+        <p id="runHint" class="text-xs mt-3 text-center t-muted">يُحضَّر الملف في ثوانٍ، ثم تنعقد جلسة محاكاة يترافع فيها الطرفان قبل صدور المسودة</p>
       </div>
 
       <!-- output panel -->
@@ -754,6 +812,47 @@ html.ink .quick button { color: var(--gold); }
           <div class="hexstream mt-2" id="hex1"></div>
           <div class="console mt-5 t-text2" id="console" aria-live="polite"></div>
           <div class="hexstream mt-4" id="hex2"></div>
+        </div>
+
+        <!-- hearing -->
+        <div id="courtState" class="hidden glass frame p-4 sm:p-6 no-print" aria-label="جلسة المحاكاة">
+          <div class="flex items-center justify-between gap-3 flex-wrap">
+            <div class="min-w-0">
+              <div class="flex items-center gap-2"><span class="dot-live"></span><h3 class="font-bold text-lg t-text">الجلسة منعقدة</h3><span class="chip !py-0.5 !text-[11px]" id="stageName">الافتتاح</span></div>
+              <div class="text-xs t-muted mt-1 truncate" id="courtCase"></div>
+            </div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <button type="button" id="pauseBtn" class="ctl"></button>
+              <button type="button" id="speedBtn" class="ctl"></button>
+              <button type="button" id="voiceBtn" class="ctl" hidden></button>
+              <button type="button" id="skipBtn" class="ctl gold"><i data-lucide="skip-back" class="w-4 h-4"></i> تخطَّ إلى الحكم</button>
+            </div>
+          </div>
+          <ol id="stageDots" class="stages mt-4" aria-label="مراحل الجلسة"></ol>
+
+          <div id="courtroom" class="courtroom mt-4" aria-hidden="true">
+            <div class="crest"><i data-lucide="scale" class="w-5 h-5"></i></div>
+            <div class="bench">
+              <div class="seat" data-who="ai"><span class="av"><i data-lucide="bot" class="w-5 h-5"></i></span><span class="nm">المستشار الرقمي</span><span class="wave"><i></i><i></i><i></i><i></i></span></div>
+              <div class="seat main" data-who="judge"><span class="av"><i data-lucide="gavel" class="w-6 h-6"></i></span><span class="nm">رئيس الدائرة</span><span class="wave"><i></i><i></i><i></i><i></i></span></div>
+              <div class="seat" data-who="clerk"><span class="av"><i data-lucide="feather" class="w-5 h-5"></i></span><span class="nm">أمين السر</span><span class="wave"><i></i><i></i><i></i><i></i></span></div>
+            </div>
+            <div class="floor">
+              <div class="desk"><div class="seat" data-who="plaintiff"><span class="av"><i data-lucide="briefcase" class="w-5 h-5"></i></span><span class="nm">وكيل المدعي</span><span class="wave"><i></i><i></i><i></i><i></i></span></div></div>
+              <div class="seat usher" data-who="usher"><span class="av"><i data-lucide="bell-ring" class="w-4 h-4"></i></span><span class="nm">الحاجب</span><span class="wave"><i></i><i></i><i></i><i></i></span></div>
+              <div class="desk"><div class="seat" data-who="defense"><span class="av"><i data-lucide="shield" class="w-5 h-5"></i></span><span class="nm">وكيل المدعى عليه</span><span class="wave"><i></i><i></i><i></i><i></i></span></div></div>
+            </div>
+          </div>
+
+          <div class="caption-box mt-4" aria-live="polite">
+            <div class="who" id="capWho">—</div>
+            <p id="caption" class="caption"></p>
+          </div>
+
+          <div class="mt-4">
+            <div class="flex items-center justify-between text-xs"><span class="font-bold t-text2 flex items-center gap-1.5"><i data-lucide="scroll-text" class="w-3.5 h-3.5 t-gold"></i> محضر الجلسة</span><span class="t-muted">تمثيل تعليمي مبسّط</span></div>
+            <ul id="transcript" class="transcript mt-2"></ul>
+          </div>
         </div>
 
         <!-- result -->
@@ -898,7 +997,7 @@ html.ink .quick button { color: var(--gold); }
         <div class="min-w-0">
           <h3 class="font-bold text-xl t-text">حدود هذا العرض التجريبي</h3>
           <div class="mt-4 grid md:grid-cols-3 gap-5 text-sm t-text2 leading-7">
-            <p><b class="t-text block mb-1">المحاكي يعمل داخل متصفحك</b>يعتمد محاكي التقاضي في هذه الصفحة على قواعد نصية مبسّطة تتعرف على الكلمات والمبالغ والمدد، وليس نموذجاً لغوياً ولا قاعدة تشريعات حقيقية. ولا يُرسَل ما تكتبه إلى أي خادم.</p>
+            <p><b class="t-text block mb-1">المحاكي يعمل داخل متصفحك</b>يعتمد محاكي التقاضي في هذه الصفحة على قواعد نصية مبسّطة تتعرف على الكلمات والمبالغ والمدد، وليس نموذجاً لغوياً ولا قاعدة تشريعات حقيقية. ولا يُرسَل ما تكتبه إلى أي خادم. أما الجلسة المعروضة فتمثيل درامي مكثّف، إذ تعتمد الجلسات المدنية والتجارية في الواقع غالباً على المذكرات المكتوبة.</p>
             <p><b class="t-text block mb-1">الإشارات التشريعية للاسترشاد</b>أُعدّت المراجع القانونية بعناية، لكنها لا تغني عن النص الرسمي النافذ. ويجب التحقق منها من الجريدة الرسمية «الكويت اليوم» أو المصادر المعتمدة قبل أي استخدام.</p>
             <p><b class="t-text block mb-1">الحسابات تقديرية</b>تُحتسب مكافأة نهاية الخدمة على أساس الأجر الشهري مقسوماً على 26 يوماً، وهو افتراض تبسيطي. ويتوقف المبلغ الفعلي على عناصر الأجر وظروف كل حالة.</p>
           </div>
@@ -1523,6 +1622,95 @@ function indemnity(salary, years, resign) {
   return Math.min(first + rest, salary * 18) * (resign ? resignShare(years) : 1);
 }
 
+// Each plea the defence raises in the hearing, the plaintiff's reply, and how the draft rules on it.
+function defensesFor(isC, f) {
+  const D = [];
+  if (isC) {
+    if (f.contractor) D.push({ label: 'دفع المقاول بأن التأخير يرجع إلى رب العمل',
+      plea: 'إن التأخير في التسليم لا يُنسب إلى موكلي، وإنما يرجع إلى تأخر المدعية في صرف الدفعات المرحلية وإلى تعديلات أدخلتها على التصاميم أثناء التنفيذ.',
+      rebut: 'الدفعات صُرفت في مواعيدها بحسب شهادات الإنجاز المرفقة، ولم يتقدم المقاول بأي طلب كتابي لمدّ مدة التنفيذ كما يوجب العقد.',
+      ruling: 'وحيث إنه عن دفع المدعى عليه بأن التأخير يرجع إلى فعل رب العمل، فإن الثابت من شهادات الإنجاز أن الدفعات صُرفت في مواعيدها، ولم يقدّم المدعى عليه ما يفيد طلبه مدّ مدة التنفيذ أو أن التعديلات المدّعاة قد استغرقت وقتاً إضافياً، ومن ثم يكون هذا الدفع قائماً على غير سند، وتلتفت عنه المحكمة.',
+      refs: ['القانون المدني 67/1980 — أحكام عقد المقاولة'] });
+    if (f.penalty) D.push({ label: 'طلب تخفيض الشرط الجزائي',
+      plea: 'واحتياطياً، نلتمس تخفيض قيمة الشرط الجزائي لأنها مبالغ فيها ولا تتناسب مع ضرر فعلي لم يثبت.',
+      rebut: 'الشرط الجزائي اتُّفق عليه بإرادة حرة بين طرفين تاجرين، وقيمته معتدلة قياساً إلى قيمة العقد.',
+      ruling: 'وحيث إنه عن طلب تخفيض التعويض الاتفاقي، فإن المدعى عليه لم يقدّم ما يثبت أن التقدير كان مبالغاً فيه إلى درجة كبيرة، بل جاء معتدلاً قياساً إلى قيمة العقد ومدة التأخير، فتقضي المحكمة برفض هذا الطلب.',
+      refs: ['القانون المدني 67/1980 — أحكام التعويض الاتفاقي'] });
+    if (f.cheque) D.push({ label: 'دفع المدعى عليه بأن الشيك سُلِّم ضماناً',
+      plea: 'إن الشيك محل الدعوى سُلِّم على سبيل الضمان لا الوفاء، ولا يمثّل مديونية مستحقة في ذمة موكلي.',
+      rebut: 'الشيك أداة وفاء بطبيعته، وقد حُرّر سداداً لثمن بضاعة استلمها المدعى عليه، ولم يقدم الدفاع أي دليل على خلاف ذلك.',
+      ruling: 'وحيث إنه عن دفع المدعى عليه بأن الشيك حُرّر على سبيل الضمان، فإن الأصل في الشيك أنه أداة وفاء، وأن له سبباً مشروعاً، ومن يدّعي خلاف هذا الأصل يقع عليه عبء إثباته، وإذ لم يقدّم المدعى عليه دليلاً على ما يدّعيه، فإن دفعه يكون على غير أساس.',
+      refs: ['قانون التجارة 68/1980 — أحكام الشيك', 'قانون الإثبات 39/1980'] });
+    if (f.company) D.push({ label: 'دفع الشريك المدير بترحيل الأرباح',
+      plea: 'إن الأرباح لم تُحجب، وإنما رُحِّلت لتمويل توسعة نشاط الشركة، وهو قرار يدخل في سلطة المدير لتحقيق مصلحة الشركة.',
+      rebut: 'عقد التأسيس يوجب توزيع الأرباح سنوياً ما لم يقرر الشركاء غير ذلك، ولم يصدر أي قرار من الشركاء بترحيلها.',
+      ruling: 'وحيث إنه عن دفع المدعى عليه بترحيل الأرباح لتمويل التوسعة، فإن الأوراق قد خلت من قرار صادر من الشركاء وفق عقد التأسيس يجيز ذلك، ولا يملك المدير أن ينفرد بحجب حق الشريك في نصيبه، وتندب المحكمة خبيراً حسابياً لتحديد صافي الأرباح القابلة للتوزيع.',
+      refs: ['قانون الشركات 1/2016'] });
+    if (f.broker) D.push({ label: 'دفع المدعى عليها بانتفاء أثر الوساطة',
+      plea: 'إن الصفقة أُبرمت بجهود موكلتي المباشرة مع المشتري، ولم يكن لمكتب المدعي أي دور منتج في إتمامها.',
+      rebut: 'المراسلات المقدمة تثبت أن المكتب هو من عرّف الطرفين، ونظّم المعاينة، وحضر جلسات التفاوض حتى توقيع العقد.',
+      ruling: 'وحيث إنه عن دفع المدعى عليها بانتفاء أثر وساطة المدعي، فإن الثابت من المراسلات المقدمة أن المدعي هو من قرّب بين الطرفين وحضر مراحل التفاوض، فتكون وساطته هي السبب المنتج في إبرام الصفقة، ويغدو هذا الدفع في غير محله.',
+      refs: ['قانون التجارة 68/1980 — أحكام السمسرة'] });
+    if (f.supply) D.push({ label: 'دفع المدعى عليها بعدم مطابقة البضاعة',
+      plea: 'إن البضاعة الموردة لم تكن مطابقة للمواصفات المتفق عليها، ولذلك امتنعت موكلتي عن السداد إلى حين الاستبدال.',
+      rebut: 'محاضر الاستلام موقّعة من ممثل المدعى عليها دون أي تحفظ، ولم تصلنا أي مطالبة بالاستبدال قبل رفع الدعوى.',
+      ruling: 'وحيث إنه عن دفع المدعى عليها بعدم مطابقة البضاعة، فإن توقيع ممثلها على محاضر الاستلام دون تحفظ قرينة على مطابقتها، ولم تقدّم ما يدحض هذه القرينة ولم تطلب ندب خبير لمعاينتها، فيكون دفعها مرسلاً لا دليل عليه.',
+      refs: ['قانون الإثبات 39/1980'] });
+    if (f.invoice && !f.supply) D.push({ label: 'دفع المدعى عليه بقصور الخدمات',
+      plea: 'إن الخدمات لم تُقدَّم بالمستوى المتفق عليه، ولم تحقق الحملات النتائج الموعودة.',
+      rebut: 'المدعى عليه استمر في تلقي الخدمات طوال مدة العقد دون أي اعتراض مكتوب، والعقد لم يضمن نتائج بعينها.',
+      ruling: 'وحيث إنه عن دفع المدعى عليه بقصور الخدمات، فإن استمراره في تلقيها طوال مدة العقد دون اعتراض مكتوب، وخلوّ العقد من التزام بتحقيق نتيجة محددة، ينفيان ما يدّعيه، ومن ثم تلتفت المحكمة عن هذا الدفع.',
+      refs: ['القانون المدني 67/1980 — م197 (حسن النية)'] });
+    if (!D.length) D.push({ label: 'إنكار المديونية',
+      plea: 'ننكر المديونية المدّعاة جملةً وتفصيلاً، ونطلب رفض الدعوى لخلوّها من الدليل.',
+      rebut: 'المستندات المقدمة تثبت قيام العلاقة التجارية وقيمة المديونية، ولم يطعن عليها الدفاع بأي مطعن.',
+      ruling: 'وحيث إنه عن إنكار المدعى عليه للمديونية، فإن الإنكار المجرد لا ينهض دليلاً في مواجهة المستندات المقدمة التي لم يطعن عليها، فتلتفت المحكمة عنه.',
+      refs: ['قانون الإثبات 39/1980'] });
+    if (D.length < 2) D.push({ label: 'الدفع ببطلان إعلان صحيفة الدعوى',
+      plea: 'ندفع شكلاً ببطلان إعلان صحيفة الدعوى لعدم تسليمها في موطن موكلنا الصحيح.',
+      rebut: 'حضور المدعى عليه بوكيله في هذه الجلسة يصحّح أي عيب قد يكون شاب الإعلان.',
+      ruling: 'وحيث إنه عن الدفع ببطلان الإعلان، فإن من المقرر أن البطلان الناشئ عن عيب في الإعلان يزول بحضور المعلَن إليه في الجلسة، وإذ حضر المدعى عليه بوكيله وأبدى دفاعه، فإن هذا الدفع يكون غير مقبول.',
+      refs: ['قانون المرافعات 38/1980'] });
+  } else {
+    if (f.dismissal) D.push({ label: 'دفع صاحب العمل بمشروعية الفصل',
+      plea: 'إن إنهاء خدمة المدعي جاء لسبب مشروع هو إخلاله المتكرر بواجبات وظيفته، ولا يستحق من ثم أي تعويض.',
+      rebut: 'لم يوجَّه إلى موكلي طوال سنوات خدمته أي إنذار أو جزاء، ولم يُجرَ معه أي تحقيق، وتقارير أدائه السنوية جيدة.',
+      ruling: 'وحيث إنه عن دفع المدعى عليها بأن الإنهاء كان لسبب مشروع، فإن الأوراق قد خلت من أي دليل على الخطأ المنسوب إلى المدعي، فلم يثبت توجيه إنذار إليه أو إجراء تحقيق معه، ومن ثم يكون هذا الدفع قولاً مرسلاً لا تعوّل عليه المحكمة.',
+      refs: ['قانون العمل 6/2010'] });
+    if (f.resign) D.push({ label: 'دفع صاحب العمل بسقوط المكافأة بالاستقالة',
+      plea: 'إن المدعي هو من أنهى العلاقة باستقالته، والاستقالة تُسقط حقه في مكافأة نهاية الخدمة.',
+      rebut: 'القانون لا يُسقط المكافأة بالاستقالة، وإنما يحدد نسبة منها بحسب مدة الخدمة، وموكلي أمضى أكثر من خمس سنوات.',
+      ruling: 'وحيث إنه عن دفع المدعى عليها بسقوط المكافأة بالاستقالة، فإنه مردود بصريح نص القانون الذي يقرر للعامل المستقيل نسبة من المكافأة بحسب مدة خدمته، على نحو ما سلف بيانه.',
+      refs: ['قانون العمل 6/2010 — م53'] });
+    if (f.wages) D.push({ label: 'دفع صاحب العمل بالظروف المالية',
+      plea: 'إن تأخر صرف الرواتب يرجع إلى ظروف مالية طارئة تمر بها المؤسسة بسبب تعثر المشاريع، وهي ظروف خارجة عن إرادتها.',
+      rebut: 'الأجر حق للعامل مقابل عمله، ولا يتحمل العامل مخاطر نشاط صاحب العمل، وموكلي استمر في العمل طوال المدة.',
+      ruling: 'وحيث إنه عن دفع المدعى عليها بمرورها بظروف مالية، فإن صاحب العمل يتحمل وحده مخاطر نشاطه، ولا تُعفيه الظروف المالية من التزامه بأداء الأجر في مواعيده متى أدّى العامل عمله، فيكون هذا الدفع على غير أساس.',
+      refs: ['قانون العمل 6/2010 — أحكام الأجور'] });
+    if (f.overtime) D.push({ label: 'دفع صاحب العمل بعدم التكليف بالعمل الإضافي',
+      plea: 'إن المدعي لم يُكلَّف كتابياً بأي عمل إضافي، وساعات عمله تدخل في طبيعة وظيفته كمندوب مبيعات.',
+      rebut: 'سجلات البصمة ورسائل المشرف المباشر تثبت التكليف والحضور الفعلي في العطل الرسمية وبعد الدوام.',
+      ruling: 'وحيث إنه عن دفع المدعى عليها بعدم التكليف الكتابي، فإن العبرة بالعمل الفعلي لا بشكل التكليف، وقد قدّم المدعي ما يرجّح أداءه عملاً إضافياً، فتندب المحكمة خبيراً لاحتساب الساعات الفعلية من سجلات الحضور.',
+      refs: ['قانون العمل 6/2010', 'قانون الإثبات 39/1980'] });
+    if (f.cut) D.push({ label: 'دفع صاحب العمل بعمومية التخفيض',
+      plea: 'إن تخفيض الرواتب إجراء عام شمل جميع العاملين في الشركة بسبب الظروف الاقتصادية، ولم يُقصد به المدعي بذاته.',
+      rebut: 'عمومية الإجراء لا تجعله مشروعاً، فالأجر المتفق عليه لا يُعدَّل إلا باتفاق الطرفين، وموكلي لم يوقّع على أي تعديل.',
+      ruling: 'وحيث إنه عن دفع المدعى عليها بأن التخفيض إجراء عام، فإن عمومية الإجراء لا تسوّغ الانتقاص من أجر العامل دون موافقته، إذ العقد شريعة المتعاقدين، فيكون هذا الدفع في غير محله.',
+      refs: ['القانون المدني 67/1980 — م196'] });
+    if (f.leave) D.push({ label: 'دفع صاحب العمل باستنفاد الإجازات',
+      plea: 'إن المدعي استنفد رصيد إجازاته السنوية خلال مدة خدمته، ولا يستحق أي بدل عنها.',
+      rebut: 'لا يوجد أي سجل إجازات موقّع من موكلي، وكشف الرصيد الصادر من إدارة الموارد البشرية نفسها يثبت الرصيد المطالب به.',
+      ruling: 'وحيث إنه عن دفع المدعى عليها باستنفاد الإجازات، فإن عبء إثبات منح العامل إجازاته يقع على صاحب العمل، وإذ لم تقدّم سجلاً موقّعاً يثبت ذلك، فإن دفعها يكون على غير سند.',
+      refs: ['قانون العمل 6/2010 — أحكام الإجازات', 'قانون الإثبات 39/1980'] });
+    if (!D.length) D.push({ label: 'إنكار المستحقات',
+      plea: 'ننكر المستحقات المطالب بها، ونطلب رفض الدعوى لعدم ثبوتها.',
+      rebut: 'عقد العمل وكشوف الرواتب المقدمة تثبت علاقة العمل وعناصر الأجر.',
+      ruling: 'وحيث إنه عن إنكار المدعى عليها للمستحقات، فإن الإنكار المجرد لا ينهض دليلاً في مواجهة عقد العمل وكشوف الرواتب المقدمة، فتلتفت المحكمة عنه.',
+      refs: ['قانون الإثبات 39/1980'] });
+  }
+  return D;
+}
+
 function buildVerdict(type, raw) {
   const { amount, salary, years, f } = analyse(type, raw);
   const reasons = [], orders = [], warnings = [];
@@ -1625,6 +1813,9 @@ function buildVerdict(type, raw) {
     if (!years) warnings.push('لم تُذكر مدة الخدمة بالسنوات.');
   }
 
+  const defenses = defensesFor(isC, f).slice(0, 2);
+  defenses.forEach(d => { signals++; reasons.push({ t: 'في ' + d.label, b: d.ruling, r: d.refs, def: true }); });
+
   reasons.push({
     t: 'في المصروفات',
     b: `وحيث إن من يخسر الدعوى يُلزم بمصروفاتها، فإن المحكمة تُلزم ${isC ? 'المدعى عليه' : 'المدعى عليها'} بها وبمقابل أتعاب المحاماة الفعلية.`,
@@ -1636,7 +1827,7 @@ function buildVerdict(type, raw) {
   if (signals === 0) warnings.push('لم تُرصد وقائع قانونية مميزة؛ جُرّب ذكر العقد أو الفاتورة أو الفصل أو الأجر.');
   const conf = Math.min(97.8, 84 + signals * 2.3 + (amount || salary ? 3 : 0) + Math.min(raw.length / 120, 4)).toFixed(1);
 
-  return { court, caseNo, reasons, orders, warnings, conf, isC };
+  return { court, caseNo, reasons, orders, warnings, conf, isC, defenses };
 }
 
 // minimal Arabic number-to-words for thousands (verdict flourish)
@@ -1659,6 +1850,134 @@ function words(n) {
   // the counted noun follows directly, so dual forms drop their nūn (مائتا دينار، ألفا دينار)
   return out.join(' و').replace(/مائتان$/, 'مائتا').replace(/ألفان$/, 'ألفا');
 }
+
+// The hearing, line by line. Built from the same analysis as the draft so the pleas heard in court are the ones the reasons answer.
+function buildSession(v, raw) {
+  const L = [], def = v.defenses, isC = v.isC;
+  const defendant = isC ? 'المدعى عليه' : 'المدعى عليها';
+  const excerpt = (raw.length > 230 ? raw.slice(0, 230).replace(/\s+\S*$/, '') + '…' : raw);
+  const ask = v.orders[0].replace(/^إلزام /, '').replace('للمدعي', 'لموكلي').replace(/\s*\([^)]*\)/, '');
+  const refs = [...new Set(v.reasons.flatMap(r => r.r))].filter(r => !/المرافعات/.test(r)).slice(0, 3);
+  const say = (who, stage, text) => L.push({ who, stage, text });
+  say('usher', 0, 'محكمة!');
+  say('clerk', 0, `الدعوى رقم ${v.caseNo}، ${v.court}. المدعي حاضر بوكيله، و${isC ? 'المدعى عليه حاضر بوكيله' : 'المدعى عليها حاضرة بوكيلها'}.`);
+  say('judge', 0, 'افتُتحت الجلسة. تُثبت المحكمة حضور الطرفين. الكلمة لوكيل المدعي.');
+  say('plaintiff', 1, `سيدي الرئيس، تخلص وقائع الدعوى فيما أورده موكلي في صحيفتها: «${excerpt}». ونلتمس الحكم بإلزام ${ask}، مع إلزام ${defendant} المصروفات.`);
+  say('judge', 1, 'الكلمة للدفاع.');
+  say('defense', 2, 'نطلب رفض الدعوى. ' + def.map(d => d.plea).join(' '));
+  say('judge', 3, 'ما ردّ وكيل المدعي على هذا الدفاع؟');
+  say('plaintiff', 3, def.map(d => d.rebut).join(' ') + ' ونصمم على الطلبات.');
+  say('defense', 3, 'نتمسك بما أبديناه من دفاع، ونلتمس احتياطياً ندب خبير لتحقيقه.');
+  say('judge', 4, 'تستعين المحكمة بالمستشار الرقمي لعرض خلاصة التحليل، على أن يبقى رأيه استرشادياً غير ملزم.');
+  say('ai', 4, `بعد مطابقة الوقائع مع ${refs.join('، ')}: رُصدت ${v.reasons.length - 2} مسائل قانونية، و${def.length === 1 ? 'دفع واحد' : 'دفعان'} للمدعى عليه. تشير المستندات إلى رجحان طلبات المدعي، ومؤشر ثقة التسبيب ${v.conf}%. التوصية مرفوعة لتقدير الهيئة.`);
+  say('judge', 4, 'اطّلعت المحكمة على التحليل، ووازنت بينه وبين أوراق الدعوى ودفاع الطرفين. قررت المحكمة حجز الدعوى للحكم آخر الجلسة.');
+  say('usher', 5, 'محكمة!');
+  say('judge', 5, `بعد المداولة، حكمت المحكمة: ب${v.orders[0].replace(/\s*\([^)]*\)/, '')}${v.orders.length > 2 ? '، وبباقي الطلبات على النحو المبيّن في أسباب الحكم' : ''}، ${v.orders[v.orders.length - 1]}. رُفعت الجلسة.`);
+  return L;
+}
+
+const ROLES_COURT = {
+  judge:     { name: 'رئيس الدائرة', icon: 'gavel', pitch: 0.8 },
+  ai:        { name: 'المستشار الرقمي', icon: 'bot', pitch: 1.2 },
+  clerk:     { name: 'أمين السر', icon: 'feather', pitch: 1.0 },
+  plaintiff: { name: 'وكيل المدعي', icon: 'briefcase', pitch: 1.05 },
+  defense:   { name: 'وكيل المدعى عليه', icon: 'shield', pitch: 0.92 },
+  usher:     { name: 'الحاجب', icon: 'bell-ring', pitch: 1.0 },
+};
+const STAGES = ['الافتتاح', 'المرافعة', 'الدفاع', 'التعقيب', 'المداولة', 'النطق بالحكم'];
+
+const player = { paused: false, skip: false, speed: 1, voice: false, arVoice: null };
+function pickVoice() {
+  if (!('speechSynthesis' in window)) return;
+  player.arVoice = speechSynthesis.getVoices().find(x => /^ar/i.test(x.lang)) || null;
+  $('#voiceBtn').hidden = !player.arVoice;
+}
+if ('speechSynthesis' in window) { pickVoice(); speechSynthesis.addEventListener?.('voiceschanged', pickVoice); }
+
+async function wait(ms) {
+  let left = reduced ? 0 : ms;
+  while (left > 0 && !player.skip) { await new Promise(r => setTimeout(r, 50)); if (!player.paused) left -= 50 * player.speed; }
+}
+function speak(text, who) {
+  return new Promise(res => {
+    if (!player.voice || !player.arVoice || player.skip) return res();
+    const u = new SpeechSynthesisUtterance(text);
+    u.voice = player.arVoice; u.lang = player.arVoice.lang; u.pitch = ROLES_COURT[who].pitch; u.rate = Math.min(1.6, 0.95 * player.speed);
+    const done = () => { clearInterval(guard); res(); };
+    u.onend = done; u.onerror = done;
+    const guard = setInterval(() => { if (player.skip) { speechSynthesis.cancel(); done(); } }, 120);
+    speechSynthesis.speak(u);
+  });
+}
+
+function setupCourt(v) {
+  $('#courtCase').textContent = `${v.caseNo} · ${v.court}`;
+  $$('.seat').forEach(s => s.classList.remove('speaking', 'spoke'));
+  $('#transcript').innerHTML = '';
+  $('#caption').innerHTML = '<span class="t-muted">القاعة تستعد لانعقاد الجلسة…</span>';
+  $('#capWho').textContent = '—';
+  $('#stageDots').innerHTML = STAGES.map((st, i) => `<li data-i="${i}"><span></span>${st}</li>`).join('');
+  player.paused = false; player.skip = false; syncPlayerUI();
+}
+function syncPlayerUI() {
+  $('#pauseBtn').innerHTML = `<i data-lucide="${player.paused ? 'play' : 'pause'}" class="w-4 h-4"></i> ${player.paused ? 'استئناف' : 'إيقاف مؤقت'}`;
+  $('#speedBtn').textContent = `السرعة ×${player.speed}`;
+  $('#voiceBtn').innerHTML = `<i data-lucide="${player.voice ? 'volume-2' : 'volume-x'}" class="w-4 h-4"></i> ${player.voice ? 'الصوت مفعّل' : 'تشغيل الصوت'}`;
+  $('#courtState').classList.toggle('is-paused', player.paused);
+  icons();
+}
+
+async function playSession(v, lines) {
+  setupCourt(v);
+  $('#courtState').classList.remove('hidden');
+  if (innerWidth < 1024) $('#courtState').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  await wait(700);
+  let clock = 9 * 60 + 30;
+  for (const ln of lines) {
+    if (player.skip) break;
+    const role = ROLES_COURT[ln.who];
+    $$('#stageDots li').forEach(li => { const i = +li.dataset.i; li.classList.toggle('done', i < ln.stage); li.classList.toggle('now', i === ln.stage); });
+    $('#stageName').textContent = STAGES[ln.stage];
+    $$('.seat').forEach(s => s.classList.toggle('speaking', s.dataset.who === ln.who));
+    $(`.seat[data-who="${ln.who}"]`).classList.add('spoke');
+    $('#capWho').innerHTML = `<i data-lucide="${role.icon}" class="w-3.5 h-3.5"></i>${role.name}`; icons();
+    if (ln.who === 'usher') $('#courtroom').classList.add('rise');
+    const cap = $('#caption'); cap.textContent = ''; cap.classList.add('caret');
+    const voiced = speak(ln.text, ln.who);
+    for (let i = 0; i <= ln.text.length && !player.skip; i += 2) {
+      cap.textContent = ln.text.slice(0, i);
+      await wait(player.voice && player.arVoice ? 38 : 26);
+    }
+    cap.textContent = ln.text; cap.classList.remove('caret');
+    await voiced;
+    const t = `${String(Math.floor(clock / 60)).padStart(2, '0')}:${String(clock % 60).padStart(2, '0')}`; clock += ln.who === 'ai' || ln.stage === 4 ? 6 : 2;
+    const li = document.createElement('li');
+    li.innerHTML = `<span class="ts" dir="ltr">${t}</span><div><b>${role.name}:</b> ${esc(ln.text)}</div>`;
+    li.dataset.who = ln.who;
+    const tr = $('#transcript'); tr.appendChild(li); tr.scrollTop = tr.scrollHeight;
+    await wait(ln.who === 'usher' ? 900 : 650);
+    $('#courtroom').classList.remove('rise');
+  }
+  if (player.skip) {
+    // fill in the rest of the minutes so the record stays complete
+    const tr = $('#transcript'), have = tr.children.length;
+    lines.slice(have).forEach(ln => { const li = document.createElement('li'); li.innerHTML = `<span class="ts">—</span><div><b>${ROLES_COURT[ln.who].name}:</b> ${esc(ln.text)}</div>`; li.dataset.who = ln.who; tr.appendChild(li); });
+    window.speechSynthesis?.cancel?.();
+  }
+  $$('.seat').forEach(s => s.classList.remove('speaking'));
+  $$('#stageDots li').forEach(li => { li.classList.add('done'); li.classList.remove('now'); });
+  $('#courtroom').classList.remove('rise');
+  await wait(400);
+}
+
+$('#pauseBtn').addEventListener('click', () => {
+  player.paused = !player.paused;
+  if ('speechSynthesis' in window) player.paused ? speechSynthesis.pause() : speechSynthesis.resume();
+  syncPlayerUI();
+});
+$('#speedBtn').addEventListener('click', () => { player.speed = player.speed === 1 ? 1.5 : player.speed === 1.5 ? 2 : 1; syncPlayerUI(); });
+$('#voiceBtn').addEventListener('click', () => { player.voice = !player.voice; if (!player.voice) window.speechSynthesis?.cancel?.(); syncPlayerUI(); });
+$('#skipBtn').addEventListener('click', () => { player.skip = true; player.paused = false; });
 
 const LOG = {
   commercial: [
@@ -1695,6 +2014,7 @@ const hexChars = '0123456789ABCDEF';
 const hexLine = () => Array.from({ length: 140 }, (_, i) => (i % 5 === 4 ? ' ' : hexChars[Math.floor(Math.random() * 16)])).join('');
 
 $('#runBtn').addEventListener('click', run);
+let lastHearing = null;
 async function run() {
   if (running) return;
   const text = ta.value.trim();
@@ -1717,14 +2037,19 @@ async function run() {
     ln.innerHTML = `<span class="st"><span class="spinner"></span></span><span class="t-muted" dir="ltr">[${String(i + 1).padStart(2, '0')}]</span><span>${steps[i]}…</span>`;
     cons.appendChild(ln);
     const pct = Math.round((i + 1) / steps.length * 100);
-    await sleep(rand(380, 620));
+    await sleep(rand(260, 420));
     ln.querySelector('.st').innerHTML = '<i data-lucide="check" class="w-4 h-4" style="color:var(--ok)"></i>'; icons();
     $('#progBar').style.width = pct + '%'; $('#pct').textContent = pct + '%';
   }
   await sleep(350);
   clearInterval(hx);
   $('#taWrap').classList.remove('scanning');
-  renderVerdict(buildVerdict(caseType, text), text);
+  const v = buildVerdict(caseType, text);
+  lastHearing = { v, text, lines: buildSession(v, text) };
+  $('#loadState').classList.add('hidden');
+  btn.innerHTML = '<span class="spinner"></span> الجلسة منعقدة…';
+  await playSession(v, lastHearing.lines);
+  renderVerdict(v, text);
   btn.disabled = false; btn.innerHTML = '<i data-lucide="sparkles" class="w-5 h-5"></i> إعادة التحليل'; icons();
   running = false;
 }
@@ -1764,8 +2089,8 @@ function renderVerdict(v, text) {
       <p class="mt-4 t-text2">بعد الاطلاع على الأوراق، وسماع المرافعة، والمداولة قانوناً:</p>
       <div class="mt-5 space-y-6">
         ${v.reasons.map((r, i) => `
-          <div class="reason">
-            <div class="font-bold t-text flex items-center gap-2"><span class="t-gold font-mono text-sm" dir="ltr">${String(i + 1).padStart(2, '0')}</span> ${r.t}</div>
+          <div class="reason${r.def ? ' def' : ''}">
+            <div class="font-bold t-text flex items-center gap-2 flex-wrap"><span class="t-gold font-mono text-sm" dir="ltr">${String(i + 1).padStart(2, '0')}</span> ${r.t}${r.def ? '<span class="def-tag"><i data-lucide="message-square-quote" class="w-3 h-3"></i> أُثير في الجلسة</span>' : ''}</div>
             <p class="mt-2 t-text2 leading-9">${r.b}</p>
             <div class="mt-2">${r.r.map(x => `<span class="ref"><i data-lucide="bookmark" class="w-3 h-3"></i>${x}</span>`).join('')}</div>
           </div>`).join('')}
@@ -1801,12 +2126,13 @@ function renderVerdict(v, text) {
       <button class="btn btn-ghost !py-2.5 text-sm" id="copyV"><i data-lucide="copy" class="w-4 h-4"></i> نسخ المسودة</button>
       <button class="btn btn-ghost !py-2.5 text-sm" id="printV"><i data-lucide="printer" class="w-4 h-4"></i> طباعة</button>
       <button class="btn btn-ghost !py-2.5 text-sm" id="newV"><i data-lucide="rotate-ccw" class="w-4 h-4"></i> دعوى جديدة</button>
+      <button class="btn btn-ghost !py-2.5 text-sm" id="replayV"><i data-lucide="clapperboard" class="w-4 h-4"></i> إعادة عرض الجلسة</button>
       <button class="btn btn-ghost !py-2.5 text-sm" id="askV"><i data-lucide="message-circle" class="w-4 h-4"></i> ناقش المسودة مع جسّار</button>
     </div>
     <p class="sec relative mt-6 text-[11px] t-muted leading-6">تنبيه: هذه مسودة مولَّدة آلياً ضمن محاكاة تعليمية، والإشارات التشريعية للاسترشاد ويجب التحقق منها من المصادر الرسمية. لا تُعدّ استشارة قانونية ولا حكماً قضائياً.</p>
   </article>`;
   icons();
-  $('#loadState').classList.add('hidden'); wrap.classList.remove('hidden');
+  $('#loadState').classList.add('hidden'); $('#courtState').classList.add('hidden'); wrap.classList.remove('hidden');
   if (innerWidth < 1024) wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
   const secs = $$('.sec', wrap);
@@ -1822,6 +2148,14 @@ function renderVerdict(v, text) {
   };
   $('#printV').onclick = () => print();
   $('#newV').onclick = () => { wrap.classList.add('hidden'); $('#idleState').classList.remove('hidden'); ta.value = ''; ta.dispatchEvent(new Event('input')); $('#runBtn').innerHTML = '<i data-lucide="sparkles" class="w-5 h-5"></i> تشغيل التحليل القانوني الذكي'; icons(); ta.focus(); };
+  $('#replayV').onclick = async () => {
+    if (running || !lastHearing) return;
+    running = true; $('#runBtn').disabled = true;
+    wrap.classList.add('hidden');
+    await playSession(lastHearing.v, lastHearing.lines);
+    renderVerdict(lastHearing.v, lastHearing.text);
+    $('#runBtn').disabled = false; running = false;
+  };
   $('#askV').onclick = () => { openChat(); userSays('كيف تُعتمد مسودة الحكم؟'); };
 }
 
