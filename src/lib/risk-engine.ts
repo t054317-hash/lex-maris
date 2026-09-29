@@ -43,7 +43,11 @@ export type ContractType =
   | 'nda'
   | 'services'
   | 'agency'
-  | 'lease';
+  | 'lease'
+  | 'licence'
+  | 'employment'
+  | 'mou'
+  | 'settlement';
 
 export type DisputeForum =
   | 'local-courts'
@@ -85,6 +89,8 @@ export interface ContractInput {
   commissionPct?: number;
   /** Lease only: term in years. */
   leaseTermYears?: number;
+  /** MoU only: exclusivity period in months; 0 = none. */
+  exclusivityMonths?: number;
 }
 
 export interface Finding {
@@ -138,7 +144,11 @@ const PRICED_TYPES: ReadonlySet<ContractType> = new Set([
   'bill-of-lading',
   'services',
   'agency',
+  'licence',
 ]);
+
+/** No commercial risk allocation: rules about caps, credit, sanctions etc. do not apply. */
+const NON_COMMERCIAL: ContractType[] = ['nda', 'employment', 'mou', 'settlement'];
 
 const not =
   (...types: ContractType[]) =>
@@ -171,7 +181,11 @@ export type FindingCode =
   | 'nda-term-short'
   | 'agency-mandatory-law'
   | 'lease-law-not-situs'
-  | 'lease-arbitration';
+  | 'lease-arbitration'
+  | 'employment-mandatory-law'
+  | 'employment-arbitration'
+  | 'mou-binding-risk'
+  | 'settlement-enforcement';
 
 interface Rule {
   id: string;
@@ -253,7 +267,7 @@ const RULES: readonly Rule[] = [
     clauseId: 'liability',
     weight: 1,
     // NDA breach and lease obligations are conventionally uncapped.
-    appliesTo: not('nda', 'lease'),
+    appliesTo: not(...NON_COMMERCIAL, 'lease'),
     evaluate: (c) => {
       if (c.liabilityCapMultiple === 0) {
         return {
@@ -335,7 +349,7 @@ const RULES: readonly Rule[] = [
     id: 'force-majeure-missing',
     clauseId: 'force-majeure',
     weight: 0.9,
-    appliesTo: not('nda'),
+    appliesTo: not(...NON_COMMERCIAL),
     evaluate: (c) =>
       !c.hasForceMajeure
         ? {
@@ -353,7 +367,7 @@ const RULES: readonly Rule[] = [
     id: 'sanctions-missing',
     clauseId: 'sanctions',
     weight: 1,
-    appliesTo: not('nda', 'lease'),
+    appliesTo: not(...NON_COMMERCIAL, 'lease'),
     evaluate: (c) =>
       !c.hasSanctionsClause
         ? {
@@ -374,7 +388,7 @@ const RULES: readonly Rule[] = [
     clauseId: 'termination',
     weight: 0.6,
     // Agency termination is governed by mandatory law; a lease runs its term.
-    appliesTo: not('nda', 'agency', 'lease'),
+    appliesTo: not(...NON_COMMERCIAL, 'agency', 'lease'),
     evaluate: (c) =>
       !c.hasTerminationForConvenience
         ? {
@@ -392,7 +406,7 @@ const RULES: readonly Rule[] = [
     id: 'indemnity-missing',
     clauseId: 'indemnity',
     weight: 0.6,
-    appliesTo: not('nda', 'lease'),
+    appliesTo: not(...NON_COMMERCIAL, 'lease'),
     evaluate: (c) =>
       !c.hasIndemnity
         ? {
@@ -537,6 +551,71 @@ const RULES: readonly Rule[] = [
           }
         : null,
   },
+  {
+    id: 'employment-mandatory-law',
+    clauseId: 'labour-law',
+    weight: 0.8,
+    appliesTo: (c) => c.type === 'employment',
+    evaluate: () => ({
+      code: 'employment-mandatory-law',
+      severity: 'medium',
+      title: 'Labour law of the place of work is mandatory',
+      detail:
+        'Probation, working hours, leave, notice and end-of-service benefits are fixed by the labour law of the place of work as minimum standards. Terms less favourable to the employee are void, whatever law the contract chooses.',
+      remediation:
+        'Fill Schedule 1 (salary, probation, notice, leave) at or above the statutory minimums of the place of work, and check any required registration or approval of the contract.',
+      authority:
+        'Kuwait Law No. 6 of 2010 on Labour in the Private Sector; UAE Federal Decree-Law No. 33 of 2021 on the Regulation of Labour Relations',
+    }),
+  },
+  {
+    id: 'employment-arbitration',
+    clauseId: 'dispute-resolution',
+    weight: 1,
+    appliesTo: (c) => c.type === 'employment',
+    evaluate: (c) =>
+      c.disputeForum.startsWith('arbitration')
+        ? {
+            code: 'employment-arbitration',
+            severity: 'high',
+            title: 'Employment disputes are generally not arbitrable',
+            detail:
+              'Labour disputes in the Gulf follow a statutory route through the labour authority and the labour courts. An arbitration clause is unlikely to bind the employee.',
+            remediation:
+              'Refer disputes to the competent labour authority and courts of the place of work.',
+          }
+        : null,
+  },
+  {
+    id: 'mou-binding-risk',
+    clauseId: 'non-binding',
+    weight: 0.6,
+    appliesTo: (c) => c.type === 'mou',
+    evaluate: () => ({
+      code: 'mou-binding-risk',
+      severity: 'low',
+      title: 'An MoU can become binding by its content',
+      detail:
+        'In civil-law jurisdictions a court looks at substance, not title: a document recording agreement on the essential terms may be treated as a binding contract despite being called a memorandum.',
+      remediation:
+        'Keep commercial terms indicative, state expressly that they are subject to a definitive agreement, and avoid conduct that implements the transaction before signature.',
+    }),
+  },
+  {
+    id: 'settlement-enforcement',
+    clauseId: 'proceedings',
+    weight: 0.6,
+    appliesTo: (c) => c.type === 'settlement',
+    evaluate: () => ({
+      code: 'settlement-enforcement',
+      severity: 'low',
+      title: 'Make the settlement directly enforceable',
+      detail:
+        'A private settlement is a contract: if the paying party defaults, the other must sue on it. Where proceedings are pending, recording the settlement before the court or tribunal can give it executory force.',
+      remediation:
+        'Where local procedure allows, have the settlement recorded or ratified by the court or tribunal hearing the dispute, or embodied in a consent award.',
+    }),
+  },
 ];
 
 /** Number of rules in the model -- shown on the landing page. */
@@ -625,5 +704,6 @@ export function defaultContractInput(): ContractInput {
     confidentialityYears: 3,
     commissionPct: 5,
     leaseTermYears: 3,
+    exclusivityMonths: 3,
   };
 }

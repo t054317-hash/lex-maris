@@ -48,7 +48,28 @@ export type CategoryClauseId =
   | 'deposit'
   | 'use'
   | 'maintenance'
-  | 'assignment';
+  | 'assignment'
+  | 'licence-grant'
+  | 'licence-restrictions'
+  | 'licence-fees'
+  | 'support'
+  | 'data-protection'
+  | 'warranty'
+  | 'employment-position'
+  | 'probation'
+  | 'remuneration'
+  | 'working-time'
+  | 'employee-duties'
+  | 'employment-termination'
+  | 'labour-law'
+  | 'mou-purpose'
+  | 'non-binding'
+  | 'exclusivity'
+  | 'costs'
+  | 'settlement-dispute'
+  | 'settlement-sum'
+  | 'release'
+  | 'proceedings';
 
 export interface CategoryText {
   headings: Record<CategoryClauseId, string>;
@@ -82,6 +103,35 @@ export interface CategoryText {
     assignment: string[];
     insurance: string[];
   };
+  licence: {
+    grant: string[];
+    restrictions: string[];
+    fees: (fees: string) => string[];
+    support: string[];
+    data: string[];
+    warranty: string[];
+  };
+  employment: {
+    position: string[];
+    probation: string[];
+    remuneration: string[];
+    workingTime: string[];
+    duties: string[];
+    termination: string[];
+    law: string[];
+  };
+  mou: {
+    purpose: string[];
+    nonBinding: string[];
+    exclusivity: (months: number) => string[];
+    costs: string[];
+  };
+  settlement: {
+    dispute: string[];
+    sum: string[];
+    release: string[];
+    proceedings: string[];
+  };
 }
 
 const EN: CategoryText = {
@@ -107,6 +157,27 @@ const EN: CategoryText = {
     use: 'Use of the Premises',
     maintenance: 'Repairs and Alterations',
     assignment: 'Assignment and Subletting',
+    'licence-grant': 'Grant of Licence',
+    'licence-restrictions': 'Restrictions',
+    'licence-fees': 'Licence Fees',
+    support: 'Maintenance and Support',
+    'data-protection': 'Data Protection',
+    warranty: 'Warranty',
+    'employment-position': 'Position and Place of Work',
+    probation: 'Probation',
+    remuneration: 'Remuneration',
+    'working-time': 'Working Time and Leave',
+    'employee-duties': "Employee's Duties",
+    'employment-termination': 'Termination of Employment',
+    'labour-law': 'Mandatory Labour Law',
+    'mou-purpose': 'Purpose',
+    'non-binding': 'Non-Binding Effect',
+    exclusivity: 'Exclusivity',
+    costs: 'Costs',
+    'settlement-dispute': 'The Dispute',
+    'settlement-sum': 'Settlement Sum',
+    release: 'Release',
+    proceedings: 'Withdrawal of Proceedings',
   },
   nda: {
     purpose: [
@@ -201,6 +272,82 @@ const EN: CategoryText = {
       'The Landlord shall insure the building against the usual risks. The Tenant shall insure its contents and fit-out, and its liability to third parties arising from its use of the Premises.',
     ],
   },
+  licence: {
+    grant: [
+      'The First Party (the "Licensor") grants the Second Party (the "Licensee") a non-exclusive, non-transferable licence to use the software described in Schedule 2 (the "Software") for the Licensee\'s internal business purposes, for the number of users and in the territory stated in Schedule 1, during the term of this Agreement.',
+      'The Software and all intellectual property in it remain the property of the Licensor or its licensors. No right is granted except as expressly stated in this Agreement.',
+    ],
+    restrictions: [
+      'The Licensee shall not copy, modify, reverse-engineer or decompile the Software, except to the extent that applicable law expressly permits it notwithstanding this restriction, and shall not sublicense, rent or otherwise make the Software available to any third party.',
+    ],
+    fees: (fees) => [
+      `The licence fees are ${fees} (the "Contract Value"), payable as set out in Schedule 1, exclusive of applicable taxes.`,
+    ],
+    support: [
+      'The Licensor shall provide the maintenance, updates and support described in Schedule 3, and shall use reasonable endeavours to correct reproducible defects notified to it.',
+    ],
+    data: [
+      "Each party shall comply with the data-protection law applicable to it. Where the Licensor processes personal data on the Licensee's behalf, it shall do so only on the Licensee's documented instructions, keep the data secure and confidential, and return or delete it at the end of this Agreement.",
+    ],
+    warranty: [
+      "The Licensor warrants that the Software will perform materially in accordance with its documentation for 90 days from delivery. The Licensee's remedy for breach of this warranty is correction or replacement of the Software or, failing that, a refund of the fees paid for the defective Software.",
+    ],
+  },
+  employment: {
+    position: [
+      'The First Party (the "Employer") employs the Second Party (the "Employee") in the position and at the place of work stated in Schedule 1, with effect from the commencement date stated there.',
+    ],
+    probation: [
+      'The employment is subject to a probationary period of the length stated in Schedule 1, which shall not exceed the maximum permitted by the labour law applicable at the place of work. During that period either party may end the employment as that law provides.',
+    ],
+    remuneration: [
+      "The Employer shall pay the Employee the salary and allowances stated in Schedule 1, monthly in arrears, by transfer to the Employee's bank account, in accordance with the applicable wage-protection rules.",
+    ],
+    workingTime: [
+      'Working hours, weekly rest, public holidays, annual leave and sick leave are as stated in Schedule 1 and are in no case less favourable to the Employee than the applicable labour law provides.',
+    ],
+    duties: [
+      "The Employee shall perform the duties of the position diligently and in good faith, follow the Employer's lawful instructions, and comply with the Employer's policies notified in writing.",
+    ],
+    termination: [
+      'Either party may terminate the employment by written notice of the period stated in Schedule 1, which shall not be shorter than the minimum required by the applicable labour law, or otherwise as that law permits.',
+      'On termination the Employee is entitled to the end-of-service benefits and any other sums due under the applicable labour law.',
+    ],
+    law: [
+      'Nothing in this Contract reduces any right of the Employee under the mandatory provisions of the labour law applicable at the place of work, which prevail over any inconsistent term.',
+    ],
+  },
+  mou: {
+    purpose: [
+      'This Memorandum records the current intentions of the parties regarding the proposed transaction described in Schedule 2 (the "Proposed Transaction").',
+    ],
+    nonBinding: [
+      'Except for the clauses on Exclusivity, Costs, Confidentiality, Governing Law and Dispute Resolution (the "Binding Provisions"), this Memorandum is not legally binding and creates no obligation to negotiate or to enter into the Proposed Transaction. Any such obligation arises only under a definitive agreement signed by both parties.',
+      'This Memorandum terminates on the earlier of the signature of a definitive agreement and the date stated in Schedule 1. The Binding Provisions survive as stated in them.',
+    ],
+    exclusivity: (months) => [
+      months
+        ? `For ${months === 1 ? '1 month' : `${months} months`} from the date of this Memorandum, the First Party shall not solicit, negotiate or enter into any agreement with a third party concerning a transaction substantially similar to the Proposed Transaction.`
+        : 'Neither party is bound by any obligation of exclusivity.',
+    ],
+    costs: [
+      'Each party shall bear its own costs in connection with this Memorandum and the Proposed Transaction.',
+    ],
+  },
+  settlement: {
+    dispute: [
+      'The parties are in dispute concerning the matters described in Schedule 2 (the "Dispute") and wish to settle the Dispute on the terms of this Agreement, without any admission of liability by either party.',
+    ],
+    sum: [
+      'The party identified in Schedule 1 as the paying party shall pay the settlement sum stated there (the "Settlement Sum") within the period stated there, by transfer to the account notified in writing by the receiving party.',
+    ],
+    release: [
+      'With effect from receipt of the Settlement Sum in full, and to the extent permitted by law, each party releases the other from all claims arising out of or in connection with the Dispute, whether or not known at the date of this Agreement, other than claims to enforce this Agreement.',
+    ],
+    proceedings: [
+      'Within 14 days of receipt of the Settlement Sum, the parties shall take the steps required to withdraw or discontinue any proceedings relating to the Dispute, each bearing its own costs unless Schedule 1 provides otherwise.',
+    ],
+  },
 };
 
 const AR: CategoryText = {
@@ -226,6 +373,27 @@ const AR: CategoryText = {
     use: 'استعمال العين المؤجَّرة',
     maintenance: 'الصيانة والتعديلات',
     assignment: 'التنازل والتأجير من الباطن',
+    'licence-grant': 'منح الترخيص',
+    'licence-restrictions': 'القيود',
+    'licence-fees': 'رسوم الترخيص',
+    support: 'الصيانة والدعم',
+    'data-protection': 'حماية البيانات',
+    warranty: 'الضمان',
+    'employment-position': 'الوظيفة ومكان العمل',
+    probation: 'فترة التجربة',
+    remuneration: 'الأجر',
+    'working-time': 'ساعات العمل والإجازات',
+    'employee-duties': 'واجبات العامل',
+    'employment-termination': 'إنهاء عقد العمل',
+    'labour-law': 'أحكام قانون العمل الآمرة',
+    'mou-purpose': 'الغرض',
+    'non-binding': 'عدم الإلزام',
+    exclusivity: 'الحصرية',
+    costs: 'المصروفات',
+    'settlement-dispute': 'النزاع',
+    'settlement-sum': 'مبلغ التسوية',
+    release: 'الإبراء',
+    proceedings: 'ترك الإجراءات',
   },
   nda: {
     purpose: [
@@ -320,6 +488,82 @@ const AR: CategoryText = {
       'يلتزم المؤجِّر بالتأمين على المبنى ضد المخاطر المعتادة. ويلتزم المستأجر بالتأمين على محتوياته وتجهيزاته، وعلى مسؤوليته تجاه الغير الناشئة عن استعماله العين المؤجَّرة.',
     ],
   },
+  licence: {
+    grant: [
+      'يمنح الطرف الأول («المرخِّص») الطرفَ الثاني («المرخَّص له») ترخيصاً غير حصري وغير قابل للتحويل باستخدام البرنامج المبيّن في الملحق رقم (2) («البرنامج») لأغراض عمله الداخلية، لعدد المستخدمين وفي الإقليم المحددين في الملحق رقم (1)، طوال مدة هذه الاتفاقية.',
+      'يبقى البرنامج وجميع حقوق الملكية الفكرية فيه مملوكاً للمرخِّص أو لمن رخّصوا له، ولا يُمنح أي حق إلا ما نصّت عليه هذه الاتفاقية صراحةً.',
+    ],
+    restrictions: [
+      'لا يجوز للمرخَّص له نسخ البرنامج أو تعديله أو إجراء هندسة عكسية له أو تفكيكه، إلا بالقدر الذي يُجيزه القانون المعمول به صراحةً رغم هذا القيد، ولا يجوز له الترخيص به من الباطن أو تأجيره أو إتاحته للغير بأي وجه.',
+    ],
+    fees: (fees) => [
+      `تبلغ رسوم الترخيص ${fees} («قيمة العقد»)، تُدفع وفقاً لما هو مبيّن في الملحق رقم (1)، غير شاملة الضرائب المستحقة.`,
+    ],
+    support: [
+      'يلتزم المرخِّص بتقديم خدمات الصيانة والتحديثات والدعم المبيّنة في الملحق رقم (3)، وببذل المساعي المعقولة لتصحيح العيوب القابلة لإعادة الظهور التي يُخطَر بها.',
+    ],
+    data: [
+      'يلتزم كل طرف بقانون حماية البيانات المنطبق عليه. وإذا عالج المرخِّص بيانات شخصية لحساب المرخَّص له، فلا يعالجها إلا وفق تعليماته الموثّقة، ويحافظ على أمنها وسريتها، ويعيدها أو يحذفها عند انتهاء هذه الاتفاقية.',
+    ],
+    warranty: [
+      'يضمن المرخِّص أن يعمل البرنامج بما يتفق جوهرياً مع وثائقه مدة 90 يوماً من تاريخ التسليم. ويقتصر حق المرخَّص له عند الإخلال بهذا الضمان على تصحيح البرنامج أو استبداله، فإن تعذّر ذلك فردّ الرسوم المدفوعة عن البرنامج المعيب.',
+    ],
+  },
+  employment: {
+    position: [
+      'يستخدم الطرف الأول («صاحب العمل») الطرفَ الثاني («العامل») في الوظيفة ومكان العمل المحددين في الملحق رقم (1)، اعتباراً من تاريخ المباشرة المبيّن فيه.',
+    ],
+    probation: [
+      'يخضع العامل لفترة تجربة بالمدة المحددة في الملحق رقم (1)، على ألا تتجاوز الحد الأقصى الذي يُجيزه قانون العمل المعمول به في مكان العمل. ويجوز لأيٍّ من الطرفين إنهاء العلاقة خلالها وفقاً لأحكام ذلك القانون.',
+    ],
+    remuneration: [
+      'يلتزم صاحب العمل بأن يؤدي للعامل الأجر والبدلات المحددة في الملحق رقم (1) شهرياً في نهاية كل شهر، بالتحويل إلى حسابه المصرفي، ووفقاً لقواعد حماية الأجور المعمول بها.',
+    ],
+    workingTime: [
+      'تكون ساعات العمل والراحة الأسبوعية والعطلات الرسمية والإجازة السنوية والإجازة المرضية وفقاً لما هو محدد في الملحق رقم (1)، ولا تقل في أي حال عمّا يقرره قانون العمل المعمول به لصالح العامل.',
+    ],
+    duties: [
+      'يلتزم العامل بأداء مهام وظيفته بعناية وحسن نية، وباتباع تعليمات صاحب العمل المشروعة، وبالتقيّد بسياسات صاحب العمل المُبلَّغة إليه كتابةً.',
+    ],
+    termination: [
+      'يجوز لأيٍّ من الطرفين إنهاء عقد العمل بإخطار كتابي بالمدة المحددة في الملحق رقم (1)، على ألا تقل عن الحد الأدنى الذي يوجبه قانون العمل المعمول به، أو على أي وجه آخر يُجيزه ذلك القانون.',
+      'يستحق العامل عند انتهاء الخدمة مكافأة نهاية الخدمة وأي مبالغ أخرى مستحقة له بموجب قانون العمل المعمول به.',
+    ],
+    law: [
+      'ليس في هذا العقد ما ينتقص من أي حق للعامل تقرره الأحكام الآمرة لقانون العمل المعمول به في مكان العمل، وتسود هذه الأحكام على أي شرط يخالفها.',
+    ],
+  },
+  mou: {
+    purpose: [
+      'تُثبت هذه المذكرة النوايا الحالية للطرفين بشأن الصفقة المقترحة المبيّنة في الملحق رقم (2) («الصفقة المقترحة»).',
+    ],
+    nonBinding: [
+      'باستثناء البنود المتعلقة بالحصرية والمصروفات والسرية والقانون الواجب التطبيق وتسوية النزاعات («الأحكام الملزمة»)، لا تُعدّ هذه المذكرة ملزمة قانوناً، ولا تُنشئ أي التزام بالتفاوض أو بإبرام الصفقة المقترحة. ولا ينشأ أي التزام من هذا القبيل إلا بموجب اتفاقية نهائية يوقّعها الطرفان.',
+      'تنتهي هذه المذكرة بتوقيع اتفاقية نهائية أو بحلول التاريخ المحدد في الملحق رقم (1)، أيهما أسبق. وتبقى الأحكام الملزمة سارية وفقاً لما تنص عليه.',
+    ],
+    exclusivity: (months) => [
+      months
+        ? `يلتزم الطرف الأول، مدة ${months === 1 ? 'شهر واحد' : months === 2 ? 'شهرين' : months <= 10 ? `${months} أشهر` : `${months} شهراً`} من تاريخ هذه المذكرة، بعدم السعي أو التفاوض أو التعاقد مع الغير بشأن صفقة مماثلة في جوهرها للصفقة المقترحة.`
+        : 'لا يلتزم أيٌّ من الطرفين بأي التزام بالحصرية.',
+    ],
+    costs: [
+      'يتحمّل كل طرف مصروفاته المتعلقة بهذه المذكرة وبالصفقة المقترحة.',
+    ],
+  },
+  settlement: {
+    dispute: [
+      'نشأ بين الطرفين نزاع بشأن المسائل المبيّنة في الملحق رقم (2) («النزاع»)، ويرغبان في تسويته صلحاً وفقاً لشروط هذه الاتفاقية، دون أن يُعدّ ذلك إقراراً بالمسؤولية من أيٍّ منهما.',
+    ],
+    sum: [
+      'يلتزم الطرف المحدد في الملحق رقم (1) بوصفه الطرف الدافع بأداء مبلغ التسوية المبيّن فيه («مبلغ التسوية») خلال المدة المحددة فيه، بالتحويل إلى الحساب الذي يُخطره به الطرف المستفيد كتابةً.',
+    ],
+    release: [
+      'اعتباراً من استلام مبلغ التسوية كاملاً، وفي الحدود التي يُجيزها القانون، يُبرئ كل طرف الطرفَ الآخر من جميع المطالبات الناشئة عن النزاع أو المتصلة به، سواء أكانت معلومة في تاريخ هذه الاتفاقية أم لا، عدا المطالبات الرامية إلى تنفيذ هذه الاتفاقية.',
+    ],
+    proceedings: [
+      'يلتزم الطرفان، خلال 14 يوماً من استلام مبلغ التسوية، باتخاذ الإجراءات اللازمة لترك أي دعاوى أو إجراءات متعلقة بالنزاع أو إنهائها، ويتحمّل كل طرف مصروفاته ما لم ينص الملحق رقم (1) على خلاف ذلك.',
+    ],
+  },
 };
 
 const FR: CategoryText = {
@@ -345,6 +589,27 @@ const FR: CategoryText = {
     use: 'Destination des locaux',
     maintenance: 'Entretien et travaux',
     assignment: 'Cession et sous-location',
+    'licence-grant': 'Concession de licence',
+    'licence-restrictions': 'Restrictions',
+    'licence-fees': 'Redevances',
+    support: 'Maintenance et assistance',
+    'data-protection': 'Protection des données',
+    warranty: 'Garantie',
+    'employment-position': 'Fonctions et lieu de travail',
+    probation: "Période d'essai",
+    remuneration: 'Rémunération',
+    'working-time': 'Durée du travail et congés',
+    'employee-duties': 'Obligations du salarié',
+    'employment-termination': 'Rupture du contrat de travail',
+    'labour-law': 'Dispositions impératives du droit du travail',
+    'mou-purpose': 'Objet',
+    'non-binding': 'Absence de force obligatoire',
+    exclusivity: 'Exclusivité',
+    costs: 'Frais',
+    'settlement-dispute': 'Le Différend',
+    'settlement-sum': 'Somme transactionnelle',
+    release: 'Renonciation',
+    proceedings: 'Désistement',
   },
   nda: {
     purpose: [
@@ -437,6 +702,82 @@ const FR: CategoryText = {
     ],
     insurance: [
       "Le Bailleur assure l'immeuble contre les risques usuels. Le Preneur assure ses biens et aménagements, ainsi que sa responsabilité civile à l'égard des tiers du fait de l'utilisation des Locaux.",
+    ],
+  },
+  licence: {
+    grant: [
+      "Le Premier Contractant (le « Concédant ») concède au Second Contractant (le « Licencié ») une licence non exclusive et incessible d'utilisation du logiciel décrit à l'Annexe 2 (le « Logiciel ») pour les besoins internes de son activité, pour le nombre d'utilisateurs et sur le territoire indiqués à l'Annexe 1, pendant la durée du présent Contrat.",
+      "Le Logiciel et l'ensemble des droits de propriété intellectuelle qui s'y rattachent demeurent la propriété du Concédant ou de ses propres concédants. Aucun droit n'est concédé au-delà de ce que prévoit expressément le présent Contrat.",
+    ],
+    restrictions: [
+      "Le Licencié s'interdit de copier, modifier, décompiler ou procéder à l'ingénierie inverse du Logiciel, sauf dans la mesure où le droit applicable l'autorise expressément nonobstant la présente restriction, et de le sous-licencier, le louer ou le mettre à la disposition de tiers.",
+    ],
+    fees: (fees) => [
+      `Les redevances de licence s'élèvent à ${fees} (la « Valeur du Contrat »), payables selon les modalités de l'Annexe 1, hors taxes applicables.`,
+    ],
+    support: [
+      "Le Concédant assure la maintenance, les mises à jour et l'assistance décrites à l'Annexe 3 et met en œuvre des efforts raisonnables pour corriger les anomalies reproductibles qui lui sont signalées.",
+    ],
+    data: [
+      "Chaque partie respecte le droit de la protection des données qui lui est applicable. Lorsque le Concédant traite des données personnelles pour le compte du Licencié, il ne le fait que sur instruction documentée de celui-ci, en assure la sécurité et la confidentialité, et les restitue ou les supprime au terme du présent Contrat.",
+    ],
+    warranty: [
+      "Le Concédant garantit que le Logiciel fonctionnera pour l'essentiel conformément à sa documentation pendant 90 jours à compter de sa livraison. Le recours du Licencié au titre de cette garantie consiste en la correction ou le remplacement du Logiciel ou, à défaut, le remboursement des redevances versées pour le Logiciel défectueux.",
+    ],
+  },
+  employment: {
+    position: [
+      "Le Premier Contractant (l'« Employeur ») engage le Second Contractant (le « Salarié ») aux fonctions et au lieu de travail indiqués à l'Annexe 1, à compter de la date d'entrée en fonctions qui y figure.",
+    ],
+    probation: [
+      "L'engagement est soumis à une période d'essai dont la durée est indiquée à l'Annexe 1 et ne peut excéder le maximum autorisé par le droit du travail applicable au lieu de travail. Pendant cette période, chaque partie peut mettre fin à la relation dans les conditions prévues par ce droit.",
+    ],
+    remuneration: [
+      "L'Employeur verse au Salarié le salaire et les indemnités indiqués à l'Annexe 1, mensuellement à terme échu, par virement sur son compte bancaire, conformément aux règles de protection des salaires applicables.",
+    ],
+    workingTime: [
+      "La durée du travail, le repos hebdomadaire, les jours fériés, les congés annuels et les congés de maladie sont ceux indiqués à l'Annexe 1 et ne peuvent en aucun cas être moins favorables au Salarié que ce que prévoit le droit du travail applicable.",
+    ],
+    duties: [
+      "Le Salarié exerce ses fonctions avec diligence et de bonne foi, se conforme aux instructions licites de l'Employeur et respecte les politiques de l'Employeur qui lui ont été notifiées par écrit.",
+    ],
+    termination: [
+      "Chaque partie peut mettre fin au contrat de travail moyennant un préavis écrit dont la durée est indiquée à l'Annexe 1 et ne peut être inférieure au minimum exigé par le droit du travail applicable, ou selon toute autre modalité permise par ce droit.",
+      "À la fin du contrat, le Salarié a droit à l'indemnité de fin de service et à toutes autres sommes dues en vertu du droit du travail applicable.",
+    ],
+    law: [
+      "Aucune stipulation du présent Contrat ne réduit les droits que le Salarié tient des dispositions impératives du droit du travail applicable au lieu de travail, lesquelles prévalent sur toute stipulation contraire.",
+    ],
+  },
+  mou: {
+    purpose: [
+      "Le présent Protocole consigne les intentions actuelles des parties concernant l'opération envisagée décrite à l'Annexe 2 (l'« Opération Envisagée »).",
+    ],
+    nonBinding: [
+      "À l'exception des clauses relatives à l'exclusivité, aux frais, à la confidentialité, au droit applicable et au règlement des différends (les « Stipulations Obligatoires »), le présent Protocole n'a pas de force obligatoire et ne crée aucune obligation de négocier ni de conclure l'Opération Envisagée. Une telle obligation ne peut naître que d'un accord définitif signé par les deux parties.",
+      "Le présent Protocole prend fin à la première des deux dates suivantes : la signature d'un accord définitif ou la date indiquée à l'Annexe 1. Les Stipulations Obligatoires survivent dans les conditions qu'elles prévoient.",
+    ],
+    exclusivity: (months) => [
+      months
+        ? `Pendant ${months} mois à compter de la date du présent Protocole, le Premier Contractant s'interdit de solliciter, négocier ou conclure avec un tiers un accord portant sur une opération substantiellement similaire à l'Opération Envisagée.`
+        : "Aucune partie n'est tenue à une obligation d'exclusivité.",
+    ],
+    costs: [
+      "Chaque partie supporte ses propres frais liés au présent Protocole et à l'Opération Envisagée.",
+    ],
+  },
+  settlement: {
+    dispute: [
+      "Les parties sont en litige au sujet des questions décrites à l'Annexe 2 (le « Différend ») et souhaitent y mettre fin par voie transactionnelle aux conditions du présent Accord, sans reconnaissance de responsabilité de part ni d'autre.",
+    ],
+    sum: [
+      "La partie désignée à l'Annexe 1 comme partie débitrice verse la somme transactionnelle qui y est indiquée (la « Somme Transactionnelle ») dans le délai qui y figure, par virement sur le compte notifié par écrit par la partie créancière.",
+    ],
+    release: [
+      "À compter de la réception de l'intégralité de la Somme Transactionnelle, et dans la mesure permise par la loi, chaque partie renonce à l'égard de l'autre à toute réclamation née du Différend ou s'y rattachant, qu'elle soit connue ou non à la date du présent Accord, à l'exception des demandes tendant à l'exécution du présent Accord.",
+    ],
+    proceedings: [
+      "Dans les 14 jours suivant la réception de la Somme Transactionnelle, les parties accomplissent les démarches nécessaires pour se désister de toute procédure relative au Différend ou y mettre fin, chacune supportant ses propres frais sauf stipulation contraire de l'Annexe 1.",
     ],
   },
 };

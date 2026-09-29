@@ -101,6 +101,8 @@ interface DocText {
     reference: string;
     first: Party;
     second: Party;
+    /** Second party is a natural person (the employee), not a company. */
+    individualSecond?: boolean;
   }) => string[];
   body: {
     definitions: string[];
@@ -173,6 +175,10 @@ const EN: DocText = {
     services: 'Services Agreement',
     agency: 'Commercial Agency Agreement',
     lease: 'Commercial Lease',
+    licence: 'Software Licence Agreement',
+    employment: 'Employment Contract',
+    mou: 'Memorandum of Understanding',
+    settlement: 'Settlement Agreement',
   },
   headings: {
     definitions: 'Definitions and Interpretation',
@@ -229,10 +235,12 @@ const EN: DocText = {
     'parent-guarantee':
       'a guarantee of the Second Party obligations executed by its ultimate parent undertaking',
   },
-  recitals: ({ date, reference, first, second }) => [
+  recitals: ({ date, reference, first, second, individualSecond }) => [
     `THIS AGREEMENT is dated ${date} and made under reference ${reference}.`,
     `(1) ${first.name.toUpperCase()}, a company registered in ${EN.registeredIn(first.jurisdiction)} under number ${first.registrationNo}, whose registered office is at ${first.address} (the "First Party"); and`,
-    `(2) ${second.name.toUpperCase()}, a company registered in ${EN.registeredIn(second.jurisdiction)} under number ${second.registrationNo}, whose registered office is at ${second.address} (the "Second Party").`,
+    individualSecond
+      ? `(2) ${second.name.toUpperCase()}, holder of identity document number ${second.registrationNo}, residing at ${second.address} (the "Second Party").`
+      : `(2) ${second.name.toUpperCase()}, a company registered in ${EN.registeredIn(second.jurisdiction)} under number ${second.registrationNo}, whose registered office is at ${second.address} (the "Second Party").`,
     'IT IS AGREED as follows:',
   ],
   body: {
@@ -325,6 +333,10 @@ const AR: DocText = {
     services: 'اتفاقية تقديم خدمات',
     agency: 'عقد وكالة تجارية',
     lease: 'عقد إيجار تجاري',
+    licence: 'اتفاقية ترخيص برمجيات',
+    employment: 'عقد عمل',
+    mou: 'مذكرة تفاهم',
+    settlement: 'اتفاقية تسوية (صلح)',
   },
   headings: {
     definitions: 'التعريفات والتفسير',
@@ -376,10 +388,12 @@ const AR: DocText = {
     'parent-guarantee':
       'كفالة لالتزامات الطرف الثاني صادرة عن الشركة الأم النهائية التابع لها',
   },
-  recitals: ({ date, reference, first, second }) => [
+  recitals: ({ date, reference, first, second, individualSecond }) => [
     `حُرّرت هذه الاتفاقية بتاريخ ${date} تحت المرجع رقم ${reference}، بين كلٍّ من:`,
     `(1) ${first.name}، شركة مسجّلة في ${AR.registeredIn(first.jurisdiction)} تحت رقم ${first.registrationNo}، ويقع مكتبها المسجّل في ${first.address} (ويُشار إليها فيما يلي بـ«الطرف الأول»)؛ و`,
-    `(2) ${second.name}، شركة مسجّلة في ${AR.registeredIn(second.jurisdiction)} تحت رقم ${second.registrationNo}، ويقع مكتبها المسجّل في ${second.address} (ويُشار إليها فيما يلي بـ«الطرف الثاني»).`,
+    individualSecond
+      ? `(2) ${second.name}، حامل وثيقة الهوية رقم ${second.registrationNo}، والمقيم في ${second.address} (ويُشار إليه فيما يلي بـ«الطرف الثاني»).`
+      : `(2) ${second.name}، شركة مسجّلة في ${AR.registeredIn(second.jurisdiction)} تحت رقم ${second.registrationNo}، ويقع مكتبها المسجّل في ${second.address} (ويُشار إليها فيما يلي بـ«الطرف الثاني»).`,
     'وقد اتفق الطرفان على ما يلي:',
   ],
   body: {
@@ -472,6 +486,10 @@ const FR: DocText = {
     services: 'Contrat de prestation de services',
     agency: "Contrat d'agence commerciale",
     lease: 'Bail commercial',
+    licence: 'Contrat de licence de logiciel',
+    employment: 'Contrat de travail',
+    mou: "Protocole d'accord",
+    settlement: 'Protocole transactionnel',
   },
   headings: {
     definitions: 'Définitions et interprétation',
@@ -525,10 +543,12 @@ const FR: DocText = {
     'parent-guarantee':
       'une garantie des obligations du Second Contractant souscrite par sa société mère ultime',
   },
-  recitals: ({ date, reference, first, second }) => [
+  recitals: ({ date, reference, first, second, individualSecond }) => [
     `LE PRÉSENT CONTRAT est conclu le ${date} sous la référence ${reference}, entre :`,
     `(1) ${first.name.toUpperCase()}, société immatriculée ${FR.registeredIn(first.jurisdiction)} sous le numéro ${first.registrationNo}, dont le siège social se trouve à l'adresse suivante : ${first.address} (le « Premier Contractant ») ; et`,
-    `(2) ${second.name.toUpperCase()}, société immatriculée ${FR.registeredIn(second.jurisdiction)} sous le numéro ${second.registrationNo}, dont le siège social se trouve à l'adresse suivante : ${second.address} (le « Second Contractant »).`,
+    individualSecond
+      ? `(2) ${second.name.toUpperCase()}, titulaire de la pièce d'identité n° ${second.registrationNo}, demeurant à l'adresse suivante : ${second.address} (le « Second Contractant »).`
+      : `(2) ${second.name.toUpperCase()}, société immatriculée ${FR.registeredIn(second.jurisdiction)} sous le numéro ${second.registrationNo}, dont le siège social se trouve à l'adresse suivante : ${second.address} (le « Second Contractant »).`,
     'IL A ÉTÉ CONVENU CE QUI SUIT :',
   ],
   body: {
@@ -776,6 +796,70 @@ export function assembleDocument(
       ];
       break;
 
+    case 'licence':
+      draft = [
+        clause('definitions', text.body.definitions),
+        clause('licence-grant', cat.licence.grant),
+        clause('licence-restrictions', cat.licence.restrictions),
+        clause('licence-fees', cat.licence.fees(money(input.valueUsd))),
+        clause('payment', text.body.payment(input.paymentTermsDays, input.paymentTermsDays > 60)),
+        clause('support', cat.licence.support),
+        clause('data-protection', cat.licence.data),
+        clause('warranty', cat.licence.warranty),
+        clause('confidentiality', text.body.confidentiality),
+        liability,
+        optional(input.hasIndemnity, 'indemnity', text.body.indemnity),
+        optional(input.hasForceMajeure, 'force-majeure', text.body.forceMajeure),
+        optional(input.hasSanctionsClause, 'sanctions', text.body.sanctions),
+        clause('termination', text.body.termination(input.hasTerminationForConvenience)),
+        governingLaw,
+        dispute,
+        execution,
+      ];
+      break;
+
+    case 'employment':
+      draft = [
+        clause('employment-position', cat.employment.position),
+        clause('probation', cat.employment.probation),
+        clause('remuneration', cat.employment.remuneration),
+        clause('working-time', cat.employment.workingTime),
+        clause('employee-duties', cat.employment.duties),
+        clause('confidentiality', text.body.confidentiality),
+        clause('employment-termination', cat.employment.termination),
+        clause('labour-law', cat.employment.law),
+        governingLaw,
+        dispute,
+        execution,
+      ];
+      break;
+
+    case 'mou':
+      draft = [
+        clause('mou-purpose', cat.mou.purpose),
+        clause('non-binding', cat.mou.nonBinding),
+        clause('exclusivity', cat.mou.exclusivity(input.exclusivityMonths ?? 0)),
+        clause('costs', cat.mou.costs),
+        clause('confidentiality', text.body.confidentiality),
+        governingLaw,
+        dispute,
+        execution,
+      ];
+      break;
+
+    case 'settlement':
+      draft = [
+        clause('settlement-dispute', cat.settlement.dispute),
+        clause('settlement-sum', cat.settlement.sum),
+        clause('release', cat.settlement.release),
+        clause('proceedings', cat.settlement.proceedings),
+        clause('confidentiality', text.body.confidentiality),
+        governingLaw,
+        dispute,
+        execution,
+      ];
+      break;
+
     default:
       draft = [
         clause('definitions', text.body.definitions),
@@ -816,6 +900,8 @@ export function assembleDocument(
       reference: meta.reference,
       first,
       second,
+      // The employee is a natural person, not a registered company.
+      individualSecond: input.type === 'employment',
     }),
     clauses,
   };

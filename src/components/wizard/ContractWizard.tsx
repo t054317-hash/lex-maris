@@ -29,6 +29,14 @@ const TRADE_TYPES: ReadonlySet<ContractInput['type']> = new Set([
   'charterparty',
 ]);
 
+/** Categories with no commercial risk allocation (no cap, FM, sanctions...). */
+const NON_COMMERCIAL: ReadonlySet<ContractInput['type']> = new Set([
+  'nda',
+  'employment',
+  'mou',
+  'settlement',
+]);
+
 const STEPS = ['instrument', 'commercial', 'allocation', 'forum', 'execute'] as const;
 
 /**
@@ -51,6 +59,12 @@ const placeholderMeta = (p: {
     second: { name: p.second, registrationNo: p.reg, address: p.address, jurisdiction: 'XX' },
   },
 });
+
+const EMPLOYEE_PLACEHOLDER: Record<Locale, { name: string; registrationNo: string; address: string }> = {
+  en: { name: '[Employee name]', registrationNo: '[civil ID / passport no.]', address: '[residential address]' },
+  ar: { name: '[اسم العامل]', registrationNo: '[رقم البطاقة المدنية / جواز السفر]', address: '[عنوان السكن]' },
+  fr: { name: '[nom du salarié]', registrationNo: "[n° de carte d'identité / passeport]", address: '[adresse du domicile]' },
+};
 
 const META_FOR: Record<Locale, DocumentMeta> = {
   en: placeholderMeta({
@@ -103,7 +117,23 @@ export function ContractWizard() {
 
   const report = useMemo(() => analyseContract(input), [input]);
   const doc = useMemo(
-    () => assembleDocument(input, META_FOR[locale], locale),
+    () => {
+      const meta = META_FOR[locale];
+      if (input.type !== 'employment') return assembleDocument(input, meta, locale);
+      // The employee is identified by ID document and home address.
+      const person = EMPLOYEE_PLACEHOLDER[locale];
+      return assembleDocument(
+        { ...input },
+        {
+          ...meta,
+          parties: {
+            ...meta.parties,
+            second: { ...meta.parties.second, ...person },
+          },
+        },
+        locale,
+      );
+    },
     [input, locale],
   );
   const usd = useMemo(() => usdFormatter(locale), [locale]);
@@ -113,14 +143,16 @@ export function ContractWizard() {
   const isTrade = TRADE_TYPES.has(input.type);
   const { type } = input;
   // Which risk-allocation controls a category actually uses.
+  const nonCommercial = NON_COMMERCIAL.has(type);
   const uses = {
-    cap: type !== 'nda' && type !== 'lease',
-    forceMajeure: type !== 'nda',
-    sanctions: type !== 'nda' && type !== 'lease',
-    indemnity: type !== 'nda' && type !== 'lease',
-    convenience: isTrade || type === 'services',
+    cap: !nonCommercial && type !== 'lease',
+    forceMajeure: !nonCommercial,
+    sanctions: !nonCommercial && type !== 'lease',
+    indemnity: !nonCommercial && type !== 'lease',
+    convenience: isTrade || type === 'services' || type === 'licence',
     insurance: isTrade,
   };
+  const priced = isTrade || type === 'services' || type === 'agency' || type === 'licence';
   const pct = (n: number) => new Intl.NumberFormat(NUMBER_LOCALE[locale]).format(n);
 
   return (
@@ -247,7 +279,32 @@ export function ContractWizard() {
                 </>
               )}
 
-              {step === 1 && (isTrade || type === 'services' || type === 'agency') && (
+              {step === 1 && type === 'mou' && (
+                <Field
+                  label={t('wizard.field.exclusivity', {
+                    value: input.exclusivityMonths
+                      ? pct(input.exclusivityMonths)
+                      : t('wizard.none'),
+                  })}
+                >
+                  <Range
+                    min={0}
+                    max={12}
+                    step={1}
+                    value={input.exclusivityMonths ?? 0}
+                    onChange={(v) => patch('exclusivityMonths', v)}
+                    dir={dir}
+                  />
+                </Field>
+              )}
+
+              {step === 1 && (type === 'employment' || type === 'settlement') && (
+                <p className="text-xs leading-relaxed text-ink-500">
+                  {t(type === 'employment' ? 'wizard.employmentNote' : 'wizard.settlementNote')}
+                </p>
+              )}
+
+              {step === 1 && priced && (
                 <>
                   {type === 'agency' ? (
                     <Field
@@ -264,7 +321,13 @@ export function ContractWizard() {
                     </Field>
                   ) : (
                     <Field
-                      label={t(type === 'services' ? 'wizard.field.fees' : 'wizard.field.value', {
+                      label={t(
+                        type === 'services'
+                          ? 'wizard.field.fees'
+                          : type === 'licence'
+                            ? 'wizard.field.licenceFees'
+                            : 'wizard.field.value',
+                        {
                         value: usd(input.valueUsd),
                       })}
                     >
@@ -347,8 +410,10 @@ export function ContractWizard() {
 
               {step === 2 && (
                 <>
-                  {type === 'nda' && (
-                    <p className="text-xs leading-relaxed text-ink-500">{t('wizard.ndaNote')}</p>
+                  {nonCommercial && (
+                    <p className="text-xs leading-relaxed text-ink-500">
+                      {t(type === 'nda' ? 'wizard.ndaNote' : 'wizard.noAllocationNote')}
+                    </p>
                   )}
                   {uses.cap && (
                   <Field

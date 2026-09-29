@@ -170,6 +170,35 @@ const ar: Table = {
     remediation:
       'أحِل المنازعات إلى المحاكم أو جهة فض منازعات الإيجار المختصة في مكان العقار.',
   },
+  'employment-mandatory-law': {
+    title: 'قانون العمل في مكان العمل قانون آمر',
+    detail:
+      'يحدد قانون العمل في مكان العمل حدوداً دنيا لفترة التجربة وساعات العمل والإجازات ومهلة الإخطار ومكافأة نهاية الخدمة. ويقع باطلاً كل شرط أقل فائدة للعامل، أياً كان القانون الذي يختاره العقد.',
+    remediation:
+      'املأ الملحق رقم (1) (الأجر وفترة التجربة ومهلة الإخطار والإجازات) بما لا يقل عن الحدود الدنيا القانونية في مكان العمل، وتحقّق من أي قيد أو اعتماد مطلوب للعقد.',
+    authority:
+      'القانون الكويتي رقم 6 لسنة 2010 في شأن العمل في القطاع الأهلي؛ المرسوم بقانون اتحادي إماراتي رقم 33 لسنة 2021 بشأن تنظيم علاقات العمل',
+  },
+  'employment-arbitration': {
+    title: 'منازعات العمل لا تقبل التحكيم في الغالب',
+    detail:
+      'تسلك منازعات العمل في دول الخليج طريقاً قانونياً محدداً عبر جهة العمل المختصة ثم المحاكم العمالية، ومن المستبعد أن يُلزَم العامل بشرط التحكيم.',
+    remediation: 'أحِل المنازعات إلى جهة العمل والمحاكم المختصة في مكان العمل.',
+  },
+  'mou-binding-risk': {
+    title: 'قد تصبح مذكرة التفاهم ملزمة بمضمونها',
+    detail:
+      'في الأنظمة المدنية ينظر القاضي إلى المضمون لا إلى التسمية، فالمستند الذي يُثبت الاتفاق على المسائل الجوهرية قد يُعدّ عقداً ملزماً وإن سُمّي مذكرة تفاهم.',
+    remediation:
+      'اجعل الشروط التجارية استرشادية، وانصص صراحةً على خضوعها لاتفاقية نهائية، وتجنّب أي تصرف ينفّذ الصفقة قبل التوقيع.',
+  },
+  'settlement-enforcement': {
+    title: 'اجعل التسوية قابلة للتنفيذ مباشرةً',
+    detail:
+      'التسوية الخاصة عقد، فإذا أخلّ الطرف الدافع وجب على الآخر رفع دعوى بها. أما إذا كانت هناك دعوى منظورة، فإن إثبات الصلح أمام المحكمة أو هيئة التحكيم قد يمنحه قوة السند التنفيذي.',
+    remediation:
+      'متى أجازت الإجراءات المحلية ذلك، أثبت الصلح أو صدّق عليه أمام المحكمة أو هيئة التحكيم التي تنظر النزاع، أو أفرغه في حكم تحكيم باتفاق الطرفين.',
+  },
 };
 
 const fr: Table = {
@@ -321,6 +350,36 @@ const fr: Table = {
       "Dans plusieurs États du Golfe, les litiges locatifs relèvent des juridictions locales ou d'organes spécialisés en matière de baux ; une clause compromissoire dans un bail peut donc être inopposable pour les principales demandes entre bailleur et preneur.",
     remediation:
       'Soumettez les litiges aux juridictions ou à l’autorité locative compétentes du lieu de situation des locaux.',
+  },
+  'employment-mandatory-law': {
+    title: 'Le droit du travail du lieu de travail est impératif',
+    detail:
+      "La période d'essai, la durée du travail, les congés, le préavis et l'indemnité de fin de service sont fixés à titre de minimums par le droit du travail du lieu de travail. Toute stipulation moins favorable au salarié est nulle, quel que soit le droit choisi par le contrat.",
+    remediation:
+      "Complétez l'Annexe 1 (salaire, période d'essai, préavis, congés) à un niveau au moins égal aux minimums légaux du lieu de travail et vérifiez toute formalité d'enregistrement ou d'approbation du contrat.",
+    authority:
+      'Loi koweïtienne n° 6 de 2010 sur le travail dans le secteur privé ; décret-loi fédéral émirien n° 33 de 2021 sur les relations de travail',
+  },
+  'employment-arbitration': {
+    title: "Les litiges du travail ne sont généralement pas arbitrables",
+    detail:
+      "Dans les États du Golfe, les litiges du travail suivent une procédure légale devant l'autorité du travail puis les juridictions sociales. Une clause compromissoire a peu de chances d'être opposable au salarié.",
+    remediation:
+      "Soumettez les litiges à l'autorité du travail et aux juridictions compétentes du lieu de travail.",
+  },
+  'mou-binding-risk': {
+    title: "Un protocole d'accord peut devenir obligatoire par son contenu",
+    detail:
+      "Dans les systèmes civilistes, le juge s'attache au contenu et non à l'intitulé : un document constatant l'accord sur les éléments essentiels peut être qualifié de contrat obligatoire, même intitulé protocole.",
+    remediation:
+      "Gardez les conditions commerciales indicatives, précisez expressément qu'elles sont subordonnées à un accord définitif et évitez tout acte d'exécution de l'opération avant la signature.",
+  },
+  'settlement-enforcement': {
+    title: 'Rendez la transaction directement exécutoire',
+    detail:
+      "Une transaction privée est un contrat : si la partie débitrice fait défaut, l'autre doit agir en justice sur son fondement. Lorsqu'une procédure est pendante, faire constater la transaction par la juridiction ou le tribunal arbitral peut lui conférer force exécutoire.",
+    remediation:
+      "Lorsque la procédure locale le permet, faites constater ou homologuer la transaction par la juridiction ou le tribunal arbitral saisi, ou consignez-la dans une sentence d'accord parties.",
   },
 };
 

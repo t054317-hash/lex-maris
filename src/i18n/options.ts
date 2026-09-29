@@ -17,6 +17,10 @@ export const CONTRACT_TYPES: readonly ContractType[] = [
   'services',
   'agency',
   'lease',
+  'licence',
+  'employment',
+  'mou',
+  'settlement',
 ];
 
 /**
@@ -36,6 +40,10 @@ export const BUILDER_TYPES: readonly ContractType[] = [
   'services',
   'agency',
   'lease',
+  'licence',
+  'employment',
+  'mou',
+  'settlement',
 ];
 
 export const COUNTERPARTY_JURISDICTIONS = ['AE', 'KW', 'SA', 'QA', 'GB', 'SG', 'XX'] as const;

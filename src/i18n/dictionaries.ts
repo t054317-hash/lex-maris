@@ -116,7 +116,7 @@ const en = {
   'cap.automation.eyebrow': 'Contract automation',
   'cap.automation.title': 'Draft in minutes, not days',
   'cap.automation.body':
-    "A declarative clause tree assembles supply, distribution, voyage charterparty, NDA, services, commercial agency and commercial lease drafts from validated inputs, each with its own clause set. Clause numbering updates automatically as terms are added or removed.",
+    "A declarative clause tree assembles eleven kinds of instrument — supply, distribution, voyage charterparty, NDA, services, commercial agency, commercial lease, software licence, employment, MoU and settlement — from validated inputs, each with its own clause set. Clause numbering updates automatically as terms are added or removed.",
   'cap.analysis.eyebrow': 'Clause-level analysis',
   'cap.analysis.title': 'Exposure scored as you type',
   'cap.analysis.body':
@@ -316,6 +316,19 @@ const en = {
   'wizard.field.fees': "Fees — {value}",
   'wizard.ndaNote':
     "An NDA has no liability cap or commercial risk allocation: a breach is remedied by damages and injunctive relief. Continue to the governing law and forum.",
+  'opt.type.licence': "Software licence",
+  'opt.type.employment': "Employment contract",
+  'opt.type.mou': "Memorandum of understanding (MoU)",
+  'opt.type.settlement': "Settlement agreement",
+  'wizard.field.exclusivity': "Exclusivity period (months) — {value}",
+  'wizard.none': "none",
+  'wizard.employmentNote':
+    "Salary, allowances, probation, notice and leave are set in Schedule 1 of the draft, and may not be less favourable to the employee than the labour law of the place of work.",
+  'wizard.settlementNote':
+    "The settlement sum, the paying party and the payment period are set in Schedule 1 of the draft.",
+  'wizard.noAllocationNote':
+    "This category has no commercial risk allocation (liability cap, force majeure, sanctions). Continue to the governing law and forum.",
+  'wizard.field.licenceFees': "Licence fees — {value}",
   // --- Shared --------------------------------------------------------------
   'common.notLegalAdvice':
     'Output is a triage signal for a qualified practitioner, not legal advice.',
@@ -428,7 +441,7 @@ const ar: Record<TranslationKey, string> = {
   'cap.automation.eyebrow': 'آلية صياغة العقود',
   'cap.automation.title': 'صياغة في دقائق، لا في أيام',
   'cap.automation.body':
-    "شجرة بنود وصفية تُركّب مسودات عقود التوريد والتوزيع الحصري ومشارطات الإيجار بالرحلة وعدم الإفصاح وتقديم الخدمات والوكالة التجارية والإيجار التجاري من مدخلات مُتحقَّق منها، لكلٍّ منها بنوده الخاصة. ويتحدّث ترقيم البنود تلقائياً عند إضافة الشروط أو حذفها.",
+    "شجرة بنود وصفية تُركّب أحد عشر نوعاً من العقود — التوريد، والتوزيع الحصري، ومشارطة الإيجار بالرحلة، وعدم الإفصاح، وتقديم الخدمات، والوكالة التجارية، والإيجار التجاري، وترخيص البرمجيات، والعمل، ومذكرة التفاهم، والتسوية — من مدخلات مُتحقَّق منها، لكلٍّ منها بنوده الخاصة. ويتحدّث ترقيم البنود تلقائياً عند إضافة الشروط أو حذفها.",
   'cap.analysis.eyebrow': 'تحليل على مستوى البنود',
   'cap.analysis.title': 'تقييم التعرّض أثناء الكتابة',
   'cap.analysis.body':
@@ -627,6 +640,19 @@ const ar: Record<TranslationKey, string> = {
   'wizard.field.fees': "الأتعاب — {value}",
   'wizard.ndaNote':
     "لا تتضمن اتفاقية عدم الإفصاح سقفاً للمسؤولية أو توزيعاً تجارياً للمخاطر، إذ يُجبر الإخلال بها بالتعويض والإجراءات الوقتية. تابع إلى القانون الواجب التطبيق وجهة النزاع.",
+  'opt.type.licence': "ترخيص برمجيات",
+  'opt.type.employment': "عقد عمل",
+  'opt.type.mou': "مذكرة تفاهم",
+  'opt.type.settlement': "اتفاقية تسوية (صلح)",
+  'wizard.field.exclusivity': "مدة الحصرية (بالأشهر) — {value}",
+  'wizard.none': "لا يوجد",
+  'wizard.employmentNote':
+    "يُحدَّد الأجر والبدلات وفترة التجربة ومهلة الإخطار والإجازات في الملحق رقم (1) من المسودة، ولا يجوز أن تكون أقل فائدة للعامل مما يقرره قانون العمل في مكان العمل.",
+  'wizard.settlementNote':
+    "يُحدَّد مبلغ التسوية والطرف الدافع ومدة السداد في الملحق رقم (1) من المسودة.",
+  'wizard.noAllocationNote':
+    "لا تتضمن هذه الفئة توزيعاً تجارياً للمخاطر (سقف المسؤولية، القوة القاهرة، العقوبات). تابع إلى القانون الواجب التطبيق وجهة النزاع.",
+  'wizard.field.licenceFees': "رسوم الترخيص — {value}",
   // --- Shared --------------------------------------------------------------
   'common.notLegalAdvice':
     'النتيجة مؤشر فرز لممارس مؤهّل، وليست استشارة قانونية.',
@@ -738,7 +764,7 @@ const fr: Record<TranslationKey, string> = {
   'cap.automation.eyebrow': 'Automatisation contractuelle',
   'cap.automation.title': 'Rédiger en minutes, pas en jours',
   'cap.automation.body':
-    "Un arbre de clauses déclaratif assemble des projets de contrats de fourniture, de distribution, de charte-partie au voyage, de confidentialité, de prestation de services, d'agence commerciale et de bail commercial à partir de données validées, chacun avec ses propres clauses. La numérotation se met à jour automatiquement lorsque des conditions sont ajoutées ou retirées.",
+    "Un arbre de clauses déclaratif assemble onze types d'instruments — fourniture, distribution, charte-partie au voyage, confidentialité, prestation de services, agence commerciale, bail commercial, licence de logiciel, travail, protocole d'accord et transaction — à partir de données validées, chacun avec ses propres clauses. La numérotation se met à jour automatiquement lorsque des conditions sont ajoutées ou retirées.",
   'cap.analysis.eyebrow': 'Analyse clause par clause',
   'cap.analysis.title': 'Exposition évaluée pendant la saisie',
   'cap.analysis.body':
@@ -939,6 +965,19 @@ const fr: Record<TranslationKey, string> = {
   'wizard.field.fees': "Honoraires — {value}",
   'wizard.ndaNote':
     "Un accord de confidentialité ne prévoit ni plafond de responsabilité ni répartition commerciale des risques : un manquement se répare par des dommages-intérêts et des mesures provisoires. Passez au droit applicable et au for.",
+  'opt.type.licence': "Licence de logiciel",
+  'opt.type.employment': "Contrat de travail",
+  'opt.type.mou': "Protocole d'accord",
+  'opt.type.settlement': "Protocole transactionnel",
+  'wizard.field.exclusivity': "Durée d'exclusivité (mois) — {value}",
+  'wizard.none': "aucune",
+  'wizard.employmentNote':
+    "Le salaire, les indemnités, la période d'essai, le préavis et les congés sont fixés à l'Annexe 1 du projet et ne peuvent être moins favorables au salarié que le droit du travail du lieu de travail.",
+  'wizard.settlementNote':
+    "La somme transactionnelle, la partie débitrice et le délai de paiement sont fixés à l'Annexe 1 du projet.",
+  'wizard.noAllocationNote':
+    "Cette catégorie ne comporte pas de répartition commerciale des risques (plafond de responsabilité, force majeure, sanctions). Passez au droit applicable et au for.",
+  'wizard.field.licenceFees': "Redevances — {value}",
   // --- Shared --------------------------------------------------------------
   'common.notLegalAdvice':
     'Le résultat est un signal de tri destiné à un praticien qualifié, et non un conseil juridique.',
