@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>منصة محاكاة التقاضي</title>
 <meta name="description" content="منصة محاكاة التقاضي — نموذج مفاهيمي لغرفة قضائية رقمية مدعومة بالذكاء الاصطناعي ومستندة إلى التشريعات الكويتية.">
-<meta name="theme-color" content="#050b16">
+<meta name="theme-color" content="#f4f6f9">
+<script>/* official theme unless the visitor chose night mode — set before first paint */try{if(localStorage.getItem("ksc-theme")!=="royal")document.documentElement.classList.add("ink")}catch(e){document.documentElement.classList.add("ink")}</script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,7 +31,7 @@
 
 <style>
 /* ==========================================================================
-   Theme tokens — "الوضع الملكي" (dark, default) and "الحبر القانوني" (ink)
+   Theme tokens — the official light palette (html.ink, default) and a night mode (:root)
    ========================================================================== */
 :root {
   --bg:        #050b16;
@@ -57,26 +58,27 @@
   color-scheme: dark;
 }
 html.ink {
-  --bg:        #f3eee2;
-  --bg-2:      #ece5d4;
-  --bg-3:      #e3dac5;
-  --graphite:  #d8cfba;
-  --surface:   rgba(255, 252, 244, 0.78);
-  --surface-2: rgba(250, 245, 233, 0.9);
-  --line:      rgba(20, 33, 61, 0.14);
-  --line-2:    rgba(122, 92, 32, 0.4);
-  --gold:      #8a6a2a;
-  --gold-2:    #6b4f18;
-  --gold-3:    #b5934e;
-  --text:      #13203a;
-  --text-2:    #2c3a55;
-  --muted:     #5d6678;
+  /* Official (default): ivory-white paper, dark navy ink, one institutional green accent. */
+  --bg:        #f4f6f9;
+  --bg-2:      #ffffff;
+  --bg-3:      #eaeef3;
+  --graphite:  #d9dfe7;
+  --surface:   rgba(255, 255, 255, 0.92);
+  --surface-2: #f7f9fb;
+  --line:      rgba(15, 36, 64, 0.12);
+  --line-2:    rgba(11, 94, 63, 0.35);
+  --gold:      #0b5e3f;
+  --gold-2:    #0f7a52;
+  --gold-3:    #084530;
+  --text:      #0f2440;
+  --text-2:    #34465f;
+  --muted:     #65738a;
   --ok:        #1f7a57;
   --warn:      #9a5f14;
-  --danger:    #a4402a;
-  --glow:      rgba(138, 106, 42, 0.18);
-  --shadow:    0 30px 60px -30px rgba(40, 30, 10, 0.35);
-  --pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'%3E%3Cg fill='none' stroke='%2313203a' stroke-opacity='0.06' stroke-width='1'%3E%3Crect x='27' y='27' width='42' height='42'/%3E%3Crect x='27' y='27' width='42' height='42' transform='rotate(45 48 48)'/%3E%3Ccircle cx='48' cy='48' r='10'/%3E%3Cpath d='M0 0L27 27M96 0L69 27M0 96L27 69M96 96L69 69M48 0v18M48 96V78M0 48h18M96 48H78'/%3E%3C/g%3E%3C/svg%3E");
+  --danger:    #b0362a;
+  --glow:      rgba(11, 94, 63, 0.09);
+  --shadow:    0 20px 50px -28px rgba(15, 36, 64, 0.35);
+  --pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'%3E%3Cg fill='none' stroke='%230f2440' stroke-opacity='0.045' stroke-width='1'%3E%3Crect x='27' y='27' width='42' height='42'/%3E%3Crect x='27' y='27' width='42' height='42' transform='rotate(45 48 48)'/%3E%3Ccircle cx='48' cy='48' r='10'/%3E%3Cpath d='M0 0L27 27M96 0L69 27M0 96L27 69M96 96L69 69M48 0v18M48 96V78M0 48h18M96 48H78'/%3E%3C/g%3E%3C/svg%3E");
   color-scheme: light;
 }
 
@@ -117,6 +119,8 @@ h1, h2, h3 { text-wrap: balance; }
   animation: sheen 7s linear infinite;
 }
 @keyframes sheen { to { background-position: -220% 0; } }
+/* Headline accent in the official theme: ink into green, restrained. */
+html.ink .gold-text { background-image: linear-gradient(100deg, #0f2440 0%, #0b5e3f 40%, #0f7a52 55%, #0b5e3f 70%, #0f2440 100%); }
 
 .glass {
   background: var(--surface);
@@ -162,7 +166,7 @@ h1, h2, h3 { text-wrap: balance; }
   box-shadow: 0 10px 30px -10px rgba(201,165,90,.7), inset 0 1px 0 rgba(255,255,255,.45);
   position: relative; overflow: hidden;
 }
-html.ink .btn-gold { color: #fffaf0; background: linear-gradient(135deg, #1d2d50, #13203a 60%, #0b1426); box-shadow: 0 10px 30px -12px rgba(19,32,58,.6), inset 0 1px 0 rgba(255,255,255,.15); }
+html.ink .btn-gold { color: #ffffff; background: linear-gradient(135deg, #16325a, #0f2440 60%, #0a1a30); box-shadow: 0 10px 30px -12px rgba(19,32,58,.6), inset 0 1px 0 rgba(255,255,255,.15); }
 .btn-gold::before {
   content: ""; position: absolute; top: 0; bottom: 0; width: 40%; left: -60%;
   background: linear-gradient(100deg, transparent, rgba(255,255,255,.55), transparent);
@@ -180,7 +184,7 @@ html.ink .btn-ghost:hover { color: var(--gold); }
 /* --- navbar ------------------------------------------------------------ */
 #nav { transition: background .5s var(--lux), border-color .5s, box-shadow .5s, padding .4s var(--lux); }
 #nav.scrolled { background: color-mix(in srgb, var(--bg) 78%, transparent); border-color: var(--line); box-shadow: 0 10px 40px -20px rgba(0,0,0,.6); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
-.nav-link { position: relative; white-space: nowrap; color: var(--text-2); padding: .45rem .7rem; border-radius: 10px; font-weight: 600; font-size: .94rem; transition: color .3s; }
+.nav-link { position: relative; white-space: nowrap; color: var(--text-2); padding: .45rem .6rem; border-radius: 10px; font-weight: 600; font-size: .94rem; transition: color .3s; }
 .nav-link::after { content: ""; position: absolute; bottom: 2px; right: 50%; left: 50%; height: 2px; border-radius: 2px; background: var(--gold); transition: right .4s var(--lux), left .4s var(--lux); }
 .nav-link:hover { color: var(--gold-2); }
 html.ink .nav-link:hover { color: var(--gold); }
@@ -195,13 +199,14 @@ html.ink .nav-link.active { color: var(--gold); }
 }
 .logo-badge::after { content: ""; position: absolute; inset: 2px; clip-path: inherit; background: linear-gradient(160deg, #0f1f38, #050b16); }
 .logo-badge svg { position: relative; z-index: 1; color: #e8cf94; }
-html.ink .logo-badge::after { background: linear-gradient(160deg, #fffaf0, #efe6d1); }
-html.ink .logo-badge svg { color: #7a5c20; }
+html.ink .logo-badge { background: linear-gradient(145deg, #0f7a52, #0b5e3f 50%, #084530); }
+html.ink .logo-badge::after { background: #ffffff; }
+html.ink .logo-badge svg { color: #0b5e3f; }
 
 /* theme switch */
 .theme-switch { width: 64px; height: 34px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--surface); position: relative; cursor: pointer; transition: background .5s; }
 .theme-switch .knob { position: absolute; top: 3px; right: 3px; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(135deg, #f0d9a0, #c9a55a); color: #0b1424; transition: right .5s var(--lux), background .5s; }
-html.ink .theme-switch .knob { right: 33px; background: linear-gradient(135deg, #1d2d50, #13203a); color: #f3eee2; }
+html.ink .theme-switch .knob { right: 33px; background: #0f2440; color: #ffffff; }
 
 /* --- hero -------------------------------------------------------------- */
 #hero { min-height: 100svh; }
@@ -276,7 +281,7 @@ html.ink .chamber .icon-hex { color: var(--gold); }
 .modal { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: 16px; visibility: hidden; opacity: 0; transition: opacity .45s var(--lux), visibility .45s; }
 .modal.open { visibility: visible; opacity: 1; }
 .modal .backdrop { position: absolute; inset: 0; background: rgba(2, 6, 14, .72); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-html.ink .modal .backdrop { background: rgba(40, 32, 15, .38); }
+html.ink .modal .backdrop { background: rgba(15, 36, 64, .38); }
 .modal .panel { position: relative; width: min(880px, 100%); max-height: calc(100svh - 32px); overflow: auto; border-radius: 24px; background: var(--bg-2); border: 1px solid var(--line-2); box-shadow: var(--shadow);
   transform: translateY(24px) scale(.97); transition: transform .6s var(--lux); overscroll-behavior: contain; }
 .modal.open .panel { transform: none; }
@@ -289,9 +294,9 @@ html.ink .modal .backdrop { background: rgba(40, 32, 15, .38); }
 .seg { display: grid; grid-template-columns: 1fr 1fr; padding: 5px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface); position: relative; }
 .seg button { position: relative; z-index: 1; padding: .8rem 1rem; border-radius: 12px; font-weight: 700; color: var(--muted); transition: color .4s; display: flex; align-items: center; justify-content: center; gap: .5rem; }
 .seg button[aria-pressed="true"] { color: #0b1424; }
-html.ink .seg button[aria-pressed="true"] { color: #fffaf0; }
+html.ink .seg button[aria-pressed="true"] { color: #ffffff; }
 .seg .pill { position: absolute; top: 5px; bottom: 5px; right: 5px; width: calc(50% - 5px); border-radius: 12px; background: linear-gradient(135deg, #f0d9a0, #c9a55a); transition: transform .55s var(--lux); box-shadow: 0 8px 22px -10px rgba(201,165,90,.8); }
-html.ink .seg .pill { background: linear-gradient(135deg, #1d2d50, #13203a); }
+html.ink .seg .pill { background: #0f2440; }
 .seg[data-v="labour"] .pill { transform: translateX(-100%); }
 
 .textarea-wrap { position: relative; border-radius: 18px; border: 1px solid var(--line); background: var(--surface); transition: border-color .3s, box-shadow .3s; overflow: hidden; }
@@ -436,7 +441,7 @@ html.ink .stage .io { color: var(--gold); }
 /* --- chat widget ------------------------------------------------------- */
 #chatFab { position: fixed; left: 22px; bottom: 22px; z-index: 70; width: 66px; height: 66px; border-radius: 50%; display: grid; place-items: center; cursor: pointer;
   background: linear-gradient(145deg, #f0d9a0, #c9a55a 50%, #8f7236); color: #0b1424; box-shadow: 0 16px 40px -10px rgba(201,165,90,.75); transition: transform .5s var(--lux); }
-html.ink #chatFab { background: linear-gradient(145deg, #243761, #13203a); color: #f0d9a0; box-shadow: 0 16px 40px -12px rgba(19,32,58,.6); }
+html.ink #chatFab { background: linear-gradient(145deg, #16325a, #0f2440); color: #ffffff; box-shadow: 0 16px 40px -12px rgba(19,32,58,.6); }
 #chatFab:hover { transform: scale(1.07) rotate(-6deg); }
 #chatFab::before { content: ""; position: absolute; inset: -4px; border-radius: 50%; border: 1px solid var(--gold); animation: fabPing 2.4s ease-out infinite; }
 @keyframes fabPing { to { transform: scale(1.35); opacity: 0; } }
@@ -450,7 +455,7 @@ html.ink #chatFab { background: linear-gradient(145deg, #243761, #13203a); color
 .msg { max-width: 88%; padding: .75rem 1rem; border-radius: 18px; line-height: 1.85; font-size: .92rem; animation: feedIn .45s var(--lux); }
 .msg.bot { align-self: flex-start; background: var(--surface); border: 1px solid var(--line); border-top-right-radius: 6px; color: var(--text); }
 .msg.user { align-self: flex-end; background: linear-gradient(135deg, #e8cf94, #c9a55a); color: #0b1424; border-top-left-radius: 6px; font-weight: 600; }
-html.ink .msg.user { background: linear-gradient(135deg, #1d2d50, #13203a); color: #fffaf0; }
+html.ink .msg.user { background: #0f2440; color: #ffffff; }
 .msg.bot b { color: var(--gold-2); } html.ink .msg.bot b { color: var(--gold); }
 .msg.bot ul { margin: .35rem 0 0; padding-right: 1.1rem; list-style: none; }
 .msg.bot ul li { position: relative; margin: .2rem 0; }
@@ -522,10 +527,11 @@ html.ink .quick button { color: var(--gold); }
       <a class="nav-link" href="#assistant" data-sec="assistant">المساعد القضائي</a>
       <a class="nav-link" href="#stats" data-sec="stats">الإحصائيات</a>
       <a class="nav-link" href="#about" data-sec="about">عن النموذج</a>
+      <a class="nav-link" href="training/">التدريب</a>
     </nav>
 
     <div class="flex items-center gap-2 sm:gap-3 shrink-0">
-      <button id="themeToggle" class="theme-switch" role="switch" aria-checked="false" aria-label="التبديل بين الوضع الملكي ووضع الحبر القانوني" title="الوضع الملكي / الحبر القانوني">
+      <button id="themeToggle" class="theme-switch" role="switch" aria-checked="false" aria-label="التبديل بين الوضع الرسمي والوضع الليلي" title="الوضع الرسمي / الوضع الليلي">
         <span class="knob"><i data-lucide="moon" class="w-3.5 h-3.5" id="themeIcon"></i></span>
       </button>
       <span class="hidden md:inline-flex xl:hidden 2xl:inline-flex"><a href="#trial" class="btn btn-gold !py-2.5 !px-4 text-sm"><i data-lucide="gavel" class="w-4 h-4"></i> ابدأ المحاكاة</a></span>
@@ -542,6 +548,7 @@ html.ink .quick button { color: var(--gold); }
       <a class="nav-link !py-3" href="#assistant" data-sec="assistant">المساعد القضائي</a>
       <a class="nav-link !py-3" href="#stats" data-sec="stats">الإحصائيات</a>
       <a class="nav-link !py-3" href="#about" data-sec="about">عن النموذج</a>
+      <a class="nav-link !py-3" href="training/">التدريب الإجرائي</a>
     </div>
   </div>
 </header>
@@ -570,6 +577,7 @@ html.ink .quick button { color: var(--gold); }
       <div class="mt-10 flex flex-wrap gap-4 reveal" data-delay="3">
         <a href="#trial" class="btn btn-gold text-lg"><i data-lucide="gavel" class="w-5 h-5"></i> ابدأ محاكاة دعوى جديدة</a>
         <a href="#chambers" class="btn btn-ghost text-lg"><i data-lucide="landmark" class="w-5 h-5"></i> استكشاف الدوائر القضائية</a>
+        <a href="training/" class="btn btn-ghost text-lg"><i data-lucide="graduation-cap" class="w-5 h-5"></i> بيئة التدريب الإجرائي</a>
       </div>
 
       <div class="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl reveal" data-delay="4">
@@ -664,7 +672,7 @@ html.ink .quick button { color: var(--gold); }
       <article class="glass frame spot p-6 reveal" data-delay="4">
         <div class="flex items-center gap-4">
           <svg width="76" height="76" viewBox="0 0 100 100" class="shrink-0 -rotate-90">
-            <defs><linearGradient id="goldGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e8cf94"/><stop offset="1" stop-color="#8f7236"/></linearGradient></defs>
+            <defs><linearGradient id="goldGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--gold-2)"/><stop offset="1" style="stop-color:var(--gold-3)"/></linearGradient></defs>
             <circle cx="50" cy="50" r="42" fill="none" stroke-width="8" class="ring-bg"/>
             <circle id="satRing" cx="50" cy="50" r="42" fill="none" stroke-width="8" class="ring-fg" stroke-dasharray="263.9" stroke-dashoffset="263.9"/>
           </svg>
@@ -1091,17 +1099,17 @@ function applyTheme(ink) {
   root.classList.toggle('ink', ink);
   $('#themeToggle').setAttribute('aria-checked', String(ink));
   const knob = $('#themeToggle .knob');
-  knob.innerHTML = `<i data-lucide="${ink ? 'feather' : 'moon'}" class="w-3.5 h-3.5"></i>`;
+  knob.innerHTML = `<i data-lucide="${ink ? 'sun' : 'moon'}" class="w-3.5 h-3.5"></i>`;
   icons();
-  document.querySelector('meta[name="theme-color"]').setAttribute('content', ink ? '#f3eee2' : '#050b16');
+  document.querySelector('meta[name="theme-color"]').setAttribute('content', ink ? '#f4f6f9' : '#050b16');
   if (window.__heroTheme) window.__heroTheme();
 }
-applyTheme(savedTheme === 'ink');
+applyTheme(savedTheme !== 'royal');
 $('#themeToggle').addEventListener('click', () => {
   const ink = !root.classList.contains('ink');
   applyTheme(ink);
   try { localStorage.setItem('ksc-theme', ink ? 'ink' : 'royal'); } catch (e) {}
-  toast(ink ? 'تم التبديل إلى وضع الحبر القانوني' : 'تم التبديل إلى الوضع الملكي');
+  toast(ink ? 'تم التبديل إلى الوضع الرسمي' : 'تم التبديل إلى الوضع الليلي');
 });
 
 /* ------------------------------------------------------------------ */
@@ -1153,7 +1161,7 @@ document.addEventListener('pointermove', e => {
 
   window.__heroTheme = () => {
     ink = root.classList.contains('ink');
-    gold = ink ? [122, 92, 32] : [201, 165, 90];
+    gold = ink ? [11, 94, 63] : [201, 165, 90];
   };
   window.__heroTheme();
 

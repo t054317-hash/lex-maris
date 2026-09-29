@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Official light palette for the standalone training page. Mirrors the
+   surface classes the components expect from the app's globals.css. */
+@layer base {
+  html { color-scheme: light; }
+  body {
+    @apply bg-navy-900 text-ink-100 font-arabic antialiased;
+    margin: 0;
+  }
+  :focus-visible { outline: 2px solid #0b5e3f; outline-offset: 3px; border-radius: 4px; }
+  ::selection { background: rgba(11, 94, 63, 0.18); }
+  p, li, dd { line-height: 1.9; }
+}
+
+@layer components {
+  .glass {
+    @apply relative rounded-glass border shadow-glass;
+    background: #ffffff;
+    border-color: rgba(15, 36, 64, 0.12);
+    transition: border-color 300ms, box-shadow 300ms, transform 300ms;
+  }
+  .glass-interactive:hover,
+  .glass-interactive:focus-within {
+    border-color: rgba(11, 94, 63, 0.45);
+    box-shadow: 0 0 0 1px rgba(11, 94, 63, 0.25), 0 16px 36px -18px rgba(15, 36, 64, 0.35);
+    transform: translateY(-2px);
+  }
+  .eyebrow { @apply text-[12px] font-bold text-gold-500; }
+}
+
+/* Two literals in the components were tuned for the dark app; re-tone them for paper. */
+.text-\[\#F2A596\] { color: #b0362a; }
+.accent-\[\#D4AF37\] { accent-color: #0b5e3f; }
+
+.site-bar { background: #0f2440; color: #ffffff; }
+.site-bar a:hover { text-decoration: underline; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
