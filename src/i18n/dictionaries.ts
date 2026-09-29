@@ -255,6 +255,9 @@ const en = {
   'auth.error.notProvisioned': 'This account is not fully provisioned. Please contact support.',
   'auth.error.generic': 'Something went wrong. Please try again.',
   'auth.error.emailFirst': 'Enter your email address first.',
+  'auth.error.oauth':
+    'Google sign-in could not be completed. Please try again, or sign in with your email.',
+  'auth.error.oauthCancelled': 'Google sign-in was cancelled.',
 
   // --- Intro ---------------------------------------------------------------
   'intro.label': 'Introduction',
@@ -569,6 +572,9 @@ const ar: Record<TranslationKey, string> = {
   'auth.error.notProvisioned': 'لم يكتمل إعداد هذا الحساب. يرجى التواصل مع الدعم.',
   'auth.error.generic': 'حدث خطأ ما. يرجى المحاولة مجدداً.',
   'auth.error.emailFirst': 'أدخل بريدك الإلكتروني أولاً.',
+  'auth.error.oauth':
+    'تعذّر إكمال تسجيل الدخول عبر Google. يرجى المحاولة مجدداً، أو تسجيل الدخول بالبريد الإلكتروني.',
+  'auth.error.oauthCancelled': 'أُلغي تسجيل الدخول عبر Google.',
 
   // --- Intro ---------------------------------------------------------------
   'intro.label': 'المقدمة',
@@ -881,6 +887,9 @@ const fr: Record<TranslationKey, string> = {
   'auth.error.notProvisioned': "Ce compte n'est pas entièrement configuré. Veuillez contacter l'assistance.",
   'auth.error.generic': "Une erreur s'est produite. Veuillez réessayer.",
   'auth.error.emailFirst': "Saisissez d'abord votre adresse e-mail.",
+  'auth.error.oauth':
+    "La connexion avec Google n'a pas pu aboutir. Veuillez réessayer, ou vous connecter avec votre adresse e-mail.",
+  'auth.error.oauthCancelled': 'La connexion avec Google a été annulée.',
 
   // --- Intro ---------------------------------------------------------------
   'intro.label': 'Introduction',

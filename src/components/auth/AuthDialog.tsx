@@ -25,10 +25,13 @@ export function AuthDialog({
   open,
   onClose,
   initialMode = 'signIn',
+  initialError = null,
 }: {
   open: boolean;
   onClose: () => void;
   initialMode?: Mode;
+  /** Shown on open, e.g. a failed Google round trip reported by /auth/callback. */
+  initialError?: string | null;
 }) {
   const { t, dir, locale } = useI18n();
   const [mode, setMode] = useState<Mode>(initialMode);
@@ -37,7 +40,7 @@ export function AuthDialog({
   const [fullName, setFullName] = useState('');
   const [organisation, setOrganisation] = useState('');
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(initialError);
   const [notice, setNotice] = useState<string | null>(null);
 
   const panelRef = useRef<HTMLDivElement | null>(null);

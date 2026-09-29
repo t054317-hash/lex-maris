@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { AuthDialog } from '@/components/auth/AuthDialog';
 import { LegalMatrixCanvas } from '@/components/ui/LegalMatrixCanvas';
@@ -25,6 +25,15 @@ export default function LoginPage() {
   const { session, loading } = useSession();
   const [open, setOpen] = useState(true);
 
+  // /auth/callback sends failures back here as ?error=<code>. Say so, in the
+  // visitor's language, instead of silently showing the form again.
+  const errorCode = useSearchParams().get('error');
+  const oauthError = errorCode
+    ? errorCode === 'access_denied'
+      ? t('auth.error.oauthCancelled')
+      : t('auth.error.oauth')
+    : null;
+
   // Already signed in? There is nothing to do here.
   useEffect(() => {
     if (!loading && session) router.replace('/dashboard');
@@ -42,6 +51,15 @@ export default function LoginPage() {
         <p className="mt-6 text-sm leading-relaxed text-ink-300">
           {t('auth.signIn.subtitle')}
         </p>
+
+        {oauthError && (
+          <p
+            role="alert"
+            className="mt-6 rounded-lg border border-status-risk/40 bg-status-risk/5 px-4 py-3 text-sm text-status-risk"
+          >
+            {oauthError}
+          </p>
+        )}
 
         {!open && (
           <button
@@ -68,6 +86,7 @@ export default function LoginPage() {
       {/* Dismissing on this route returns the visitor to the marketing site
           rather than leaving them on an empty page. */}
       <AuthDialog
+        initialError={oauthError}
         open={open}
         onClose={() => {
           setOpen(false);
