@@ -180,7 +180,7 @@ html.ink .btn-ghost:hover { color: var(--gold); }
 /* --- navbar ------------------------------------------------------------ */
 #nav { transition: background .5s var(--lux), border-color .5s, box-shadow .5s, padding .4s var(--lux); }
 #nav.scrolled { background: color-mix(in srgb, var(--bg) 78%, transparent); border-color: var(--line); box-shadow: 0 10px 40px -20px rgba(0,0,0,.6); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
-.nav-link { position: relative; white-space: nowrap; color: var(--text-2); padding: .45rem .8rem; border-radius: 10px; font-weight: 600; font-size: .94rem; transition: color .3s; }
+.nav-link { position: relative; white-space: nowrap; color: var(--text-2); padding: .45rem .7rem; border-radius: 10px; font-weight: 600; font-size: .94rem; transition: color .3s; }
 .nav-link::after { content: ""; position: absolute; bottom: 2px; right: 50%; left: 50%; height: 2px; border-radius: 2px; background: var(--gold); transition: right .4s var(--lux), left .4s var(--lux); }
 .nav-link:hover { color: var(--gold-2); }
 html.ink .nav-link:hover { color: var(--gold); }
@@ -302,8 +302,12 @@ html.ink .seg .pill { background: linear-gradient(135deg, #1d2d50, #13203a); }
   background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--gold) 28%, transparent), transparent); }
 .scanning .scanline { opacity: 1; animation: scan 1.6s linear infinite; }
 @keyframes scan { to { top: 100%; } }
-.sample-btn { font-size: .8rem; padding: .35rem .8rem; border-radius: 999px; border: 1px dashed var(--line-2); color: var(--text-2); transition: all .3s; }
-.sample-btn:hover { border-color: var(--gold); color: var(--gold); border-style: solid; }
+.sample-btn { display: flex; align-items: flex-start; gap: .6rem; text-align: right; padding: .65rem .75rem; border-radius: 12px; border: 1px dashed var(--line-2); color: var(--text-2); background: transparent; transition: border-color .3s, background .3s, color .3s; }
+.sample-btn:hover { border-color: var(--gold); border-style: solid; background: color-mix(in srgb, var(--gold) 7%, transparent); }
+.sample-btn[aria-pressed="true"] { border-style: solid; border-color: var(--gold); background: color-mix(in srgb, var(--gold) 12%, transparent); }
+.sample-btn .ttl { font-size: .82rem; font-weight: 700; color: var(--text); line-height: 1.5; }
+.sample-btn .sub { font-size: .7rem; color: var(--muted); line-height: 1.5; }
+.sample-btn svg { color: var(--gold); flex: none; margin-top: 2px; }
 
 .console { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .8rem; direction: rtl; }
 .console .ln { display: flex; gap: .6rem; align-items: center; padding: .28rem 0; opacity: 0; transform: translateX(-8px); animation: lnIn .5s var(--lux) forwards; }
@@ -351,6 +355,26 @@ html.ink .ref { color: var(--gold); }
   box-shadow: 0 0 60px var(--glow), inset 0 0 30px color-mix(in srgb, var(--gold) 20%, transparent); animation: breathe 4s ease-in-out infinite; }
 html.ink .avatar-orb .core { color: var(--gold); }
 @keyframes breathe { 50% { transform: scale(1.05); box-shadow: 0 0 90px var(--glow), inset 0 0 40px color-mix(in srgb, var(--gold) 26%, transparent); } }
+
+/* --- about --------------------------------------------------------------- */
+.stage { position: relative; counter-increment: stage; }
+.stage-n::before { content: counter(stage, decimal-leading-zero); font-family: 'JetBrains Mono', monospace; font-size: .8rem; font-weight: 500; color: var(--gold); }
+.stage .io { font-size: .72rem; font-weight: 700; color: var(--gold-2); border: 1px dashed var(--line-2); border-radius: 8px; padding: .3rem .6rem; display: inline-block; }
+html.ink .stage .io { color: var(--gold); }
+.stage.human { border-color: color-mix(in srgb, var(--ok) 45%, transparent); }
+@media (min-width: 1024px) {
+  .stage:not(:last-child)::after { content: ""; position: absolute; top: 50%; left: -13px; width: 10px; height: 10px; border-top: 1.5px solid var(--gold); border-left: 1.5px solid var(--gold); transform: translateY(-50%) rotate(-45deg); opacity: .7; }
+}
+.oversight { border-collapse: collapse; min-width: 560px; }
+.oversight th, .oversight td { text-align: right; padding: .9rem 1rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+.oversight thead th { font-size: .75rem; font-weight: 700; color: var(--muted); letter-spacing: .02em; }
+.oversight tbody th { font-weight: 700; color: var(--text); white-space: nowrap; }
+.oversight td { color: var(--text-2); }
+.oversight tbody tr:last-child > * { border-bottom: 0; }
+.lvl { display: inline-flex; align-items: center; gap: .35rem; font-size: .72rem; font-weight: 800; padding: .2rem .6rem; border-radius: 999px; white-space: nowrap; border: 1px solid currentColor; }
+.lvl::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.lvl.l2 { color: var(--ok); } .lvl.l3 { color: var(--warn); } .lvl.l4 { color: var(--danger); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* --- chat widget ------------------------------------------------------- */
 #chatFab { position: fixed; left: 22px; bottom: 22px; z-index: 70; width: 66px; height: 66px; border-radius: 50%; display: grid; place-items: center; cursor: pointer;
@@ -426,7 +450,7 @@ html.ink .quick button { color: var(--gold); }
 <!-- ======================= NAVBAR ======================= -->
 <header id="nav" class="fixed top-0 inset-x-0 z-50 border-b border-transparent">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 h-[76px] flex items-center justify-between gap-4">
-    <a href="#home" class="flex items-center gap-3 min-w-0" aria-label="المحكمة الكويتية الذكية — الرئيسية">
+    <a href="#home" class="flex items-center gap-3 min-w-0 xl:shrink-0" aria-label="المحكمة الكويتية الذكية — الرئيسية">
       <span class="logo-badge shrink-0"><i data-lucide="scale" class="w-5 h-5"></i></span>
       <span class="leading-tight min-w-0">
         <span class="block font-amiri text-base sm:text-xl font-bold t-text truncate">المحكمة الكويتية الذكية</span>
@@ -434,31 +458,33 @@ html.ink .quick button { color: var(--gold); }
       </span>
     </a>
 
-    <nav class="hidden lg:flex items-center gap-1" aria-label="التنقل الرئيسي">
+    <nav class="hidden xl:flex items-center gap-0.5" aria-label="التنقل الرئيسي">
       <a class="nav-link" href="#home" data-sec="home">الرئيسية</a>
       <a class="nav-link" href="#chambers" data-sec="chambers">الدوائر القضائية</a>
       <a class="nav-link" href="#trial" data-sec="trial">تجربة التقاضي الحي</a>
       <a class="nav-link" href="#assistant" data-sec="assistant">المساعد القضائي</a>
       <a class="nav-link" href="#stats" data-sec="stats">الإحصائيات</a>
+      <a class="nav-link" href="#about" data-sec="about">عن النموذج</a>
     </nav>
 
     <div class="flex items-center gap-2 sm:gap-3 shrink-0">
       <button id="themeToggle" class="theme-switch" role="switch" aria-checked="false" aria-label="التبديل بين الوضع الملكي ووضع الحبر القانوني" title="الوضع الملكي / الحبر القانوني">
         <span class="knob"><i data-lucide="moon" class="w-3.5 h-3.5" id="themeIcon"></i></span>
       </button>
-      <span class="hidden md:inline-flex"><a href="#trial" class="btn btn-gold !py-2.5 !px-4 text-sm"><i data-lucide="gavel" class="w-4 h-4"></i> ابدأ المحاكاة</a></span>
-      <button id="menuBtn" class="lg:hidden w-11 h-11 grid place-items-center rounded-xl glass" aria-label="فتح القائمة" aria-expanded="false" aria-controls="mobileMenu">
+      <span class="hidden md:inline-flex xl:hidden 2xl:inline-flex"><a href="#trial" class="btn btn-gold !py-2.5 !px-4 text-sm"><i data-lucide="gavel" class="w-4 h-4"></i> ابدأ المحاكاة</a></span>
+      <button id="menuBtn" class="xl:hidden w-11 h-11 grid place-items-center rounded-xl glass" aria-label="فتح القائمة" aria-expanded="false" aria-controls="mobileMenu">
         <i data-lucide="menu" class="w-5 h-5 t-gold"></i>
       </button>
     </div>
   </div>
-  <div id="mobileMenu" class="lg:hidden hidden px-4 pb-4">
+  <div id="mobileMenu" class="xl:hidden hidden px-4 pb-4">
     <div class="glass rounded-2xl p-2 flex flex-col">
       <a class="nav-link !py-3" href="#home" data-sec="home">الرئيسية</a>
       <a class="nav-link !py-3" href="#chambers" data-sec="chambers">الدوائر القضائية</a>
       <a class="nav-link !py-3" href="#trial" data-sec="trial">تجربة التقاضي الحي</a>
       <a class="nav-link !py-3" href="#assistant" data-sec="assistant">المساعد القضائي</a>
       <a class="nav-link !py-3" href="#stats" data-sec="stats">الإحصائيات</a>
+      <a class="nav-link !py-3" href="#about" data-sec="about">عن النموذج</a>
     </div>
   </div>
 </header>
@@ -690,12 +716,12 @@ html.ink .quick button { color: var(--gold); }
           <textarea id="caseText" maxlength="1200" placeholder="مثال: أبرمت شركتنا عقد توريد مع المدعى عليه بقيمة 45,000 دينار كويتي، وقمنا بتسليم البضاعة كاملة، إلا أنه امتنع عن سداد الفاتورة رغم المطالبة..."></textarea>
           <div class="scanline"></div>
         </div>
-        <div class="mt-3 flex flex-wrap gap-2 items-center">
-          <span class="text-xs t-muted">نماذج جاهزة:</span>
-          <button type="button" class="sample-btn" data-sample="0">عقد توريد</button>
-          <button type="button" class="sample-btn" data-sample="1">شيك مرتجع</button>
-          <button type="button" class="sample-btn" data-sample="2">فصل تعسفي</button>
-          <button type="button" class="sample-btn" data-sample="3">رواتب متأخرة</button>
+        <div class="mt-5">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-xs font-bold t-text2 flex items-center gap-1.5"><i data-lucide="library-big" class="w-3.5 h-3.5 t-gold"></i> نماذج جاهزة من واقع التقاضي الكويتي</span>
+            <button type="button" id="randomSample" class="text-xs font-bold t-gold flex items-center gap-1 hover:underline"><i data-lucide="shuffle" class="w-3.5 h-3.5"></i> نموذج عشوائي</button>
+          </div>
+          <div id="samples" class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2" role="list"></div>
         </div>
 
         <button id="runBtn" type="button" class="btn btn-gold w-full mt-7 text-lg"><i data-lucide="sparkles" class="w-5 h-5"></i> تشغيل التحليل القانوني الذكي</button>
@@ -768,6 +794,120 @@ html.ink .quick button { color: var(--gold); }
   </div>
 </section>
 
+<!-- ======================= ABOUT ======================= -->
+<section id="about" class="relative py-24 sm:py-32">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="text-center max-w-3xl mx-auto reveal">
+      <div class="eyebrow">عن النموذج</div>
+      <h2 class="section-title font-amiri font-bold mt-4">نموذج مفاهيمي.. <span class="gold-text">لاستشراف عدالة الغد</span></h2>
+      <p class="mt-5 t-text2 leading-9 text-lg">
+        «المحكمة الكويتية الذكية» عرضٌ تجريبي تعليمي (Conceptual Demo) يتصوّر كيف يمكن للذكاء الاصطناعي أن يُعين القضاء الكويتي
+        على تسريع الفصل في الدعاوى وتوحيد جودة التسبيب، مع بقاء سلطة الحكم كاملةً في يد القاضي.
+      </p>
+    </div>
+
+    <!-- is / is not -->
+    <div class="mt-14 grid md:grid-cols-2 gap-5">
+      <div class="glass frame p-7 sm:p-8 reveal" data-delay="1">
+        <h3 class="font-bold text-xl t-text flex items-center gap-2"><i data-lucide="circle-check" class="w-5 h-5" style="color:var(--ok)"></i> ما يقدّمه هذا النموذج</h3>
+        <ul class="mt-5 space-y-3 t-text2 leading-8">
+          <li class="flex gap-3"><i data-lucide="check" class="w-4 h-4 mt-2 shrink-0" style="color:var(--ok)"></i>تصوّراً لتجربة تقاضٍ رقمية متكاملة: من قيد الصحيفة إلى مسودة الحكم.</li>
+          <li class="flex gap-3"><i data-lucide="check" class="w-4 h-4 mt-2 shrink-0" style="color:var(--ok)"></i>أداةً تعليمية لطلبة القانون والباحثين لفهم بنية الحكم القضائي: الوقائع ثم الأسباب ثم المنطوق.</li>
+          <li class="flex gap-3"><i data-lucide="check" class="w-4 h-4 mt-2 shrink-0" style="color:var(--ok)"></i>مادةً للنقاش حول حوكمة الذكاء الاصطناعي في القضاء وضماناته.</li>
+        </ul>
+      </div>
+      <div class="glass frame p-7 sm:p-8 reveal" data-delay="2">
+        <h3 class="font-bold text-xl t-text flex items-center gap-2"><i data-lucide="circle-x" class="w-5 h-5" style="color:var(--danger)"></i> ما ليس عليه</h3>
+        <ul class="mt-5 space-y-3 t-text2 leading-8">
+          <li class="flex gap-3"><i data-lucide="x" class="w-4 h-4 mt-2 shrink-0" style="color:var(--danger)"></i>ليس جهة قضائية رسمية، ولا يمثّل وزارة العدل أو أي جهة حكومية كويتية.</li>
+          <li class="flex gap-3"><i data-lucide="x" class="w-4 h-4 mt-2 shrink-0" style="color:var(--danger)"></i>لا يُصدر أحكاماً ملزمة، ولا يُغني عن محامٍ مرخّص أو استشارة قانونية.</li>
+          <li class="flex gap-3"><i data-lucide="x" class="w-4 h-4 mt-2 shrink-0" style="color:var(--danger)"></i>الإحصاءات المعروضة في لوحة المؤشرات أرقام توضيحية وليست بيانات فعلية.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- pipeline -->
+    <div class="mt-16 reveal">
+      <h3 class="font-amiri text-2xl sm:text-3xl font-bold t-text text-center">كيف تُعالَج النصوص في المنظومة المقترحة؟</h3>
+      <p class="mt-3 t-muted text-center max-w-2xl mx-auto leading-8">خمس مراحل متتابعة، تنتهي كلها عند القاضي. كل مخرَج في كل مرحلة قابل للتتبّع إلى مصدره.</p>
+      <ol class="mt-10 grid sm:grid-cols-2 lg:grid-cols-5 gap-4" style="counter-reset:stage">
+        <li class="stage glass rounded-2xl p-5">
+          <div class="flex items-center justify-between"><span class="stage-n"></span><i data-lucide="scan-text" class="w-5 h-5 t-gold"></i></div>
+          <div class="font-bold t-text mt-4">الاستقبال والتطبيع</div>
+          <p class="text-sm t-muted mt-2 leading-7">توحيد الأرقام والتشكيل والإملاء في صحيفة الدعوى ومرفقاتها، واستخراج النص من المستندات الممسوحة.</p>
+          <div class="io mt-4">المخرَج: نص عربي منظّف</div>
+        </li>
+        <li class="stage glass rounded-2xl p-5">
+          <div class="flex items-center justify-between"><span class="stage-n"></span><i data-lucide="tags" class="w-5 h-5 t-gold"></i></div>
+          <div class="font-bold t-text mt-4">استخراج الوقائع</div>
+          <p class="text-sm t-muted mt-2 leading-7">تمييز الأطراف والمبالغ والتواريخ ومدد الخدمة والأجور، وتصنيف العلاقة القانونية ونوع الطلبات.</p>
+          <div class="io mt-4">المخرَج: بطاقة وقائع منظّمة</div>
+        </li>
+        <li class="stage glass rounded-2xl p-5">
+          <div class="flex items-center justify-between"><span class="stage-n"></span><i data-lucide="library" class="w-5 h-5 t-gold"></i></div>
+          <div class="font-bold t-text mt-4">الاسترجاع التشريعي</div>
+          <p class="text-sm t-muted mt-2 leading-7">جلب المواد ذات الصلة من قاعدة تشريعات مفهرسة مادةً مادة، مع التحقق من تاريخ النفاذ والتعديلات اللاحقة.</p>
+          <div class="io mt-4">المخرَج: نصوص ومبادئ موثّقة المصدر</div>
+        </li>
+        <li class="stage glass rounded-2xl p-5">
+          <div class="flex items-center justify-between"><span class="stage-n"></span><i data-lucide="git-branch" class="w-5 h-5 t-gold"></i></div>
+          <div class="font-bold t-text mt-4">التسبيب والصياغة</div>
+          <p class="text-sm t-muted mt-2 leading-7">بناء سلسلة استدلال تربط كل واقعة بسندها، ثم صياغة المسودة بالأسلوب القضائي مع فحص اتساق الأسباب والمنطوق.</p>
+          <div class="io mt-4">المخرَج: مسودة حكم مسبّبة</div>
+        </li>
+        <li class="stage glass rounded-2xl p-5 human">
+          <div class="flex items-center justify-between"><span class="stage-n"></span><i data-lucide="user-check" class="w-5 h-5" style="color:var(--ok)"></i></div>
+          <div class="font-bold t-text mt-4">المراجعة البشرية</div>
+          <p class="text-sm t-muted mt-2 leading-7">يراجع القاضي الوقائع والأسباب، ويعدّل أو يرفض أو يعتمد. لا تصير المسودة حكماً إلا بتوقيعه.</p>
+          <div class="io mt-4" style="color:var(--ok);border-color:color-mix(in srgb,var(--ok) 40%,transparent)">المخرَج: حكم قضائي بقرار بشري</div>
+        </li>
+      </ol>
+    </div>
+
+    <!-- oversight matrix -->
+    <div class="mt-16 grid lg:grid-cols-5 gap-5 items-start">
+      <div class="lg:col-span-2 reveal">
+        <h3 class="font-amiri text-2xl sm:text-3xl font-bold t-text">الإشراف البشري ليس خياراً</h3>
+        <p class="mt-4 t-text2 leading-9">يقوم النموذج على مبدأ واحد: <b class="t-gold">الذكاء الاصطناعي يقترح، والقاضي يقرّر.</b> وتتدرّج درجة الإشراف بحسب خطورة النزاع، فتبلغ حدّها الأقصى في المواد الجزائية حيث لا يُنتج النظام أي مسودة حكم على الإطلاق.</p>
+        <ul class="mt-6 space-y-3 text-sm t-text2 leading-7">
+          <li class="flex gap-3"><i data-lucide="eye" class="w-4 h-4 t-gold mt-1.5 shrink-0"></i><span><b class="t-text">قابلية التفسير:</b> لكل نتيجة سندها التشريعي الظاهر، فلا «صندوق أسود».</span></li>
+          <li class="flex gap-3"><i data-lucide="file-lock-2" class="w-4 h-4 t-gold mt-1.5 shrink-0"></i><span><b class="t-text">سجل تدقيق:</b> تُحفظ كل مسودة وكل تعديل قضائي عليها في سجل لا يقبل التعديل.</span></li>
+          <li class="flex gap-3"><i data-lucide="scale" class="w-4 h-4 t-gold mt-1.5 shrink-0"></i><span><b class="t-text">حق الخصوم:</b> الاطلاع على منهج التحليل، وبقاء طرق الطعن المقررة قانوناً كما هي.</span></li>
+        </ul>
+      </div>
+      <div class="lg:col-span-3 glass frame p-2 sm:p-3 reveal" data-delay="2">
+        <div class="overflow-x-auto">
+          <table class="oversight w-full text-sm">
+            <caption class="sr-only">مصفوفة الإشراف البشري حسب الدائرة</caption>
+            <thead><tr><th scope="col">الدائرة</th><th scope="col">دور الذكاء الاصطناعي</th><th scope="col">دور القاضي</th><th scope="col">مستوى الإشراف</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">التجارية والشركات</th><td>مسودة حكم مسبّبة</td><td>مراجعة واعتماد كل مسودة</td><td><span class="lvl l2">مرتفع</span></td></tr>
+              <tr><th scope="row">المدنية والتعويضات</th><td>مسودة حكم وتوصية بندب خبير</td><td>تقدير التعويض والاعتماد</td><td><span class="lvl l2">مرتفع</span></td></tr>
+              <tr><th scope="row">الأحوال الشخصية</th><td>تقدير استرشادي للنفقة وتوصية بالصلح</td><td>الفصل بما يحقق مصلحة المحضون</td><td><span class="lvl l3">معزَّز</span></td></tr>
+              <tr><th scope="row">الجزائية</th><td>تنظيم الأدلة ورصد الدفوع فقط</td><td>الإدانة والبراءة والعقوبة حصراً</td><td><span class="lvl l4">كامل</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- limits of this demo -->
+    <div class="mt-16 rounded-3xl p-6 sm:p-8 border reveal" style="border-color:color-mix(in srgb,var(--warn) 45%,transparent);background:color-mix(in srgb,var(--warn) 7%,transparent)">
+      <div class="flex flex-col md:flex-row gap-6">
+        <i data-lucide="flask-conical" class="w-8 h-8 shrink-0" style="color:var(--warn)"></i>
+        <div class="min-w-0">
+          <h3 class="font-bold text-xl t-text">حدود هذا العرض التجريبي</h3>
+          <div class="mt-4 grid md:grid-cols-3 gap-5 text-sm t-text2 leading-7">
+            <p><b class="t-text block mb-1">المحاكي يعمل داخل متصفحك</b>يعتمد محاكي التقاضي في هذه الصفحة على قواعد نصية مبسّطة تتعرف على الكلمات والمبالغ والمدد، وليس نموذجاً لغوياً ولا قاعدة تشريعات حقيقية. ولا يُرسَل ما تكتبه إلى أي خادم.</p>
+            <p><b class="t-text block mb-1">الإشارات التشريعية للاسترشاد</b>أُعدّت المراجع القانونية بعناية، لكنها لا تغني عن النص الرسمي النافذ. ويجب التحقق منها من الجريدة الرسمية «الكويت اليوم» أو المصادر المعتمدة قبل أي استخدام.</p>
+            <p><b class="t-text block mb-1">الحسابات تقديرية</b>تُحتسب مكافأة نهاية الخدمة على أساس الأجر الشهري مقسوماً على 26 يوماً، وهو افتراض تبسيطي. ويتوقف المبلغ الفعلي على عناصر الأجر وظروف كل حالة.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 </main>
 
 <!-- ======================= FOOTER ======================= -->
@@ -783,7 +923,7 @@ html.ink .quick button { color: var(--gold); }
     </div>
     <p class="mt-8 text-xs t-muted leading-7 text-center max-w-4xl mx-auto">
       تنبيه: هذا الموقع نموذج مفاهيمي تعليمي، وليس جهة قضائية رسمية ولا يمثّل أي جهة حكومية. المسودات والإحصاءات المعروضة توضيحية،
-      والإشارات التشريعية للاسترشاد فقط ويجب التحقق منها من المصادر الرسمية. لا يُعدّ أي محتوى هنا استشارة قانونية.
+      والإشارات التشريعية للاسترشاد فقط ويجب التحقق منها من المصادر الرسمية. لا يُعدّ أي محتوى هنا استشارة قانونية. <a href="#about" class="t-gold font-bold hover:underline">اقرأ المزيد عن النموذج</a>
     </p>
   </div>
 </footer>
@@ -888,7 +1028,7 @@ const secObs = new IntersectionObserver(entries => {
     $$('.nav-link').forEach(l => l.classList.toggle('active', l.dataset.sec === e.target.id));
   });
 }, { rootMargin: '-45% 0px -50% 0px' });
-['home', 'stats', 'chambers', 'trial', 'assistant'].forEach(id => secObs.observe(document.getElementById(id)));
+['home', 'stats', 'chambers', 'trial', 'assistant', 'about'].forEach(id => secObs.observe(document.getElementById(id)));
 
 /* ------------------------------------------------------------------ */
 /* Reveal + spotlight                                                   */
@@ -1289,27 +1429,65 @@ modal.addEventListener('keydown', e => {
 /* Trial simulator                                                      */
 /* ------------------------------------------------------------------ */
 const SAMPLES = [
-  ['commercial', 'أبرمت شركتنا عقد توريد مواد بناء مع شركة المدعى عليها بتاريخ 2025/03/10 بقيمة إجمالية قدرها 45,000 دينار كويتي. قمنا بتسليم البضاعة كاملة وفق محاضر الاستلام الموقعة، وأصدرنا الفاتورة، إلا أن المدعى عليها امتنعت عن السداد رغم المطالبة الودية والإنذار الرسمي، وتأخرت أكثر من ستة أشهر عن موعد الاستحقاق.'],
-  ['commercial', 'حرر المدعى عليه لصالحي شيكاً بمبلغ 12,500 دينار كويتي سداداً لقيمة بضاعة اشتراها مني بموجب عقد بيع تجاري، وعند تقديم الشيك للبنك في تاريخ الاستحقاق ارتد لعدم كفاية الرصيد، ولم يسدد المبلغ حتى الآن رغم مطالبته.'],
-  ['labour', 'عملت لدى شركة خاصة بوظيفة محاسب لمدة 8 سنوات براتب شهري قدره 900 دينار كويتي، وفوجئت بإنهاء خدماتي فجأة دون إنذار ودون ذكر سبب مشروع، ولم تصرف لي الشركة مكافأة نهاية الخدمة ولا بدل رصيد الإجازات المستحقة.'],
-  ['labour', 'أعمل لدى مؤسسة مقاولات منذ 3 سنوات براتب 450 دينار، ولم أستلم رواتبي عن الأشهر الأربعة الأخيرة رغم استمراري في العمل، وتقدمت بشكوى إلى الهيئة العامة للقوى العاملة دون نتيجة.'],
+  { type: 'commercial', icon: 'package', title: 'عقد توريد مواد بناء', sub: 'بضاعة مسلّمة وفاتورة غير مسددة',
+    text: 'أبرمت شركتنا عقد توريد مواد بناء مع شركة المدعى عليها بتاريخ 2025/03/10 بقيمة إجمالية قدرها 45,000 دينار كويتي. قمنا بتسليم البضاعة كاملة وفق محاضر الاستلام الموقعة، وأصدرنا الفاتورة، إلا أن المدعى عليها امتنعت عن السداد رغم المطالبة الودية والإنذار الرسمي، وتأخرت أكثر من ستة أشهر عن موعد الاستحقاق.' },
+  { type: 'commercial', icon: 'banknote', title: 'شيك مرتجع', sub: 'شيك ارتد لعدم كفاية الرصيد',
+    text: 'حرر المدعى عليه لصالحي شيكاً بمبلغ 12,500 دينار كويتي سداداً لقيمة بضاعة اشتراها مني بموجب عقد بيع تجاري، وعند تقديم الشيك للبنك في تاريخ الاستحقاق ارتد لعدم كفاية الرصيد، ولم يسدد المبلغ حتى الآن رغم مطالبته.' },
+  { type: 'commercial', icon: 'hard-hat', title: 'تأخر مقاول وشرط جزائي', sub: 'تشطيب مبنى تجاري في منطقة الري',
+    text: 'نطالب المدعى عليه، وهو مقاول، بمبلغ 11,000 دينار كويتي قيمة الشرط الجزائي المتفق عليه في عقد مقاولة لتشطيب مبنى تجاري في منطقة الري، إذ نص العقد على التسليم خلال 10 أشهر وعلى غرامة تأخير قدرها 500 دينار عن كل أسبوع، وقد تأخر المقاول 22 أسبوعاً عن موعد التسليم رغم إنذاره رسمياً.' },
+  { type: 'commercial', icon: 'handshake', title: 'نزاع شركاء في ذ.م.م', sub: 'حجب الأرباح والاطلاع على الدفاتر',
+    text: 'أنا شريك بنسبة 40% في شركة ذات مسؤولية محدودة تعمل في تجارة المواد الغذائية بمنطقة الشويخ الصناعية، وامتنع الشريك المدير عن توزيع الأرباح عن السنتين الماليتين الأخيرتين خلافاً لعقد التأسيس، ورفض تمكيني من الاطلاع على الدفاتر، وأطالب بنصيبي من الأرباح المقدّر بمبلغ 36,000 دينار كويتي.' },
+  { type: 'commercial', icon: 'megaphone', title: 'مستحقات خدمات تسويق', sub: 'فواتير شهرية متراكمة على مطعم',
+    text: 'قدمت شركتنا خدمات تسويق رقمي وإدارة حملات إعلانية لمطعم في منطقة السالمية بموجب عقد خدمات لمدة سنة، وأصدرنا فواتير شهرية بلغ مجموع غير المسدد منها 8,400 دينار كويتي، وقد تأخر المدعى عليه في السداد رغم المطالبات المتكررة والإنذار الرسمي.' },
+  { type: 'commercial', icon: 'building', title: 'عمولة سمسرة عقارية', sub: 'صفقة تمّت بوساطة ولم تُدفع العمولة',
+    text: 'نطالب المدعى عليها بمبلغ 27,000 دينار كويتي قيمة عمولة السمسرة المتفق عليها بنسبة 1% بموجب عقد وساطة مكتوب، بعد أن أُبرمت صفقة بيع عقار تجاري في منطقة القبلة بقيمة 2,700,000 دينار نتيجة وساطة مكتبنا، إلا أنها امتنعت عن سداد العمولة رغم إنذارها رسمياً.' },
+  { type: 'labour', icon: 'user-x', title: 'فصل تعسفي', sub: 'إنهاء مفاجئ بعد 8 سنوات',
+    text: 'عملت لدى شركة خاصة بوظيفة محاسب لمدة 8 سنوات براتب شهري قدره 900 دينار كويتي، وفوجئت بإنهاء خدماتي فجأة دون إنذار ودون ذكر سبب مشروع، ولم تصرف لي الشركة مكافأة نهاية الخدمة ولا بدل رصيد الإجازات المستحقة.' },
+  { type: 'labour', icon: 'wallet', title: 'رواتب متأخرة', sub: 'أربعة أشهر دون أجر',
+    text: 'أعمل لدى مؤسسة مقاولات منذ 3 سنوات براتب 450 دينار، ولم أستلم رواتبي عن الأشهر الأربعة الأخيرة رغم استمراري في العمل، وتقدمت بشكوى إلى الهيئة العامة للقوى العاملة دون نتيجة.' },
+  { type: 'labour', icon: 'log-out', title: 'استقالة ومكافأة', sub: 'رفض صرف المكافأة بحجة الاستقالة',
+    text: 'قدمت استقالتي من شركة اتصالات بعد خدمة 7 سنوات براتب شهري 1,200 دينار كويتي، والتزمت بمهلة الإنذار كاملة، إلا أن الشركة رفضت صرف مكافأة نهاية الخدمة بحجة أن الاستقالة تُسقط الحق فيها، وتقدمت بشكوى إلى الهيئة العامة للقوى العاملة.' },
+  { type: 'labour', icon: 'clock', title: 'ساعات عمل إضافية', sub: 'عمل في العطل الرسمية دون أجر',
+    text: 'أعمل مندوب مبيعات لدى شركة تجارية منذ 4 سنوات براتب 600 دينار، وكُلّفت طوال السنة الأخيرة بالعمل ساعات إضافية يومياً وفي أيام العطل الرسمية دون أن أتقاضى أجر العمل الإضافي، ونطالب بمستحقاتي عن تلك الفترة.' },
+  { type: 'labour', icon: 'stethoscope', title: 'انتهاء عقد محدد المدة', sub: 'ممرضة في مستشفى خاص',
+    text: 'انتهى عقدي محدد المدة مع مستشفى خاص بعد 5 سنوات بوظيفة ممرضة براتب 750 دينار، ولم تُصرف لي مكافأة نهاية الخدمة ولا بدل رصيد الإجازات السنوية البالغ 60 يوماً رغم مطالبتي الإدارة كتابياً.' },
+  { type: 'labour', icon: 'trending-down', title: 'تخفيض الراتب', sub: 'انتقاص الأجر دون موافقة العامل',
+    text: 'أعمل مهندساً لدى شركة نفطية خاصة منذ 6 سنوات، وقد خفّضت الشركة راتبي الشهري من 1,000 إلى 700 دينار كويتي منذ 8 أشهر بقرار منفرد ودون موافقتي، مع استمراري في أداء العمل ذاته، وأطالب بفروق الأجر عن تلك المدة.' },
 ];
 
 let caseType = 'commercial', running = false;
 const seg = $('#caseType'), ta = $('#caseText');
+function renderSamples() {
+  $('#samples').innerHTML = SAMPLES.map((x, i) => x.type !== caseType ? '' : `
+    <button type="button" class="sample-btn" role="listitem" data-sample="${i}" aria-pressed="false">
+      <i data-lucide="${x.icon}" class="w-4 h-4"></i>
+      <span class="min-w-0"><span class="ttl block">${x.title}</span><span class="sub block">${x.sub}</span></span>
+    </button>`).join('');
+  icons();
+}
+function loadSample(i) {
+  const x = SAMPLES[i];
+  setType(x.type); ta.value = x.text; ta.dispatchEvent(new Event('input'));
+  $$('.sample-btn').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.sample === i)));
+  ta.focus();
+}
 function setType(v) {
+  const changed = v !== caseType || !$('#samples').children.length;
   caseType = v; seg.dataset.v = v;
   $$('button', seg).forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === v)));
+  if (changed) renderSamples();
   ta.placeholder = v === 'commercial'
     ? 'مثال: أبرمت شركتنا عقد توريد مع المدعى عليه بقيمة 45,000 دينار كويتي، وقمنا بتسليم البضاعة كاملة، إلا أنه امتنع عن سداد الفاتورة رغم المطالبة...'
     : 'مثال: عملت لدى شركة لمدة 6 سنوات براتب 800 دينار، وتم فصلي دون إنذار ولم أستلم مكافأة نهاية الخدمة...';
 }
 $$('button', seg).forEach(b => b.addEventListener('click', () => setType(b.dataset.v)));
 ta.addEventListener('input', () => { $('#charCount').textContent = ta.value.length; });
-$$('.sample-btn').forEach(b => b.addEventListener('click', () => {
-  const [type, text] = SAMPLES[+b.dataset.sample];
-  setType(type); ta.value = text; ta.dispatchEvent(new Event('input')); ta.focus();
-}));
+$('#samples').addEventListener('click', e => { const b = e.target.closest('.sample-btn'); if (b) loadSample(+b.dataset.sample); });
+$('#randomSample').addEventListener('click', () => {
+  const pool = SAMPLES.map((x, i) => i).filter(i => SAMPLES[i].text !== ta.value);
+  loadSample(pick(pool));
+});
+setType(caseType);
 
 const toLatin = s => s.replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/٬/g, ',').replace(/٫/g, '.');
 const num = s => parseFloat(String(s).replace(/,/g, ''));
@@ -1325,9 +1503,9 @@ function analyse(type, raw) {
   const yearsM = t.match(/(\d+(?:\.\d+)?)\s*(?:سنوات|سنة|سنين|أعوام|عاماً|عاما|عام)/);
   const years = yearsM ? num(yearsM[1]) : null;
   const f = {
-    contract: has(t, /عقد|اتفاق|اتفاقية/), supply: has(t, /توريد|بضاع|تسليم|شحن|فاتور/), cheque: has(t, /شيك|شك\b/),
+    contract: has(t, /عقد|اتفاق|اتفاقية/), supply: has(t, /توريد|بضاع|شحن|محاضر الاستلام/), invoice: has(t, /فاتور|فواتير/), cheque: has(t, /شيك|شك\b/),
     delay: has(t, /تأخ|امتنع|مماطل|لم يسدد|عدم سداد|رفض السداد|لم يدفع|لم يتم السداد/), notice: has(t, /إنذار|انذار|مطالبة|أنذر/),
-    company: has(t, /شريك|شركاء|مساهم|الجمعية العامة/), penalty: has(t, /شرط جزائي/), bounced: has(t, /ارتد|رصيد|مرتجع/),
+    company: has(t, /شريك|شركاء|مساهم|الجمعية العامة/), penalty: has(t, /شرط\s*(?:ال)?جزائي|غرامة تأخير/), contractor: has(t, /مقاول/) && !has(t, /مؤسسة مقاولات/), resign: has(t, /استقال/), broker: has(t, /سمسر|وساطة/), cut: has(t, /خفّض|خفض|تخفيض|انتقاص/), overtime: has(t, /ساعات إضافية|عمل إضافي|العمل الإضافي|العطل الرسمية/), bounced: has(t, /ارتد|رصيد|مرتجع/),
     dismissal: has(t, /فصل|إنهاء|انهاء|استغناء|طرد|أنهت|إنهاء خدماتي/), noWarning: has(t, /دون إنذار|بدون إنذار|فجأة|دون سابق/),
     wages: has(t, /رواتب|أجور|لم أستلم|لم استلم|متأخرة|رواتبي/), leave: has(t, /إجاز|اجاز/), indemnity: has(t, /مكافأة|مكافاة|نهاية الخدمة/),
     pam: has(t, /القوى العاملة|شكوى/),
@@ -1335,12 +1513,14 @@ function analyse(type, raw) {
   return { t, amount, salary, years, f };
 }
 
-function indemnity(salary, years) {
+// Law 6/2010 Art. 53: on resignation the worker receives half the award after 3–5 years, two thirds after 5–10, the full award from 10 years.
+function resignShare(years) { return years < 3 ? 0 : years < 5 ? 0.5 : years < 10 ? 2 / 3 : 1; }
+function indemnity(salary, years, resign) {
   // Law 6/2010 Art. 51 (monthly-paid): 15 days per year for first 5 years, one month per year thereafter, capped at 1.5 years' pay.
   const daily = salary / 26;
   const first = Math.min(years, 5) * 15 * daily;
   const rest = Math.max(0, years - 5) * salary;
-  return Math.min(first + rest, salary * 18);
+  return Math.min(first + rest, salary * 18) * (resign ? resignShare(years) : 1);
 }
 
 function buildVerdict(type, raw) {
@@ -1363,9 +1543,9 @@ function buildVerdict(type, raw) {
       b: 'وحيث إن العقد شريعة المتعاقدين، فلا يجوز لأحدهما نقضه أو تعديله إلا باتفاق الطرفين أو للأسباب التي يقررها القانون، ويجب تنفيذه طبقاً لما اشتمل عليه وبطريقة تتفق مع ما يوجبه حسن النية. وقد ثبت من الأوراق قيام العلاقة التعاقدية بين الطرفين ووفاء المدعي بالتزامه' + (f.supply ? ' بالتوريد والتسليم.' : '.'),
       r: ['القانون المدني 67/1980 — م196', 'م197 (حسن النية)'],
     }); }
-    if (f.supply) { signals++; reasons.push({
+    if (f.supply || f.invoice) { signals++; reasons.push({
       t: 'في الإثبات',
-      b: 'وحيث إن المحررات المقدمة — من محاضر استلام وفواتير — لم يطعن عليها المدعى عليه بثمة مطعن، فتطمئن إليها المحكمة وتعوّل عليها في ثبوت المديونية، إذ من المقرر أن تحصيل فهم الواقع وتقدير الأدلة من سلطة محكمة الموضوع متى أقامت قضاءها على أسباب سائغة لها أصلها الثابت في الأوراق.',
+      b: `وحيث إن المحررات المقدمة — ${f.supply ? 'من محاضر استلام وفواتير' : 'من فواتير ومراسلات'} — لم يطعن عليها المدعى عليه بثمة مطعن، فتطمئن إليها المحكمة وتعوّل عليها في ثبوت المديونية، إذ من المقرر أن تحصيل فهم الواقع وتقدير الأدلة من سلطة محكمة الموضوع متى أقامت قضاءها على أسباب سائغة لها أصلها الثابت في الأوراق.`,
       r: ['قانون الإثبات 39/1980', 'مبدأ مستقر — محكمة التمييز'],
     }); }
     if (f.cheque) { signals += 2; reasons.push({
@@ -1373,22 +1553,33 @@ function buildVerdict(type, raw) {
       b: `وحيث إن الشيك أداة وفاء تجري مجرى النقود${f.bounced ? '، وقد ثبت ارتداده لعدم كفاية الرصيد' : ''}، وكان المدعى عليه لم يقدّم ما يفيد براءة ذمته من قيمته، فإن المحكمة تقضي بإلزامه بها، وذلك دون إخلال بالمسؤولية الجزائية عن إصدار شيك بدون رصيد التي تختص بها الدائرة الجزائية بضماناتها.`,
       r: ['قانون التجارة 68/1980 — أحكام الشيك'],
     }); }
-    if (f.delay) { signals++; reasons.push({
+    if (f.contractor) { signals += 2; reasons.push({
+      t: 'في التزامات المقاول',
+      b: `وحيث إن المقاول ملزم بإنجاز العمل وفق الشروط المتفق عليها وفي المدة المحددة في العقد، وقد ثبت تأخره عن موعد التسليم${f.notice ? ' رغم إنذاره' : ''} دون أن يقدّم ما يثبت أن التأخير يرجع إلى سبب أجنبي لا يد له فيه أو إلى فعل رب العمل، فإنه يكون قد أخلّ بالتزامه التعاقدي.`,
+      r: ['القانون المدني 67/1980 — أحكام عقد المقاولة'],
+    }); }
+    if (f.delay && !f.contractor && !f.company) { signals++; reasons.push({
       t: 'في التأخير والتعويض',
       b: `وحيث إن المدعى عليه قد تأخر في الوفاء بالتزامه في ميعاد استحقاقه${f.notice ? ' رغم إنذاره' : ''}، وكان محل الالتزام مبلغاً من النقود معلوم المقدار وقت الطلب، فإنه يحق للدائن المطالبة بالتعويض عن التأخير وفقاً للأحكام المقررة في المواد التجارية، على أن تقدّره المحكمة في حدود الطلبات.`,
       r: ['قانون التجارة 68/1980', 'القانون المدني 67/1980'],
+    }); }
+    if (f.broker) { signals += 2; reasons.push({
+      t: 'في أجر السمسار',
+      b: 'وحيث إن السمسار يستحق أجره متى أدّت وساطته إلى إبرام العقد بين الطرفين اللذين قرّب بينهما، وكان الثابت من الأوراق أن الصفقة أُبرمت نتيجة وساطة المدعي، وأن الأجر محدد بنسبة متفق عليها في عقد الوساطة، فإن المدعى عليها تكون ملزمة بأدائه.',
+      r: ['قانون التجارة 68/1980 — أحكام السمسرة'],
     }); }
     if (f.company) { signals++; reasons.push({
       t: 'في علاقة الشركاء',
       b: 'وحيث إن النزاع يتصل بحقوق الشركاء، فإن المحكمة تُعمل أحكام قانون الشركات وعقد التأسيس والنظام الأساسي، وتوصي بندب خبير حسابي لتصفية الحساب بين الطرفين.',
       r: ['قانون الشركات 1/2016'],
     }); }
-    if (f.penalty) { signals++; reasons.push({ t: 'في الشرط الجزائي', b: 'وحيث إن الطرفين اتفقا مقدماً على قيمة التعويض، فإن للمحكمة أن تخفّضه إذا أثبت المدين أن التقدير كان مبالغاً فيه أو أن الالتزام الأصلي قد نُفّذ في جزء منه.', r: ['القانون المدني 67/1980'] }); }
+    if (f.penalty) { signals++; reasons.push({ t: 'في الشرط الجزائي', b: 'وحيث إن الطرفين اتفقا مقدماً على قيمة التعويض عن التأخير، فإن هذا التقدير يكون مستحقاً بمجرد ثبوت الإخلال دون حاجة إلى إثبات الضرر، على أن للمحكمة أن تخفّضه إذا أثبت المدين أن التقدير كان مبالغاً فيه إلى درجة كبيرة أو أن الالتزام الأصلي قد نُفّذ في جزء منه.', r: ['القانون المدني 67/1980 — أحكام التعويض الاتفاقي'] }); }
 
     orders.push(amount
-      ? `إلزام المدعى عليه بأن يؤدي للمدعي مبلغاً وقدره ${fmt(amount)} د.ك (${words(amount)} ديناراً كويتياً) قيمة المديونية الثابتة`
+      ? `إلزام المدعى عليه بأن يؤدي للمدعي مبلغاً وقدره ${fmt(amount)} د.ك (${words(amount)} دينار كويتي) ${f.penalty ? 'قيمة التعويض الاتفاقي المستحق' : f.broker ? 'قيمة عمولة السمسرة المستحقة' : f.company ? 'نصيبه في الأرباح المستحقة، بعد التحقق منه بتقرير خبير حسابي' : 'قيمة المديونية الثابتة'}`
       : 'إلزام المدعى عليه بأن يؤدي للمدعي قيمة المديونية الثابتة بالأوراق، على أن يُحدَّد مقدارها بمعرفة خبير حسابي تندبه المحكمة');
-    if (f.delay) orders.push('والتعويض عن التأخير في الوفاء من تاريخ المطالبة القضائية حتى تمام السداد، في حدود ما تقدّره المحكمة');
+    if (f.company) orders.push('وبتمكين المدعي من الاطلاع على دفاتر الشركة ومستنداتها');
+    if (f.delay && !f.contractor && !f.company) orders.push('والتعويض عن التأخير في الوفاء من تاريخ المطالبة القضائية حتى تمام السداد، في حدود ما تقدّره المحكمة');
     if (!amount) warnings.push('لم يُستدل على قيمة المطالبة في الملخص؛ يُستحسن ذكر المبلغ بالدينار الكويتي.');
   } else {
     reasons.push({
@@ -1401,9 +1592,15 @@ function buildVerdict(type, raw) {
       b: `وحيث إنه لم يثبت من الأوراق قيام صاحب العمل بإخطار العامل بمهلة الإنذار المقررة قانوناً${f.noWarning ? '، وقد جاء الإنهاء مفاجئاً' : ''}، ولم يقدّم مبرراً مشروعاً للإنهاء، فإن الإنهاء يغدو تعسفياً مستوجباً للتعويض عن مهلة الإنذار وعمّا لحق العامل من ضرر، وهو ما تقدّره المحكمة بحسب ظروف الدعوى ومدة الخدمة.`,
       r: ['قانون العمل 6/2010 — أحكام الإنذار والإنهاء التعسفي'],
     }); }
-    if (f.indemnity || f.dismissal) { signals++; reasons.push({
+    const owesAward = f.indemnity || f.dismissal || f.resign;
+    if (f.resign) { signals += 2; reasons.push({
+      t: 'في أثر الاستقالة على المكافأة',
+      b: `وحيث إن الاستقالة لا تُسقط حق العامل في مكافأة نهاية الخدمة، وإنما يستحق منها نسبة تتدرج بحسب مدة خدمته: نصفها إذا بلغت ثلاث سنوات ولم تبلغ خمساً، وثلثيها إذا بلغت خمساً ولم تبلغ عشراً، وكاملها إذا بلغت عشر سنوات فأكثر${years ? `؛ ومدة خدمة المدعي ${fmt(years, years % 1 ? 1 : 0)} سنة، فيستحق ${years < 3 ? 'لا شيء من المكافأة' : years < 5 ? 'نصفها' : years < 10 ? 'ثلثيها' : 'كاملها'}` : ''}. ومن ثم يكون امتناع صاحب العمل عن صرفها بحجة الاستقالة على غير سند.`,
+      r: ['قانون العمل 6/2010 — م53'],
+    }); }
+    if (owesAward) { signals++; reasons.push({
       t: 'في مكافأة نهاية الخدمة',
-      b: `وحيث إن العامل يستحق عند انتهاء خدمته مكافأة قوامها أجر خمسة عشر يوماً عن كل سنة من السنوات الخمس الأولى، وأجر شهر عن كل سنة من السنوات التالية، بحد أقصى أجر سنة ونصف${salary && years ? `؛ وإذ كانت مدة خدمة المدعي ${fmt(years, years % 1 ? 1 : 0)} سنة بأجر شهري قدره ${fmt(salary)} د.ك، فإن مكافأته تُقدَّر حسابياً بنحو ${fmt(indemnity(salary, years), 3)} د.ك.` : '.'}`,
+      b: `وحيث إن العامل يستحق عند انتهاء خدمته مكافأة قوامها أجر خمسة عشر يوماً عن كل سنة من السنوات الخمس الأولى، وأجر شهر عن كل سنة من السنوات التالية، بحد أقصى أجر سنة ونصف${salary && years ? `؛ وإذ كانت مدة خدمة المدعي ${fmt(years, years % 1 ? 1 : 0)} سنة بأجر شهري قدره ${fmt(salary)} د.ك، فإن مكافأته ${f.resign ? 'بعد إعمال نسبة الاستقالة ' : ''}تُقدَّر حسابياً بنحو ${fmt(indemnity(salary, years, f.resign), 3)} د.ك.` : '.'}`,
       r: ['قانون العمل 6/2010 — م51'],
     }); }
     if (f.wages) { signals += 2; reasons.push({
@@ -1411,13 +1608,18 @@ function buildVerdict(type, raw) {
       b: 'وحيث إن الأجر هو المقابل الأساسي لالتزام العامل بأداء العمل، ويلتزم صاحب العمل بصرفه في مواعيده دون تأخير، ولم يقدّم المدعى عليه ما يفيد الوفاء به عن المدة المطالب بها، فإنه يُلزم بأدائه.',
       r: ['قانون العمل 6/2010 — أحكام الأجور'],
     }); }
+    if (f.cut) { signals += 2; reasons.push({ t: 'في الانتقاص من الأجر', b: `وحيث إن الأجر المتفق عليه من العناصر الجوهرية في عقد العمل، فلا يجوز لصاحب العمل أن ينتقص منه بإرادته المنفردة ولا أن يعدّل شروط العقد على نحو يضرّ بالعامل دون موافقته، وإذ خفّض صاحب العمل أجر المدعي مع استمرار أدائه العمل ذاته، فإن المدعي يستحق فروق الأجر عن المدة المطالب بها.`, r: ['قانون العمل 6/2010 — أحكام الأجور', 'القانون المدني 67/1980 — م196'] }); }
+    if (f.overtime) { signals += 2; reasons.push({ t: 'في أجر العمل الإضافي', b: `وحيث إن تشغيل العامل ساعات تزيد على ساعات العمل المقررة، أو في أيام الراحة والعطل الرسمية، يوجب لصاحب العمل أن يؤدي له أجراً إضافياً بالزيادة التي يقررها القانون على أجره الأصلي، ولم يثبت من الأوراق أداء هذا الأجر${salary ? `، وكان أجر المدعي الشهري ${fmt(salary)} د.ك` : ''}، فإن المحكمة تُلزم صاحب العمل به بعد احتساب الساعات الفعلية بمعرفة خبير.`, r: ['قانون العمل 6/2010 — أحكام ساعات العمل والعمل الإضافي'] }); }
     if (f.leave) { signals++; reasons.push({ t: 'في بدل الإجازات', b: 'وحيث إن للعامل الحق في المقابل النقدي لرصيد إجازاته السنوية التي لم يستنفدها عند انتهاء خدمته، ولم يثبت حصوله عليها، فإنه يستحق بدلها محسوباً على أساس آخر أجر.', r: ['قانون العمل 6/2010 — أحكام الإجازات'] }); }
 
-    if (salary && years && (f.indemnity || f.dismissal)) orders.push(`إلزام المدعى عليها بأن تؤدي للمدعي مكافأة نهاية الخدمة بمبلغ تقديري قدره ${fmt(indemnity(salary, years), 3)} د.ك`);
-    else if (f.indemnity || f.dismissal) orders.push('إلزام المدعى عليها بأن تؤدي للمدعي مكافأة نهاية الخدمة وفق ما يسفر عنه الحساب');
+    if (salary && years && owesAward && !(f.resign && years < 3)) orders.push(`إلزام المدعى عليها بأن تؤدي للمدعي مكافأة نهاية الخدمة بمبلغ تقديري قدره ${fmt(indemnity(salary, years, f.resign), 3)} د.ك`);
+    else if (owesAward && !(f.resign && years < 3)) orders.push('إلزام المدعى عليها بأن تؤدي للمدعي مكافأة نهاية الخدمة وفق ما يسفر عنه الحساب');
     if (f.dismissal) orders.push('وبأن تؤدي له بدل مهلة الإنذار والتعويض عن الإنهاء التعسفي بحسب ما تقدّره المحكمة');
     if (f.wages) { orders.push(`وبأن تؤدي له الأجور المتأخرة${salary ? ` على أساس أجر شهري قدره ${fmt(salary)} د.ك` : ''} عن المدة المطالب بها`); }
+    if (f.cut) orders.push('وبأن تؤدي له فروق الأجر الناتجة عن التخفيض عن المدة المطالب بها، مع إعادة أجره إلى ما كان عليه');
+    if (f.overtime) orders.push('وبأن تؤدي له أجر العمل الإضافي عن الفترة المطالب بها وفق ما يسفر عنه تقرير الخبير');
     if (f.leave) orders.push('وبدل رصيد الإجازات السنوية غير المستنفدة');
+    if (orders.length) orders[0] = orders[0].replace(/^وبأن تؤدي له /, 'إلزام المدعى عليها بأن تؤدي للمدعي ').replace(/^وبدل /, 'إلزام المدعى عليها بأن تؤدي للمدعي بدل ');
     if (!orders.length) orders.push('إلزام المدعى عليها بأن تؤدي للمدعي مستحقاته العمالية الثابتة بالأوراق وفق ما يسفر عنه تقرير الخبير');
     if (!salary) warnings.push('لم يُذكر الأجر الشهري؛ ذِكره يتيح حساب المكافأة بدقة.');
     if (!years) warnings.push('لم تُذكر مدة الخدمة بالسنوات.');
@@ -1425,10 +1627,10 @@ function buildVerdict(type, raw) {
 
   reasons.push({
     t: 'في المصروفات',
-    b: 'وحيث إن من يخسر الدعوى يُلزم بمصروفاتها، فإن المحكمة تُلزم المدعى عليه بها وبمقابل أتعاب المحاماة الفعلية.',
+    b: `وحيث إن من يخسر الدعوى يُلزم بمصروفاتها، فإن المحكمة تُلزم ${isC ? 'المدعى عليه' : 'المدعى عليها'} بها وبمقابل أتعاب المحاماة الفعلية.`,
     r: ['قانون المرافعات 38/1980 — أحكام المصروفات'],
   });
-  orders.push('وألزمت المدعى عليه المصروفات ومقابل أتعاب المحاماة الفعلية');
+  orders.push(`وألزمت ${isC ? 'المدعى عليه' : 'المدعى عليها'} المصروفات ومقابل أتعاب المحاماة الفعلية`);
 
   if (raw.trim().length < 80) warnings.push('الملخص موجز؛ كلما زادت التفاصيل ارتفعت دقة التسبيب.');
   if (signals === 0) warnings.push('لم تُرصد وقائع قانونية مميزة؛ جُرّب ذكر العقد أو الفاتورة أو الفصل أو الأجر.');
@@ -1452,9 +1654,10 @@ function words(n) {
   if (n === 0) return 'صفر';
   if (n >= 1e6) return fmt(n);
   const th = Math.floor(n / 1000), rest = n % 1000, out = [];
-  if (th) out.push(th === 1 ? 'ألف' : th === 2 ? 'ألفان' : th <= 10 ? `${below1000(th)} آلاف` : `${below1000(th)} ألفاً`);
+  if (th) out.push(th === 1 ? 'ألف' : th === 2 ? 'ألفان' : th <= 10 ? `${below1000(th)} آلاف` : `${below1000(th)} ${rest ? 'ألفاً' : 'ألف'}`);
   if (rest) out.push(below1000(rest));
-  return out.join(' و');
+  // the counted noun follows directly, so dual forms drop their nūn (مائتا دينار، ألفا دينار)
+  return out.join(' و').replace(/مائتان$/, 'مائتا').replace(/ألفان$/, 'ألفا');
 }
 
 const LOG = {
@@ -1662,6 +1865,7 @@ const KB = [
   { k: /اعتماد|تعتمد|تُعتمد|مسودة|القاضي البشري|توقيع/, a: () => 'تمرّ المسودة بثلاث بوابات:<ul><li>مراجعة القاضي للوقائع والتسبيب، وله التعديل الكامل أو الرفض.</li><li>فحص آلي للاتساق بين الأسباب والمنطوق.</li><li>التوقيع الإلكتروني للقاضي، ثم الإيداع والإعلان.</li></ul>وكل تعديل يُسجَّل في سجل تدقيق يمكن للخصوم الاطلاع على خلاصته.', q: () => ['مواعيد الطعن', 'جرّب المحاكاة'] },
   { k: /خصوصية|بيانات|أمان|امان|تشفير|سرية|حماية/, a: () => 'تُعامل البيانات القضائية بأعلى درجات السرية: تشفير كامل أثناء النقل والتخزين، واستضافة سيادية داخل دولة الكويت، وحجب تلقائي للبيانات الحساسة، وصلاحيات اطلاع مقصورة على أطراف الدعوى والمحكمة، مع سجل تدقيق غير قابل للتعديل.', q: () => ['كيف يعمل الذكاء الاصطناعي هنا؟'] },
   { k: /محاكاة|تجربة|جرّب|جرب|المحاكي/, a: () => { setTimeout(() => $('#trial').scrollIntoView({ behavior: 'smooth' }), 600); return 'بكل سرور، سأنقلك الآن إلى <b>محاكي التقاضي الحي</b>. اختر نوع الدعوى، واكتب ملخص النزاع أو استخدم نموذجاً جاهزاً، ثم اضغط «تشغيل التحليل القانوني الذكي».'; }, q: () => ['مواعيد الطعن'] },
+  { k: /عن النموذج|مفاهيمي|حقيقي|رسمي|تجريبي|هل هذه محكمة/, a: () => { setTimeout(() => $('#about').scrollIntoView({ behavior: 'smooth' }), 600); return 'هذا الموقع <b>نموذج مفاهيمي تعليمي</b> يستشرف مستقبل العدالة الرقمية، وليس جهة قضائية رسمية. والمحاكي فيه يعمل بقواعد نصية مبسّطة داخل متصفحك. سأنقلك الآن إلى قسم «عن النموذج» لتفاصيل المنهجية وضمانات الإشراف البشري.'; }, q: () => ['كيف يعمل الذكاء الاصطناعي هنا؟', 'جرّب المحاكاة'] },
   { k: /شكر|شكراً|يعطيك|مشكور|جزاك/, a: () => 'العفو، وهذا واجبنا. أسأل الله لك التوفيق والسداد، وأنا حاضر لأي استفسار آخر.', q: () => ['كيف أرفع دعوى؟'] },
   { k: /من أنت|مين انت|من انت|اسمك|جسار|جسّار/, a: () => 'أنا <b>جسّار</b>، المساعد القضائي الذكي للمحكمة الكويتية الذكية. أُرشد ولا أحكم، وأُعين ولا أحلّ محل المحامي أو القاضي.', q: () => ['كيف يعمل الذكاء الاصطناعي هنا؟', 'كيف أرفع دعوى؟'] },
 ];
