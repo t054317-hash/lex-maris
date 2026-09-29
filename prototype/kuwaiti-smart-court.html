@@ -824,7 +824,7 @@ html.ink .quick button { color: var(--gold); }
             <div class="flex items-center gap-2 flex-wrap">
               <button type="button" id="pauseBtn" class="ctl"></button>
               <button type="button" id="speedBtn" class="ctl"></button>
-              <button type="button" id="voiceBtn" class="ctl" hidden></button>
+              <button type="button" id="voiceBtn" class="ctl"></button>
               <button type="button" id="skipBtn" class="ctl gold"><i data-lucide="skip-back" class="w-4 h-4"></i> تخطَّ إلى الحكم</button>
             </div>
           </div>
@@ -847,6 +847,7 @@ html.ink .quick button { color: var(--gold); }
           <div class="caption-box mt-4" aria-live="polite">
             <div class="who" id="capWho">—</div>
             <p id="caption" class="caption"></p>
+            <p id="voiceNote" class="text-[11px] t-muted mt-1" hidden>بعض عبارات هذه الدعوى بلا تسجيل صوتي لأنها كُتبت يدوياً؛ النماذج الجاهزة مسموعة بالكامل.</p>
           </div>
 
           <div class="mt-4">
@@ -997,7 +998,7 @@ html.ink .quick button { color: var(--gold); }
         <div class="min-w-0">
           <h3 class="font-bold text-xl t-text">حدود هذا العرض التجريبي</h3>
           <div class="mt-4 grid md:grid-cols-3 gap-5 text-sm t-text2 leading-7">
-            <p><b class="t-text block mb-1">المحاكي يعمل داخل متصفحك</b>يعتمد محاكي التقاضي في هذه الصفحة على قواعد نصية مبسّطة تتعرف على الكلمات والمبالغ والمدد، وليس نموذجاً لغوياً ولا قاعدة تشريعات حقيقية. ولا يُرسَل ما تكتبه إلى أي خادم. أما الجلسة المعروضة فتمثيل درامي مكثّف، إذ تعتمد الجلسات المدنية والتجارية في الواقع غالباً على المذكرات المكتوبة.</p>
+            <p><b class="t-text block mb-1">المحاكي يعمل داخل متصفحك</b>يعتمد محاكي التقاضي في هذه الصفحة على قواعد نصية مبسّطة تتعرف على الكلمات والمبالغ والمدد، وليس نموذجاً لغوياً ولا قاعدة تشريعات حقيقية. ولا يُرسَل ما تكتبه إلى أي خادم. أما الجلسة المعروضة فتمثيل درامي مكثّف، إذ تعتمد الجلسات المدنية والتجارية في الواقع غالباً على المذكرات المكتوبة. وأصوات الجلسة مولَّدة آلياً بنموذج Piper مفتوح المصدر (صوت kareem).</p>
             <p><b class="t-text block mb-1">الإشارات التشريعية للاسترشاد</b>أُعدّت المراجع القانونية بعناية، لكنها لا تغني عن النص الرسمي النافذ. ويجب التحقق منها من الجريدة الرسمية «الكويت اليوم» أو المصادر المعتمدة قبل أي استخدام.</p>
             <p><b class="t-text block mb-1">الحسابات تقديرية</b>تُحتسب مكافأة نهاية الخدمة على أساس الأجر الشهري مقسوماً على 26 يوماً، وهو افتراض تبسيطي. ويتوقف المبلغ الفعلي على عناصر الأجر وظروف كل حالة.</p>
           </div>
@@ -1716,7 +1717,7 @@ function buildVerdict(type, raw) {
   const reasons = [], orders = [], warnings = [];
   const isC = type === 'commercial';
   const court = isC ? 'المحكمة الكلية — الدائرة التجارية' : 'المحكمة الكلية — الدائرة العمالية';
-  const caseNo = `${Math.floor(rand(1000, 9999))} / 2026 ${isC ? 'تجاري كلي' : 'عمالي كلي'}`;
+  const caseNo = `${1000 + parseInt(clipKey(type, raw), 16) % 9000} / 2026 ${isC ? 'تجاري كلي' : 'عمالي كلي'}`;
   let signals = 0;
 
   reasons.push({
@@ -1852,27 +1853,34 @@ function words(n) {
 }
 
 // The hearing, line by line. Built from the same analysis as the draft so the pleas heard in court are the ones the reasons answer.
+// FNV-1a — names the recorded clip for a (speaker, text) pair.
+function clipKey(who, text) {
+  let h = 0x811c9dc5;
+  for (const ch of who + '|' + text) { h ^= ch.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; }
+  return h.toString(16).padStart(8, '0');
+}
+
 function buildSession(v, raw) {
   const L = [], def = v.defenses, isC = v.isC;
   const defendant = isC ? 'المدعى عليه' : 'المدعى عليها';
-  const excerpt = (raw.length > 230 ? raw.slice(0, 230).replace(/\s+\S*$/, '') + '…' : raw);
+  const excerpt = (raw.length > 150 ? raw.slice(0, 150).replace(/\s+\S*$/, '') + '…' : raw);
   const ask = v.orders[0].replace(/^إلزام /, '').replace('للمدعي', 'لموكلي').replace(/\s*\([^)]*\)/, '');
   const refs = [...new Set(v.reasons.flatMap(r => r.r))].filter(r => !/المرافعات/.test(r)).slice(0, 3);
-  const say = (who, stage, text) => L.push({ who, stage, text });
+  const say = (who, stage, ...segs) => L.push({ who, stage, segs, text: segs.join(' ') });
   say('usher', 0, 'محكمة!');
-  say('clerk', 0, `الدعوى رقم ${v.caseNo}، ${v.court}. المدعي حاضر بوكيله، و${isC ? 'المدعى عليه حاضر بوكيله' : 'المدعى عليها حاضرة بوكيلها'}.`);
+  say('clerk', 0, `الدعوى رقم ${v.caseNo}، ${v.court}.`, `المدعي حاضر بوكيله، و${isC ? 'المدعى عليه حاضر بوكيله' : 'المدعى عليها حاضرة بوكيلها'}.`);
   say('judge', 0, 'افتُتحت الجلسة. تُثبت المحكمة حضور الطرفين. الكلمة لوكيل المدعي.');
-  say('plaintiff', 1, `سيدي الرئيس، تخلص وقائع الدعوى فيما أورده موكلي في صحيفتها: «${excerpt}». ونلتمس الحكم بإلزام ${ask}، مع إلزام ${defendant} المصروفات.`);
+  say('plaintiff', 1, 'سيدي الرئيس، تخلص وقائع الدعوى فيما أورده موكلي في صحيفتها:', `«${excerpt}».`, `ونلتمس الحكم بإلزام ${ask}، مع إلزام ${defendant} المصروفات.`);
   say('judge', 1, 'الكلمة للدفاع.');
-  say('defense', 2, 'نطلب رفض الدعوى. ' + def.map(d => d.plea).join(' '));
+  say('defense', 2, 'نطلب رفض الدعوى.', ...def.map(d => d.plea));
   say('judge', 3, 'ما ردّ وكيل المدعي على هذا الدفاع؟');
-  say('plaintiff', 3, def.map(d => d.rebut).join(' ') + ' ونصمم على الطلبات.');
+  say('plaintiff', 3, ...def.map(d => d.rebut), 'ونصمم على الطلبات.');
   say('defense', 3, 'نتمسك بما أبديناه من دفاع، ونلتمس احتياطياً ندب خبير لتحقيقه.');
   say('judge', 4, 'تستعين المحكمة بالمستشار الرقمي لعرض خلاصة التحليل، على أن يبقى رأيه استرشادياً غير ملزم.');
-  say('ai', 4, `بعد مطابقة الوقائع مع ${refs.join('، ')}: رُصدت ${v.reasons.length - 2} مسائل قانونية، و${def.length === 1 ? 'دفع واحد' : 'دفعان'} للمدعى عليه. تشير المستندات إلى رجحان طلبات المدعي، ومؤشر ثقة التسبيب ${v.conf}%. التوصية مرفوعة لتقدير الهيئة.`);
+  say('ai', 4, `بعد مطابقة الوقائع مع ${refs.join('، ')}: رُصدت ${v.reasons.length - 2} مسائل قانونية، و${def.length === 1 ? 'دفع واحد' : 'دفعان'} للمدعى عليه.`, `تشير المستندات إلى رجحان طلبات المدعي، ومؤشر ثقة التسبيب ${v.conf}%.`, 'التوصية مرفوعة لتقدير الهيئة.');
   say('judge', 4, 'اطّلعت المحكمة على التحليل، ووازنت بينه وبين أوراق الدعوى ودفاع الطرفين. قررت المحكمة حجز الدعوى للحكم آخر الجلسة.');
   say('usher', 5, 'محكمة!');
-  say('judge', 5, `بعد المداولة، حكمت المحكمة: ب${v.orders[0].replace(/\s*\([^)]*\)/, '')}${v.orders.length > 2 ? '، وبباقي الطلبات على النحو المبيّن في أسباب الحكم' : ''}، ${v.orders[v.orders.length - 1]}. رُفعت الجلسة.`);
+  say('judge', 5, `بعد المداولة، حكمت المحكمة: ب${v.orders[0].replace(/\s*\([^)]*\)/, '')}${v.orders.length > 2 ? '، وبباقي الطلبات على النحو المبيّن في أسباب الحكم' : ''}، ${v.orders[v.orders.length - 1]}.`, 'رُفعت الجلسة.');
   return L;
 }
 
@@ -1886,34 +1894,72 @@ const ROLES_COURT = {
 };
 const STAGES = ['الافتتاح', 'المرافعة', 'الدفاع', 'التعقيب', 'المداولة', 'النطق بالحكم'];
 
-const player = { paused: false, skip: false, speed: 1, voice: false, arVoice: null };
+// Recorded clips (Piper "kareem" voice, generated offline) keyed by clipKey → duration in seconds.
+const CLIPS = /*CLIPS*/{"05942408":0.79,"48809197":10.63,"375f82bf":4.55,"8ba326f0":6.65,"9c40b8f1":5.25,"3c450e3d":17.89,"9fa593c3":13.28,"a75eb47c":1.5,"4c630ccc":1.55,"70e7a2b6":9.95,"6246fb2f":5.99,"5a8dd39a":3.86,"de8db07f":9.74,"49b952be":6.85,"e00d9e0c":1.47,"2483e00f":5.05,"5121a4a4":8.63,"c85c8e61":20.57,"8f46b38f":7.35,"6f75cf8e":2.5,"0afd5c1f":11.22,"46128b1a":23.56,"31fc1957":1.5,"bc357259":9.92,"d57d349d":14.6,"75d4384c":13.45,"c08d6f11":7.66,"f5246446":10.01,"5e885482":21.01,"7cd3cddb":24.01,"159af9a5":9.6,"1f6859f7":15.04,"eb61ca94":13.82,"ed1a9d2e":12.88,"067a2228":7.88,"8d2bdef2":10.04,"8a08d2a1":8.23,"02ec19af":23.33,"e5d20912":20.04,"fdc10209":10.45,"e0e55e46":14.04,"fbeb1bd4":15.88,"facf02ab":9.15,"5420cc73":8.71,"ac1adeae":19.76,"f89167e9":27.12,"2a62ab17":10.52,"3a3a36c2":12.74,"a430041c":13.73,"7b0ad265":7.39,"7a2a482f":9.2,"86b6c5b5":24.26,"4d97bc8e":9.1,"4c4efe29":14.68,"829ebf1d":12.9,"32722693":8.55,"7c3045a0":10.06,"5a51b3fb":20.98,"6e9f307e":23.15,"49518288":10.06,"d820f16e":4.84,"e952ee05":14.5,"4b7ffc81":17.31,"188132ba":9.01,"35b9bef7":6.8,"41302e1d":8.88,"7112bdc6":9.98,"c9305a14":21.56,"4b77ccb6":27.88,"50fd53a5":9.86,"dc451c92":14.03,"25e5e38b":16.15,"c8332372":9.82,"53800bf7":9.3,"bb7c9fe6":15.06,"668e7288":7.24,"d2d0792d":22.4,"79771259":10.54,"ba7be614":13.46,"4f63c98f":16.78,"813bb22b":7.41,"8797062c":8.98,"9c2eec1f":21.1,"760965d5":23.25,"e42c5931":9.92,"ba84afdb":14.17,"d46f50e2":14.17,"465bee9f":8.04,"1637bfc8":9.26,"79b43535":20.36,"27871feb":7.15,"bcaf30ca":20.54,"8c25e9af":10.45,"9e386e93":15.48,"908f68ff":16.67,"7a251637":20.43,"01df605d":7.4,"3069ad0c":27.4,"37f61e7b":10.31,"6f9c9cad":14.17,"94a444c6":15.18,"aac0e334":8.84,"1ef75ede":10.37,"b110e59c":22.18,"19de0258":21.72,"7406b1aa":6.31,"ab5e71ea":8.9,"5c201311":5.07,"6f71e63f":6.1}/*/CLIPS*/;
+const player = { paused: false, skip: false, speed: 1, voice: true, arVoice: null, audio: new Audio() };
+player.audio.preload = 'auto';
 function pickVoice() {
   if (!('speechSynthesis' in window)) return;
   player.arVoice = speechSynthesis.getVoices().find(x => /^ar/i.test(x.lang)) || null;
-  $('#voiceBtn').hidden = !player.arVoice;
 }
 if ('speechSynthesis' in window) { pickVoice(); speechSynthesis.addEventListener?.('voiceschanged', pickVoice); }
+// Called inside the click that starts the hearing, so later playback is allowed on iOS and Chrome.
+function unlockAudio() {
+  const a = player.audio;
+  a.src = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA=';
+  a.play().then(() => a.pause()).catch(() => {});
+}
 
 async function wait(ms) {
   let left = reduced ? 0 : ms;
   while (left > 0 && !player.skip) { await new Promise(r => setTimeout(r, 50)); if (!player.paused) left -= 50 * player.speed; }
 }
-function speak(text, who) {
+function playClip(key) {
   return new Promise(res => {
-    if (!player.voice || !player.arVoice || player.skip) return res();
+    const a = player.audio;
+    let done = false; const end = ok => { if (done) return; done = true; clearInterval(guard); res(ok); };
+    a.onended = () => end(true); a.onerror = () => end(false);
+    const guard = setInterval(() => {
+      if (player.skip) { a.pause(); end(true); }
+      else if (player.paused && !a.paused) a.pause();
+      else if (!player.paused && a.paused && !a.ended && a.dataset.started) a.play().catch(() => {});
+    }, 100);
+    a.src = `audio/${key}.mp3`; a.playbackRate = player.speed; delete a.dataset.started;
+    a.play().then(() => { a.dataset.started = '1'; }).catch(() => end(false));
+  });
+}
+function speakSystem(text, who) {
+  return new Promise(res => {
+    if (!player.arVoice || player.skip) return res(false);
     const u = new SpeechSynthesisUtterance(text);
     u.voice = player.arVoice; u.lang = player.arVoice.lang; u.pitch = ROLES_COURT[who].pitch; u.rate = Math.min(1.6, 0.95 * player.speed);
-    const done = () => { clearInterval(guard); res(); };
+    const done = () => { clearInterval(guard); res(true); };
     u.onend = done; u.onerror = done;
     const guard = setInterval(() => { if (player.skip) { speechSynthesis.cancel(); done(); } }, 120);
     speechSynthesis.speak(u);
   });
 }
+// Types one segment while its voice plays, pacing the text to the audio's length.
+async function playSegment(cap, before, seg, who) {
+  const key = clipKey(who, seg), dur = CLIPS[key];
+  let voice = Promise.resolve(false), perChar = 26;
+  if (player.voice && !player.skip) {
+    if (dur) { voice = playClip(key); perChar = Math.max(12, (dur * 1000) / seg.length); }
+    else if (player.arVoice) { voice = speakSystem(seg, who); perChar = 55; }
+    else $('#voiceNote').hidden = false;
+  }
+  for (let i = 0; i <= seg.length && !player.skip; i += 1) {
+    cap.textContent = before + seg.slice(0, i);
+    await wait(perChar);
+  }
+  cap.textContent = before + seg;
+  await voice;
+}
 
 function setupCourt(v) {
   $('#courtCase').textContent = `${v.caseNo} · ${v.court}`;
   $$('.seat').forEach(s => s.classList.remove('speaking', 'spoke'));
-  $('#transcript').innerHTML = '';
+  $('#transcript').innerHTML = ''; $('#voiceNote').hidden = true;
   $('#caption').innerHTML = '<span class="t-muted">القاعة تستعد لانعقاد الجلسة…</span>';
   $('#capWho').textContent = '—';
   $('#stageDots').innerHTML = STAGES.map((st, i) => `<li data-i="${i}"><span></span>${st}</li>`).join('');
@@ -1922,7 +1968,7 @@ function setupCourt(v) {
 function syncPlayerUI() {
   $('#pauseBtn').innerHTML = `<i data-lucide="${player.paused ? 'play' : 'pause'}" class="w-4 h-4"></i> ${player.paused ? 'استئناف' : 'إيقاف مؤقت'}`;
   $('#speedBtn').textContent = `السرعة ×${player.speed}`;
-  $('#voiceBtn').innerHTML = `<i data-lucide="${player.voice ? 'volume-2' : 'volume-x'}" class="w-4 h-4"></i> ${player.voice ? 'الصوت مفعّل' : 'تشغيل الصوت'}`;
+  $('#voiceBtn').innerHTML = `<i data-lucide="${player.voice ? 'volume-2' : 'volume-x'}" class="w-4 h-4"></i> ${player.voice ? 'كتم الصوت' : 'تشغيل الصوت'}`;
   $('#courtState').classList.toggle('is-paused', player.paused);
   icons();
 }
@@ -1943,13 +1989,14 @@ async function playSession(v, lines) {
     $('#capWho').innerHTML = `<i data-lucide="${role.icon}" class="w-3.5 h-3.5"></i>${role.name}`; icons();
     if (ln.who === 'usher') $('#courtroom').classList.add('rise');
     const cap = $('#caption'); cap.textContent = ''; cap.classList.add('caret');
-    const voiced = speak(ln.text, ln.who);
-    for (let i = 0; i <= ln.text.length && !player.skip; i += 2) {
-      cap.textContent = ln.text.slice(0, i);
-      await wait(player.voice && player.arVoice ? 38 : 26);
+    let shown = '';
+    for (const seg of ln.segs) {
+      if (player.skip) break;
+      await playSegment(cap, shown, seg, ln.who);
+      shown += seg + ' ';
+      await wait(120);
     }
     cap.textContent = ln.text; cap.classList.remove('caret');
-    await voiced;
     const t = `${String(Math.floor(clock / 60)).padStart(2, '0')}:${String(clock % 60).padStart(2, '0')}`; clock += ln.who === 'ai' || ln.stage === 4 ? 6 : 2;
     const li = document.createElement('li');
     li.innerHTML = `<span class="ts" dir="ltr">${t}</span><div><b>${role.name}:</b> ${esc(ln.text)}</div>`;
@@ -1958,6 +2005,7 @@ async function playSession(v, lines) {
     await wait(ln.who === 'usher' ? 900 : 650);
     $('#courtroom').classList.remove('rise');
   }
+  player.audio.pause();
   if (player.skip) {
     // fill in the rest of the minutes so the record stays complete
     const tr = $('#transcript'), have = tr.children.length;
@@ -1972,11 +2020,17 @@ async function playSession(v, lines) {
 
 $('#pauseBtn').addEventListener('click', () => {
   player.paused = !player.paused;
+  if (player.paused) player.audio.pause(); else if (player.audio.dataset.started && !player.audio.ended) player.audio.play().catch(() => {});
   if ('speechSynthesis' in window) player.paused ? speechSynthesis.pause() : speechSynthesis.resume();
   syncPlayerUI();
 });
-$('#speedBtn').addEventListener('click', () => { player.speed = player.speed === 1 ? 1.5 : player.speed === 1.5 ? 2 : 1; syncPlayerUI(); });
-$('#voiceBtn').addEventListener('click', () => { player.voice = !player.voice; if (!player.voice) window.speechSynthesis?.cancel?.(); syncPlayerUI(); });
+$('#speedBtn').addEventListener('click', () => { player.speed = player.speed === 1 ? 1.5 : player.speed === 1.5 ? 2 : 1; player.audio.playbackRate = player.speed; syncPlayerUI(); });
+$('#voiceBtn').addEventListener('click', () => {
+  player.voice = !player.voice;
+  if (!player.voice) { player.audio.pause(); player.audio.volume = 0; window.speechSynthesis?.cancel?.(); }
+  else { player.audio.volume = 1; if (player.audio.dataset.started && !player.audio.ended && !player.paused) player.audio.play().catch(() => {}); }
+  syncPlayerUI();
+});
 $('#skipBtn').addEventListener('click', () => { player.skip = true; player.paused = false; });
 
 const LOG = {
@@ -2013,7 +2067,7 @@ function drawNeural() {
 const hexChars = '0123456789ABCDEF';
 const hexLine = () => Array.from({ length: 140 }, (_, i) => (i % 5 === 4 ? ' ' : hexChars[Math.floor(Math.random() * 16)])).join('');
 
-$('#runBtn').addEventListener('click', run);
+$('#runBtn').addEventListener('click', () => { unlockAudio(); run(); });
 let lastHearing = null;
 async function run() {
   if (running) return;
@@ -2150,6 +2204,7 @@ function renderVerdict(v, text) {
   $('#newV').onclick = () => { wrap.classList.add('hidden'); $('#idleState').classList.remove('hidden'); ta.value = ''; ta.dispatchEvent(new Event('input')); $('#runBtn').innerHTML = '<i data-lucide="sparkles" class="w-5 h-5"></i> تشغيل التحليل القانوني الذكي'; icons(); ta.focus(); };
   $('#replayV').onclick = async () => {
     if (running || !lastHearing) return;
+    unlockAudio();
     running = true; $('#runBtn').disabled = true;
     wrap.classList.add('hidden');
     await playSession(lastHearing.v, lastHearing.lines);
@@ -2167,6 +2222,8 @@ function typewrite(el, text, done) {
     if (i < text.length) setTimeout(tick, 16); else { el.classList.remove('caret'); done && done(); }
   })();
 }
+
+window.__ksc = { SAMPLES, buildVerdict, buildSession, defensesFor, clipKey };
 
 /* ------------------------------------------------------------------ */
 /* Chat — "Jassar"                                                      */
