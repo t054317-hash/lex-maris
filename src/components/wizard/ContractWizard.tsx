@@ -39,7 +39,89 @@ const NON_COMMERCIAL: ReadonlySet<ContractInput['type']> = new Set([
   'property-sale',
 ]);
 
-const STEPS = ['instrument', 'commercial', 'allocation', 'forum', 'execute'] as const;
+/** Categories where the "counterparty jurisdiction" is where the real estate is. */
+const LOCATION_TYPES: ReadonlySet<ContractInput['type']> = new Set(['lease', 'property-sale']);
+
+/** Categories that state an amount of money. */
+const MONEY_TYPES: ReadonlySet<ContractInput['type']> = new Set([
+  'supply',
+  'distribution',
+  'charterparty',
+  'services',
+  'agency',
+  'lease',
+  'licence',
+  'construction',
+  'property-sale',
+]);
+
+const CURRENCIES = ['KWD', 'USD', 'AED', 'SAR', 'EUR'] as const;
+
+interface PartyForm {
+  name: string;
+  reg: string;
+  address: string;
+  jurisdiction: string;
+  individual: boolean;
+}
+interface PartiesForm {
+  first: PartyForm;
+  second: PartyForm;
+  date: string;
+  reference: string;
+}
+const EMPTY_PARTY: PartyForm = { name: '', reg: '', address: '', jurisdiction: 'XX', individual: false };
+const EMPTY_PARTIES: PartiesForm = {
+  first: EMPTY_PARTY,
+  second: { ...EMPTY_PARTY, jurisdiction: 'XX' },
+  date: '',
+  reference: '',
+};
+
+/** What each party is called in each category, so a non-lawyer knows which side is theirs. */
+const ROLES: Record<Locale, Partial<Record<ContractInput['type'], readonly [string, string]>>> = {
+  en: {
+    supply: ['First Party — Supplier', 'Second Party — Buyer'],
+    distribution: ['First Party — Supplier', 'Second Party — Distributor'],
+    charterparty: ['First Party — Shipowner', 'Second Party — Charterer'],
+    services: ['First Party — Provider', 'Second Party — Client'],
+    agency: ['First Party — Principal', 'Second Party — Agent'],
+    lease: ['First Party — Landlord', 'Second Party — Tenant'],
+    licence: ['First Party — Licensor', 'Second Party — Licensee'],
+    employment: ['First Party — Employer', 'Second Party — Employee'],
+    construction: ['First Party — Employer (owner)', 'Second Party — Contractor'],
+    'property-sale': ['First Party — Seller', 'Second Party — Buyer'],
+  },
+  ar: {
+    supply: ['الطرف الأول — المورِّد', 'الطرف الثاني — المشتري'],
+    distribution: ['الطرف الأول — المورِّد', 'الطرف الثاني — الموزِّع'],
+    charterparty: ['الطرف الأول — مالك السفينة', 'الطرف الثاني — المستأجر'],
+    services: ['الطرف الأول — مقدّم الخدمة', 'الطرف الثاني — العميل'],
+    agency: ['الطرف الأول — الموكِّل', 'الطرف الثاني — الوكيل'],
+    lease: ['الطرف الأول — المؤجِّر', 'الطرف الثاني — المستأجر'],
+    licence: ['الطرف الأول — المرخِّص', 'الطرف الثاني — المرخَّص له'],
+    employment: ['الطرف الأول — صاحب العمل', 'الطرف الثاني — العامل'],
+    construction: ['الطرف الأول — صاحب العمل (المالك)', 'الطرف الثاني — المقاول'],
+    'property-sale': ['الطرف الأول — البائع', 'الطرف الثاني — المشتري'],
+  },
+  fr: {
+    supply: ['Premier Contractant — Fournisseur', 'Second Contractant — Acheteur'],
+    distribution: ['Premier Contractant — Fournisseur', 'Second Contractant — Distributeur'],
+    charterparty: ['Premier Contractant — Armateur', 'Second Contractant — Affréteur'],
+    services: ['Premier Contractant — Prestataire', 'Second Contractant — Client'],
+    agency: ['Premier Contractant — Mandant', 'Second Contractant — Agent'],
+    lease: ['Premier Contractant — Bailleur', 'Second Contractant — Preneur'],
+    licence: ['Premier Contractant — Concédant', 'Second Contractant — Licencié'],
+    employment: ['Premier Contractant — Employeur', 'Second Contractant — Salarié'],
+    construction: ["Premier Contractant — Maître d'ouvrage", 'Second Contractant — Entrepreneur'],
+    'property-sale': ['Premier Contractant — Vendeur', 'Second Contractant — Acquéreur'],
+  },
+};
+
+const TEXT_INPUT =
+  'w-full rounded-lg border border-ink-500/25 bg-navy-800/70 px-3.5 py-2.5 text-sm text-ink-100 transition-colors duration-300 hover:border-gold-500/50 focus:border-gold-500';
+
+const STEPS = ['instrument', 'parties', 'commercial', 'allocation', 'forum', 'execute'] as const;
 
 /**
  * The builder drafts a template, so every party detail is a bracketed
@@ -110,6 +192,9 @@ export function ContractWizard() {
   const { t, locale, dir } = useI18n();
   const [step, setStep] = useState(0);
   const [input, setInput] = useState<ContractInput>(defaultContractInput);
+  const [parties, setParties] = useState<PartiesForm>(EMPTY_PARTIES);
+  const setParty = (side: 'first' | 'second', key: keyof PartyForm, value: string | boolean) =>
+    setParties((p) => ({ ...p, [side]: { ...p[side], [key]: value } }));
 
   const patch = useCallback(
     <K extends keyof ContractInput>(key: K, value: ContractInput[K]) =>
@@ -118,27 +203,36 @@ export function ContractWizard() {
   );
 
   const report = useMemo(() => analyseContract(input), [input]);
-  const doc = useMemo(
-    () => {
-      const meta = META_FOR[locale];
-      if (input.type !== 'employment') return assembleDocument(input, meta, locale);
-      // The employee is identified by ID document and home address.
-      const person = EMPLOYEE_PLACEHOLDER[locale];
-      return assembleDocument(
-        { ...input },
-        {
-          ...meta,
-          parties: {
-            ...meta.parties,
-            second: { ...meta.parties.second, ...person },
-          },
-        },
-        locale,
-      );
-    },
-    [input, locale],
-  );
-  const usd = useMemo(() => usdFormatter(locale), [locale]);
+  const doc = useMemo(() => {
+    // Whatever the user typed; anything blank stays a bracketed placeholder
+    // so the printed contract shows exactly what is still to be completed.
+    const ph = META_FOR[locale];
+    const employee = input.type === 'employment';
+    const party = (side: 'first' | 'second'): DocumentMeta['parties']['first'] => {
+      const f = parties[side];
+      const individual = side === 'second' && employee ? true : f.individual;
+      const personPh = EMPLOYEE_PLACEHOLDER[locale];
+      const base = ph.parties[side];
+      return {
+        name: f.name.trim() || (individual && side === 'second' && employee ? personPh.name : base.name),
+        registrationNo: f.reg.trim() || (individual ? personPh.registrationNo : base.registrationNo),
+        address: f.address.trim() || (individual ? personPh.address : base.address),
+        jurisdiction: side === 'second' && !LOCATION_TYPES.has(input.type) ? input.counterpartyJurisdiction : f.jurisdiction,
+        individual,
+      };
+    };
+    return assembleDocument(
+      input,
+      {
+        reference: parties.reference.trim() || ph.reference,
+        executionDate: parties.date || ph.executionDate,
+        parties: { first: party('first'), second: party('second') },
+      },
+      locale,
+    );
+  }, [input, locale, parties]);
+  const currency = input.currency ?? 'KWD';
+  const usd = useMemo(() => moneyFormatter(locale, currency), [locale, currency]);
 
   const isMaritime =
     input.type === 'charterparty' || input.type === 'bill-of-lading';
@@ -208,16 +302,7 @@ export function ContractWizard() {
                   <Field label={t('checkout.field.instrumentType')}>
                     <Select
                       value={input.type}
-                      onChange={(v) =>
-                        setInput((prev) => {
-                          const next = { ...prev, type: v as ContractInput['type'] };
-                          // The value slider means annual rent for a lease, with its
-                          // own range; keep the figure inside the range it is shown on.
-                          if (next.type === 'lease' && next.valueUsd > 2_000_000) next.valueUsd = 120_000;
-                          if (next.type !== 'lease' && next.valueUsd < 50_000) next.valueUsd = 50_000;
-                          return next;
-                        })
-                      }
+                      onChange={(v) => patch('type', v as ContractInput['type'])}
                       options={options(t, 'opt.type', BUILDER_TYPES)}
                     />
                   </Field>
@@ -225,28 +310,117 @@ export function ContractWizard() {
                   <p className="-mt-2 rounded-lg border border-gold-500/20 bg-gold-500/5 px-3.5 py-2.5 text-sm leading-relaxed text-ink-100">
                     {t(`opt.desc.${type}` as TranslationKey)}
                   </p>
-                  <Field
-                    label={
-                      type === 'lease'
-                        ? t('wizard.field.premisesLocation')
-                        : type === 'property-sale'
-                          ? t('wizard.field.propertyLocation')
-                        : t('checkout.field.counterpartyJurisdiction')
-                    }
-                  >
-                    <Select
-                      value={input.counterpartyJurisdiction}
-                      onChange={(v) => patch('counterpartyJurisdiction', v)}
-                      options={options(t, 'opt.country', COUNTERPARTY_JURISDICTIONS)}
-                    />
-                  </Field>
-                  <p className="text-xs leading-relaxed text-ink-500">
-                    {t('wizard.partyNote')}
-                  </p>
+                  {LOCATION_TYPES.has(type) && (
+                    <Field
+                      label={
+                        type === 'lease'
+                          ? t('wizard.field.premisesLocation')
+                          : t('wizard.field.propertyLocation')
+                      }
+                    >
+                      <Select
+                        value={input.counterpartyJurisdiction}
+                        onChange={(v) => patch('counterpartyJurisdiction', v)}
+                        options={options(t, 'opt.country', COUNTERPARTY_JURISDICTIONS)}
+                      />
+                    </Field>
+                  )}
                 </>
               )}
 
-              {step === 1 && type === 'nda' && (
+              {step === 1 && (
+                <>
+                  <p className="text-xs leading-relaxed text-ink-500">{t('party.note')}</p>
+                  {(['first', 'second'] as const).map((side) => {
+                    const f = parties[side];
+                    const forcedPerson = side === 'second' && type === 'employment';
+                    const person = forcedPerson || f.individual;
+                    return (
+                      <fieldset
+                        key={side}
+                        className="space-y-3 rounded-lg border border-ink-500/20 bg-navy-800/30 p-4"
+                      >
+                        <legend className="px-1 text-sm font-medium text-gold-400">
+                          {ROLES[locale][type]?.[side === 'first' ? 0 : 1] ??
+                            t(side === 'first' ? 'party.first' : 'party.second')}
+                        </legend>
+                        {!forcedPerson && (
+                          <label className="flex items-center gap-2 text-xs text-ink-300">
+                            <input
+                              type="checkbox"
+                              checked={f.individual}
+                              onChange={(e) => setParty(side, 'individual', e.target.checked)}
+                              className="h-4 w-4 accent-[rgb(var(--gold-500))]"
+                            />
+                            {t('party.individual')}
+                          </label>
+                        )}
+                        <TextField
+                          label={t('party.name')}
+                          value={f.name}
+                          onChange={(v) => setParty(side, 'name', v)}
+                          autoComplete={person ? 'name' : 'organization'}
+                        />
+                        <TextField
+                          label={t(person ? 'party.id' : 'party.reg')}
+                          value={f.reg}
+                          onChange={(v) => setParty(side, 'reg', v)}
+                        />
+                        <TextField
+                          label={t(person ? 'party.home' : 'party.address')}
+                          value={f.address}
+                          onChange={(v) => setParty(side, 'address', v)}
+                          autoComplete="street-address"
+                        />
+                        {!person && (
+                          <Field label={t('party.country')}>
+                            <Select
+                              value={
+                                side === 'second' && !LOCATION_TYPES.has(type)
+                                  ? input.counterpartyJurisdiction
+                                  : f.jurisdiction
+                              }
+                              onChange={(v) =>
+                                side === 'second' && !LOCATION_TYPES.has(type)
+                                  ? patch('counterpartyJurisdiction', v)
+                                  : setParty(side, 'jurisdiction', v)
+                              }
+                              options={options(t, 'opt.country', COUNTERPARTY_JURISDICTIONS)}
+                            />
+                          </Field>
+                        )}
+                      </fieldset>
+                    );
+                  })}
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <Field label={t('party.date')}>
+                      <input
+                        type="date"
+                        value={parties.date}
+                        onChange={(e) => setParties((p) => ({ ...p, date: e.target.value }))}
+                        className={TEXT_INPUT}
+                      />
+                    </Field>
+                    <TextField
+                      label={t('party.reference')}
+                      value={parties.reference}
+                      onChange={(v) => setParties((p) => ({ ...p, reference: v }))}
+                    />
+                  </div>
+                </>
+              )}
+
+              {step === 2 && MONEY_TYPES.has(type) && (
+                <Field label={t('wizard.field.currency')}>
+                  <Select
+                    value={currency}
+                    onChange={(v) => patch('currency', v)}
+                    options={CURRENCIES.map((c) => [c, t(`opt.currency.${c}` as TranslationKey)] as const)}
+                  />
+                </Field>
+              )}
+
+              {step === 2 && type === 'nda' && (
                 <Field
                   label={t('wizard.field.ndaYears', {
                     value: input.confidentialityYears
@@ -265,12 +439,12 @@ export function ContractWizard() {
                 </Field>
               )}
 
-              {step === 1 && type === 'lease' && (
+              {step === 2 && type === 'lease' && (
                 <>
                   <Field label={t('wizard.field.annualRent', { value: usd(input.valueUsd) })}>
                     <Range
                       min={10_000}
-                      max={2_000_000}
+                      max={1_000_000_000_000}
                       step={10_000}
                       value={input.valueUsd}
                       onChange={(v) => patch('valueUsd', v)}
@@ -292,7 +466,7 @@ export function ContractWizard() {
                 </>
               )}
 
-              {step === 1 && type === 'mou' && (
+              {step === 2 && type === 'mou' && (
                 <Field
                   label={t('wizard.field.exclusivity', {
                     value: input.exclusivityMonths
@@ -311,7 +485,7 @@ export function ContractWizard() {
                 </Field>
               )}
 
-              {step === 1 && type === 'construction' && (
+              {step === 2 && type === 'construction' && (
                 <Field
                   label={t('wizard.field.completion', {
                     value: pct(input.completionMonths ?? 0),
@@ -328,11 +502,11 @@ export function ContractWizard() {
                 </Field>
               )}
 
-              {step === 1 && type === 'property-sale' && (
+              {step === 2 && type === 'property-sale' && (
                 <Field label={t('wizard.field.salePrice', { value: usd(input.valueUsd) })}>
                   <Range
                     min={50_000}
-                    max={50_000_000}
+                    max={1_000_000_000_000}
                     step={50_000}
                     value={input.valueUsd}
                     onChange={(v) => patch('valueUsd', v)}
@@ -341,13 +515,13 @@ export function ContractWizard() {
                 </Field>
               )}
 
-              {step === 1 && (type === 'employment' || type === 'settlement') && (
+              {step === 2 && (type === 'employment' || type === 'settlement') && (
                 <p className="text-xs leading-relaxed text-ink-500">
                   {t(type === 'employment' ? 'wizard.employmentNote' : 'wizard.settlementNote')}
                 </p>
               )}
 
-              {step === 1 && priced && (
+              {step === 2 && priced && (
                 <>
                   {type === 'agency' ? (
                     <Field
@@ -378,7 +552,7 @@ export function ContractWizard() {
                     >
                       <Range
                         min={50_000}
-                        max={50_000_000}
+                        max={1_000_000_000_000}
                         step={50_000}
                         value={input.valueUsd}
                         onChange={(v) => patch('valueUsd', v)}
@@ -401,7 +575,7 @@ export function ContractWizard() {
                 </>
               )}
 
-              {step === 1 && isTrade && (
+              {step === 2 && isTrade && (
                 <>
                   <Field label={t('wizard.field.security')}>
                     <Select
@@ -441,7 +615,7 @@ export function ContractWizard() {
                       >
                         <Range
                           min={0}
-                          max={60_000}
+                          max={1_000_000_000}
                           step={1_000}
                           value={input.demurrageRateUsd ?? 0}
                           onChange={(v) => patch('demurrageRateUsd', v)}
@@ -453,7 +627,7 @@ export function ContractWizard() {
                 </>
               )}
 
-              {step === 2 && (
+              {step === 3 && (
                 <>
                   {nonCommercial && (
                     <p className="text-xs leading-relaxed text-ink-500">
@@ -523,7 +697,7 @@ export function ContractWizard() {
                 </>
               )}
 
-              {step === 3 && (
+              {step === 4 && (
                 <>
                   <Field label={t('wizard.field.governingLaw')}>
                     <Select
@@ -547,7 +721,7 @@ export function ContractWizard() {
                 </>
               )}
 
-              {step === 4 && (
+              {step === 5 && (
                 <FindingsList findings={report.findings} />
               )}
             </motion.div>
@@ -597,13 +771,14 @@ export function ContractWizard() {
 /* Field primitives                                                           */
 /* -------------------------------------------------------------------------- */
 
-const usdFormatter = (locale: Locale) => (n: number) =>
-  new Intl.NumberFormat(NUMBER_LOCALE[locale], {
-    style: 'currency',
-    currency: 'USD',
-    notation: n >= 1_000_000 ? 'compact' : 'standard',
-    maximumFractionDigits: n >= 1_000_000 ? 1 : 0,
-  }).format(n);
+const moneyFormatter = (locale: Locale, currency: string) => (n: number) =>
+  n > 0
+    ? new Intl.NumberFormat(NUMBER_LOCALE[locale], {
+        style: 'currency',
+        currency,
+        maximumFractionDigits: currency === 'KWD' ? 3 : 2,
+      }).format(n)
+    : '—';
 
 function Field({
   label,
@@ -617,6 +792,31 @@ function Field({
       <span className="eyebrow mb-2 block">{label}</span>
       {children}
     </label>
+  );
+}
+
+function TextField({
+  label,
+  value,
+  onChange,
+  autoComplete,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  autoComplete?: string;
+}) {
+  return (
+    <Field label={label}>
+      <input
+        type="text"
+        value={value}
+        maxLength={300}
+        autoComplete={autoComplete}
+        onChange={(e) => onChange(e.target.value)}
+        className={TEXT_INPUT}
+      />
+    </Field>
   );
 }
 
@@ -644,36 +844,42 @@ function Select({
   );
 }
 
+/**
+ * Number entry. Every figure in the contract -- amounts, days, months,
+ * percentages -- is typed by the user rather than dragged on a slider, so a
+ * figure is never suggested to them. Empty means "not stated yet" (0), which
+ * the draft shows as a placeholder. `min`/`max`/`step` only guide the
+ * keyboard and validation; `dir` is kept for call-site compatibility.
+ */
 function Range({
   min,
   max,
   step,
   value,
   onChange,
-  dir,
 }: {
   min: number;
   max: number;
   step: number;
   value: number;
   onChange: (v: number) => void;
-  dir: 'ltr' | 'rtl';
+  dir?: 'ltr' | 'rtl';
 }) {
-  const pct = ((value - min) / (max - min)) * 100;
-  // A range input fills from the inline-start edge, which is the right in RTL.
-  const angle = dir === 'rtl' ? '270deg' : '90deg';
   return (
     <input
-      type="range"
-      min={min}
+      type="number"
+      inputMode="decimal"
+      dir="ltr"
+      min={Math.min(min, 0)}
       max={max}
       step={step}
-      value={value}
-      onChange={(e) => onChange(Number(e.target.value))}
-      className="h-1.5 w-full cursor-pointer appearance-none rounded-full outline-none"
-      style={{
-        background: `linear-gradient(${angle}, #D4AF37 ${pct}%, rgba(195,202,219,0.18) ${pct}%)`,
+      value={value ? value : ''}
+      placeholder="—"
+      onChange={(e) => {
+        const n = Number(e.target.value);
+        onChange(Number.isFinite(n) && n > 0 ? Math.min(n, max) : 0);
       }}
+      className="w-full rounded-lg border border-ink-500/25 bg-navy-800/70 px-3.5 py-2.5 text-start text-sm tabular-nums text-ink-100 transition-colors duration-300 hover:border-gold-500/50 focus:border-gold-500"
     />
   );
 }

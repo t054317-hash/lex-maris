@@ -237,3 +237,34 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* Printing the contract: only the print copy DocumentPreview mounts at the
+   root of <body> is shown; everything else -- header, tool, grain -- is
+   removed from the flow so the contract starts on page one. */
+.print-root {
+  display: none;
+}
+@media print {
+  @page {
+    size: A4;
+    margin: 20mm 18mm;
+  }
+  html,
+  body {
+    background: #fff !important;
+    color: #111 !important;
+  }
+  body::after {
+    display: none !important;
+  }
+  body > *:not(.print-root) {
+    display: none !important;
+  }
+  .print-root {
+    display: block;
+  }
+  .print-root * {
+    color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}

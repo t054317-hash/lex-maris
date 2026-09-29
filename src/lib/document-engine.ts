@@ -22,6 +22,7 @@
 import { NUMBER_LOCALE, type Locale } from '@/i18n/config';
 import type { ContractInput, ContractType, DisputeForum, Security } from './risk-engine';
 import { CATEGORY_TEXT, type CategoryClauseId } from './document-categories';
+import { closingFor, type Closing } from './document-closing';
 
 export interface Party {
   name: string;
@@ -31,6 +32,8 @@ export interface Party {
   address: string;
   /** ISO-3166 alpha-2. */
   jurisdiction: string;
+  /** A natural person (identified by ID document and residence), not a company. */
+  individual?: boolean;
 }
 
 export interface DocumentMeta {
@@ -76,6 +79,8 @@ export interface AssembledDocument {
   title: string;
   recitals: string[];
   clauses: Clause[];
+  /** Schedule titles the clauses refer to, and the signature blocks. */
+  closing: Closing;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -101,8 +106,6 @@ interface DocText {
     reference: string;
     first: Party;
     second: Party;
-    /** Second party is a natural person (the employee), not a company. */
-    individualSecond?: boolean;
   }) => string[];
   body: {
     definitions: string[];
@@ -237,14 +240,18 @@ const EN: DocText = {
     'parent-guarantee':
       'a guarantee of the Second Party obligations executed by its ultimate parent undertaking',
   },
-  recitals: ({ date, reference, first, second, individualSecond }) => [
-    `THIS AGREEMENT is dated ${date} and made under reference ${reference}.`,
-    `(1) ${first.name.toUpperCase()}, a company registered in ${EN.registeredIn(first.jurisdiction)} under number ${first.registrationNo}, whose registered office is at ${first.address} (the "First Party"); and`,
-    individualSecond
-      ? `(2) ${second.name.toUpperCase()}, holder of identity document number ${second.registrationNo}, residing at ${second.address} (the "Second Party").`
-      : `(2) ${second.name.toUpperCase()}, a company registered in ${EN.registeredIn(second.jurisdiction)} under number ${second.registrationNo}, whose registered office is at ${second.address} (the "Second Party").`,
-    'IT IS AGREED as follows:',
-  ],
+  recitals: ({ date, reference, first, second }) => {
+    const line = (n: 1 | 2, p: Party, role: string, end: string) =>
+      p.individual
+        ? `(${n}) ${p.name.toUpperCase()}, holder of identity document number ${p.registrationNo}, residing at ${p.address} (the "${role}")${end}`
+        : `(${n}) ${p.name.toUpperCase()}, a company registered in ${EN.registeredIn(p.jurisdiction)} under number ${p.registrationNo}, whose registered office is at ${p.address} (the "${role}")${end}`;
+    return [
+      `THIS AGREEMENT is dated ${date} and made under reference ${reference}.`,
+      line(1, first, 'First Party', '; and'),
+      line(2, second, 'Second Party', '.'),
+      'IT IS AGREED as follows:',
+    ];
+  },
   body: {
     definitions: [
       'In this Agreement, capitalised terms have the meanings given to them in Schedule 1. References to a statute include that statute as amended or re-enacted from time to time.',
@@ -392,14 +399,18 @@ const AR: DocText = {
     'parent-guarantee':
       'كفالة لالتزامات الطرف الثاني صادرة عن الشركة الأم النهائية التابع لها',
   },
-  recitals: ({ date, reference, first, second, individualSecond }) => [
-    `حُرّرت هذه الاتفاقية بتاريخ ${date} تحت المرجع رقم ${reference}، بين كلٍّ من:`,
-    `(1) ${first.name}، شركة مسجّلة في ${AR.registeredIn(first.jurisdiction)} تحت رقم ${first.registrationNo}، ويقع مكتبها المسجّل في ${first.address} (ويُشار إليها فيما يلي بـ«الطرف الأول»)؛ و`,
-    individualSecond
-      ? `(2) ${second.name}، حامل وثيقة الهوية رقم ${second.registrationNo}، والمقيم في ${second.address} (ويُشار إليه فيما يلي بـ«الطرف الثاني»).`
-      : `(2) ${second.name}، شركة مسجّلة في ${AR.registeredIn(second.jurisdiction)} تحت رقم ${second.registrationNo}، ويقع مكتبها المسجّل في ${second.address} (ويُشار إليها فيما يلي بـ«الطرف الثاني»).`,
-    'وقد اتفق الطرفان على ما يلي:',
-  ],
+  recitals: ({ date, reference, first, second }) => {
+    const line = (n: 1 | 2, p: Party, role: string, end: string) =>
+      p.individual
+        ? `(${n}) ${p.name}، حامل وثيقة الهوية رقم ${p.registrationNo}، والمقيم في ${p.address} (ويُشار إليه فيما يلي بـ«${role}»)${end}`
+        : `(${n}) ${p.name}، شركة مسجّلة في ${AR.registeredIn(p.jurisdiction)} تحت رقم ${p.registrationNo}، ويقع مكتبها المسجّل في ${p.address} (ويُشار إليها فيما يلي بـ«${role}»)${end}`;
+    return [
+      `حُرّرت هذه الاتفاقية بتاريخ ${date} تحت المرجع رقم ${reference}، بين كلٍّ من:`,
+      line(1, first, 'الطرف الأول', '؛ و'),
+      line(2, second, 'الطرف الثاني', '.'),
+      'وقد اتفق الطرفان على ما يلي:',
+    ];
+  },
   body: {
     definitions: [
       'في هذه الاتفاقية، تكون للمصطلحات المعرَّفة المعاني المحددة لها في الملحق رقم (1). وتشمل الإشارة إلى أي تشريع ذلك التشريع بصيغته المعدَّلة أو المعاد إصداره من وقت لآخر.',
@@ -549,14 +560,18 @@ const FR: DocText = {
     'parent-guarantee':
       'une garantie des obligations du Second Contractant souscrite par sa société mère ultime',
   },
-  recitals: ({ date, reference, first, second, individualSecond }) => [
-    `LE PRÉSENT CONTRAT est conclu le ${date} sous la référence ${reference}, entre :`,
-    `(1) ${first.name.toUpperCase()}, société immatriculée ${FR.registeredIn(first.jurisdiction)} sous le numéro ${first.registrationNo}, dont le siège social se trouve à l'adresse suivante : ${first.address} (le « Premier Contractant ») ; et`,
-    individualSecond
-      ? `(2) ${second.name.toUpperCase()}, titulaire de la pièce d'identité n° ${second.registrationNo}, demeurant à l'adresse suivante : ${second.address} (le « Second Contractant »).`
-      : `(2) ${second.name.toUpperCase()}, société immatriculée ${FR.registeredIn(second.jurisdiction)} sous le numéro ${second.registrationNo}, dont le siège social se trouve à l'adresse suivante : ${second.address} (le « Second Contractant »).`,
-    'IL A ÉTÉ CONVENU CE QUI SUIT :',
-  ],
+  recitals: ({ date, reference, first, second }) => {
+    const line = (n: 1 | 2, p: Party, role: string, end: string) =>
+      p.individual
+        ? `(${n}) ${p.name.toUpperCase()}, titulaire de la pièce d'identité n° ${p.registrationNo}, demeurant à l'adresse suivante : ${p.address} (le « ${role} »)${end}`
+        : `(${n}) ${p.name.toUpperCase()}, société immatriculée ${FR.registeredIn(p.jurisdiction)} sous le numéro ${p.registrationNo}, dont le siège social se trouve à l'adresse suivante : ${p.address} (le « ${role} »)${end}`;
+    return [
+      `LE PRÉSENT CONTRAT est conclu le ${date} sous la référence ${reference}, entre :`,
+      line(1, first, 'Premier Contractant', ' ; et'),
+      line(2, second, 'Second Contractant', '.'),
+      'IL A ÉTÉ CONVENU CE QUI SUIT :',
+    ];
+  },
   body: {
     definitions: [
       "Dans le présent Contrat, les termes commençant par une majuscule ont le sens qui leur est donné à l'Annexe 1. Toute référence à un texte législatif s'entend de ce texte tel que modifié ou remplacé le cas échéant.",
@@ -648,15 +663,26 @@ export function instrumentTitle(type: ContractType, locale: Locale = 'en'): stri
   return TEXT[locale].typeTitles[type];
 }
 
-function formatters(locale: Locale): Fmt {
+/** Shown where the user has not entered an amount yet. */
+const AMOUNT_PLACEHOLDER: Record<Locale, string> = {
+  en: '[amount]',
+  ar: '[المبلغ]',
+  fr: '[montant]',
+};
+
+function formatters(locale: Locale, currency: string): Fmt {
   const tag = NUMBER_LOCALE[locale];
   return {
-    money: (usd) =>
-      new Intl.NumberFormat(tag, {
-        style: 'currency',
-        currency: 'USD',
-        maximumFractionDigits: 0,
-      }).format(usd),
+    money: (amount) =>
+      amount > 0
+        ? new Intl.NumberFormat(tag, {
+            style: 'currency',
+            currency,
+            // Kuwaiti dinar has 3 minor digits (fils); others 2.
+            maximumFractionDigits: currency === 'KWD' ? 3 : 2,
+            minimumFractionDigits: 0,
+          }).format(amount)
+        : AMOUNT_PLACEHOLDER[locale],
     num: (n) => new Intl.NumberFormat(tag, { maximumFractionDigits: 2 }).format(n),
   };
 }
@@ -685,7 +711,7 @@ export function assembleDocument(
   locale: Locale = 'en',
 ): AssembledDocument {
   const text = TEXT[locale] ?? EN;
-  const { money, num } = formatters(locale);
+  const { money, num } = formatters(locale, input.currency ?? 'KWD');
   const { first, second } = meta.parties;
   const isMaritime =
     input.type === 'charterparty' || input.type === 'bill-of-lading';
@@ -711,7 +737,7 @@ export function assembleDocument(
     text.body.liability(
       input.liabilityCapMultiple > 0
         ? {
-            amount: money(input.valueUsd * input.liabilityCapMultiple),
+            amount: money(input.valueUsd > 0 ? input.valueUsd * input.liabilityCapMultiple : 0),
             multiple: num(input.liabilityCapMultiple),
           }
         : null,
@@ -945,11 +971,23 @@ export function assembleDocument(
       date: formatDate(meta.executionDate, locale),
       reference: meta.reference,
       first,
-      second,
-      // The employee is a natural person, not a registered company.
-      individualSecond: input.type === 'employment',
+      // The employee is always a natural person, not a registered company.
+      second: input.type === 'employment' ? { ...second, individual: true } : second,
     }),
     clauses,
+    closing: (() => {
+      const secondParty = input.type === 'employment' ? { ...second, individual: true } : second;
+      const c = closingFor(input.type, locale, {
+        firstName: first.name,
+        secondName: secondParty.name,
+        firstIndividual: !!first.individual,
+        secondIndividual: !!secondParty.individual,
+      });
+      // The break-fee schedule exists only when there is a convenience exit.
+      const breakFee = ['supply', 'distribution', 'charterparty', 'services'].includes(input.type);
+      if (breakFee && !input.hasTerminationForConvenience) c.schedules = c.schedules.slice(0, 2);
+      return c;
+    })(),
   };
 }
 

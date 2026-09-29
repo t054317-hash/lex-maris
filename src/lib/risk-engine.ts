@@ -69,8 +69,13 @@ export interface ContractInput {
   /** Counterparty home jurisdiction, ISO-3166 alpha-2. */
   counterpartyJurisdiction: string;
   disputeForum: DisputeForum;
-  /** Contract value in USD. Drives proportionality of caps and security. */
+  /**
+   * Contract value in `currency` (the name is historical). 0 = not yet
+   * entered; the draft then shows an [amount] placeholder.
+   */
   valueUsd: number;
+  /** ISO 4217 currency of every amount in the contract. Defaults to KWD. */
+  currency?: string;
   /** Aggregate liability cap as a multiple of contract value; 0 = uncapped. */
   liabilityCapMultiple: number;
   paymentTermsDays: number;
@@ -154,6 +159,21 @@ const PRICED_TYPES: ReadonlySet<ContractType> = new Set([
 
 /** No commercial risk allocation: rules about caps, credit, sanctions etc. do not apply. */
 const NON_COMMERCIAL: ContractType[] = ['nda', 'employment', 'mou', 'settlement', 'property-sale'];
+
+/**
+ * USD equivalent, for the value thresholds only. AED and SAR are pegged to
+ * the dollar; KWD (basket peg) and EUR float, so their rates are rounded
+ * approximations -- adequate for a triage threshold, never for a price.
+ */
+const USD_PER_UNIT: Record<string, number> = {
+  USD: 1,
+  AED: 1 / 3.6725,
+  SAR: 1 / 3.75,
+  KWD: 3.25,
+  EUR: 1.1,
+};
+const usdEquivalent = (c: ContractInput) =>
+  c.valueUsd * (USD_PER_UNIT[c.currency ?? 'KWD'] ?? 1);
 
 const not =
   (...types: ContractType[]) =>
@@ -341,11 +361,11 @@ const RULES: readonly Rule[] = [
     clauseId: 'security',
     weight: 1,
     appliesTo: (c) =>
-      (GOODS_TYPES.has(c.type) || MARITIME_TYPES.has(c.type)) && c.valueUsd >= 500_000,
+      (GOODS_TYPES.has(c.type) || MARITIME_TYPES.has(c.type)) && usdEquivalent(c) >= 500_000,
     evaluate: (c) =>
       c.security === 'none'
         ? {
-            severity: c.valueUsd >= 5_000_000 ? 'high' : 'medium',
+            severity: usdEquivalent(c) >= 5_000_000 ? 'high' : 'medium',
             code: 'security-missing',
             title: 'No payment security for a material contract value',
             detail:
@@ -530,7 +550,7 @@ const RULES: readonly Rule[] = [
     id: 'lease-law-not-situs',
     clauseId: 'governing-law',
     weight: 1,
-    appliesTo: (c) => c.type === 'lease',
+    appliesTo: (c) => c.type === 'lease' && c.counterpartyJurisdiction !== 'XX',
     evaluate: (c) =>
       c.governingLaw !== c.counterpartyJurisdiction
         ? {
@@ -698,7 +718,7 @@ const RULES: readonly Rule[] = [
     id: 'property-law-not-situs',
     clauseId: 'governing-law',
     weight: 1,
-    appliesTo: (c) => c.type === 'property-sale',
+    appliesTo: (c) => c.type === 'property-sale' && c.counterpartyJurisdiction !== 'XX',
     evaluate: (c) =>
       c.governingLaw !== c.counterpartyJurisdiction
         ? {
@@ -802,9 +822,12 @@ export function defaultContractInput(): ContractInput {
   return {
     type: 'supply',
     governingLaw: 'GB',
-    counterpartyJurisdiction: 'AE',
+    // Nothing is assumed about the parties: unset until the user chooses.
+    counterpartyJurisdiction: 'XX',
     disputeForum: 'arbitration-lcia',
-    valueUsd: 2_500_000,
+    // No amount is suggested: the user types it.
+    valueUsd: 0,
+    currency: 'KWD',
     liabilityCapMultiple: 1,
     paymentTermsDays: 45,
     security: 'lc',
