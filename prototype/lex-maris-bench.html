@@ -404,88 +404,12 @@ input[type="range"]::-moz-range-thumb {
 }
 
 /* ==========================================================================
-   Matter rail
+   My files (empty state)
    ========================================================================== */
-.matter-grid {
-  display: grid; gap: 24px; margin-top: 48px;
-  grid-template-columns: minmax(0,1.1fr) minmax(0,1fr);
-}
-@media (max-width: 940px) { .matter-grid { grid-template-columns: minmax(0,1fr); } }
-
-.rail { position: relative; list-style: none; margin: 26px 0 0; padding: 0; }
-.rail::before {
-  content: ""; position: absolute; inset-inline-start: 7px; top: 8px; bottom: 8px;
-  width: 1px; background: rgba(139,147,168,0.26);
-}
-#rail-fill {
-  position: absolute; inset-inline-start: 7px; top: 8px; width: 1px;
-  background: var(--gold); box-shadow: 0 0 10px rgba(212,175,55,0.6);
-  transform-origin: top; transform: scaleY(0);
-  transition: transform 1.1s var(--lux);
-}
-.rail li { position: relative; display: flex; gap: 16px; padding-bottom: 26px; }
-.rail li:last-child { padding-bottom: 0; }
-.rail .dot-wrap {
-  position: relative; z-index: 1; flex: none;
-  width: 15px; height: 15px; margin-top: 5px;
-  display: flex; align-items: center; justify-content: center;
-}
-.rail .dot { width: 9px; height: 9px; border-radius: 50%; }
-.rail [data-state="done"] .dot { background: var(--gold); box-shadow: 0 0 10px rgba(212,175,55,0.8); }
-.rail [data-state="active"] .dot { background: var(--gold-lit); }
-.rail [data-state="blocked"] .dot { background: var(--elevated); }
-.rail [data-state="pending"] .dot {
-  width: 7px; height: 7px; background: var(--navy);
-  border: 1px solid rgba(139,147,168,0.6);
-}
-.rail .halo {
-  position: absolute; inset: 3px; border-radius: 50%; background: var(--gold-lit); opacity: 0;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .rail [data-state="active"] .halo { animation: pulse 2s ease-out infinite; }
-}
-@keyframes pulse {
-  0% { transform: scale(1); opacity: 0.55; }
-  100% { transform: scale(2.8); opacity: 0; }
-}
-.rail .label { display: block; font-size: 14px; }
-.rail [data-state="pending"] .label { color: var(--ink-mute); }
-.rail .meta { display: block; margin-top: 3px; font-size: 12px; color: var(--ink-mute); }
-.rail .chip {
-  flex: none; align-self: flex-start; margin-top: 4px;
-  font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.14em;
-  color: var(--elevated); border: 1px solid rgba(224,114,90,0.42);
-  background: rgba(224,114,90,0.1); border-radius: 999px; padding: 4px 10px;
-}
-
-.alerts { list-style: none; margin: 18px 0 0; padding: 0; display: grid; gap: 12px; }
-/* Severity is carried by a left stripe as well as by colour, so state reads
-   without relying on hue alone. */
-.alert {
-  border: 1px solid rgba(139,147,168,0.22); border-inline-start-width: 3px;
-  background: rgba(16,26,58,0.4); border-radius: 10px; padding: 15px 17px;
-}
-.alert[data-sev="high"]   { border-inline-start-color: var(--elevated); }
-.alert[data-sev="medium"] { border-inline-start-color: var(--watch); }
-.alert[data-sev="low"]    { border-inline-start-color: var(--ink-mute); }
-.alert h4 { margin: 0; font-family: var(--body); font-size: 14px; font-weight: 500; }
-.alert p { margin-top: 6px; font-size: 12.5px; line-height: 1.6; color: var(--ink-soft); }
-.alert .sev {
-  font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.14em; margin-bottom: 6px; display: block;
-}
-.alert[data-sev="high"] .sev   { color: var(--elevated); }
-.alert[data-sev="medium"] .sev { color: var(--watch); }
-.alert[data-sev="low"] .sev    { color: var(--ink-mute); }
-
-.vault { list-style: none; margin: 18px 0 0; padding: 0; }
-.vault li {
-  display: flex; align-items: center; justify-content: space-between; gap: 16px;
-  padding: 13px 0; border-top: 1px solid rgba(139,147,168,0.14);
-}
-.vault li:first-child { border-top: 0; }
-.vault .name { display: block; font-size: 14px; }
-.vault .seal { display: block; margin-top: 3px; font-size: 10.5px; color: var(--ink-mute); }
-.vault .when { flex: none; font-size: 12px; color: var(--ink-mute); }
+.empty-state { margin-top: 48px; text-align: center; padding: 48px 26px; }
+.empty-state .empty-title { font-family: var(--display); font-size: 20px; }
+.empty-state .note { max-width: 46ch; margin: 12px auto 0; }
+.empty-state .btn-gold { display: inline-flex; margin-top: 26px; }
 
 footer { border-top: 1px solid rgba(139,147,168,0.16); padding: 36px 0; }
 .foot-row {
@@ -558,13 +482,11 @@ html[lang="ar"] dd { line-height: 1.9; }
    text — the Gulf drafting convention. */
 html[lang="ar"] .mono,
 html[lang="ar"] .clause .num,
-html[lang="ar"] #tally dd,
-html[lang="ar"] .summary-value { direction: ltr; unicode-bidi: embed; }
+html[lang="ar"] #tally dd { direction: ltr; unicode-bidi: embed; }
 
 /* Mono elements that carry translated words (not just codes) must keep the
    paragraph direction, or the Arabic word order flips. */
-html[lang="ar"] #clause-count,
-html[lang="ar"] .vault .seal { direction: rtl; unicode-bidi: plaintext; font-family: inherit; }
+html[lang="ar"] #clause-count { direction: rtl; unicode-bidi: plaintext; font-family: inherit; }
 /* The clause number is an LTR run, so its logical end margin points the
    wrong way inside RTL text; set the physical side explicitly. */
 html[dir="rtl"] .clause .para .num { margin-right: 0; margin-left: 6px; }
@@ -732,6 +654,7 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
 @media (min-width: 560px) { .field-grid { grid-template-columns: 1fr 1fr; } }
 
 .co-field { display: block; }
+.co-field[hidden] { display: none; }
 .co-field > span { display: block; margin-bottom: 8px; }
 .co-field input, .co-field select, .co-field textarea {
   width: 100%; font: 400 14px var(--body); color: var(--ink);
@@ -744,37 +667,6 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
 }
 .co-field .req { color: var(--elevated); margin-inline-start: 4px; }
 
-.summary-line {
-  display: flex; align-items: baseline; justify-content: space-between;
-  gap: 16px; font-size: 14px;
-}
-.summary-line dt { color: var(--ink-soft); }
-.summary-line.muted dt { color: var(--ink-mute); }
-.summary-value { color: var(--ink); font-variant-numeric: tabular-nums; }
-.summary-line.total { border-top: 1px solid rgba(139,147,168,0.15); padding-top: 12px; margin-top: 12px; }
-.summary-line.total .summary-value {
-  font-family: var(--display); font-size: 19px; color: var(--gold-lit);
-}
-
-.pay-options { display: grid; gap: 8px; margin-top: 12px; }
-.pay-option {
-  display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  border: 1px solid rgba(139,147,168,0.22); background: rgba(16,26,58,0.4);
-  border-radius: 10px; padding: 13px 16px; color: var(--ink);
-  font: 400 14px var(--body); cursor: none; text-align: start;
-  transition: border-color 300ms var(--lux), background 300ms var(--lux), color 300ms var(--lux);
-}
-.pay-option:hover { border-color: rgba(212,175,55,0.4); }
-.pay-option[aria-checked="true"] {
-  border-color: rgba(212,175,55,0.6); background: rgba(212,175,55,0.1); color: var(--gold-lit);
-}
-.pay-option .radio {
-  flex: none; width: 14px; height: 14px; border-radius: 50%;
-  border: 1px solid rgba(139,147,168,0.5);
-}
-.pay-option[aria-checked="true"] .radio {
-  border-color: var(--gold); background: rgba(212,175,55,0.7);
-}
 .btn-block {
   width: 100%; margin-top: 20px; border-radius: 999px; padding: 14px 24px;
   border: 1px solid rgba(212,175,55,0.5); background: rgba(212,175,55,0.12);
@@ -840,7 +732,7 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
     <a class="header-brand" href="#site" data-cursor="hover" data-i18n="brand.name">LEX MARIS</a>
     <nav class="nav">
       <a href="#bench" data-cursor="hover" data-i18n="nav.bench">Contract bench</a>
-      <a href="#matter" data-cursor="hover" data-i18n="nav.dashboard">Dashboard</a>
+      <a href="#matter" data-cursor="hover" data-i18n="nav.dashboard">My files</a>
       <a href="#checkout" data-cursor="hover" data-i18n="nav.commission">Commission</a>
     </nav>
     <div class="header-actions">
@@ -857,7 +749,7 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
 <main id="main">
  <div class="view" id="view-site">
   <!-- ======================================================================
-       Hero — restructured into two columns. The copy is unchanged; what is
+       Hero — restructured into two columns. The copy follows the live app; what is
        new is that the gavel now lives here as a live, re-strikeable object
        instead of being locked inside an intro a returning visitor never
        sees again. The old 100vh height is gone: it pushed the actual
@@ -869,17 +761,17 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       <div class="hero-grid">
         <div>
           <p class="eyebrow" data-i18n="hero.eyebrow">Commercial &middot; Corporate &middot; Maritime</p>
-          <h1 data-i18n-html="hero.title">The instrument, <span class="accent">drafted and scored</span> before the call ends.</h1>
+          <h1 data-i18n-html="hero.title">Every clause <span class="accent">assessed before</span> you sign it.</h1>
           <p class="lede" data-i18n="hero.lede">
-            Lex Maris assembles commercial and maritime instruments from validated
-            terms, scores every clause against a fixed exposure model, and executes
-            them with a verifiable cryptographic trail.
+            Lex Maris drafts commercial and maritime instruments from your terms and
+            assesses every clause against a fixed, published rule set — in Arabic,
+            English or French.
           </p>
           <div class="cta-row">
             <a class="btn-gold" href="#checkout" data-cursor="hover" data-i18n="hero.cta.primary">Commission a contract</a>
             <a class="btn-quiet" href="#bench" data-cursor="hover" data-i18n="hero.cta.secondary">Try the risk bench</a>
           </div>
-          <p class="eyebrow" style="margin-top:28px" data-i18n="hero.trust">Kuwait &middot; UAE &middot; England &amp; Wales &middot; Singapore</p>
+          <p class="eyebrow" style="margin-top:28px" data-i18n="hero.trust">Governing laws modelled: Kuwait &middot; UAE &middot; England &amp; Wales &middot; Singapore &middot; Switzerland &middot; New York</p>
         </div>
 
         <div class="hero-gavel">
@@ -892,9 +784,9 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       <hr class="rule" style="margin-top:56px">
       <dl class="stat-rail" style="margin-top:32px">
         <div><dt>12</dt><dd data-i18n="hero.metric.rules">clause rules per pass</dd></div>
-        <div><dt data-i18n="hero.metric.turnaroundValue">&lt; 2s</dt><dd data-i18n="hero.metric.turnaround">draft to sealed PDF</dd></div>
-        <div><dt>AES-256</dt><dd data-i18n="hero.metric.sealing">per-document sealing</dd></div>
-        <div><dt>4</dt><dd data-i18n="hero.metric.forum">arbitral seats modelled</dd></div>
+        <div><dt>3</dt><dd data-i18n="hero.metric.turnaround">drafting languages</dd></div>
+        <div><dt>16</dt><dd data-i18n="hero.metric.sealing">standard clauses in the drafting engine</dd></div>
+        <div><dt>3</dt><dd data-i18n="hero.metric.forum">arbitral institutions modelled (LCIA · ICC · DIAC)</dd></div>
       </dl>
     </div>
   </section>
@@ -967,45 +859,22 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
   <hr class="rule" style="max-width:1120px">
 
   <!-- ======================================================================
-       Matter rail
+       My files. The preview has no backend, so it cannot list real
+       instructions; it shows the same empty state the live dashboard shows
+       to an account that has not submitted anything yet.
        =================================================================== -->
   <section id="matter">
     <div class="shell">
       <div class="section-head">
-        <p class="eyebrow" data-i18n="matter.eyebrow">Client dashboard</p>
-        <h2 data-i18n="matter.title">The client always knows where it is.</h2>
-        <p data-i18n="matter.intro">
-          Matter status streams over an authenticated socket channel. Drafting,
-          review, counterparty comment and execution land on this rail the
-          moment they happen.
-        </p>
+        <p class="eyebrow" data-i18n="brand.name">LEX MARIS</p>
+        <h2 data-i18n="dash.heading">My files</h2>
+        <p data-i18n="dash.lede">Every set of instructions you have submitted, with its current stage.</p>
       </div>
 
-      <div class="matter-grid">
-        <div class="glass panel">
-          <div style="display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:10px">
-            <div>
-              <p class="eyebrow" data-i18n="matter.progress">Matter progress</p>
-              <p class="mono" style="margin-top:6px;font-size:13px;color:var(--ink-soft)">LM-2026-0417</p>
-            </div>
-            <p id="matter-count" style="font-size:12px;color:var(--ink-mute)">
-              <span class="mono" style="color:var(--gold-lit)">4</span> of
-              <span class="mono">7</span> stages complete
-            </p>
-          </div>
-          <ol class="rail" id="rail"><span id="rail-fill"></span></ol>
-        </div>
-
-        <div style="display:grid;gap:24px;align-content:start">
-          <div class="glass panel" style="padding:26px">
-            <p class="eyebrow" data-i18n="matter.alerts">Compliance alerts</p>
-            <ul class="alerts" id="alerts"></ul>
-          </div>
-          <div class="glass panel" style="padding:26px">
-            <p class="eyebrow" data-i18n="matter.vault">Encrypted document vault</p>
-            <ul class="vault" id="vault"></ul>
-          </div>
-        </div>
+      <div class="glass panel empty-state">
+        <p class="empty-title" data-i18n="dash.empty.title">No files yet</p>
+        <p class="note" data-i18n="dash.empty.body">When you submit instructions, each request appears here with its current stage.</p>
+        <a class="btn-gold" href="#checkout" data-cursor="hover" data-i18n="hero.cta.primary">Commission a contract</a>
       </div>
     </div>
   </section>
@@ -1020,9 +889,9 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
        * The brief form is the same shape the risk engine consumes, so the
          provisional exposure on the right is computed by the identical rule
          set the bench uses -- not a marketing approximation of it.
-       * There is no card field anywhere on this page, by design. The buttons
-         choose a METHOD; the number is only ever entered on the gateway's own
-         page. That is what keeps the site out of PCI-DSS scope.
+       * There is no fixed fee and no payment step. Submitting sends
+         instructions; counsel replies with a written fee quote and an
+         engagement letter before any work begins.
       ==================================================================== -->
  <div class="view" id="view-checkout" hidden>
   <section>
@@ -1037,8 +906,8 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
         <p class="eyebrow" data-i18n="checkout.eyebrow">Commission</p>
         <h2 data-i18n="checkout.title">Contract Writing</h2>
         <p data-i18n="checkout.subtitle">
-          Tell us the terms. Counsel drafts the instrument and returns it with a
-          clause-level risk report.
+          Tell us the terms. Counsel reviews your instructions and sends a
+          written fee quote before any drafting begins.
         </p>
       </div>
 
@@ -1085,7 +954,7 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
             <div class="field-grid">
               <label class="co-field">
                 <span class="eyebrow" data-i18n="checkout.field.value">Contract value (USD)</span>
-                <input type="number" id="co-value" min="0" step="50000" value="2500000">
+                <input type="number" id="co-value" min="0" step="50000">
               </label>
               <label class="co-field">
                 <span class="eyebrow" data-i18n="checkout.field.paymentTerms">Payment terms (days)</span>
@@ -1169,45 +1038,15 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
           </div>
 
           <div class="glass panel" style="padding:26px">
-            <p class="eyebrow" data-i18n="checkout.summary.title">Order summary</p>
-            <dl style="display:grid;gap:10px;margin-top:20px">
-              <div class="summary-line">
-                <dt data-i18n="checkout.summary.service">Contract writing</dt>
-                <dd class="summary-value" id="co-subtotal">KWD 250.000</dd>
-              </div>
-              <div class="summary-line muted">
-                <dt data-i18n="checkout.summary.turnaround">Turnaround</dt>
-                <dd class="summary-value"><span id="co-days">3</span> <span data-i18n="checkout.summary.days">business days</span></dd>
-              </div>
-              <div class="summary-line muted">
-                <dt data-i18n="checkout.summary.tax">Tax</dt>
-                <dd class="summary-value" id="co-tax">KWD 0.000</dd>
-              </div>
-              <div class="summary-line total">
-                <dt data-i18n="checkout.summary.total">Total due</dt>
-                <dd class="summary-value" id="co-total">KWD 250.000</dd>
-              </div>
-            </dl>
-
-            <p class="eyebrow" style="margin-top:26px" data-i18n="checkout.section.payment">Payment</p>
-            <div class="pay-options" id="pay-options" role="radiogroup">
-              <button type="button" class="pay-option" role="radio" data-method="card" aria-checked="true" data-cursor="hover">
-                <span data-i18n="checkout.pay.card">Pay by card</span><span class="radio" aria-hidden="true"></span>
-              </button>
-              <button type="button" class="pay-option" role="radio" data-method="knet" aria-checked="false" data-cursor="hover">
-                <span data-i18n="checkout.pay.knet">Pay by KNET</span><span class="radio" aria-hidden="true"></span>
-              </button>
-              <button type="button" class="pay-option" role="radio" data-method="transfer" aria-checked="false" data-cursor="hover">
-                <span data-i18n="checkout.pay.transfer">Bank transfer</span><span class="radio" aria-hidden="true"></span>
-              </button>
-            </div>
+            <p class="eyebrow" data-i18n="checkout.fee.title">Fees</p>
+            <p class="note" style="margin-top:12px" data-i18n="checkout.fee.body">
+              No fixed fee applies. Fees depend on the scope and complexity of the
+              instrument and are set out in a written quote and engagement letter
+              for your approval. Nothing is charged when you submit this form.
+            </p>
 
             <button type="submit" class="btn-block" id="co-submit" data-cursor="hover"
-                    data-i18n="checkout.pay.submit">Continue to payment</button>
-            <p class="note" style="margin-top:14px" data-i18n="checkout.pay.redirect">
-              You will be taken to our payment provider. Card details are entered
-              there, never on this site.
-            </p>
+                    data-i18n="checkout.submit">Submit instructions</button>
             <p id="co-result" class="note" style="margin-top:12px" role="status"></p>
           </div>
         </div>
@@ -1215,8 +1054,10 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
 
       <p class="note" style="margin-top:48px;border-top:1px solid rgba(139,147,168,0.15);padding-top:24px"
          data-i18n="checkout.disclaimer">
-        Submitting this form creates an instruction, not a retainer. An engagement
-        letter follows before work begins.
+        Submitting this form sends instructions; it does not create a
+        lawyer–client engagement. An engagement letter setting out scope and
+        fees follows before work begins. The risk score shown is an automated
+        indicator, not legal advice.
       </p>
     </div>
   </section>
@@ -1247,23 +1088,6 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       Access your matters, drafts and executed instruments.
     </p>
     <span class="demo-badge" data-i18n="auth.demoBadge">Preview — no live account</span>
-
-    <button type="button" id="auth-google" data-cursor="hover"
-            style="display:flex;width:100%;align-items:center;justify-content:center;gap:10px;margin-top:18px;padding:12px 20px;border-radius:999px;border:1px solid rgba(139,147,168,0.3);background:rgba(16,26,58,0.6);color:var(--ink);font:400 14px var(--body);cursor:none">
-      <svg aria-hidden="true" viewBox="0 0 18 18" width="16" height="16">
-        <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92a8.78 8.78 0 0 0 2.68-6.62Z"/>
-        <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.81.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.34A9 9 0 0 0 9 18Z"/>
-        <path fill="#FBBC05" d="M3.97 10.72a5.4 5.4 0 0 1 0-3.44V4.94H.96a9 9 0 0 0 0 8.12l3.01-2.34Z"/>
-        <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.59C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.94l3.01 2.34C4.68 5.16 6.66 3.58 9 3.58Z"/>
-      </svg>
-      <span data-i18n="auth.google">Continue with Google</span>
-    </button>
-
-    <div aria-hidden="true" style="display:flex;align-items:center;gap:12px;margin:18px 0 0">
-      <span style="height:1px;flex:1;background:rgba(139,147,168,0.2)"></span>
-      <span style="font-size:10px;text-transform:uppercase;letter-spacing:0.16em;color:var(--ink-mute)" data-i18n="auth.or">or</span>
-      <span style="height:1px;flex:1;background:rgba(139,147,168,0.2)"></span>
-    </div>
 
     <form id="auth-form">
       <label class="auth-field" id="auth-name-field" hidden>
@@ -1297,7 +1121,7 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
     </p>
     <p class="auth-note" style="border-top:0;padding-top:0;margin-top:10px"
        data-i18n="auth.privilegeNotice">
-      Communications through this platform may be privileged. Do not share your
+      Information you submit is treated as confidential. Do not share your
       credentials.
     </p>
   </div>
@@ -1329,7 +1153,7 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       'brand.name': 'LEX MARIS',
       'lang.aria': 'Change language',
       'nav.bench': 'Contract bench',
-      'nav.dashboard': 'Dashboard',
+      'nav.dashboard': "My files",
       'nav.commission': 'Commission',
       'nav.signIn': 'Sign in',
       'nav.signOut': 'Sign out',
@@ -1337,17 +1161,16 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       'intro.skip': 'Skip intro',
       'intro.hitAria': 'Strike the gavel to enter',
       'hero.eyebrow': 'Commercial · Corporate · Maritime',
-      'hero.title': 'The instrument, <span class="accent">drafted and scored</span> before the call ends.',
-      'hero.lede': 'Lex Maris assembles commercial and maritime instruments from validated terms, scores every clause against a fixed exposure model, and executes them with a verifiable cryptographic trail.',
+      'hero.title': "Every clause <span class=\"accent\">assessed before</span> you sign it.",
+      'hero.lede': "Lex Maris drafts commercial and maritime instruments from your terms and assesses every clause against a fixed, published rule set — in Arabic, English or French.",
       'hero.cta.primary': 'Commission a contract',
       'hero.cta.secondary': 'Try the risk bench',
-      'hero.trust': 'Kuwait · UAE · England & Wales · Singapore',
+      'hero.trust': "Governing laws modelled: Kuwait · UAE · England & Wales · Singapore · Switzerland · New York",
       'hero.gavel.hint': 'Strike the gavel',
-      'hero.metric.rules': 'clause rules per pass',
-      'hero.metric.turnaroundValue': '< 2s',
-      'hero.metric.turnaround': 'draft to sealed PDF',
-      'hero.metric.sealing': 'per-document sealing',
-      'hero.metric.forum': 'arbitral seats modelled',
+      'hero.metric.rules': "clause rules per pass",
+      'hero.metric.turnaround': "drafting languages",
+      'hero.metric.sealing': "standard clauses in the drafting engine",
+      'hero.metric.forum': "arbitral institutions modelled (LCIA · ICC · DIAC)",
       'dial.exposure': 'exposure',
 
       'bench.eyebrow': 'Risk scanner & live contract builder',
@@ -1381,7 +1204,7 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       'unit.days.other': '{n} days',
       'unit.hours.one': '{n} running hour',
       'unit.hours.other': '{n} running hours',
-      'note.parties': 'Party details are drawn from the matter record. Registry data is verified against the relevant commercial register before execution.',
+      'note.parties': "Party names, registration numbers and addresses appear as placeholders. They must be completed and verified against the relevant commercial register before signature.",
       'note.enforce': 'Enforceability is assessed against the counterparty asset jurisdiction, not the seat.',
       'sw.forceMajeure': 'Force majeure clause',
       'sw.sanctions': 'Sanctions & trade-control clause',
@@ -1401,7 +1224,6 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       'opt.jur.QA': 'Qatar',
       'opt.jur.GB': 'United Kingdom',
       'opt.jur.SG': 'Singapore',
-      'opt.jur.TW': 'Taiwan',
       'opt.jur.XX': 'Not stated',
       'opt.law.GB': 'England & Wales',
       'opt.law.AE': 'United Arab Emirates',
@@ -1412,7 +1234,7 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       'opt.law.XX': 'Not stated',
       'opt.forum.arbitration-lcia': 'LCIA arbitration, London',
       'opt.forum.arbitration-icc': 'ICC arbitration',
-      'opt.forum.arbitration-difc': 'DIFC-LCIA arbitration',
+      'opt.forum.arbitration-difc': "DIAC arbitration, seat DIFC",
       'opt.forum.arbitration-adhoc': 'Ad hoc arbitration',
       'opt.forum.local-courts': 'Courts — first party seat',
       'opt.forum.local-courts.checkout': 'Courts — your seat',
@@ -1437,62 +1259,61 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       'findings.none.body': 'Every rule in the current model passed. The draft is ready for partner review and execution.',
       'findings.amend': 'Recommended amendment',
 
-      'f.govLaw.title': 'No governing law selected',
-      'f.govLaw.detail': 'Without an express choice of law, the applicable law falls to be decided by the forum conflict rules. Neither party can price that outcome at signature.',
-      'f.govLaw.remediation': 'Insert an express governing-law clause. For cross-border trade, English law or DIFC law are the conventional neutral choices.',
-      'f.forumSilent.title': 'No dispute-resolution mechanism',
-      'f.forumSilent.detail': 'Absent an agreed forum, proceedings can be commenced in any jurisdiction with a hook, inviting parallel actions and a race to judgment.',
-      'f.forumSilent.remediation': 'Adopt a seated arbitration clause with the seat, language, rules and number of arbitrators expressly stated.',
-      'f.adhoc.title': 'Ad hoc arbitration without institutional support',
-      'f.adhoc.detail': 'Ad hoc arbitration leaves appointment, challenge and fee mechanics to the parties. It stalls as soon as one party stops cooperating.',
-      'f.adhoc.remediation': 'Adopt UNCITRAL Rules with a named appointing authority, or move to an institutional clause (LCIA, ICC, DIFC-LCIA).',
-      'f.foreignCourts.title': 'Judgment may be unenforceable where the assets sit',
-      'f.foreignCourts.detail': 'A court judgment must be recognised in the jurisdiction holding the counterparty assets. That route is materially weaker here than arbitral enforcement.',
-      'f.foreignCourts.remediation': 'Switch to arbitration so the award travels under the New York Convention.',
-      'f.uncapped.title': 'Liability is uncapped',
-      'f.uncapped.detail': 'Exposure is unbounded and, at this contract value, effectively uninsurable at the limits underwriters will write.',
-      'f.uncapped.remediation': 'Cap aggregate liability at 100-150% of contract value with the usual carve-outs: death or personal injury, fraud, and IP infringement.',
-      'f.capHigh.title': 'Liability cap is disproportionate to contract value',
-      'f.capHigh.detail': 'A cap of {mult}x value sits above the market range and will not fit inside a standard professional-indemnity tower.',
-      'f.capHigh.remediation': 'Negotiate the cap toward 1-2x value, or obtain a bespoke insurance endorsement for the excess layer.',
-      'f.pay90.title': 'Payment terms exceed 90 days',
-      'f.pay90.detail': 'Working-capital exposure of this length turns a trading contract into unsecured credit, and may breach late-payment statutes in the buyer jurisdiction.',
-      'f.pay90.remediation': 'Reduce to 30-60 days, or price the credit explicitly through late-payment interest plus security.',
-      'f.pay60.title': 'Extended payment terms',
-      'f.pay60.detail': 'Terms beyond 60 days warrant an express late-payment interest rate so the cost of delay is not absorbed silently.',
-      'f.pay60.remediation': 'Add interest at a stated margin over the relevant reference rate, compounding monthly.',
-      'f.noSecurity.title': 'No payment security for a material contract value',
-      'f.noSecurity.detail': 'The full contract value rides on the counterparty balance sheet, with no instrument to call on default.',
-      'f.noSecurity.remediation': 'Require a confirmed irrevocable letter of credit, or a bank guarantee from an investment-grade issuer.',
-      'f.noForceMajeure.title': 'No force majeure clause',
-      'f.noForceMajeure.detail': 'Common-law frustration is far narrower than a drafted force majeure clause and rarely excuses delay short of impossibility.',
-      'f.noForceMajeure.remediation': 'Add a force majeure clause with notice mechanics, a mitigation duty, and a long-stop termination right.',
-      'f.noSanctions.title': 'No sanctions or trade-control clause',
-      'f.noSanctions.detail': 'Cross-border trade with no sanctions representation, no screening covenant and no suspension right exposes the party to strict-liability penalties and correspondent-bank de-risking.',
-      'f.noSanctions.remediation': 'Add sanctions representations and warranties, an ongoing screening covenant, and a right to suspend or terminate without liability.',
-      'f.noConvenience.title': 'No termination for convenience',
-      'f.noConvenience.detail': 'Exit is limited to breach and insolvency events, removing flexibility if commercial conditions move against the party.',
-      'f.noConvenience.remediation': 'Consider a convenience right after an initial committed period, with a defined break fee.',
-      'f.noIndemnity.title': 'No express indemnity',
-      'f.noIndemnity.detail': 'Recovery is confined to damages for breach, subject to remoteness, causation and the duty to mitigate.',
-      'f.noIndemnity.remediation': 'Add targeted indemnities for third-party IP claims, regulatory penalties, and cargo or property damage.',
-      'f.noInsurance.title': 'Insurance responsibility not allocated',
-      'f.noInsurance.detail': 'Where the contract is silent, cover follows risk under the applicable Incoterm, which parties routinely misread, leaving a gap in transit.',
-      'f.noInsurance.remediation': 'State who insures, for what value (conventionally 110% of CIF), and name the other party as loss payee.',
-      'f.noLaytime.title': 'Laytime not defined',
-      'f.noLaytime.detail': 'With no laytime, the moment demurrage starts to run is indeterminate. This is the most frequently arbitrated defect in charterparty drafting.',
-      'f.noLaytime.remediation': 'State laytime in running hours, define notice of readiness, and specify which periods are excepted.',
-      'f.noDemurrage.title': 'Demurrage rate unstated',
-      'f.noDemurrage.detail': 'Without an agreed rate, delay is recoverable only as damages for detention, which is harder to prove and slower to recover.',
-      'f.noDemurrage.remediation': 'State a daily demurrage rate, payable pro rata, with an express time bar for claims.',
+      'f.govLaw.title': "No governing law selected",
+      'f.govLaw.detail': "Without an express choice of law, the applicable law falls to be decided by the forum conflict rules. Neither party can price that outcome at signature.",
+      'f.govLaw.remediation': "Insert an express governing-law clause. For cross-border trade, English law or DIFC law are the conventional neutral choices.",
+      'f.forumSilent.title': "No dispute-resolution mechanism",
+      'f.forumSilent.detail': "Absent an agreed forum, proceedings can be commenced in any jurisdiction with a hook, inviting parallel actions and a race to judgment.",
+      'f.forumSilent.remediation': "Adopt a seated arbitration clause with the seat, language, rules and number of arbitrators expressly stated.",
+      'f.adhoc.title': "Ad hoc arbitration without institutional support",
+      'f.adhoc.detail': "Ad hoc arbitration leaves appointment, challenge and fee mechanics to the parties. It stalls as soon as one party stops cooperating.",
+      'f.adhoc.remediation': "Adopt UNCITRAL Rules with a named appointing authority, or move to an institutional clause (LCIA, ICC, DIAC).",
+      'f.foreignCourts.title': "Enforcement route against the counterparty is unverified",
+      'f.foreignCourts.detail': "A court judgment must be recognised where the counterparty's assets are located. With the counterparty's jurisdiction unstated, that route cannot be assessed, whereas an arbitral award is enforceable in the 170+ New York Convention states.",
+      'f.foreignCourts.remediation': "State the counterparty's jurisdiction, or switch to arbitration seated in a New York Convention state.",
+      'f.uncapped.title': "Liability is uncapped",
+      'f.uncapped.detail': "Exposure is unbounded and, at this contract value, effectively uninsurable at the limits underwriters will write.",
+      'f.uncapped.remediation': "Cap aggregate liability at 100-150% of contract value with the usual carve-outs: death or personal injury, fraud, and IP infringement.",
+      'f.capHigh.title': "Liability cap is disproportionate to contract value",
+      'f.capHigh.detail': "A cap of {mult}x value sits above the market range and will not fit inside a standard professional-indemnity tower.",
+      'f.capHigh.remediation': "Negotiate the cap toward 1-2x value, or obtain a bespoke insurance endorsement for the excess layer.",
+      'f.pay90.title': "Payment terms exceed 90 days",
+      'f.pay90.detail': "Working-capital exposure of this length turns a trading contract into unsecured credit, and may breach late-payment statutes in the buyer jurisdiction.",
+      'f.pay90.remediation': "Reduce to 30-60 days, or price the credit explicitly through late-payment interest plus security.",
+      'f.pay60.title': "Extended payment terms",
+      'f.pay60.detail': "Terms beyond 60 days warrant an express late-payment interest rate so the cost of delay is not absorbed silently.",
+      'f.pay60.remediation': "Where the governing law permits contractual interest, add interest at a stated margin over the relevant reference rate. Under Sharia-based systems (e.g. Saudi Arabia) interest is unenforceable; use a different late-payment mechanism.",
+      'f.noSecurity.title': "No payment security for a material contract value",
+      'f.noSecurity.detail': "The full contract value rides on the counterparty balance sheet, with no instrument to call on default.",
+      'f.noSecurity.remediation': "Require a confirmed irrevocable letter of credit, or a bank guarantee from an investment-grade issuer.",
+      'f.noForceMajeure.title': "No force majeure clause",
+      'f.noForceMajeure.detail': "Without an express clause, relief depends on the governing law's default rules (frustration under English law; statutory force majeure and exceptional-circumstances doctrines in civil-law systems such as Kuwait and the UAE), which are narrower and less predictable than a drafted clause.",
+      'f.noForceMajeure.remediation': "Add a force majeure clause with notice mechanics, a mitigation duty, and a long-stop termination right.",
+      'f.noSanctions.title': "No sanctions or trade-control clause",
+      'f.noSanctions.detail': "Cross-border trade with no sanctions representation, no screening covenant and no suspension right exposes the party to strict-liability penalties and correspondent-bank de-risking.",
+      'f.noSanctions.remediation': "Add sanctions representations and warranties, an ongoing screening covenant, and a right to suspend or terminate without liability.",
+      'f.noConvenience.title': "No termination for convenience",
+      'f.noConvenience.detail': "Exit is limited to breach and insolvency events, removing flexibility if commercial conditions move against the party.",
+      'f.noConvenience.remediation': "Consider a convenience right after an initial committed period, with a defined break fee.",
+      'f.noIndemnity.title': "No express indemnity",
+      'f.noIndemnity.detail': "Recovery is confined to damages for breach, subject to foreseeability (remoteness), causation and the duty to mitigate.",
+      'f.noIndemnity.remediation': "Add targeted indemnities for third-party IP claims, regulatory penalties, and cargo or property damage.",
+      'f.noInsurance.title': "Insurance responsibility not allocated",
+      'f.noInsurance.detail': "Where the contract is silent, cover follows risk under the applicable Incoterm, which parties routinely misread, leaving a gap in transit.",
+      'f.noInsurance.remediation': "State who insures, for what value (conventionally 110% of CIF), and name the other party as loss payee.",
+      'f.noLaytime.title': "Laytime not defined",
+      'f.noLaytime.detail': "With no laytime, the moment demurrage starts to run is indeterminate. This is the most frequently arbitrated defect in charterparty drafting.",
+      'f.noLaytime.remediation': "State laytime in running hours, define notice of readiness, and specify which periods are excepted.",
+      'f.noDemurrage.title': "Demurrage rate unstated",
+      'f.noDemurrage.detail': "Without an agreed rate, delay is recoverable only as damages for detention, which is harder to prove and slower to recover.",
+      'f.noDemurrage.remediation': "State a daily demurrage rate, payable pro rata, with an express time bar for claims.",
 
-      'cite.rome': 'Rome I Regulation (EC) 593/2008, Art. 3',
-      'cite.nyc2': 'New York Convention 1958, Art. II',
-      'cite.nyc3': 'New York Convention 1958, Art. III',
-      'cite.ucp': 'UCP 600',
-      'cite.sanctions': 'OFAC 31 CFR Part 500 et seq.; EU Regulation 833/2014',
-      'cite.incoterms': 'Incoterms 2020, A5/B5',
-      'cite.laytime': 'Laytime Definitions for Charter Parties 2013',
+      'cite.rome': "Rome I Regulation (EC) No 593/2008, Arts 3–4; UAE Civil Transactions Law (Federal Law No. 5 of 1985), Art. 19",
+      'cite.nyc3': "New York Convention 1958, Art. III",
+      'cite.ucp': "UCP 600",
+      'cite.sanctions': "UN Security Council sanctions; US OFAC regulations (31 CFR Chapter V); EU restrictive measures, e.g. Council Regulation (EU) No 833/2014",
+      'cite.incoterms': "Incoterms 2020, A5/B5",
+      'cite.laytime': "Laytime Definitions for Charter Parties 2013",
 
       'clause.definitions': 'Definitions and Interpretation',
       'clause.scope': 'Scope of Agreement',
@@ -1529,24 +1350,24 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       'doc.forum.foreign-courts': 'the courts of the jurisdiction of the Second Party shall have exclusive jurisdiction',
       'doc.forum.arbitration-lcia': 'any dispute shall be referred to and finally resolved by arbitration under the LCIA Rules, seated in London, before three arbitrators, in the English language',
       'doc.forum.arbitration-icc': 'any dispute shall be referred to and finally resolved by arbitration under the Rules of Arbitration of the International Chamber of Commerce, before three arbitrators, in the English language',
-      'doc.forum.arbitration-difc': 'any dispute shall be referred to and finally resolved by arbitration under the DIFC-LCIA Arbitration Rules, seated in the Dubai International Financial Centre, before three arbitrators, in the English language',
+      'doc.forum.arbitration-difc': "any dispute shall be referred to and finally resolved by arbitration under the Arbitration Rules of the Dubai International Arbitration Centre (DIAC), seated in the Dubai International Financial Centre, before three arbitrators, in the English language",
       'doc.forum.arbitration-adhoc': 'any dispute shall be referred to ad hoc arbitration as the parties may agree at the relevant time',
       'doc.forum.silent': '[DISPUTE RESOLUTION MECHANISM NOT SELECTED]',
       'doc.sec.lc': 'a confirmed irrevocable documentary letter of credit issued by a bank acceptable to the First Party and governed by UCP 600',
       'doc.sec.bank-guarantee': 'an on-demand bank guarantee issued by an investment-grade bank acceptable to the First Party',
       'doc.sec.parent-guarantee': 'a guarantee of the Second Party obligations executed by its ultimate parent undertaking',
       'doc.sec.none': 'no security',
-      'doc.recital.date': 'THIS AGREEMENT is dated {date} and made under reference LM-2026-0417.',
-      'doc.recital.first': '(1) MERIDIAN TRADING DMCC, a company registered in the United Arab Emirates under number DMCC-114820, whose registered office is at Unit 3402, Almas Tower, JLT, Dubai (the "First Party"); and',
-      'doc.recital.second': '(2) NORTHGATE COMMODITIES LTD, a company registered in England and Wales under number 09441237, whose registered office is at 12 Leadenhall Street, London EC3V 1LP (the "Second Party").',
-      'doc.recital.agreed': 'IT IS AGREED as follows:',
+      'doc.recital.date': "THIS AGREEMENT is dated [date] and made under reference [reference].",
+      'doc.recital.first': "(1) [FIRST PARTY NAME], a company registered in [jurisdiction of registration] under number [registration no.], whose registered office is at [registered address] (the \"First Party\"); and",
+      'doc.recital.second': "(2) [SECOND PARTY NAME], a company registered in [jurisdiction of registration] under number [registration no.], whose registered office is at [registered address] (the \"Second Party\").",
+      'doc.recital.agreed': "IT IS AGREED as follows:",
       'doc.definitions.1': 'In this Agreement, capitalised terms have the meanings given to them in Schedule 1. References to a statute include that statute as amended or re-enacted from time to time.',
       'doc.definitions.2': 'Headings are for convenience only and do not affect the construction of this Agreement.',
       'doc.scope.1': 'The First Party shall provide, and the Second Party shall accept, the goods, services or vessel capacity described in Schedule 2, on and subject to the terms of this Agreement.',
       'doc.scope.2': 'The aggregate value of this Agreement is {value} (the "Contract Value").',
       'doc.payment.1': 'The Second Party shall pay each valid invoice within {days} of the date of invoice, in cleared funds, without set-off or deduction.',
-      'doc.payment.2.extended': 'Sums not paid when due shall bear interest at 4% per annum above the applicable reference rate, accruing daily and compounding monthly, from the due date until payment.',
-      'doc.payment.2.statutory': 'Sums not paid when due shall bear interest at the statutory rate from the due date until payment.',
+      'doc.payment.2.extended': "To the extent permitted by the governing law, sums not paid when due shall bear interest at 4% per annum above the applicable reference rate, accruing daily, from the due date until payment.",
+      'doc.payment.2.statutory': "To the extent permitted by the governing law, sums not paid when due shall bear interest at the statutory rate from the due date until payment.",
       'doc.security.1': 'As a condition precedent to the First Party performance obligations, the Second Party shall procure and maintain {security} in an amount not less than the Contract Value.',
       'doc.laytime.1': 'Laytime for loading and discharging shall be {hours} in total, weather permitting, Sundays and holidays excepted, commencing upon tender of a valid Notice of Readiness.',
       'doc.laytime.none': '[LAYTIME NOT SPECIFIED — demurrage cannot accrue until laytime is defined.]',
@@ -1574,55 +1395,22 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       'doc.law.1': 'This Agreement and any dispute arising out of or in connection with it shall be governed by and construed in accordance with {law}.',
       'doc.dispute.1': 'The parties agree that {forum}.',
       'doc.dispute.2': 'Nothing in this clause prevents either party from seeking interim or conservatory relief from any court of competent jurisdiction.',
-      'doc.execution.1': 'This Agreement may be executed in counterparts and by electronic signature, each of which shall constitute an original and all of which together shall constitute one and the same instrument.',
-      'doc.execution.2': 'The parties agree that an electronic signature applied through the platform, together with the associated audit record and document hash, satisfies any requirement for signature in writing.',
+      'doc.execution.1': "This Agreement may be executed in counterparts and by electronic signature, each of which shall constitute an original and all of which together shall constitute one and the same instrument.",
+      'doc.execution.2': "To the extent permitted by applicable law, the parties agree that an electronic signature satisfies any requirement for signature in writing. Where the law requires a particular form, notarisation or wet-ink signature, that requirement shall be complied with.",
       'draft.flag': '{sev} — {title}',
       'draft.foot': 'Draft — not for execution. Generated by the Lex Maris document engine.',
-
-      'matter.eyebrow': 'Client dashboard',
-      'matter.title': 'The client always knows where it is.',
-      'matter.intro': 'Matter status streams over an authenticated socket channel. Drafting, review, counterparty comment and execution land on this rail the moment they happen.',
-      'matter.progress': 'Matter progress',
-      'matter.count': '{done} of {total} stages complete',
-      'matter.alerts': 'Compliance alerts',
-      'matter.vault': 'Encrypted document vault',
-      'stage.received': 'Instructions received',
-      'stage.drafted': 'First draft assembled',
-      'stage.riskPass': 'Risk pass complete — {n} findings',
-      'stage.partner': 'Partner review',
-      'stage.counterparty': 'Counterparty comments awaited',
-      'stage.rescreen': 'Sanctions re-screen required before execution',
-      'stage.execution': 'Execution and sealing',
-      'stage.when': '{date}, {time}',
-      'stage.due': 'Due {date}',
-      'stage.screenExpired': 'Screening expired {date}',
-      'stage.notStarted': 'Not started',
-      'stage.actionRequired': 'Action required',
-      'actor.portal': 'Client portal',
-      'actor.engine': 'Document engine',
-      'actor.scanner': 'Scanner v1.0.0',
-      'actor.partner': 'H. Al-Rashed',
-      'alert.screening.title': 'Sanctions screening expired',
-      'alert.screening.body': 'The counterparty screening record is 91 days old. Execution is blocked until a fresh screen is recorded against the current consolidated lists.',
-      'alert.timebar.title': 'Demurrage time bar approaching',
-      'alert.timebar.body': 'Claim LM-2026-0388 must be presented with supporting documents within 11 days or it is time-barred under clause 6.2.',
-      'alert.lc.title': 'Letter of credit expiry',
-      'alert.lc.body': 'The confirmed LC on matter LM-2026-0402 expires in 24 days, ahead of the final shipment window.',
-      'vault.charter': 'Voyage charterparty — executed',
-      'vault.supply': 'Supply agreement — draft 4',
-      'vault.screening': 'Sanctions screening record',
-      'vault.bol': 'Bill of lading — MV Sirocco',
-      'vault.sealed': 'Sealed · AES-256-GCM',
-      'vault.expired': 'Expired',
+      'dash.heading': "My files",
+      'dash.lede': "Every set of instructions you have submitted, with its current stage.",
+      'dash.empty.title': "No files yet",
+      'dash.empty.body': "When you submit instructions, each request appears here with its current stage.",
 
       'checkout.eyebrow': 'Commission',
       'checkout.title': 'Contract Writing',
-      'checkout.subtitle': 'Tell us the terms. Counsel drafts the instrument and returns it with a clause-level risk report.',
+      'checkout.subtitle': "Tell us the terms. Counsel reviews your instructions and sends a written fee quote before any drafting begins.",
       'checkout.section.instrument': 'The instrument',
       'checkout.section.parties': 'The parties',
       'checkout.section.terms': 'Commercial terms',
       'checkout.section.contact': 'Your details',
-      'checkout.section.payment': 'Payment',
       'checkout.field.instrumentType': 'Instrument type',
       'checkout.field.deadline': 'Needed by',
       'checkout.field.firstParty': 'Your entity',
@@ -1643,26 +1431,16 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       'checkout.field.country': 'Billing country',
       'checkout.riskPreview.title': 'Provisional exposure',
       'checkout.riskPreview.note': 'Scored live from the terms above by the same engine counsel uses. Indicative only.',
-      'checkout.summary.title': 'Order summary',
-      'checkout.summary.service': 'Contract writing',
-      'checkout.summary.turnaround': 'Turnaround',
-      'checkout.summary.days': 'business days',
-      'checkout.summary.tax': 'Tax',
-      'checkout.summary.total': 'Total due',
-      'checkout.pay.card': 'Pay by card',
-      'checkout.pay.knet': 'Pay by KNET',
-      'checkout.pay.transfer': 'Bank transfer',
-      'checkout.pay.submit': 'Continue to payment',
-      'checkout.pay.redirect': 'You will be taken to our payment provider. Card details are entered there, never on this site.',
-      'checkout.disclaimer': 'Submitting this form creates an instruction, not a retainer. An engagement letter follows before work begins.',
-      'checkout.demo': 'Preview only — this page is not connected to a payment gateway. In the live app this creates an order and redirects to the provider.',
+      'checkout.fee.title': "Fees",
+      'checkout.fee.body': "No fixed fee applies. Fees depend on the scope and complexity of the instrument and are set out in a written quote and engagement letter for your approval. Nothing is charged when you submit this form.",
+      'checkout.submit': "Submit instructions",
+      'checkout.disclaimer': "Submitting this form sends instructions; it does not create a lawyer–client engagement. An engagement letter setting out scope and fees follows before work begins. The risk score shown is an automated indicator, not legal advice.",
+      'checkout.demo': "Preview only — this page is not connected to the ordering service. In the live app, submitting sends your instructions to counsel, who reply with a written fee quote. Nothing is charged.",
       'checkout.incomplete': 'Please complete the highlighted fields.',
       'auth.signIn.title': 'Sign in',
       'auth.signIn.subtitle': 'Access your matters, drafts and executed instruments.',
       'auth.signUp.title': 'Create an account',
       'auth.signUp.subtitle': 'Commission work and track it from instruction to execution.',
-      'auth.google': 'Continue with Google',
-      'auth.or': 'or',
       'auth.fullName': 'Full name',
       'auth.email': 'Email address',
       'auth.password': 'Password',
@@ -1674,7 +1452,7 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       'auth.working': 'Working…',
       'auth.demoBadge': 'Preview — no live account',
       'auth.demo': 'Preview only — this page cannot reach the authentication service. The live app signs in against Supabase Auth.',
-      'auth.privilegeNotice': 'Communications through this platform may be privileged. Do not share your credentials.',
+      'auth.privilegeNotice': "Information you submit is treated as confidential. Do not share your credentials.",
       'auth.welcome': 'Signed in. Your details now carry through to checkout.',
       'auth.created': 'Account created. Your details now carry through to checkout.',
       'auth.badEmail': 'Please enter a valid email address.',
@@ -1682,8 +1460,6 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       'auth.signedInAs': 'Signed in as',
       'auth.duplicate': 'This email is already registered. Please sign in instead.',
       'auth.invalid': 'Invalid email or password.',
-      'auth.useGoogle': 'This account uses Google Sign-In. Use the Google button above.',
-      'auth.googlePreview': 'Google Sign-In needs the deployed app — this preview cannot reach Google. Email and password work here.',
       'auth.noCrypto': 'This browser cannot hash securely.',
       'auth.previewNotice': 'Accounts in this preview are stored in THIS BROWSER only, and passwords are hashed with PBKDF2-SHA256 (150,000 iterations, per-user salt) — never in plain text. There is no server here, so accounts do not follow you to another device. The deployed app uses Supabase Auth with bcrypt.',
       'common.notLegalAdvice': 'Demonstration interface. Output is a triage signal for a qualified practitioner, not legal advice.'
@@ -1694,7 +1470,7 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       'brand.name': 'ليكس ماريس',
       'lang.aria': 'تغيير اللغة',
       'nav.bench': 'منصة العقود',
-      'nav.dashboard': 'لوحة المتابعة',
+      'nav.dashboard': "ملفاتي",
       'nav.commission': 'اطلب صياغة',
       'nav.signIn': 'تسجيل الدخول',
       'nav.signOut': 'تسجيل الخروج',
@@ -1702,17 +1478,16 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       'intro.skip': 'تخطَّ المقدمة',
       'intro.hitAria': 'اطرق المطرقة للدخول',
       'hero.eyebrow': 'تجاري · شركات · بحري',
-      'hero.title': 'العقد، <span class="accent">مصوغاً ومُقيَّماً</span> قبل أن تنتهي المكالمة.',
-      'hero.lede': 'تُركّب ليكس ماريس العقود التجارية والبحرية من شروط مُتحقَّق منها، وتقيّم كل بند وفق نموذج تعرّض ثابت، وتنفّذها بسجل تشفيري قابل للإثبات.',
+      'hero.title': "كل بند <span class=\"accent\">مُقيَّم قبل</span> أن توقّعه.",
+      'hero.lede': "تصوغ ليكس ماريس العقود التجارية والبحرية وفقاً لشروطك، وتقيّم كل بند وفق مجموعة قواعد ثابتة ومعلنة — بالعربية أو الإنجليزية أو الفرنسية.",
       'hero.cta.primary': 'اطلب صياغة عقد',
       'hero.cta.secondary': 'جرّب منصة المخاطر',
-      'hero.trust': 'الكويت · الإمارات · إنجلترا وويلز · سنغافورة',
+      'hero.trust': "القوانين المُنمذجة: الكويت · الإمارات · إنجلترا وويلز · سنغافورة · سويسرا · نيويورك",
       'hero.gavel.hint': 'اطرق المطرقة',
-      'hero.metric.rules': 'قاعدة بنود في كل تقييم',
-      'hero.metric.turnaroundValue': '< 2 ث',
-      'hero.metric.turnaround': 'من المسودة إلى ملف مختوم',
-      'hero.metric.sealing': 'تشفير لكل مستند',
-      'hero.metric.forum': 'مقار تحكيم مُنمذجة',
+      'hero.metric.rules': "قاعدة بنود في كل تقييم",
+      'hero.metric.turnaround': "لغات للصياغة",
+      'hero.metric.sealing': "بنداً نموذجياً في محرّك الصياغة",
+      'hero.metric.forum': "مؤسسات تحكيم مُنمذجة (LCIA · ICC · DIAC)",
       'dial.exposure': 'التعرّض',
 
       'bench.eyebrow': 'فاحص المخاطر ومُنشئ العقود الفوري',
@@ -1756,7 +1531,7 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       'unit.hours.few': '{n} ساعات متواصلة',
       'unit.hours.many': '{n} ساعة متواصلة',
       'unit.hours.other': '{n} ساعة متواصلة',
-      'note.parties': 'تُستمد بيانات الأطراف من سجل القضية، ويُتحقَّق من بيانات القيد مقابل السجل التجاري المختص قبل التوقيع.',
+      'note.parties': "تظهر أسماء الأطراف وأرقام قيدها وعناوينها كحقول فارغة بين معقوفين، ويجب استكمالها والتحقق منها من السجل التجاري المختص قبل التوقيع.",
       'note.enforce': 'تُقيَّم قابلية التنفيذ بالنظر إلى الدولة التي توجد فيها أصول الطرف المقابل، لا إلى مقر التحكيم.',
       'sw.forceMajeure': 'بند القوة القاهرة',
       'sw.sanctions': 'بند العقوبات وضوابط التجارة',
@@ -1776,7 +1551,6 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       'opt.jur.QA': 'قطر',
       'opt.jur.GB': 'المملكة المتحدة',
       'opt.jur.SG': 'سنغافورة',
-      'opt.jur.TW': 'تايوان',
       'opt.jur.XX': 'غير محدد',
       'opt.law.GB': 'إنجلترا وويلز',
       'opt.law.AE': 'الإمارات العربية المتحدة',
@@ -1787,7 +1561,7 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       'opt.law.XX': 'غير محدد',
       'opt.forum.arbitration-lcia': 'تحكيم محكمة لندن للتحكيم الدولي (LCIA)، لندن',
       'opt.forum.arbitration-icc': 'تحكيم غرفة التجارة الدولية (ICC)',
-      'opt.forum.arbitration-difc': 'تحكيم مركز DIFC-LCIA',
+      'opt.forum.arbitration-difc': "تحكيم مركز دبي للتحكيم الدولي (DIAC)، مقره مركز دبي المالي العالمي",
       'opt.forum.arbitration-adhoc': 'تحكيم حرّ (غير مؤسسي)',
       'opt.forum.local-courts': 'المحاكم — دولة الطرف الأول',
       'opt.forum.local-courts.checkout': 'المحاكم — دولتك',
@@ -1812,62 +1586,61 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       'findings.none.body': 'اجتازت المسودة جميع قواعد النموذج الحالي، وهي جاهزة لمراجعة الشريك والتوقيع.',
       'findings.amend': 'التعديل المقترح',
 
-      'f.govLaw.title': 'لم يُحدَّد القانون الواجب التطبيق',
-      'f.govLaw.detail': 'في غياب اختيار صريح للقانون، يُحدَّد القانون الواجب التطبيق وفقاً لقواعد تنازع القوانين لدى الجهة التي تنظر النزاع، ولا يستطيع أي من الطرفين تقدير كلفة هذه النتيجة عند التوقيع.',
-      'f.govLaw.remediation': 'أدرِج بنداً صريحاً بشأن القانون الواجب التطبيق. وفي التجارة العابرة للحدود، يُعدّ القانون الإنجليزي أو قانون مركز دبي المالي العالمي الخيارين المحايدين المعتادين.',
-      'f.forumSilent.title': 'لا توجد آلية لتسوية النزاعات',
-      'f.forumSilent.detail': 'في غياب جهة متفق عليها لنظر النزاع، يمكن رفع الدعوى أمام أي جهة قضائية يتوافر لديها ضابط للاختصاص، مما يفتح الباب لدعاوى متوازية وسباق نحو استصدار الحكم.',
-      'f.forumSilent.remediation': 'اعتمِد شرط تحكيم يحدّد صراحةً مقر التحكيم ولغته والقواعد المطبَّقة وعدد المحكّمين.',
-      'f.adhoc.title': 'تحكيم حرّ دون دعم مؤسسي',
-      'f.adhoc.detail': 'يترك التحكيم الحر آليات تعيين المحكّمين وردّهم وتحديد أتعابهم للطرفين، ويتعثّر بمجرد توقف أحدهما عن التعاون.',
-      'f.adhoc.remediation': 'اعتمِد قواعد الأونسيترال مع تسمية سلطة التعيين، أو انتقِل إلى شرط تحكيم مؤسسي (LCIA أو ICC أو DIFC-LCIA).',
-      'f.foreignCourts.title': 'قد يتعذّر تنفيذ الحكم في الدولة التي توجد فيها الأصول',
-      'f.foreignCourts.detail': 'يجب الاعتراف بالحكم القضائي في الدولة التي توجد فيها أصول الطرف المقابل، وهذا المسار أضعف هنا بكثير من تنفيذ أحكام التحكيم.',
-      'f.foreignCourts.remediation': 'انتقِل إلى التحكيم ليكون حكم التحكيم قابلاً للتنفيذ دولياً بموجب اتفاقية نيويورك.',
-      'f.uncapped.title': 'المسؤولية غير محدودة بسقف',
-      'f.uncapped.detail': 'التعرّض غير محدود، وهو عند قيمة العقد هذه غير قابل للتأمين فعلياً ضمن الحدود التي يقبلها المكتتبون.',
-      'f.uncapped.remediation': 'حدِّد سقف المسؤولية الإجمالية بنسبة 100-150% من قيمة العقد مع الاستثناءات المعتادة: الوفاة أو الإصابة الشخصية، والغش، والتعدي على الملكية الفكرية.',
-      'f.capHigh.title': 'سقف المسؤولية لا يتناسب مع قيمة العقد',
-      'f.capHigh.detail': 'سقف يعادل {mult}× قيمة العقد يتجاوز النطاق السائد في السوق، ولن تستوعبه طبقات تأمين المسؤولية المهنية المعتادة.',
-      'f.capHigh.remediation': 'تفاوَض لخفض السقف إلى ما بين مثل قيمة العقد ومثليها، أو احصل على ملحق تأمين مخصص للشريحة الزائدة.',
-      'f.pay90.title': 'مدة السداد تتجاوز 90 يوماً',
-      'f.pay90.detail': 'تعريض رأس المال العامل لهذه المدة يحوّل العقد التجاري إلى ائتمان غير مضمون، وقد يخالف تشريعات التأخر في السداد في دولة المشتري.',
-      'f.pay90.remediation': 'خفِّض المدة إلى 30-60 يوماً، أو سعِّر الائتمان صراحةً من خلال فائدة التأخير مع ضمان مناسب.',
-      'f.pay60.title': 'مدة سداد ممتدة',
-      'f.pay60.detail': 'تستوجب المدد التي تتجاوز 60 يوماً النص صراحةً على سعر لفائدة التأخير، حتى لا تُستوعب كلفة التأخير دون مقابل.',
-      'f.pay60.remediation': 'أضِف فائدة بهامش محدد فوق السعر المرجعي المعني، تُرسمل شهرياً.',
-      'f.noSecurity.title': 'لا يوجد ضمان للسداد رغم جسامة قيمة العقد',
-      'f.noSecurity.detail': 'تعتمد قيمة العقد بكاملها على الملاءة المالية للطرف المقابل، دون أي أداة يمكن تسييلها عند الإخلال.',
-      'f.noSecurity.remediation': 'اشترِط خطاب اعتماد مستندي معزَّزاً غير قابل للإلغاء، أو خطاب ضمان بنكي صادراً عن بنك ذي تصنيف ائتماني استثماري.',
-      'f.noForceMajeure.title': 'لا يوجد بند للقوة القاهرة',
-      'f.noForceMajeure.detail': 'نظرية استحالة تحقق الغرض من العقد في القانون العام الإنجليزي أضيق بكثير من بند القوة القاهرة المصاغ، ونادراً ما تُعفي من التأخير ما لم يبلغ حد الاستحالة.',
-      'f.noForceMajeure.remediation': 'أضِف بنداً للقوة القاهرة يتضمن آلية للإخطار، والتزاماً بالتخفيف من الأضرار، وحقاً في الإنهاء بعد انقضاء مهلة قصوى.',
-      'f.noSanctions.title': 'لا يوجد بند للعقوبات أو ضوابط التجارة',
-      'f.noSanctions.detail': 'التجارة العابرة للحدود دون إقرار بشأن العقوبات، ودون التزام بالفحص، ودون حق في وقف التنفيذ، تعرّض الطرف لجزاءات قائمة على المسؤولية المطلقة ولتقليص البنوك المراسلة تعاملاتها معه.',
-      'f.noSanctions.remediation': 'أضِف إقرارات وضمانات بشأن العقوبات، والتزاماً مستمراً بالفحص، وحقاً في وقف التنفيذ أو الإنهاء دون مسؤولية.',
-      'f.noConvenience.title': 'لا يوجد حق في الإنهاء لدواعي الملاءمة',
-      'f.noConvenience.detail': 'يقتصر الخروج من العقد على حالات الإخلال والإعسار، مما يسلب الطرف المرونة إذا تغيّرت الظروف التجارية في غير صالحه.',
-      'f.noConvenience.remediation': 'انظر في النص على حق الإنهاء لدواعي الملاءمة بعد فترة التزام أولية، مقابل رسم إنهاء محدد.',
-      'f.noIndemnity.title': 'لا يوجد التزام صريح بالتعويض',
-      'f.noIndemnity.detail': 'يقتصر الاسترداد على التعويض عن الإخلال، مع مراعاة قواعد الضرر غير المتوقع ورابطة السببية وواجب التخفيف من الضرر.',
-      'f.noIndemnity.remediation': 'أضِف التزامات محددة بالتعويض عن مطالبات الغير المتعلقة بالملكية الفكرية، والجزاءات التنظيمية، والأضرار التي تلحق بالبضائع أو الممتلكات.',
-      'f.noInsurance.title': 'لم يُحدَّد الطرف المسؤول عن التأمين',
-      'f.noInsurance.detail': 'عند سكوت العقد، تتبع التغطية التأمينية انتقال المخاطر بموجب قاعدة إنكوترمز المطبَّقة، وكثيراً ما يسيء الأطراف فهمها، فتنشأ فجوة في التغطية أثناء النقل.',
-      'f.noInsurance.remediation': 'حدِّد الطرف الملتزم بالتأمين وقيمة التأمين (عادةً 110% من قيمة CIF)، وسمِّ الطرف الآخر مستفيداً من التعويض.',
-      'f.noLaytime.title': 'لم تُحدَّد مدة التحميل والتفريغ',
-      'f.noLaytime.detail': 'في غياب مدة محددة للتحميل والتفريغ، يظل موعد بدء احتساب غرامة التأخير غير محدد، وهو أكثر العيوب عرضةً للتحكيم في صياغة مشارطات الإيجار.',
-      'f.noLaytime.remediation': 'حدِّد مدة التحميل والتفريغ بالساعات المتواصلة، وعرِّف إشعار الجاهزية، وبيِّن الفترات المستثناة.',
-      'f.noDemurrage.title': 'لم يُحدَّد معدل غرامة التأخير',
-      'f.noDemurrage.detail': 'في غياب معدل متفق عليه، لا يُسترد التعويض عن التأخير إلا بوصفه تعويضاً عن الاحتجاز، وهو أصعب إثباتاً وأبطأ تحصيلاً.',
-      'f.noDemurrage.remediation': 'حدِّد معدلاً يومياً لغرامة التأخير يُستحق بنسبة تناسبية، مع مدة صريحة لسقوط المطالبات.',
+      'f.govLaw.title': "لم يُحدَّد القانون الواجب التطبيق",
+      'f.govLaw.detail': "في غياب اختيار صريح للقانون، يُحدَّد القانون الواجب التطبيق وفق قواعد تنازع القوانين لدى جهة النظر في النزاع، ولا يستطيع أي من الطرفين تقدير هذه النتيجة عند التوقيع.",
+      'f.govLaw.remediation': "أدرج بنداً صريحاً للقانون الواجب التطبيق. في التجارة العابرة للحدود، يُعدّ القانون الإنجليزي أو قانون مركز دبي المالي العالمي الخيارين المحايدين المعتادين.",
+      'f.forumSilent.title': "لا توجد آلية لتسوية النزاعات",
+      'f.forumSilent.detail': "في غياب جهة متفق عليها لتسوية النزاع، يمكن رفع الدعوى في أي دولة يتوافر فيها ضابط اختصاص، مما يفتح الباب لدعاوى متوازية وسباق نحو الحكم.",
+      'f.forumSilent.remediation': "اعتمد شرط تحكيم محدد المقر، مع النص صراحة على المقر واللغة والقواعد وعدد المحكّمين.",
+      'f.adhoc.title': "تحكيم حرّ دون دعم مؤسسي",
+      'f.adhoc.detail': "يترك التحكيم الحرّ آليات التعيين والردّ والأتعاب للطرفين، ويتعثّر بمجرد توقّف أحدهما عن التعاون.",
+      'f.adhoc.remediation': "اعتمد قواعد الأونسيترال مع تسمية سلطة تعيين، أو انتقل إلى شرط تحكيم مؤسسي (LCIA أو ICC أو DIAC).",
+      'f.foreignCourts.title': "طريق التنفيذ ضد الطرف المقابل غير مُتحقَّق منه",
+      'f.foreignCourts.detail': "يجب الاعتراف بالحكم القضائي في الدولة التي توجد فيها أصول الطرف المقابل. ومع عدم تحديد دولة الطرف المقابل يتعذّر تقييم هذا الطريق، بينما يُنفَّذ حكم التحكيم في أكثر من 170 دولة منضمة إلى اتفاقية نيويورك.",
+      'f.foreignCourts.remediation': "حدّد دولة الطرف المقابل، أو انتقل إلى تحكيم يكون مقره في دولة منضمة إلى اتفاقية نيويورك.",
+      'f.uncapped.title': "المسؤولية غير محدودة",
+      'f.uncapped.detail': "التعرّض غير محدود، وعند هذه القيمة التعاقدية يتعذّر عملياً التأمين عليه ضمن الحدود التي يقبلها المؤمِّنون.",
+      'f.uncapped.remediation': "حدّد سقف المسؤولية الإجمالية بما بين 100% و150% من قيمة العقد، مع الاستثناءات المعتادة: الوفاة أو الإصابة الشخصية، والغش، والتعدي على الملكية الفكرية.",
+      'f.capHigh.title': "سقف المسؤولية غير متناسب مع قيمة العقد",
+      'f.capHigh.detail': "سقف يعادل {mult} ضعف القيمة يتجاوز النطاق السائد في السوق، ولن يستوعبه غطاء تأمين المسؤولية المهنية المعتاد.",
+      'f.capHigh.remediation': "فاوض لخفض السقف إلى ما بين ضعف وضعفي القيمة، أو احصل على ملحق تأمين خاص للشريحة الزائدة.",
+      'f.pay90.title': "مدة السداد تتجاوز 90 يوماً",
+      'f.pay90.detail': "تعرّض رأس المال العامل لهذه المدة يحوّل العقد التجاري إلى ائتمان غير مضمون، وقد يخالف تشريعات التأخر في السداد في دولة المشتري.",
+      'f.pay90.remediation': "خفّض المدة إلى 30–60 يوماً، أو سعّر الائتمان صراحة عبر فائدة التأخير مع ضمان.",
+      'f.pay60.title': "مدة سداد ممتدة",
+      'f.pay60.detail': "المدد التي تتجاوز 60 يوماً تستوجب النص صراحة على سعر فائدة التأخير، حتى لا تُستوعب تكلفة التأخير بصمت.",
+      'f.pay60.remediation': "إذا كان القانون الواجب التطبيق يُجيز الفائدة الاتفاقية، فأضف فائدة بهامش محدد فوق السعر المرجعي المعني. أما في الأنظمة المستندة إلى أحكام الشريعة (كالمملكة العربية السعودية) فلا يُعتدّ بالفائدة، ويلزم اعتماد آلية أخرى للتأخر في السداد.",
+      'f.noSecurity.title': "لا يوجد ضمان للسداد رغم أهمية قيمة العقد",
+      'f.noSecurity.detail': "تعتمد قيمة العقد بالكامل على الملاءة المالية للطرف المقابل، دون أي أداة يمكن تسييلها عند الإخلال.",
+      'f.noSecurity.remediation': "اشترط خطاب اعتماد مستندي معزَّزاً وغير قابل للإلغاء، أو خطاب ضمان من بنك ذي تصنيف استثماري.",
+      'f.noForceMajeure.title': "لا يوجد بند للقوة القاهرة",
+      'f.noForceMajeure.detail': "في غياب بند صريح، يتوقف الإعفاء على القواعد العامة في القانون الواجب التطبيق (نظرية استحالة التنفيذ (frustration) في القانون الإنجليزي، وأحكام القوة القاهرة والظروف الطارئة في القوانين المدنية كقانوني الكويت والإمارات)، وهي أضيق وأقل قابلية للتوقّع من بند مصاغ.",
+      'f.noForceMajeure.remediation': "أضف بند قوة قاهرة يتضمن آلية الإخطار، وواجب التخفيف من الأضرار، وحقاً نهائياً في الإنهاء.",
+      'f.noSanctions.title': "لا يوجد بند للعقوبات وضوابط التجارة",
+      'f.noSanctions.detail': "التجارة العابرة للحدود دون إقرار بشأن العقوبات أو تعهّد بالفحص أو حق في التعليق تعرّض الطرف لعقوبات قائمة على المسؤولية المطلقة ولتقليص البنوك المراسلة لتعاملاتها معه.",
+      'f.noSanctions.remediation': "أضف إقرارات وضمانات بشأن العقوبات، وتعهّداً بالفحص المستمر، وحقاً في التعليق أو الإنهاء دون مسؤولية.",
+      'f.noConvenience.title': "لا يوجد حق في الإنهاء للملاءمة",
+      'f.noConvenience.detail': "يقتصر الخروج من العقد على حالات الإخلال والإعسار، مما يُفقد الطرف المرونة إذا تغيّرت الظروف التجارية في غير صالحه.",
+      'f.noConvenience.remediation': "فكّر في حق إنهاء للملاءمة بعد فترة التزام أولية، مقابل رسم إنهاء محدد.",
+      'f.noIndemnity.title': "لا يوجد تعويض صريح",
+      'f.noIndemnity.detail': "يقتصر الاسترداد على التعويض عن الإخلال، رهناً بقواعد توقّع الضرر والسببية وواجب التخفيف منه.",
+      'f.noIndemnity.remediation': "أضف تعويضات محددة عن مطالبات الغير المتعلقة بالملكية الفكرية، والجزاءات التنظيمية، والأضرار التي تلحق بالبضائع أو الممتلكات.",
+      'f.noInsurance.title': "لم تُحدَّد مسؤولية التأمين",
+      'f.noInsurance.detail': "عند سكوت العقد، يتبع التأمين انتقال المخاطر وفق قاعدة الإنكوترمز المطبَّقة، وهو ما يُساء فهمه كثيراً، فتنشأ فجوة في التغطية أثناء النقل.",
+      'f.noInsurance.remediation': "حدّد من يتولى التأمين، وبأي قيمة (عادةً 110% من قيمة CIF)، وسمِّ الطرف الآخر مستفيداً من التعويض.",
+      'f.noLaytime.title': "لم تُحدَّد مدة التحميل والتفريغ",
+      'f.noLaytime.detail': "في غياب هذه المدة، يصبح موعد بدء احتساب غرامة التأخير غير محدد. وهذا أكثر عيوب صياغة مشارطات الإيجار عرضاً على التحكيم.",
+      'f.noLaytime.remediation': "حدّد المدة بالساعات المتواصلة، وعرّف إشعار الجاهزية، وبيّن الفترات المستثناة.",
+      'f.noDemurrage.title': "لم يُحدَّد سعر غرامة التأخير",
+      'f.noDemurrage.detail': "في غياب سعر متفق عليه، لا يُسترد التأخير إلا بوصفه تعويضاً عن الاحتجاز، وهو أصعب إثباتاً وأبطأ استرداداً.",
+      'f.noDemurrage.remediation': "حدّد سعراً يومياً لغرامة التأخير يُستحق بنسبة جزء اليوم، مع مدة سقوط صريحة للمطالبات.",
 
-      'cite.rome': 'لائحة روما الأولى (EC) رقم 593/2008، المادة 3',
-      'cite.nyc2': 'اتفاقية نيويورك لعام 1958، المادة الثانية',
-      'cite.nyc3': 'اتفاقية نيويورك لعام 1958، المادة الثالثة',
-      'cite.ucp': 'الأصول والأعراف الموحدة للاعتمادات المستندية (UCP 600)',
-      'cite.sanctions': 'لوائح OFAC‏ 31 CFR الجزء 500 وما يليه؛ لائحة الاتحاد الأوروبي رقم 833/2014',
-      'cite.incoterms': 'قواعد إنكوترمز 2020، البندان A5/B5',
-      'cite.laytime': 'تعريفات مدة التحميل والتفريغ لمشارطات الإيجار لعام 2013 (BIMCO)',
+      'cite.rome': "لائحة روما الأولى (EC) رقم 593/2008، المادتان 3 و4؛ قانون المعاملات المدنية الإماراتي (القانون الاتحادي رقم 5 لسنة 1985)، المادة 19",
+      'cite.nyc3': "اتفاقية نيويورك لعام 1958، المادة الثالثة",
+      'cite.ucp': "UCP 600",
+      'cite.sanctions': "عقوبات مجلس الأمن الدولي؛ لوائح مكتب مراقبة الأصول الأجنبية الأمريكي OFAC (31 CFR Chapter V)؛ التدابير التقييدية للاتحاد الأوروبي، ومنها اللائحة (EU) رقم 833/2014",
+      'cite.incoterms': "قواعد إنكوترمز 2020، البندان A5/B5",
+      'cite.laytime': "تعريفات مدد التحميل والتفريغ لمشارطات الإيجار 2013",
 
       'clause.definitions': 'التعريفات والتفسير',
       'clause.scope': 'نطاق الاتفاقية',
@@ -1904,24 +1677,24 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       'doc.forum.foreign-courts': 'تختص محاكم الدولة التي يتبعها الطرف الثاني اختصاصاً حصرياً بنظر أي نزاع',
       'doc.forum.arbitration-lcia': 'يُحال أي نزاع إلى التحكيم ويُفصل فيه نهائياً وفقاً لقواعد محكمة لندن للتحكيم الدولي (LCIA)، ويكون مقر التحكيم لندن، أمام هيئة من ثلاثة محكّمين، وتكون لغة التحكيم الإنجليزية',
       'doc.forum.arbitration-icc': 'يُحال أي نزاع إلى التحكيم ويُفصل فيه نهائياً وفقاً لقواعد التحكيم لدى غرفة التجارة الدولية (ICC)، أمام هيئة من ثلاثة محكّمين، وتكون لغة التحكيم الإنجليزية',
-      'doc.forum.arbitration-difc': 'يُحال أي نزاع إلى التحكيم ويُفصل فيه نهائياً وفقاً لقواعد التحكيم لدى مركز DIFC-LCIA، ويكون مقر التحكيم مركز دبي المالي العالمي، أمام هيئة من ثلاثة محكّمين، وتكون لغة التحكيم الإنجليزية',
+      'doc.forum.arbitration-difc': "يُحال أي نزاع إلى التحكيم ويُفصل فيه نهائياً وفقاً لقواعد التحكيم لدى مركز دبي للتحكيم الدولي (DIAC)، ويكون مقر التحكيم مركز دبي المالي العالمي، أمام هيئة من ثلاثة محكّمين، وتكون لغة التحكيم الإنجليزية",
       'doc.forum.arbitration-adhoc': 'يُحال أي نزاع إلى تحكيم حرّ (غير مؤسسي) وفق ما يتفق عليه الطرفان في حينه',
       'doc.forum.silent': '[لم تُحدَّد آلية تسوية النزاعات]',
       'doc.sec.lc': 'خطاب اعتماد مستندي معزَّز غير قابل للإلغاء، صادر عن بنك يقبله الطرف الأول، وخاضع للأصول والأعراف الموحدة للاعتمادات المستندية (UCP 600)',
       'doc.sec.bank-guarantee': 'خطاب ضمان بنكي مستحق الدفع عند أول طلب، صادر عن بنك ذي تصنيف ائتماني استثماري يقبله الطرف الأول',
       'doc.sec.parent-guarantee': 'ضمان لالتزامات الطرف الثاني صادر عن الشركة الأم النهائية التي يتبعها',
       'doc.sec.none': 'لا يوجد ضمان',
-      'doc.recital.date': 'حُرِّرت هذه الاتفاقية بتاريخ {date} تحت المرجع رقم LM-2026-0417.',
-      'doc.recital.first': '(1) شركة MERIDIAN TRADING DMCC، وهي شركة مسجّلة في دولة الإمارات العربية المتحدة تحت الرقم DMCC-114820، ويقع مقرها المسجّل في الوحدة 3402، برج الماس، أبراج بحيرات جميرا، دبي (ويُشار إليها فيما يلي بـ"الطرف الأول")؛ و',
-      'doc.recital.second': '(2) شركة NORTHGATE COMMODITIES LTD، وهي شركة مسجّلة في إنجلترا وويلز تحت الرقم 09441237، ويقع مقرها المسجّل في 12 شارع ليدنهول، لندن EC3V 1LP (ويُشار إليها فيما يلي بـ"الطرف الثاني").',
-      'doc.recital.agreed': 'وقد اتفق الطرفان على ما يلي:',
+      'doc.recital.date': "حُرّرت هذه الاتفاقية بتاريخ [التاريخ] تحت المرجع رقم [المرجع]، بين كلٍّ من:",
+      'doc.recital.first': "(1) [اسم الطرف الأول]، شركة مسجّلة في [دولة القيد] تحت رقم [رقم القيد]، ويقع مكتبها المسجّل في [عنوان المقر المسجّل] (ويُشار إليها فيما يلي بـ«الطرف الأول»)؛ و",
+      'doc.recital.second': "(2) [اسم الطرف الثاني]، شركة مسجّلة في [دولة القيد] تحت رقم [رقم القيد]، ويقع مكتبها المسجّل في [عنوان المقر المسجّل] (ويُشار إليها فيما يلي بـ«الطرف الثاني»).",
+      'doc.recital.agreed': "وقد اتفق الطرفان على ما يلي:",
       'doc.definitions.1': 'يكون للمصطلحات المعرَّفة الواردة في هذه الاتفاقية المعاني المحددة لها في الملحق رقم (1). وتشمل الإشارة إلى أي تشريع ذلك التشريع بصيغته المعدَّلة أو المعاد إصداره من وقت لآخر.',
       'doc.definitions.2': 'وُضعت العناوين للتيسير فحسب، ولا أثر لها في تفسير هذه الاتفاقية.',
       'doc.scope.1': 'يلتزم الطرف الأول بتقديم البضائع أو الخدمات أو الحمولة المتاحة على السفينة المبيَّنة في الملحق رقم (2)، ويلتزم الطرف الثاني بقبولها، وذلك وفقاً لأحكام هذه الاتفاقية ومع مراعاتها.',
       'doc.scope.2': 'تبلغ القيمة الإجمالية لهذه الاتفاقية {value} (ويُشار إليها فيما يلي بـ"قيمة العقد").',
       'doc.payment.1': 'يلتزم الطرف الثاني بسداد كل فاتورة صحيحة خلال {days} من تاريخ إصدارها، بأموال متاحة للتصرف فوراً، دون أي مقاصة أو استقطاع.',
-      'doc.payment.2.extended': 'تستحق على المبالغ غير المسددة في مواعيد استحقاقها فائدة تأخير بواقع 4% سنوياً فوق السعر المرجعي المعمول به، تُحتسب يومياً وتُرسمل شهرياً، اعتباراً من تاريخ الاستحقاق حتى تمام السداد.',
-      'doc.payment.2.statutory': 'تستحق على المبالغ غير المسددة في مواعيد استحقاقها فائدة تأخير بالسعر القانوني اعتباراً من تاريخ الاستحقاق حتى تمام السداد.',
+      'doc.payment.2.extended': "في الحدود التي يُجيزها القانون الواجب التطبيق، تستحق على المبالغ غير المسدَّدة في مواعيد استحقاقها فائدة بنسبة 4% سنوياً فوق السعر المرجعي المطبَّق، تُحتسب يومياً، من تاريخ الاستحقاق حتى تمام السداد.",
+      'doc.payment.2.statutory': "في الحدود التي يُجيزها القانون الواجب التطبيق، تستحق على المبالغ غير المسدَّدة في مواعيد استحقاقها الفائدة القانونية من تاريخ الاستحقاق حتى تمام السداد.",
       'doc.security.1': 'كشرط مسبق لنفاذ التزامات الطرف الأول، يلتزم الطرف الثاني بتقديم {security} والمحافظة على سريانه، بمبلغ لا يقل عن قيمة العقد.',
       'doc.laytime.1': 'تكون مدة التحميل والتفريغ {hours} إجمالاً، إذا سمحت الأحوال الجوية، باستثناء أيام الأحد والعطلات الرسمية، وتبدأ من تقديم إشعار جاهزية صحيح.',
       'doc.laytime.none': '[لم تُحدَّد مدة التحميل والتفريغ — لا تستحق غرامة التأخير ما لم تُحدَّد هذه المدة.]',
@@ -1947,57 +1720,24 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       'doc.confidentiality.1': 'يلتزم كل طرف بالحفاظ على سرية جميع المعلومات التي يفصح عنها الطرف الآخر والموسومة بأنها سرية أو التي يُفهم بصورة معقولة أنها كذلك، وألا يستخدمها إلا لأغراض هذه الاتفاقية.',
       'doc.confidentiality.2': 'ويظل هذا الالتزام سارياً لمدة خمس سنوات بعد انتهاء هذه الاتفاقية.',
       'doc.law.1': 'القانون الواجب التطبيق على هذه الاتفاقية، وعلى أي نزاع ينشأ عنها أو يتصل بها، وفي تفسيرها، هو {law}.',
-      'doc.dispute.1': 'يتفق الطرفان على أنه {forum}.',
+      'doc.dispute.1': 'اتفق الطرفان على أن {forum}.',
       'doc.dispute.2': 'ليس في هذا البند ما يمنع أياً من الطرفين من طلب اتخاذ تدابير مؤقتة أو تحفظية من أي محكمة مختصة.',
-      'doc.execution.1': 'يجوز تحرير هذه الاتفاقية من عدة نسخ وتوقيعها إلكترونياً، وتُعدّ كل نسخة منها أصلاً، وتشكّل جميع النسخ معاً مستنداً واحداً.',
-      'doc.execution.2': 'يتفق الطرفان على أن التوقيع الإلكتروني المُثبت عبر المنصة، مقروناً بسجل التدقيق المرتبط به وبالبصمة الرقمية للمستند، يستوفي أي اشتراط للتوقيع الكتابي.',
+      'doc.execution.1': "يجوز توقيع هذه الاتفاقية على نسخ متعددة وبالتوقيع الإلكتروني، وتُعدّ كل نسخة منها أصلاً، وتشكّل جميعها معاً صكاً واحداً.",
+      'doc.execution.2': "في الحدود التي يُجيزها القانون المعمول به، يتفق الطرفان على أن التوقيع الإلكتروني يستوفي أي اشتراط للتوقيع الكتابي. وحيثما يشترط القانون شكلاً معيناً أو توثيقاً أو توقيعاً خطياً، وجب استيفاء ذلك الشرط.",
       'draft.flag': '{sev} — {title}',
       'draft.foot': 'مسودة — ليست للتوقيع. أُعدّت بواسطة محرّك المستندات في ليكس ماريس.',
-
-      'matter.eyebrow': 'لوحة العميل',
-      'matter.title': 'يعرف العميل دائماً أين وصل ملفه.',
-      'matter.intro': 'تُبثّ حالة القضية عبر قناة اتصال موثّقة، فتظهر الصياغة والمراجعة وملاحظات الطرف المقابل والتوقيع على هذا المسار لحظة حدوثها.',
-      'matter.progress': 'تقدّم القضية',
-      'matter.count': 'اكتملت {done} من أصل {total} مراحل',
-      'matter.alerts': 'تنبيهات الامتثال',
-      'matter.vault': 'خزنة المستندات المشفّرة',
-      'stage.received': 'استلام التعليمات',
-      'stage.drafted': 'إعداد المسودة الأولى',
-      'stage.riskPass': 'اكتمال فحص المخاطر — {n} ملاحظات',
-      'stage.partner': 'مراجعة الشريك',
-      'stage.counterparty': 'بانتظار ملاحظات الطرف المقابل',
-      'stage.rescreen': 'يلزم إعادة فحص العقوبات قبل التوقيع',
-      'stage.execution': 'التوقيع والختم',
-      'stage.when': '{date}، {time}',
-      'stage.due': 'الموعد النهائي {date}',
-      'stage.screenExpired': 'انتهت صلاحية الفحص في {date}',
-      'stage.notStarted': 'لم تبدأ بعد',
-      'stage.actionRequired': 'إجراء مطلوب',
-      'actor.portal': 'بوابة العميل',
-      'actor.engine': 'محرّك المستندات',
-      'actor.scanner': 'الفاحص v1.0.0',
-      'actor.partner': 'ح. الراشد',
-      'alert.screening.title': 'انتهت صلاحية فحص العقوبات',
-      'alert.screening.body': 'مضى على سجل فحص الطرف المقابل 91 يوماً، ويظل التوقيع معلّقاً إلى حين تسجيل فحص جديد مقابل القوائم الموحدة الحالية.',
-      'alert.timebar.title': 'اقتراب سقوط مطالبة غرامة التأخير',
-      'alert.timebar.body': 'يجب تقديم المطالبة LM-2026-0388 مشفوعةً بالمستندات المؤيدة خلال 11 يوماً، وإلا سقطت بموجب البند 6.2.',
-      'alert.lc.title': 'انتهاء صلاحية خطاب الاعتماد',
-      'alert.lc.body': 'ينتهي خطاب الاعتماد المعزَّز الخاص بالقضية LM-2026-0402 خلال 24 يوماً، أي قبل فترة الشحنة الأخيرة.',
-      'vault.charter': 'مشارطة إيجار بالرحلة — موقّعة',
-      'vault.supply': 'اتفاقية توريد — المسودة 4',
-      'vault.screening': 'سجل فحص العقوبات',
-      'vault.bol': 'سند الشحن — السفينة MV Sirocco',
-      'vault.sealed': 'مختوم · AES-256-GCM',
-      'vault.expired': 'منتهي الصلاحية',
+      'dash.heading': "ملفاتي",
+      'dash.lede': "جميع التكليفات التي أرسلتها، مع المرحلة الحالية لكل منها.",
+      'dash.empty.title': "لا توجد ملفات بعد",
+      'dash.empty.body': "عند إرسال أي تكليف، سيظهر هنا مع مرحلته الحالية.",
 
       'checkout.eyebrow': 'طلب خدمة',
       'checkout.title': 'صياغة العقود',
-      'checkout.subtitle': 'أخبرنا بالشروط. يتولى المحامون صياغة العقد وإعادته إليك مع تقرير مخاطر على مستوى البنود.',
+      'checkout.subtitle': "أخبرنا بالشروط. يراجع المحامي تكليفك ويرسل لك عرض أتعاب مكتوباً قبل البدء بأي صياغة.",
       'checkout.section.instrument': 'العقد',
       'checkout.section.parties': 'الأطراف',
       'checkout.section.terms': 'الشروط التجارية',
       'checkout.section.contact': 'بياناتك',
-      'checkout.section.payment': 'الدفع',
       'checkout.field.instrumentType': 'نوع العقد',
       'checkout.field.deadline': 'المطلوب بحلول',
       'checkout.field.firstParty': 'جهتك',
@@ -2018,26 +1758,16 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       'checkout.field.country': 'بلد الفوترة',
       'checkout.riskPreview.title': 'التعرّض المبدئي',
       'checkout.riskPreview.note': 'يُحسب فورياً من الشروط أعلاه بالمحرّك نفسه الذي يستخدمه المحامون. للاسترشاد فقط.',
-      'checkout.summary.title': 'ملخص الطلب',
-      'checkout.summary.service': 'صياغة عقد',
-      'checkout.summary.turnaround': 'مدة التنفيذ',
-      'checkout.summary.days': 'أيام عمل',
-      'checkout.summary.tax': 'الضريبة',
-      'checkout.summary.total': 'الإجمالي المستحق',
-      'checkout.pay.card': 'الدفع بالبطاقة',
-      'checkout.pay.knet': 'الدفع عبر كي-نت',
-      'checkout.pay.transfer': 'حوالة بنكية',
-      'checkout.pay.submit': 'المتابعة إلى الدفع',
-      'checkout.pay.redirect': 'سيتم تحويلك إلى مزوّد الدفع. تُدخل بيانات البطاقة هناك، وليس على هذا الموقع.',
-      'checkout.disclaimer': 'إرسال هذا النموذج يُنشئ تكليفاً وليس عقد وكالة. يصدر خطاب التكليف قبل بدء العمل.',
-      'checkout.demo': 'معاينة فقط — هذه الصفحة غير موصولة بمزوّد دفع. في التطبيق الفعلي يُنشأ الطلب ويُحوَّل المستخدم إلى المزوّد.',
+      'checkout.fee.title': "الأتعاب",
+      'checkout.fee.body': "لا توجد أتعاب ثابتة. تُحدَّد الأتعاب بحسب نطاق العقد ودرجة تعقيده، وتُبيَّن في عرض مكتوب وخطاب تكليف لموافقتك. لا يُستوفى أي مبلغ عند إرسال هذا النموذج.",
+      'checkout.submit': "إرسال التكليف",
+      'checkout.disclaimer': "إرسال هذا النموذج هو تقديم تكليف، ولا يُنشئ بذاته علاقة وكالة بين المحامي والعميل. يُرسَل خطاب تكليف يحدد النطاق والأتعاب قبل بدء العمل. مؤشر المخاطر المعروض تقييم آلي، وليس استشارة قانونية.",
+      'checkout.demo': "معاينة فقط — هذه الصفحة غير موصولة بخدمة الطلبات. في التطبيق الفعلي يُرسَل تكليفك إلى المحامي، الذي يردّ بعرض أتعاب مكتوب، ولا يُستوفى أي مبلغ.",
       'checkout.incomplete': 'يرجى إكمال الحقول المحدَّدة.',
       'auth.signIn.title': 'تسجيل الدخول',
       'auth.signIn.subtitle': 'اطّلع على قضاياك ومسوداتك والعقود الموقّعة.',
       'auth.signUp.title': 'إنشاء حساب',
       'auth.signUp.subtitle': 'اطلب العمل وتابعه من التكليف حتى التوقيع.',
-      'auth.google': 'المتابعة باستخدام Google',
-      'auth.or': 'أو',
       'auth.fullName': 'الاسم الكامل',
       'auth.email': 'البريد الإلكتروني',
       'auth.password': 'كلمة المرور',
@@ -2049,7 +1779,7 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       'auth.working': 'جارٍ المعالجة…',
       'auth.demoBadge': 'معاينة — لا يوجد حساب فعلي',
       'auth.demo': 'معاينة فقط — لا تستطيع هذه الصفحة الوصول إلى خدمة المصادقة. التطبيق الفعلي يسجّل الدخول عبر Supabase Auth.',
-      'auth.privilegeNotice': 'قد تكون المراسلات عبر هذه المنصة مشمولة بالسرية المهنية. لا تشارك بيانات دخولك.',
+      'auth.privilegeNotice': "تُعامَل المعلومات التي ترسلها بسرية. لا تشارك بيانات دخولك مع أحد.",
       'auth.welcome': 'تم تسجيل الدخول. ستُستخدم بياناتك في صفحة الدفع.',
       'auth.created': 'تم إنشاء الحساب. ستُستخدم بياناتك في صفحة الدفع.',
       'auth.badEmail': 'يرجى إدخال بريد إلكتروني صحيح.',
@@ -2057,8 +1787,6 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       'auth.signedInAs': 'مسجَّل الدخول باسم',
       'auth.duplicate': 'هذا البريد الإلكتروني مسجَّل بالفعل. يرجى تسجيل الدخول.',
       'auth.invalid': 'البريد الإلكتروني أو كلمة المرور غير صحيحة.',
-      'auth.useGoogle': 'هذا الحساب يستخدم تسجيل الدخول عبر Google. استخدم زر Google أعلاه.',
-      'auth.googlePreview': 'تسجيل الدخول عبر Google يتطلّب التطبيق المنشور — هذه المعاينة لا تستطيع الوصول إلى Google. البريد الإلكتروني وكلمة المرور يعملان هنا.',
       'auth.noCrypto': 'لا يستطيع هذا المتصفح تجزئة كلمة المرور بصورة آمنة.',
       'auth.previewNotice': 'تُحفظ الحسابات في هذه المعاينة داخل هذا المتصفح فقط، وتُجزَّأ كلمات المرور بخوارزمية PBKDF2-SHA256 (150,000 تكرار، مع ملح خاص لكل مستخدم) — ولا تُخزَّن كنص صريح أبداً. لا يوجد خادم هنا، لذا لا تنتقل الحسابات إلى جهاز آخر. التطبيق المنشور يستخدم Supabase Auth مع bcrypt.',
       'common.notLegalAdvice': 'واجهة عرض توضيحية. النتيجة مؤشر فرز لممارس مؤهّل، وليست استشارة قانونية.'
@@ -2069,7 +1797,7 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       'brand.name': 'LEX MARIS',
       'lang.aria': 'Changer de langue',
       'nav.bench': 'Atelier contractuel',
-      'nav.dashboard': 'Tableau de bord',
+      'nav.dashboard': "Mes dossiers",
       'nav.commission': 'Commander',
       'nav.signIn': 'Se connecter',
       'nav.signOut': 'Se déconnecter',
@@ -2077,17 +1805,16 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       'intro.skip': 'Passer l’introduction',
       'intro.hitAria': 'Frappez le maillet pour entrer',
       'hero.eyebrow': 'Commercial · Sociétés · Maritime',
-      'hero.title': 'L’acte, <span class="accent">rédigé et évalué</span> avant la fin de l’appel.',
-      'hero.lede': 'Lex Maris assemble des actes commerciaux et maritimes à partir de conditions validées, évalue chaque clause selon un modèle d’exposition constant et en organise la signature avec une piste cryptographique vérifiable.',
+      'hero.title': "Chaque clause <span class=\"accent\">évaluée avant</span> votre signature.",
+      'hero.lede': "Lex Maris rédige vos instruments commerciaux et maritimes à partir de vos conditions et évalue chaque clause selon un ensemble de règles fixe et publié — en arabe, en anglais ou en français.",
       'hero.cta.primary': 'Commander un contrat',
       'hero.cta.secondary': 'Essayer l’analyse des risques',
-      'hero.trust': 'Koweït · Émirats arabes unis · Angleterre et pays de Galles · Singapour',
+      'hero.trust': "Droits applicables modélisés : Koweït · Émirats · Angleterre et pays de Galles · Singapour · Suisse · New York",
       'hero.gavel.hint': 'Frappez le maillet',
-      'hero.metric.rules': 'règles de clause par analyse',
-      'hero.metric.turnaroundValue': '< 2 s',
-      'hero.metric.turnaround': 'du projet au PDF scellé',
-      'hero.metric.sealing': 'scellement par document',
-      'hero.metric.forum': 'sièges arbitraux modélisés',
+      'hero.metric.rules': "règles de clauses par analyse",
+      'hero.metric.turnaround': "langues de rédaction",
+      'hero.metric.sealing': "clauses types dans le moteur de rédaction",
+      'hero.metric.forum': "institutions d'arbitrage modélisées (LCIA · CCI · DIAC)",
       'dial.exposure': 'exposition',
 
       'bench.eyebrow': 'Analyse des risques et rédaction en direct',
@@ -2124,7 +1851,7 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       'unit.hours.one': '{n} heure courante',
       'unit.hours.many': '{n} heures courantes',
       'unit.hours.other': '{n} heures courantes',
-      'note.parties': 'Les informations relatives aux parties proviennent du dossier. Les données d’immatriculation sont vérifiées auprès du registre du commerce compétent avant la signature.',
+      'note.parties': "Les dénominations, numéros d'immatriculation et adresses des parties figurent entre crochets. Ils doivent être complétés et vérifiés auprès du registre du commerce compétent avant signature.",
       'note.enforce': 'Le caractère exécutoire est apprécié au regard de l’État où se trouvent les actifs du cocontractant, et non du siège.',
       'sw.forceMajeure': 'Clause de force majeure',
       'sw.sanctions': 'Clause de sanctions et de contrôle des échanges',
@@ -2144,7 +1871,6 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       'opt.jur.QA': 'Qatar',
       'opt.jur.GB': 'Royaume-Uni',
       'opt.jur.SG': 'Singapour',
-      'opt.jur.TW': 'Taïwan',
       'opt.jur.XX': 'Non précisé',
       'opt.law.GB': 'Angleterre et pays de Galles',
       'opt.law.AE': 'Émirats arabes unis',
@@ -2155,7 +1881,7 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       'opt.law.XX': 'Non précisé',
       'opt.forum.arbitration-lcia': 'Arbitrage LCIA, Londres',
       'opt.forum.arbitration-icc': 'Arbitrage CCI',
-      'opt.forum.arbitration-difc': 'Arbitrage DIFC-LCIA',
+      'opt.forum.arbitration-difc': "Arbitrage DIAC, siège au DIFC",
       'opt.forum.arbitration-adhoc': 'Arbitrage ad hoc',
       'opt.forum.local-courts': 'Tribunaux — ressort du Premier Contractant',
       'opt.forum.local-courts.checkout': 'Tribunaux — votre ressort',
@@ -2180,62 +1906,61 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       'findings.none.body': 'Toutes les règles du modèle actuel sont satisfaites. Le projet est prêt pour la revue par l’associé et la signature.',
       'findings.amend': 'Modification recommandée',
 
-      'f.govLaw.title': 'Aucun droit applicable choisi',
-      'f.govLaw.detail': 'À défaut de choix exprès, la loi applicable sera déterminée par les règles de conflit de lois du for saisi. Aucune des parties ne peut chiffrer ce risque au moment de la signature.',
-      'f.govLaw.remediation': 'Insérer une clause expresse de droit applicable. Dans le commerce international, le droit anglais ou le droit du DIFC constituent les choix neutres usuels.',
-      'f.forumSilent.title': 'Aucun mode de règlement des litiges',
-      'f.forumSilent.detail': 'À défaut de for convenu, une action peut être engagée devant toute juridiction disposant d’un chef de compétence, ce qui favorise les procédures parallèles et la course au jugement.',
-      'f.forumSilent.remediation': 'Adopter une clause compromissoire précisant expressément le siège, la langue, le règlement applicable et le nombre d’arbitres.',
-      'f.adhoc.title': 'Arbitrage ad hoc sans appui institutionnel',
-      'f.adhoc.detail': 'L’arbitrage ad hoc laisse aux parties le soin d’organiser la désignation, la récusation et la rémunération des arbitres. Il se bloque dès que l’une d’elles cesse de coopérer.',
-      'f.adhoc.remediation': 'Adopter le Règlement d’arbitrage de la CNUDCI avec une autorité de nomination désignée, ou opter pour une clause institutionnelle (LCIA, CCI, DIFC-LCIA).',
-      'f.foreignCourts.title': 'Le jugement risque d’être inexécutable là où se trouvent les actifs',
-      'f.foreignCourts.detail': 'Un jugement doit être reconnu dans l’État où se trouvent les actifs du cocontractant. Cette voie est ici nettement moins sûre que l’exécution d’une sentence arbitrale.',
-      'f.foreignCourts.remediation': 'Recourir à l’arbitrage afin que la sentence circule sous l’empire de la Convention de New York.',
-      'f.uncapped.title': 'Responsabilité non plafonnée',
-      'f.uncapped.detail': 'L’exposition est illimitée et, pour ce montant contractuel, pratiquement inassurable aux plafonds que les assureurs acceptent de souscrire.',
-      'f.uncapped.remediation': 'Plafonner la responsabilité globale à 100-150 % de la valeur du contrat, avec les exclusions usuelles : décès ou dommage corporel, fraude et contrefaçon.',
-      'f.capHigh.title': 'Plafond de responsabilité disproportionné par rapport à la valeur du contrat',
-      'f.capHigh.detail': 'Un plafond de {mult} fois la valeur dépasse les pratiques du marché et n’entre pas dans un programme d’assurance responsabilité civile professionnelle standard.',
-      'f.capHigh.remediation': 'Négocier un plafond de 1 à 2 fois la valeur, ou obtenir un avenant d’assurance spécifique pour la tranche excédentaire.',
-      'f.pay90.title': 'Délai de paiement supérieur à 90 jours',
-      'f.pay90.detail': 'Une exposition de trésorerie d’une telle durée transforme un contrat commercial en crédit non garanti et peut enfreindre la réglementation sur les retards de paiement dans l’État de l’acheteur.',
-      'f.pay90.remediation': 'Ramener le délai à 30-60 jours, ou tarifer expressément le crédit par des intérêts de retard assortis d’une garantie.',
-      'f.pay60.title': 'Délai de paiement allongé',
-      'f.pay60.detail': 'Au-delà de 60 jours, un taux d’intérêt de retard exprès s’impose afin que le coût du retard ne soit pas absorbé en silence.',
-      'f.pay60.remediation': 'Prévoir des intérêts à une marge déterminée au-dessus du taux de référence pertinent, capitalisés mensuellement.',
-      'f.noSecurity.title': 'Aucune garantie de paiement pour un montant significatif',
-      'f.noSecurity.detail': 'La totalité de la valeur du contrat repose sur le bilan du cocontractant, sans aucun instrument à appeler en cas de défaillance.',
-      'f.noSecurity.remediation': 'Exiger un crédit documentaire irrévocable et confirmé, ou une garantie bancaire émise par un établissement de catégorie investissement.',
-      'f.noForceMajeure.title': 'Absence de clause de force majeure',
-      'f.noForceMajeure.detail': 'La théorie de la frustration en common law est bien plus étroite qu’une clause de force majeure rédigée et n’excuse que rarement un retard en deçà de l’impossibilité.',
-      'f.noForceMajeure.remediation': 'Ajouter une clause de force majeure prévoyant des modalités de notification, une obligation d’atténuation et un droit de résiliation à l’issue d’un délai butoir.',
-      'f.noSanctions.title': 'Absence de clause de sanctions et de contrôle des échanges',
-      'f.noSanctions.detail': 'Un commerce transfrontalier sans déclaration relative aux sanctions, sans engagement de filtrage ni droit de suspension expose la partie à des pénalités de responsabilité objective et au désengagement des banques correspondantes.',
-      'f.noSanctions.remediation': 'Ajouter des déclarations et garanties relatives aux sanctions, un engagement de filtrage continu et un droit de suspension ou de résiliation sans responsabilité.',
-      'f.noConvenience.title': 'Absence de résiliation pour convenance',
-      'f.noConvenience.detail': 'La sortie est limitée aux cas de manquement et d’insolvabilité, ce qui prive la partie de toute souplesse si les conditions commerciales évoluent en sa défaveur.',
-      'f.noConvenience.remediation': 'Envisager une faculté de résiliation pour convenance après une période d’engagement initiale, moyennant une indemnité de rupture déterminée.',
-      'f.noIndemnity.title': 'Absence d’indemnisation expresse',
-      'f.noIndemnity.detail': 'La réparation est limitée aux dommages-intérêts pour inexécution, sous réserve des règles de prévisibilité, de causalité et de l’obligation de minimiser le dommage.',
-      'f.noIndemnity.remediation': 'Ajouter des indemnisations ciblées couvrant les réclamations de tiers en matière de propriété intellectuelle, les sanctions réglementaires et les dommages aux marchandises ou aux biens.',
-      'f.noInsurance.title': 'Responsabilité de l’assurance non attribuée',
-      'f.noInsurance.detail': 'Lorsque le contrat est muet, la couverture suit le transfert des risques selon l’Incoterm applicable, que les parties interprètent souvent mal, ce qui laisse un vide pendant le transport.',
-      'f.noInsurance.remediation': 'Préciser qui assure, pour quelle valeur (usuellement 110 % de la valeur CIF), et désigner l’autre partie comme bénéficiaire des indemnités.',
-      'f.noLaytime.title': 'Staries non définies',
-      'f.noLaytime.detail': 'Sans staries, le point de départ des surestaries est indéterminé. C’est le défaut de rédaction des chartes-parties le plus fréquemment soumis à l’arbitrage.',
-      'f.noLaytime.remediation': 'Exprimer les staries en heures courantes, définir l’avis de disponibilité du navire et préciser les périodes exceptées.',
-      'f.noDemurrage.title': 'Taux de surestaries non stipulé',
-      'f.noDemurrage.detail': 'À défaut de taux convenu, le retard n’est indemnisable qu’au titre de dommages-intérêts pour détention, plus difficiles à prouver et plus lents à recouvrer.',
-      'f.noDemurrage.remediation': 'Stipuler un taux journalier de surestaries, payable au prorata, assorti d’un délai de forclusion exprès pour les réclamations.',
+      'f.govLaw.title': "Aucun droit applicable choisi",
+      'f.govLaw.detail': "À défaut de choix exprès, la loi applicable est déterminée par les règles de conflit du for saisi. Aucune des parties ne peut évaluer cette issue au moment de la signature.",
+      'f.govLaw.remediation': "Insérez une clause expresse de droit applicable. Pour le commerce international, le droit anglais ou le droit du DIFC sont les choix neutres usuels.",
+      'f.forumSilent.title': "Aucun mode de règlement des différends",
+      'f.forumSilent.detail': "Faute de for convenu, une action peut être engagée dans toute juridiction présentant un lien de rattachement, ce qui favorise les procédures parallèles et la course au jugement.",
+      'f.forumSilent.remediation': "Adoptez une clause compromissoire précisant expressément le siège, la langue, le règlement et le nombre d'arbitres.",
+      'f.adhoc.title': "Arbitrage ad hoc sans soutien institutionnel",
+      'f.adhoc.detail': "L'arbitrage ad hoc laisse aux parties la nomination, la récusation et les honoraires. Il se bloque dès qu'une partie cesse de coopérer.",
+      'f.adhoc.remediation': "Adoptez le Règlement de la CNUDCI avec une autorité de nomination désignée, ou optez pour une clause institutionnelle (LCIA, CCI, DIAC).",
+      'f.foreignCourts.title': "Voie d'exécution contre le cocontractant non vérifiée",
+      'f.foreignCourts.detail': "Un jugement doit être reconnu dans l'État où se situent les actifs du cocontractant. La juridiction du cocontractant n'étant pas précisée, cette voie ne peut être évaluée, alors qu'une sentence arbitrale est exécutoire dans plus de 170 États parties à la Convention de New York.",
+      'f.foreignCourts.remediation': "Précisez la juridiction du cocontractant, ou optez pour un arbitrage siégeant dans un État partie à la Convention de New York.",
+      'f.uncapped.title': "Responsabilité illimitée",
+      'f.uncapped.detail': "L'exposition est illimitée et, à cette valeur contractuelle, pratiquement inassurable aux plafonds que les assureurs acceptent de couvrir.",
+      'f.uncapped.remediation': "Plafonnez la responsabilité globale entre 100 et 150 % de la valeur du contrat, avec les exclusions usuelles : décès ou dommage corporel, fraude et contrefaçon.",
+      'f.capHigh.title': "Plafond de responsabilité disproportionné",
+      'f.capHigh.detail': "Un plafond de {mult} fois la valeur dépasse la fourchette de marché et n'entre pas dans un programme standard d'assurance responsabilité civile professionnelle.",
+      'f.capHigh.remediation': "Négociez un plafond de 1 à 2 fois la valeur, ou obtenez un avenant d'assurance spécifique pour la tranche excédentaire.",
+      'f.pay90.title': "Délai de paiement supérieur à 90 jours",
+      'f.pay90.detail': "Une exposition du fonds de roulement de cette durée transforme un contrat commercial en crédit non garanti et peut enfreindre la réglementation sur les retards de paiement dans le pays de l'acheteur.",
+      'f.pay90.remediation': "Ramenez le délai à 30–60 jours, ou valorisez explicitement le crédit par des intérêts de retard assortis d’une sûreté.",
+      'f.pay60.title': "Délai de paiement étendu",
+      'f.pay60.detail': "Au-delà de 60 jours, un taux d'intérêt de retard exprès s'impose pour que le coût du retard ne soit pas absorbé silencieusement.",
+      'f.pay60.remediation': "Si le droit applicable admet l'intérêt conventionnel, prévoyez des intérêts à une marge déterminée au-dessus du taux de référence pertinent. Dans les systèmes fondés sur la charia (p. ex. l'Arabie saoudite), l'intérêt est inopposable ; prévoyez un autre mécanisme de retard de paiement.",
+      'f.noSecurity.title': "Aucune garantie de paiement pour un contrat significatif",
+      'f.noSecurity.detail': "La totalité de la valeur du contrat repose sur le bilan du cocontractant, sans instrument mobilisable en cas de défaillance.",
+      'f.noSecurity.remediation': "Exigez un crédit documentaire irrévocable et confirmé, ou une garantie bancaire émise par une banque de catégorie investissement.",
+      'f.noForceMajeure.title': "Aucune clause de force majeure",
+      'f.noForceMajeure.detail': "À défaut de clause expresse, l'exonération dépend des règles supplétives du droit applicable (frustration en droit anglais ; force majeure et imprévision légales dans les systèmes civilistes tels que le Koweït et les Émirats), plus étroites et moins prévisibles qu'une clause rédigée.",
+      'f.noForceMajeure.remediation': "Ajoutez une clause de force majeure prévoyant les modalités de notification, une obligation d'atténuation et un droit de résiliation à terme.",
+      'f.noSanctions.title': "Aucune clause de sanctions ni de contrôle des échanges",
+      'f.noSanctions.detail': "Un commerce international sans déclaration relative aux sanctions, sans engagement de filtrage et sans droit de suspension expose la partie à des pénalités de responsabilité objective et au désengagement des banques correspondantes.",
+      'f.noSanctions.remediation': "Ajoutez des déclarations et garanties relatives aux sanctions, un engagement de filtrage continu et un droit de suspendre ou de résilier sans responsabilité.",
+      'f.noConvenience.title': "Aucune résiliation pour convenance",
+      'f.noConvenience.detail': "La sortie est limitée aux cas de manquement et d'insolvabilité, ce qui prive la partie de souplesse si les conditions commerciales évoluent en sa défaveur.",
+      'f.noConvenience.remediation': "Envisagez un droit de résiliation pour convenance après une période d'engagement initiale, moyennant une indemnité de rupture définie.",
+      'f.noIndemnity.title': "Aucune garantie d’indemnisation expresse",
+      'f.noIndemnity.detail': "La réparation est limitée aux dommages-intérêts pour inexécution, sous réserve de la prévisibilité, du lien de causalité et de l'obligation de minimiser le dommage.",
+      'f.noIndemnity.remediation': "Ajoutez des garanties ciblées pour les réclamations de tiers en propriété intellectuelle, les sanctions réglementaires et les dommages aux marchandises ou aux biens.",
+      'f.noInsurance.title': "Responsabilité d'assurance non répartie",
+      'f.noInsurance.detail': "Lorsque le contrat est muet, la couverture suit le transfert des risques selon l'Incoterm applicable, souvent mal interprété, laissant une lacune pendant le transport.",
+      'f.noInsurance.remediation': "Précisez qui assure, pour quelle valeur (usuellement 110 % de la valeur CIF), et désignez l'autre partie comme bénéficiaire.",
+      'f.noLaytime.title': "Staries non définies",
+      'f.noLaytime.detail': "Sans staries, le point de départ des surestaries est indéterminé. C'est le défaut de rédaction de charte-partie le plus fréquemment soumis à l'arbitrage.",
+      'f.noLaytime.remediation': "Fixez les staries en heures consécutives, définissez l'avis de disponibilité et précisez les périodes exceptées.",
+      'f.noDemurrage.title': "Taux de surestaries non précisé",
+      'f.noDemurrage.detail': "Sans taux convenu, le retard n'est indemnisable qu'au titre de dommages-intérêts pour immobilisation, plus difficiles à prouver et plus lents à recouvrer.",
+      'f.noDemurrage.remediation': "Fixez un taux journalier de surestaries, dû au prorata, assorti d’un délai de forclusion exprès pour les réclamations.",
 
-      'cite.rome': 'Règlement (CE) n° 593/2008 (Rome I), art. 3',
-      'cite.nyc2': 'Convention de New York de 1958, art. II',
-      'cite.nyc3': 'Convention de New York de 1958, art. III',
-      'cite.ucp': 'Règles et usances uniformes de la CCI (RUU 600 / UCP 600)',
-      'cite.sanctions': 'OFAC, 31 CFR Part 500 et s. ; Règlement (UE) n° 833/2014',
-      'cite.incoterms': 'Incoterms 2020, A5/B5',
-      'cite.laytime': 'Définitions BIMCO des staries pour les chartes-parties (2013)',
+      'cite.rome': "Règlement (CE) n° 593/2008 (Rome I), art. 3 et 4 ; Code des transactions civiles des Émirats (loi fédérale n° 5 de 1985), art. 19",
+      'cite.nyc3': "Convention de New York de 1958, art. III",
+      'cite.ucp': "RUU 600",
+      'cite.sanctions': "Sanctions du Conseil de sécurité de l'ONU ; réglementation OFAC (31 CFR Chapter V) ; mesures restrictives de l'UE, p. ex. règlement (UE) n° 833/2014",
+      'cite.incoterms': "Incoterms 2020, A5/B5",
+      'cite.laytime': "Laytime Definitions for Charter Parties 2013",
 
       'clause.definitions': 'Définitions et interprétation',
       'clause.scope': 'Objet du Contrat',
@@ -2272,24 +1997,24 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       'doc.forum.foreign-courts': 'les juridictions du ressort du Second Contractant seront seules compétentes',
       'doc.forum.arbitration-lcia': 'tout litige sera soumis à l’arbitrage et tranché définitivement selon le Règlement d’arbitrage de la LCIA, le siège de l’arbitrage étant fixé à Londres, par trois arbitres, la langue de l’arbitrage étant l’anglais',
       'doc.forum.arbitration-icc': 'tout litige sera tranché définitivement suivant le Règlement d’arbitrage de la Chambre de commerce internationale (CCI), par trois arbitres, la langue de l’arbitrage étant l’anglais',
-      'doc.forum.arbitration-difc': 'tout litige sera soumis à l’arbitrage et tranché définitivement selon le Règlement d’arbitrage du DIFC-LCIA, le siège de l’arbitrage étant fixé au Centre financier international de Dubaï (DIFC), par trois arbitres, la langue de l’arbitrage étant l’anglais',
+      'doc.forum.arbitration-difc': "tout différend sera soumis à l'arbitrage et définitivement tranché selon le Règlement d'arbitrage du Dubai International Arbitration Centre (DIAC), le siège de l'arbitrage étant fixé au Dubai International Financial Centre, par trois arbitres, en langue anglaise",
       'doc.forum.arbitration-adhoc': 'tout litige sera soumis à un arbitrage ad hoc selon les modalités dont les parties pourront convenir le moment venu',
       'doc.forum.silent': '[MODE DE RÈGLEMENT DES LITIGES NON SÉLECTIONNÉ]',
       'doc.sec.lc': 'un crédit documentaire irrévocable et confirmé, émis par une banque agréée par le Premier Contractant et soumis aux RUU 600 (UCP 600)',
       'doc.sec.bank-guarantee': 'une garantie bancaire à première demande émise par une banque de catégorie investissement agréée par le Premier Contractant',
       'doc.sec.parent-guarantee': 'une garantie des obligations du Second Contractant consentie par sa société mère ultime',
       'doc.sec.none': 'aucune garantie',
-      'doc.recital.date': 'LE PRÉSENT CONTRAT est daté du {date} et conclu sous la référence LM-2026-0417.',
-      'doc.recital.first': '(1) MERIDIAN TRADING DMCC, société immatriculée aux Émirats arabes unis sous le numéro DMCC-114820, dont le siège social est situé bureau 3402, Almas Tower, JLT, Dubaï (le « Premier Contractant ») ; et',
-      'doc.recital.second': '(2) NORTHGATE COMMODITIES LTD, société immatriculée en Angleterre et au pays de Galles sous le numéro 09441237, dont le siège social est situé 12 Leadenhall Street, Londres EC3V 1LP (le « Second Contractant »).',
-      'doc.recital.agreed': 'IL A ÉTÉ CONVENU CE QUI SUIT :',
+      'doc.recital.date': "LE PRÉSENT CONTRAT est conclu le [date] sous la référence [référence], entre :",
+      'doc.recital.first': "(1) [DÉNOMINATION DU PREMIER CONTRACTANT], société immatriculée [lieu d'immatriculation] sous le numéro [numéro d'immatriculation], dont le siège social se trouve à l'adresse suivante : [adresse du siège social] (le « Premier Contractant ») ; et",
+      'doc.recital.second': "(2) [DÉNOMINATION DU SECOND CONTRACTANT], société immatriculée [lieu d'immatriculation] sous le numéro [numéro d'immatriculation], dont le siège social se trouve à l'adresse suivante : [adresse du siège social] (le « Second Contractant »).",
+      'doc.recital.agreed': "IL A ÉTÉ CONVENU CE QUI SUIT :",
       'doc.definitions.1': 'Dans le présent Contrat, les termes commençant par une majuscule ont le sens qui leur est donné à l’Annexe 1. Toute référence à un texte législatif s’entend de ce texte tel que modifié ou réédicté le cas échéant.',
       'doc.definitions.2': 'Les titres ne figurent qu’à des fins de commodité et n’affectent pas l’interprétation du présent Contrat.',
       'doc.scope.1': 'Le Premier Contractant fournit, et le Second Contractant accepte, les marchandises, services ou capacités de navire décrits à l’Annexe 2, aux conditions et sous réserve des stipulations du présent Contrat.',
       'doc.scope.2': 'La valeur globale du présent Contrat s’élève à {value} (la « Valeur du Contrat »).',
       'doc.payment.1': 'Le Second Contractant règle chaque facture valable dans un délai de {days} à compter de sa date d’émission, en fonds disponibles, sans compensation ni déduction.',
-      'doc.payment.2.extended': 'Les sommes non réglées à leur échéance portent intérêt au taux de référence applicable majoré de 4 % l’an, courant quotidiennement et capitalisé mensuellement, de la date d’échéance jusqu’au complet paiement.',
-      'doc.payment.2.statutory': 'Les sommes non réglées à leur échéance portent intérêt au taux légal de la date d’échéance jusqu’au complet paiement.',
+      'doc.payment.2.extended': "Dans la mesure permise par le droit applicable, les sommes non payées à leur échéance portent intérêt au taux de 4 % l'an au-dessus du taux de référence applicable, courant quotidiennement, de la date d'échéance jusqu'au paiement effectif.",
+      'doc.payment.2.statutory': "Dans la mesure permise par le droit applicable, les sommes non payées à leur échéance portent intérêt au taux légal de la date d'échéance jusqu'au paiement effectif.",
       'doc.security.1': 'À titre de condition préalable aux obligations d’exécution du Premier Contractant, le Second Contractant fournit et maintient {security} d’un montant au moins égal à la Valeur du Contrat.',
       'doc.laytime.1': 'Les staries pour le chargement et le déchargement sont fixées à {hours} au total, temps permettant, dimanches et jours fériés exceptés, et commencent à courir à compter de la remise d’un avis de disponibilité du navire valable.',
       'doc.laytime.none': '[STARIES NON PRÉCISÉES — les surestaries ne peuvent courir tant que les staries ne sont pas définies.]',
@@ -2317,55 +2042,22 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       'doc.law.1': 'Le présent Contrat, ainsi que tout litige né de celui-ci ou s’y rapportant, est régi par {law} et interprété conformément à celui-ci.',
       'doc.dispute.1': 'Les parties conviennent que {forum}.',
       'doc.dispute.2': 'Aucune stipulation du présent article n’empêche l’une ou l’autre des parties de solliciter des mesures provisoires ou conservatoires auprès de toute juridiction compétente.',
-      'doc.execution.1': 'Le présent Contrat peut être signé en plusieurs exemplaires et par voie de signature électronique, chacun constituant un original et l’ensemble constituant un seul et même acte.',
-      'doc.execution.2': 'Les parties conviennent qu’une signature électronique apposée via la plateforme, accompagnée du journal d’audit et de l’empreinte numérique du document, satisfait à toute exigence de signature écrite.',
+      'doc.execution.1': "Le présent Contrat peut être signé en plusieurs exemplaires et par signature électronique, chacun constituant un original et leur ensemble constituant un seul et même instrument.",
+      'doc.execution.2': "Dans la mesure permise par le droit applicable, les parties conviennent qu'une signature électronique satisfait à toute exigence de signature écrite. Lorsque la loi impose une forme particulière, une légalisation ou une signature manuscrite, cette exigence doit être respectée.",
       'draft.flag': '{sev} — {title}',
       'draft.foot': 'Projet — ne pas signer. Généré par le moteur documentaire Lex Maris.',
-
-      'matter.eyebrow': 'Tableau de bord client',
-      'matter.title': 'Le client sait toujours où en est son dossier.',
-      'matter.intro': 'L’état du dossier est diffusé via un canal authentifié. Rédaction, revue, observations du cocontractant et signature s’affichent sur ce fil dès qu’elles surviennent.',
-      'matter.progress': 'Avancement du dossier',
-      'matter.count': '{done} étapes sur {total} terminées',
-      'matter.alerts': 'Alertes de conformité',
-      'matter.vault': 'Coffre-fort documentaire chiffré',
-      'stage.received': 'Instructions reçues',
-      'stage.drafted': 'Premier projet assemblé',
-      'stage.riskPass': 'Analyse des risques terminée — {n} anomalies',
-      'stage.partner': 'Revue par l’associé',
-      'stage.counterparty': 'Observations du cocontractant attendues',
-      'stage.rescreen': 'Nouveau filtrage sanctions requis avant signature',
-      'stage.execution': 'Signature et scellement',
-      'stage.when': '{date} à {time}',
-      'stage.due': 'Échéance le {date}',
-      'stage.screenExpired': 'Filtrage expiré le {date}',
-      'stage.notStarted': 'Non commencée',
-      'stage.actionRequired': 'Action requise',
-      'actor.portal': 'Portail client',
-      'actor.engine': 'Moteur documentaire',
-      'actor.scanner': 'Analyseur v1.0.0',
-      'actor.partner': 'H. Al-Rashed',
-      'alert.screening.title': 'Filtrage sanctions expiré',
-      'alert.screening.body': 'Le dernier filtrage du cocontractant date de 91 jours. La signature est bloquée jusqu’à l’enregistrement d’un nouveau filtrage au regard des listes consolidées en vigueur.',
-      'alert.timebar.title': 'Forclusion des surestaries imminente',
-      'alert.timebar.body': 'La réclamation LM-2026-0388 doit être présentée avec ses pièces justificatives dans les 11 jours, faute de quoi elle sera forclose en application de l’article 6.2.',
-      'alert.lc.title': 'Expiration du crédit documentaire',
-      'alert.lc.body': 'Le crédit documentaire confirmé du dossier LM-2026-0402 expire dans 24 jours, avant la dernière fenêtre d’expédition.',
-      'vault.charter': 'Charte-partie au voyage — signée',
-      'vault.supply': 'Contrat de fourniture — projet 4',
-      'vault.screening': 'Registre de filtrage sanctions',
-      'vault.bol': 'Connaissement — MV Sirocco',
-      'vault.sealed': 'Scellé · AES-256-GCM',
-      'vault.expired': 'Expiré',
+      'dash.heading': "Mes dossiers",
+      'dash.lede': "Toutes les instructions que vous avez transmises, avec leur étape en cours.",
+      'dash.empty.title': "Aucun dossier pour le moment",
+      'dash.empty.body': "Lorsque vous transmettez des instructions, chaque demande apparaît ici avec son étape en cours.",
 
       'checkout.eyebrow': 'Commande',
       'checkout.title': 'Rédaction de contrats',
-      'checkout.subtitle': 'Indiquez-nous les conditions. Nos avocats rédigent l’acte et vous le remettent accompagné d’un rapport de risques clause par clause.',
+      'checkout.subtitle': "Indiquez-nous vos conditions. Nos avocats examinent vos instructions et vous adressent un devis d'honoraires écrit avant toute rédaction.",
       'checkout.section.instrument': 'L’acte',
       'checkout.section.parties': 'Les parties',
       'checkout.section.terms': 'Conditions commerciales',
       'checkout.section.contact': 'Vos coordonnées',
-      'checkout.section.payment': 'Paiement',
       'checkout.field.instrumentType': 'Type d’acte',
       'checkout.field.deadline': 'Date souhaitée',
       'checkout.field.firstParty': 'Votre entité',
@@ -2386,26 +2078,16 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       'checkout.field.country': 'Pays de facturation',
       'checkout.riskPreview.title': 'Exposition provisoire',
       'checkout.riskPreview.note': 'Évaluée en direct à partir des conditions ci-dessus par le moteur qu’utilisent nos avocats. À titre indicatif.',
-      'checkout.summary.title': 'Récapitulatif de la commande',
-      'checkout.summary.service': 'Rédaction de contrat',
-      'checkout.summary.turnaround': 'Délai',
-      'checkout.summary.days': 'jours ouvrés',
-      'checkout.summary.tax': 'Taxes',
-      'checkout.summary.total': 'Total à régler',
-      'checkout.pay.card': 'Payer par carte',
-      'checkout.pay.knet': 'Payer par KNET',
-      'checkout.pay.transfer': 'Virement bancaire',
-      'checkout.pay.submit': 'Continuer vers le paiement',
-      'checkout.pay.redirect': 'Vous serez redirigé vers notre prestataire de paiement. Les données de carte y sont saisies, jamais sur ce site.',
-      'checkout.disclaimer': 'L’envoi de ce formulaire constitue une instruction, et non une convention d’honoraires. Une lettre de mission vous sera adressée avant le début des travaux.',
-      'checkout.demo': 'Aperçu uniquement — cette page n’est reliée à aucune passerelle de paiement. Dans l’application réelle, une commande est créée et vous êtes redirigé vers le prestataire.',
+      'checkout.fee.title': "Honoraires",
+      'checkout.fee.body': "Aucun honoraire forfaitaire ne s'applique. Les honoraires dépendent de l'étendue et de la complexité de l'instrument et figurent dans un devis écrit et une lettre de mission soumis à votre accord. Rien n'est facturé lors de l'envoi de ce formulaire.",
+      'checkout.submit': "Envoyer les instructions",
+      'checkout.disclaimer': "L'envoi de ce formulaire transmet des instructions ; il ne crée pas de relation avocat-client. Une lettre de mission précisant l'étendue et les honoraires vous sera adressée avant le début des travaux. Le score de risque affiché est un indicateur automatisé, et non un conseil juridique.",
+      'checkout.demo': "Aperçu uniquement — cette page n’est pas reliée au service de commande. Dans l’application réelle, l’envoi transmet vos instructions à nos avocats, qui vous adressent un devis d’honoraires écrit. Rien n’est facturé.",
       'checkout.incomplete': 'Veuillez compléter les champs signalés.',
       'auth.signIn.title': 'Se connecter',
       'auth.signIn.subtitle': 'Accédez à vos dossiers, projets et actes signés.',
       'auth.signUp.title': 'Créer un compte',
       'auth.signUp.subtitle': 'Commandez des travaux et suivez-les de l’instruction à la signature.',
-      'auth.google': 'Continuer avec Google',
-      'auth.or': 'ou',
       'auth.fullName': 'Nom complet',
       'auth.email': 'Adresse e-mail',
       'auth.password': 'Mot de passe',
@@ -2417,7 +2099,7 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       'auth.working': 'Traitement en cours…',
       'auth.demoBadge': 'Aperçu — aucun compte réel',
       'auth.demo': 'Aperçu uniquement — cette page ne peut pas joindre le service d’authentification. L’application réelle utilise Supabase Auth.',
-      'auth.privilegeNotice': 'Les communications via cette plateforme peuvent être couvertes par le secret professionnel. Ne communiquez pas vos identifiants.',
+      'auth.privilegeNotice': "Les informations que vous transmettez sont traitées de manière confidentielle. Ne partagez pas vos identifiants.",
       'auth.welcome': 'Connexion réussie. Vos coordonnées sont désormais reprises dans le formulaire de commande.',
       'auth.created': 'Compte créé. Vos coordonnées sont désormais reprises dans le formulaire de commande.',
       'auth.badEmail': 'Veuillez saisir une adresse e-mail valide.',
@@ -2425,8 +2107,6 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       'auth.signedInAs': 'Connecté en tant que',
       'auth.duplicate': 'Cette adresse e-mail est déjà enregistrée. Veuillez vous connecter.',
       'auth.invalid': 'Adresse e-mail ou mot de passe incorrect.',
-      'auth.useGoogle': 'Ce compte utilise la connexion Google. Utilisez le bouton Google ci-dessus.',
-      'auth.googlePreview': 'La connexion Google nécessite l’application déployée — cet aperçu ne peut pas joindre Google. L’e-mail et le mot de passe fonctionnent ici.',
       'auth.noCrypto': 'Ce navigateur ne permet pas un hachage sécurisé.',
       'auth.previewNotice': 'Dans cet aperçu, les comptes sont conservés dans CE NAVIGATEUR uniquement, et les mots de passe sont hachés avec PBKDF2-SHA256 (150 000 itérations, sel propre à chaque utilisateur) — jamais en clair. Il n’y a pas de serveur ici : les comptes ne vous suivent donc pas sur un autre appareil. L’application déployée utilise Supabase Auth avec bcrypt.',
       'common.notLegalAdvice': 'Interface de démonstration. Le résultat constitue un signal de tri destiné à un praticien qualifié, et non un conseil juridique.'
@@ -2478,14 +2158,6 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
     return tr(key, v);
   }
 
-  /** Calendar dates in the active locale, Latin digits throughout. */
-  function fmtDate(y, m, d, style) {
-    var opts = style === 'short'
-      ? { day: 'numeric', month: 'short' }
-      : { day: 'numeric', month: 'long', year: 'numeric' };
-    return new Intl.DateTimeFormat(numLocale(), opts).format(new Date(y, m - 1, d));
-  }
-
   /* ======================================================================
      1. Risk engine
      Pure, deterministic, and the single source of truth for what a term
@@ -2497,7 +2169,10 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
   var SEVERITY_ORDER = ['critical', 'high', 'medium', 'low', 'info'];
   var MARITIME = { charterparty: 1, 'bill-of-lading': 1 };
   var GOODS = { supply: 1, distribution: 1 };
-  var WEAK_ENFORCEMENT = { TW: 1, ER: 1, SO: 1, XX: 1 };
+  /* Only an unstated counterparty jurisdiction trips the enforcement rule:
+     with no jurisdiction there is nothing to assess the judgment route
+     against. Same set as WEAK_JUDGMENT_ENFORCEMENT in risk-engine.ts. */
+  var WEAK_ENFORCEMENT = { XX: 1 };
 
   /* Rules return message KEYS, not prose: analyse() resolves them through
      tr() so a finding reads in whichever language is active. `clause` is
@@ -2514,7 +2189,7 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       id: 'forum-defect', clause: 'dispute-resolution', weight: 1,
       evaluate: function (c) {
         if (c.disputeForum === 'silent') {
-          return { severity: 'critical', msg: 'forumSilent', cite: 'nyc2' };
+          return { severity: 'critical', msg: 'forumSilent' };
         }
         if (c.disputeForum === 'arbitration-adhoc') {
           return { severity: 'medium', msg: 'adhoc' };
@@ -2732,8 +2407,10 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
 
     return {
       title: tr('doc.title.' + c.type),
+      // Parties, reference and date are bracketed placeholders, as in the
+      // live builder: nothing in the draft should read as a real party.
       recitals: [
-        tr('doc.recital.date', { date: fmtDate(2026, 9, 8) }),
+        tr('doc.recital.date'),
         tr('doc.recital.first'),
         tr('doc.recital.second'),
         tr('doc.recital.agreed')
@@ -2760,8 +2437,13 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
 
   /* Option lists hold values only; labels come from opt.<group>.<value>. */
   var OPT = {
-    type: ['charterparty', 'bill-of-lading', 'supply', 'distribution', 'shareholders', 'jv'],
-    benchJur: ['AE', 'KW', 'SA', 'GB', 'SG', 'TW', 'XX'],
+    // Every instrument counsel can be asked for (the checkout).
+    type: ['supply', 'distribution', 'charterparty', 'bill-of-lading', 'shareholders', 'jv'],
+    // Instruments the live builder drafts. A value-based liability cap is void
+    // in bill of lading terms (Hague-Visby Art. III r. 8), and this clause set
+    // is not a shareholders or JV agreement; those are ordered from counsel.
+    builderType: ['supply', 'distribution', 'charterparty'],
+    benchJur: ['AE', 'KW', 'SA', 'QA', 'GB', 'SG', 'XX'],
     law: ['GB', 'AE', 'KW', 'SG', 'CH', 'US', 'XX'],
     forum: ['arbitration-lcia', 'arbitration-icc', 'arbitration-difc', 'arbitration-adhoc',
             'local-courts', 'foreign-courts', 'silent'],
@@ -2852,7 +2534,7 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
     var html = '';
 
     if (state.step === 0) {
-      html += selectField(tr('checkout.field.instrumentType'), 'type', optionsFor('type', OPT.type));
+      html += selectField(tr('checkout.field.instrumentType'), 'type', optionsFor('type', OPT.builderType));
       html += selectField(tr('checkout.field.counterpartyJurisdiction'), 'counterpartyJurisdiction',
         optionsFor('jur', OPT.benchJur));
       html += '<p class="note">' + esc(tr('note.parties')) + '</p>';
@@ -3028,94 +2710,6 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
   });
 
   render();
-
-  /* ======================================================================
-     4. Matter rail, alerts, vault
-     ==================================================================== */
-  /* Dates are [month, day] in 2026 and are formatted per locale. */
-  var STAGES = [
-    { label: 'stage.received', at: [9, 2], time: '09:14', actor: 'actor.portal', state: 'done' },
-    { label: 'stage.drafted', at: [9, 2], time: '09:16', actor: 'actor.engine', state: 'done' },
-    { label: 'stage.riskPass', n: 3, at: [9, 2], time: '09:16', actor: 'actor.scanner', state: 'done' },
-    { label: 'stage.partner', at: [9, 4], time: '15:40', actor: 'actor.partner', state: 'done' },
-    { label: 'stage.counterparty', meta: 'stage.due', at: [9, 10], actorName: 'Northgate Commodities Ltd', state: 'active' },
-    { label: 'stage.rescreen', meta: 'stage.screenExpired', at: [9, 6], state: 'blocked' },
-    { label: 'stage.execution', meta: 'stage.notStarted', state: 'pending' }
-  ];
-
-  var ALERTS = [
-    { sev: 'high', key: 'alert.screening' },
-    { sev: 'medium', key: 'alert.timebar' },
-    { sev: 'low', key: 'alert.lc' }
-  ];
-
-  var VAULT = [
-    { name: 'vault.charter', seal: 'SHA-256 · 4f9c…9a71e', at: [9, 6] },
-    { name: 'vault.supply', sealKey: 'vault.sealed', at: [9, 4] },
-    { name: 'vault.screening', sealKey: 'vault.expired', at: [6, 7] },
-    { name: 'vault.bol', sealKey: 'vault.sealed', at: [9, 1] }
-  ];
-
-  function shortDate(at) { return fmtDate(2026, at[0], at[1], 'short'); }
-
-  function stageMeta(s) {
-    if (s.time) return tr('stage.when', { date: shortDate(s.at), time: s.time });
-    return tr(s.meta, s.at ? { date: shortDate(s.at) } : null);
-  }
-
-  var railFill = $('rail-fill');
-  var doneCount = STAGES.filter(function (s) { return s.state === 'done'; }).length;
-
-  /* Re-run on every language change. Only the <li> rows are rebuilt; the
-     animated #rail-fill span inside the <ol> is left alone. */
-  function renderMatter() {
-    var rail = $('rail');
-    Array.prototype.slice.call(rail.querySelectorAll('li')).forEach(function (li) {
-      rail.removeChild(li);
-    });
-    rail.insertAdjacentHTML('beforeend', STAGES.map(function (s) {
-      var actor = s.actor ? tr(s.actor) : s.actorName;
-      return '<li data-state="' + s.state + '">' +
-        '<span class="dot-wrap"><span class="halo" aria-hidden="true"></span>' +
-        '<span class="dot"></span></span>' +
-        '<span style="min-width:0;flex:1"><span class="label">' +
-        esc(tr(s.label, s.n != null ? { n: num(s.n) } : null)) + '</span>' +
-        '<span class="meta">' + esc(stageMeta(s)) +
-        (actor ? ' &middot; ' + esc(actor) : '') + '</span></span>' +
-        (s.state === 'blocked' ? '<span class="chip">' + esc(tr('stage.actionRequired')) + '</span>' : '') +
-        '</li>';
-    }).join(''));
-
-    // Template is escaped first; only our own numeric spans are injected.
-    $('matter-count').innerHTML = esc(tr('matter.count'))
-      .replace('{done}', '<span class="mono" style="color:var(--gold-lit)">' + num(doneCount) + '</span>')
-      .replace('{total}', '<span class="mono">' + num(STAGES.length) + '</span>');
-
-    $('alerts').innerHTML = ALERTS.map(function (a) {
-      return '<li class="alert" data-sev="' + a.sev + '">' +
-        '<span class="sev">' + esc(tr('sev.' + a.sev)) + '</span>' +
-        '<h4>' + esc(tr(a.key + '.title')) + '</h4><p>' + esc(tr(a.key + '.body')) + '</p></li>';
-    }).join('');
-
-    $('vault').innerHTML = VAULT.map(function (d) {
-      return '<li data-cursor="hover"><span style="min-width:0"><span class="name">' +
-        esc(tr(d.name)) + '</span><span class="seal mono">' + esc(d.sealKey ? tr(d.sealKey) : d.seal) +
-        '</span></span><span class="when">' + esc(shortDate(d.at)) + '</span></li>';
-    }).join('');
-  }
-
-  renderMatter();
-
-  var fillRatio = doneCount / (STAGES.length - 1);
-  railFill.style.bottom = '8px';
-  railFill.style.height = 'calc(100% - 16px)';
-  if (REDUCED) {
-    railFill.style.transform = 'scaleY(' + fillRatio + ')';
-  } else {
-    requestAnimationFrame(function () {
-      railFill.style.transform = 'scaleY(' + fillRatio + ')';
-    });
-  }
 
   /* ======================================================================
      5. Cursor spotlight
@@ -4018,7 +3612,6 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
     // renderSession must come AFTER the data-i18n pass above, which would
     // otherwise reset the header button to "Sign in" while signed in.
     render();
-    renderMatter();
     renderCheckoutOptions();
     renderCheckout();
     renderSession();
@@ -4087,16 +3680,6 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
     }
     openAuth();
   });
-  /* Google in the preview: the OAuth redirect to accounts.google.com cannot
-     happen from inside this sandbox, so rather than a button that appears to
-     hang, it says so. The deployed app wires the real flow through
-     signInWithOAuth('google') and /auth/callback. */
-  $('auth-google').addEventListener('click', function () {
-    var out = $('auth-result');
-    out.textContent = tr('auth.googlePreview');
-    out.style.color = 'var(--watch)';
-  });
-
   $('auth-close').addEventListener('click', closeAuth);
   $('auth-scrim').addEventListener('click', closeAuth);
   $('auth-mode-toggle').addEventListener('click', function () {
@@ -4350,11 +3933,6 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       return;
     }
 
-    if (existing.auth_provider === 'google' && !existing.password_hash) {
-      done(tr('auth.useGoogle'), 'var(--elevated)');
-      return;
-    }
-
     derivePasswordHash(password, existing.salt).then(function (hash) {
       if (!hashesMatch(hash, existing.password_hash)) {
         $('auth-password').value = '';
@@ -4384,7 +3962,7 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
   }
 
   function renderCheckoutOptions() {
-    fillSelect('co-type', optionsFor('type', OPT.type), 'charterparty');
+    fillSelect('co-type', optionsFor('type', OPT.type), 'supply');
     fillSelect('co-cpjur', optionsFor('jur', CO_JUR), 'AE');
     fillSelect('co-law', optionsFor('law', OPT.law), 'GB');
     fillSelect('co-forum', optionsFor('forum', OPT.forum,
@@ -4394,17 +3972,6 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
   }
 
   renderCheckoutOptions();
-
-  // Prices in fils. 1 KWD = 1000 fils. Integer arithmetic only -- never float
-  // a price.
-  var SERVICE = { price: 250000, currency: 'KWD', days: 3 };
-  var payMethod = 'card';
-
-  function kwd(fils) {
-    return new Intl.NumberFormat(numLocale(), {
-      style: 'currency', currency: SERVICE.currency, minimumFractionDigits: 3
-    }).format(fils / 1000);
-  }
 
   /** Read the checkout form into the exact shape the risk engine consumes. */
   function checkoutTerms() {
@@ -4450,11 +4017,6 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
     $('co-band').textContent = tr('band.' + report.band);
     $('co-band').style.color = band.color;
     $('co-tally').innerHTML = tallyHtml(report);
-
-    $('co-subtotal').textContent = kwd(SERVICE.price);
-    $('co-tax').textContent = kwd(0);
-    $('co-total').textContent = kwd(SERVICE.price);
-    $('co-days').textContent = num(SERVICE.days);
   }
 
   ['co-type', 'co-law', 'co-cpjur', 'co-forum', 'co-security',
@@ -4464,15 +4026,6 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       el.addEventListener('input', renderCheckout);
       el.addEventListener('change', renderCheckout);
     }
-  });
-
-  $('pay-options').addEventListener('click', function (e) {
-    var btn = e.target.closest('.pay-option');
-    if (!btn) return;
-    payMethod = btn.getAttribute('data-method');
-    document.querySelectorAll('.pay-option').forEach(function (b) {
-      b.setAttribute('aria-checked', String(b === btn));
-    });
   });
 
   $('checkout-form').addEventListener('submit', function (e) {
@@ -4486,7 +4039,8 @@ html[dir="rtl"] .switch[aria-checked="true"] .knob { transform: translateX(-18px
       $(missing[0]).focus();
       return;
     }
-    // Honest about the boundary: no gateway is reachable from this sandbox.
+    // Honest about the boundary: the ordering service is not reachable
+    // from this sandbox.
     out.textContent = tr('checkout.demo');
     out.style.color = 'var(--watch)';
   });
