@@ -11,23 +11,25 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Theme-able: channels live in CSS variables (globals.css), so the
+        // same classes (and their /opacity modifiers) serve dark and light.
         navy: {
-          950: '#050A18',
-          900: '#0A1128', // brand background
-          800: '#101A3A',
-          700: '#18244F',
-          600: '#22315F',
+          950: '#050A18', // intro and overlays stay dark in both themes
+          900: 'rgb(var(--navy-900) / <alpha-value>)', // page ground
+          800: 'rgb(var(--navy-800) / <alpha-value>)',
+          700: 'rgb(var(--navy-700) / <alpha-value>)',
+          600: 'rgb(var(--navy-600) / <alpha-value>)',
         },
         gold: {
-          400: '#E7C765',
-          500: '#D4AF37', // brand accent
-          600: '#B4922B',
-          700: '#8A6F1F',
+          400: 'rgb(var(--gold-400) / <alpha-value>)',
+          500: 'rgb(var(--gold-500) / <alpha-value>)', // brand accent
+          600: 'rgb(var(--gold-600) / <alpha-value>)',
+          700: 'rgb(var(--gold-700) / <alpha-value>)',
         },
         ink: {
-          100: '#F3F5FA',
-          300: '#C3CADB',
-          500: '#8B93A8',
+          100: 'rgb(var(--ink-100) / <alpha-value>)',
+          300: 'rgb(var(--ink-300) / <alpha-value>)',
+          500: 'rgb(var(--ink-500) / <alpha-value>)',
         },
         status: {
           safe: '#3FBF8F',
@@ -62,8 +64,24 @@ const config: Config = {
           '0%,100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-8px)' },
         },
+        // Two identical lists side by side: moving by half the track loops seamlessly.
+        marquee: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+        marqueeRtl: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(50%)' },
+        },
+        goldSweep: {
+          '0%': { backgroundPosition: '200% 50%' },
+          '100%': { backgroundPosition: '-200% 50%' },
+        },
       },
       animation: {
+        marquee: 'marquee 48s linear infinite',
+        marqueeRtl: 'marqueeRtl 48s linear infinite',
+        goldSweep: 'goldSweep 7s ease-in-out infinite',
         shimmer: 'shimmer 2.4s ease-in-out infinite',
         floatSlow: 'floatSlow 6s ease-in-out infinite',
       },

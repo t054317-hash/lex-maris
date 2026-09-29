@@ -6,6 +6,8 @@ import { SiteHeader } from '@/components/ui/SiteHeader';
 import { I18nProvider } from '@/i18n/I18nProvider';
 import { DIRECTION } from '@/i18n/config';
 import { getServerT } from '@/i18n/server';
+import { cookies } from 'next/headers';
+import { THEME_COOKIE, isThemeMode } from '@/lib/theme-mode';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -47,7 +49,7 @@ export function generateMetadata(): Metadata {
 
 export const viewport: Viewport = {
   themeColor: '#0A1128',
-  colorScheme: 'dark',
+  colorScheme: 'dark light',
   width: 'device-width',
   initialScale: 1,
 };
@@ -60,11 +62,14 @@ export const viewport: Viewport = {
  */
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const { t, locale } = getServerT();
+  const themeCookie = cookies().get(THEME_COOKIE)?.value;
+  const theme = isThemeMode(themeCookie) ? themeCookie : 'dark';
 
   return (
     <html
       lang={locale}
       dir={DIRECTION[locale]}
+      data-theme={theme}
       className={`${inter.variable} ${cinzel.variable} ${tajawal.variable}`}
     >
       <body data-custom-cursor="on">

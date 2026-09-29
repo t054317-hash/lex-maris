@@ -30,7 +30,7 @@ const ar: Table = {
     remediation:
       'أدرج بنداً صريحاً للقانون الواجب التطبيق. في التجارة العابرة للحدود، يُعدّ القانون الإنجليزي أو قانون مركز دبي المالي العالمي الخيارين المحايدين المعتادين.',
     authority:
-      'لائحة روما الأولى (EC) رقم 593/2008، المادتان 3 و4؛ قانون المعاملات المدنية الإماراتي (القانون الاتحادي رقم 5 لسنة 1985)، المادة 19',
+      'لائحة روما الأولى (EC) رقم 593/2008، المادتان 3 و4؛ قانون المعاملات المدنية الإماراتي (المرسوم بقانون اتحادي رقم 25 لسنة 2025)، المادة 19',
   },
   'forum-silent': {
     title: 'لا توجد آلية لتسوية النزاعات',
@@ -132,7 +132,7 @@ const ar: Table = {
       'في غياب هذه المدة، يصبح موعد بدء احتساب غرامة التأخير غير محدد. وهذا أكثر عيوب صياغة مشارطات الإيجار عرضاً على التحكيم.',
     remediation:
       'حدّد المدة بالساعات المتواصلة، وعرّف إشعار الجاهزية، وبيّن الفترات المستثناة.',
-    authority: 'تعريفات مدد التحميل والتفريغ لمشارطات الإيجار 2013',
+    authority: 'تعريفات مدد التحميل والتفريغ لمشارطات الإيجار 2013 (BIMCO وCMI وFONASBA وبورصة البلطيق)',
   },
   'demurrage-undefined': {
     title: 'لم يُحدَّد سعر غرامة التأخير',
@@ -155,7 +155,7 @@ const ar: Table = {
     remediation:
       'تحقّق قبل التوقيع من اشتراطات القيد وأحكام الإنهاء والتعويض في الإقليم، واحسب كلفة الخروج على أساسها.',
     authority:
-      'القانون الكويتي رقم 13 لسنة 2016 بشأن تنظيم الوكالات التجارية؛ المرسوم بقانون اتحادي إماراتي رقم 3 لسنة 2022 بشأن تنظيم الوكالات التجارية',
+      'القانون الكويتي رقم 13 لسنة 2016 بشأن تنظيم الوكالات التجارية؛ القانون الاتحادي الإماراتي رقم 3 لسنة 2022 بشأن تنظيم الوكالات التجارية',
   },
   'lease-law-not-situs': {
     title: 'القانون الواجب التطبيق يختلف عن موقع العقار',
@@ -205,15 +205,17 @@ const ar: Table = {
       'يضمن المقاول والمهندس متضامنين مدة عشر سنوات ما يحدث من تهدّم كلي أو جزئي للبناء ومن عيوب تهدد متانته وسلامته، ويقع باطلاً كل اتفاق يُعفي من هذا الضمان أو يحدّ منه. ولا يشمله سقف المسؤولية الوارد في العقد.',
     remediation:
       'احسب كلفة التعرّض لمدة عشر سنوات، وتحقّق من تأمين المسؤولية المهنية للمقاول والمصمّم، وأبقِ الاستثناء قائماً في بند تحديد المسؤولية.',
-    authority: 'قانون المعاملات المدنية الإماراتي (القانون الاتحادي رقم 5 لسنة 1985)، المواد 880–882',
+    authority:
+      'القانون المدني الكويتي، المواد 692–697؛ قانون المعاملات المدنية الإماراتي (المرسوم بقانون اتحادي رقم 25 لسنة 2025)، المواد 821–824 (المواد 880–883 سابقاً من القانون الاتحادي رقم 5 لسنة 1985)',
   },
   'construction-delay-damages': {
     title: 'قد تعدّل المحكمة غرامة التأخير المتفق عليها',
     detail:
-      'تُجيز القوانين المدنية في المنطقة للمحكمة، بناءً على طلب أحد الطرفين، تعديل التعويض المتفق عليه ليساوي الضرر الواقع فعلاً. فالنسبة التي تتجاوز كثيراً الضرر المحتمل قد لا تُنفَّذ كما كُتبت.',
+      'في القوانين المدنية بالمنطقة لا يُستحق التعويض المتفق عليه إذا لم يقع ضرر، ويجوز للمحكمة تخفيضه إذا كان مبالغاً فيه إلى درجة كبيرة. فالنسبة التي تتجاوز كثيراً الضرر المحتمل قد لا تُنفَّذ كما كُتبت.',
     remediation:
       'حدّد النسبة اليومية والحد الأقصى بناءً على تقدير حقيقي لضرر التأخير، ووثّق أساس هذا التقدير.',
-    authority: 'قانون المعاملات المدنية الإماراتي، المادة 390',
+    authority:
+      'القانون المدني الكويتي، المادة 303؛ قانون المعاملات المدنية الإماراتي (المرسوم بقانون اتحادي رقم 25 لسنة 2025)، المادة 340 (المادة 390 سابقاً)',
   },
   'construction-time-undefined': {
     title: 'لم تُحدَّد مدة الإنجاز',
@@ -241,7 +243,8 @@ const ar: Table = {
       'تقيّد عدة دول خليجية تملّك الأجانب والشركات ذات المساهمين الأجانب للعقارات، أو تقصره على مناطق محددة.',
     remediation:
       'تحقّق من أهلية المشتري واستخرج أي موافقة لازمة قبل دفع العربون، واجعل البيع معلّقاً على صدورها.',
-    authority: 'القانون الكويتي رقم 74 لسنة 1979 بتنظيم تملّك غير الكويتيين للعقارات',
+    authority:
+      'المرسوم بالقانون الكويتي رقم 74 لسنة 1979 بتنظيم تملّك غير الكويتيين للعقارات، المعدَّل بالمرسوم بقانون رقم 7 لسنة 2025',
   },
 };
 
@@ -253,7 +256,7 @@ const fr: Table = {
     remediation:
       'Insérez une clause expresse de droit applicable. Pour le commerce international, le droit anglais ou le droit du DIFC sont les choix neutres usuels.',
     authority:
-      'Règlement (CE) n° 593/2008 (Rome I), art. 3 et 4 ; Code des transactions civiles des Émirats (loi fédérale n° 5 de 1985), art. 19',
+      'Règlement (CE) n° 593/2008 (Rome I), art. 3 et 4 ; Code des transactions civiles des Émirats (décret-loi fédéral n° 25 de 2025), art. 19',
   },
   'forum-silent': {
     title: 'Aucun mode de règlement des différends',
@@ -380,7 +383,7 @@ const fr: Table = {
     remediation:
       "Vérifiez avant signature les exigences d'enregistrement et les règles de résiliation et d'indemnisation du territoire, et chiffrez la sortie en conséquence.",
     authority:
-      'Loi koweïtienne n° 13 de 2016 sur les agences commerciales ; décret-loi fédéral émirien n° 3 de 2022 sur les agences commerciales',
+      'Loi koweïtienne n° 13 de 2016 sur les agences commerciales ; loi fédérale émirienne n° 3 de 2022 réglementant les agences commerciales',
   },
   'lease-law-not-situs': {
     title: 'Droit applicable différent du lieu de situation des locaux',
@@ -428,18 +431,20 @@ const fr: Table = {
   'construction-decennial': {
     title: 'La responsabilité décennale ne peut être exclue ni plafonnée',
     detail:
-      "L'entrepreneur et le concepteur sont solidairement responsables pendant dix ans de l'effondrement de l'ouvrage et des vices menaçant sa solidité, et toute convention excluant ou limitant cette responsabilité est nulle. Le plafond de responsabilité du contrat ne s'y applique pas.",
+      "L'entrepreneur et l'ingénieur sont solidairement responsables pendant dix ans de l'effondrement de l'ouvrage et des vices menaçant sa solidité, et toute convention excluant ou limitant cette responsabilité est nulle. Le plafond de responsabilité du contrat ne s'y applique pas.",
     remediation:
       "Chiffrez l'exposition décennale, vérifiez l'assurance de responsabilité professionnelle de l'entrepreneur et du concepteur, et conservez l'exclusion dans la clause de limitation.",
-    authority: 'Code des transactions civiles des Émirats (loi fédérale n° 5 de 1985), art. 880 à 882',
+    authority:
+      'Code civil koweïtien, art. 692 à 697 ; Code des transactions civiles des Émirats (décret-loi fédéral n° 25 de 2025), art. 821 à 824 (anciennement loi fédérale n° 5 de 1985, art. 880 à 883)',
   },
   'construction-delay-damages': {
     title: 'Les pénalités de retard peuvent être ajustées par le juge',
     detail:
-      "Les codes civils de la région permettent au juge, sur demande, d'ajuster l'indemnité convenue au préjudice réellement subi. Un taux très supérieur à la perte probable peut ne pas être appliqué tel quel.",
+      "Dans les codes civils de la région, l'indemnité convenue n'est pas due en l'absence de préjudice, et le juge peut la réduire lorsqu'elle est manifestement excessive. Un taux très supérieur à la perte probable peut ne pas être appliqué tel quel.",
     remediation:
       'Fixez le taux journalier et le plafond sur la base d’une estimation sincère du préjudice de retard, et conservez la justification de cette estimation.',
-    authority: 'Code des transactions civiles des Émirats, art. 390',
+    authority:
+      'Code civil koweïtien, art. 303 ; Code des transactions civiles des Émirats (décret-loi fédéral n° 25 de 2025), art. 340 (anciennement art. 390)',
   },
   'construction-time-undefined': {
     title: "Délai d'exécution non précisé",
@@ -467,7 +472,8 @@ const fr: Table = {
       "Plusieurs États du Golfe restreignent l'acquisition d'immeubles par des étrangers et par des sociétés à actionnariat étranger, ou la limitent à certaines zones.",
     remediation:
       "Vérifiez l'éligibilité de l'acquéreur et obtenez toute autorisation requise avant le versement de l'acompte, en faisant de celle-ci une condition de la vente.",
-    authority: 'Loi koweïtienne n° 74 de 1979 sur la propriété immobilière des non-Koweïtiens',
+    authority:
+      'Décret-loi koweïtien n° 74 de 1979 sur la propriété immobilière des non-Koweïtiens, modifié par le décret-loi n° 7 de 2025',
   },
 };
 

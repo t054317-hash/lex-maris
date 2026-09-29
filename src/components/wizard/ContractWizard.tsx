@@ -13,6 +13,7 @@ import {
 } from '@/lib/risk-engine';
 import { assembleDocument, type DocumentMeta } from '@/lib/document-engine';
 import { useI18n } from '@/i18n/I18nProvider';
+import type { TranslationKey } from '@/i18n/dictionaries';
 import { NUMBER_LOCALE, type Locale } from '@/i18n/config';
 import {
   BUILDER_TYPES,
@@ -220,6 +221,10 @@ export function ContractWizard() {
                       options={options(t, 'opt.type', BUILDER_TYPES)}
                     />
                   </Field>
+                  {/* What the contract is for, in one plain sentence. */}
+                  <p className="-mt-2 rounded-lg border border-gold-500/20 bg-gold-500/5 px-3.5 py-2.5 text-sm leading-relaxed text-ink-100">
+                    {t(`opt.desc.${type}` as TranslationKey)}
+                  </p>
                   <Field
                     label={
                       type === 'lease'

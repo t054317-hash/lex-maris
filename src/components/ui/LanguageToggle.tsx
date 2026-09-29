@@ -31,7 +31,7 @@ export function LanguageToggle({ className = '' }: { className?: string }) {
             aria-pressed={active}
             title={LOCALE_LABEL[code]}
             onClick={() => setLocale(code)}
-            className={`min-w-[2.25rem] rounded-full px-2.5 py-1 text-xs font-medium transition-colors duration-300 ${
+            className={`min-w-[1.75rem] rounded-full px-1.5 py-1 text-xs font-medium sm:min-w-[2.25rem] sm:px-2.5 transition-colors duration-300 ${
               active
                 ? 'bg-gold-500/20 text-gold-400'
                 : 'text-ink-500 hover:text-ink-100'

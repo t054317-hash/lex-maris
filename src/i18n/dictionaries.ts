@@ -112,7 +112,7 @@ const en = {
     'Scored live from the terms above by the same engine counsel uses. Indicative only.',
 
   // --- Capabilities --------------------------------------------------------
-  'cap.heading': 'Built for counsel who carry the risk',
+  'cap.heading': "Built for businesses — and the lawyers who advise them",
   'cap.automation.eyebrow': 'Contract automation',
   'cap.automation.title': 'Draft in minutes, not days',
   'cap.automation.body':
@@ -210,7 +210,7 @@ const en = {
   'wizard.reviewFindings': 'Review findings',
 
   // --- Risk report ---------------------------------------------------------
-  'risk.exposure': 'exposure',
+  'risk.exposure': "risk score",
   'risk.aggregate': 'Aggregate risk',
   'risk.noFindings': 'No findings',
   'risk.band.safe': 'Acceptable',
@@ -335,6 +335,45 @@ const en = {
   'wizard.field.completion': "Time for completion (months) — {value}",
   'wizard.field.salePrice': "Purchase price — {value}",
   'wizard.field.contractPrice': "Contract price — {value}",
+  'theme.toLight': "Switch to day mode",
+  'theme.toDark': "Switch to night mode",
+  'opt.desc.supply':
+    "Selling goods to a buyer on agreed terms: price, delivery and payment.",
+  'opt.desc.distribution':
+    "Appointing a company to resell your products in a territory.",
+  'opt.desc.charterparty': "Hiring a ship to carry cargo for one voyage.",
+  'opt.desc.nda':
+    "Before sharing confidential information with another party, to keep it secret.",
+  'opt.desc.services':
+    "Hiring a company or consultant to do work for a fee.",
+  'opt.desc.agency':
+    "Appointing an agent to find customers for your products in return for commission.",
+  'opt.desc.lease': "Renting a shop, office or other business premises.",
+  'opt.desc.licence':
+    "Letting a customer use your software, or using software that belongs to someone else.",
+  'opt.desc.employment': "Hiring an employee.",
+  'opt.desc.mou':
+    "Recording what two parties intend to agree before the final contract is signed.",
+  'opt.desc.settlement':
+    "Ending a dispute by agreement, usually in return for a payment.",
+  'opt.desc.construction': "Hiring a contractor to build or renovate.",
+  'opt.desc.property-sale':
+    "Buying or selling land, a building or an apartment.",
+  'how.eyebrow': "How it works",
+  'how.heading': "A contract in three steps — no legal background needed",
+  'how.1.title': "Choose the contract",
+  'how.1.body':
+    "Pick what you need from thirteen everyday contracts. Each one is explained in a single line.",
+  'how.2.title': "Answer simple questions",
+  'how.2.body':
+    "Move the sliders and switches. The draft rewrites itself as you go, in Arabic, English or French.",
+  'how.3.title': "Read the warnings, then ask a lawyer",
+  'how.3.body':
+    "Each risk is explained in plain words with a suggested fix. Send your instructions and a lawyer finalises the contract.",
+  'how.cta': "Start with the contract builder",
+  'how.note':
+    "The draft is a starting point, not legal advice. Have a qualified lawyer review it before signing.",
+  'marquee.label': "Contracts you can draft",
   // --- Shared --------------------------------------------------------------
   'common.notLegalAdvice':
     'Output is a triage signal for a qualified practitioner, not legal advice.',
@@ -443,7 +482,7 @@ const ar: Record<TranslationKey, string> = {
     'يُحسب فورياً من الشروط أعلاه بالمحرّك نفسه الذي تستخدمه المحاماة. للاسترشاد فقط.',
 
   // --- Capabilities --------------------------------------------------------
-  'cap.heading': 'مُصمَّم للمحامين الذين يتحمّلون المخاطر',
+  'cap.heading': "مُصمَّم لأصحاب الأعمال وللمحامين الذين يرافقونهم",
   'cap.automation.eyebrow': 'آلية صياغة العقود',
   'cap.automation.title': 'صياغة في دقائق، لا في أيام',
   'cap.automation.body':
@@ -542,7 +581,7 @@ const ar: Record<TranslationKey, string> = {
   'wizard.reviewFindings': 'مراجعة الملاحظات',
 
   // --- Risk report ---------------------------------------------------------
-  'risk.exposure': 'التعرّض',
+  'risk.exposure': "درجة المخاطر",
   'risk.aggregate': 'إجمالي المخاطر',
   'risk.noFindings': 'لا توجد ملاحظات',
   'risk.band.safe': 'مقبول',
@@ -665,6 +704,39 @@ const ar: Record<TranslationKey, string> = {
   'wizard.field.completion': "مدة الإنجاز (بالأشهر) — {value}",
   'wizard.field.salePrice': "ثمن البيع — {value}",
   'wizard.field.contractPrice': "قيمة العقد — {value}",
+  'theme.toLight': "التبديل إلى وضع النهار",
+  'theme.toDark': "التبديل إلى الوضع الليلي",
+  'opt.desc.supply':
+    "لبيع بضائع لمشترٍ وفق شروط متفق عليها: الثمن والتسليم والدفع.",
+  'opt.desc.distribution': "لتعيين جهة تعيد بيع منتجاتك في منطقة محددة.",
+  'opt.desc.charterparty': "لاستئجار سفينة لنقل بضاعة في رحلة واحدة.",
+  'opt.desc.nda': "قبل مشاركة معلومات سرية مع طرف آخر، لضمان عدم إفشائها.",
+  'opt.desc.services': "للتعاقد مع شركة أو مستشار لأداء عمل مقابل أتعاب.",
+  'opt.desc.agency': "لتعيين وكيل يبحث عن عملاء لمنتجاتك مقابل عمولة.",
+  'opt.desc.lease': "لاستئجار محل أو مكتب أو أي عقار تجاري.",
+  'opt.desc.licence':
+    "للسماح لعميل باستخدام برنامجك، أو لاستخدام برنامج يملكه غيرك.",
+  'opt.desc.employment': "لتوظيف عامل أو موظف.",
+  'opt.desc.mou':
+    "لتوثيق ما ينوي الطرفان الاتفاق عليه قبل توقيع العقد النهائي.",
+  'opt.desc.settlement': "لإنهاء نزاع بالتراضي، غالباً مقابل مبلغ.",
+  'opt.desc.construction': "للتعاقد مع مقاول لبناء أو ترميم.",
+  'opt.desc.property-sale': "لشراء أو بيع أرض أو مبنى أو شقة.",
+  'how.eyebrow': "كيف يعمل",
+  'how.heading': "عقدك في ثلاث خطوات — دون حاجة إلى خلفية قانونية",
+  'how.1.title': "اختر العقد",
+  'how.1.body':
+    "اختر ما تحتاجه من ثلاثة عشر عقداً شائعاً، ولكلٍّ منها شرح في سطر واحد.",
+  'how.2.title': "أجب عن أسئلة بسيطة",
+  'how.2.body':
+    "حرّك المؤشرات والمفاتيح، وتُعاد كتابة المسودة فوراً بالعربية أو الإنجليزية أو الفرنسية.",
+  'how.3.title': "راجع التنبيهات ثم استشر محامياً",
+  'how.3.body':
+    "يُشرح كل خطر بكلمات واضحة مع اقتراح لمعالجته. أرسل تكليفك ليتولى محامٍ إعداد العقد النهائي.",
+  'how.cta': "ابدأ بمنشئ العقود",
+  'how.note':
+    "المسودة نقطة انطلاق وليست استشارة قانونية. اعرضها على محامٍ مؤهّل قبل التوقيع.",
+  'marquee.label': "العقود التي يمكنك صياغتها",
   // --- Shared --------------------------------------------------------------
   'common.notLegalAdvice':
     'النتيجة مؤشر فرز لممارس مؤهّل، وليست استشارة قانونية.',
@@ -772,7 +844,8 @@ const fr: Record<TranslationKey, string> = {
     'Calculée en direct à partir des conditions ci-dessus par le moteur utilisé par nos avocats. À titre indicatif.',
 
   // --- Capabilities --------------------------------------------------------
-  'cap.heading': 'Conçu pour les juristes qui portent le risque',
+  'cap.heading':
+    "Conçu pour les entreprises — et les avocats qui les conseillent",
   'cap.automation.eyebrow': 'Automatisation contractuelle',
   'cap.automation.title': 'Rédiger en minutes, pas en jours',
   'cap.automation.body':
@@ -870,7 +943,7 @@ const fr: Record<TranslationKey, string> = {
   'wizard.reviewFindings': 'Voir les constats',
 
   // --- Risk report ---------------------------------------------------------
-  'risk.exposure': 'exposition',
+  'risk.exposure': "score de risque",
   'risk.aggregate': 'Risque global',
   'risk.noFindings': 'Aucun constat',
   'risk.band.safe': 'Acceptable',
@@ -996,6 +1069,49 @@ const fr: Record<TranslationKey, string> = {
   'wizard.field.completion': "Délai d'exécution (mois) — {value}",
   'wizard.field.salePrice': "Prix de vente — {value}",
   'wizard.field.contractPrice': "Prix du marché — {value}",
+  'theme.toLight': "Passer en mode jour",
+  'theme.toDark': "Passer en mode nuit",
+  'opt.desc.supply':
+    "Vendre des marchandises à un acheteur à des conditions convenues : prix, livraison et paiement.",
+  'opt.desc.distribution':
+    "Désigner une société pour revendre vos produits sur un territoire.",
+  'opt.desc.charterparty':
+    "Affréter un navire pour transporter une cargaison sur un voyage.",
+  'opt.desc.nda':
+    "Avant de partager des informations confidentielles avec un tiers, pour qu'elles restent secrètes.",
+  'opt.desc.services':
+    "Confier un travail à une société ou à un consultant contre rémunération.",
+  'opt.desc.agency':
+    "Désigner un agent qui trouve des clients pour vos produits contre commission.",
+  'opt.desc.lease':
+    "Louer une boutique, un bureau ou d'autres locaux professionnels.",
+  'opt.desc.licence':
+    "Autoriser un client à utiliser votre logiciel, ou utiliser celui d'un autre.",
+  'opt.desc.employment': "Embaucher un salarié.",
+  'opt.desc.mou':
+    "Consigner ce que deux parties envisagent de conclure avant la signature du contrat définitif.",
+  'opt.desc.settlement':
+    "Mettre fin à un litige à l'amiable, généralement contre un paiement.",
+  'opt.desc.construction':
+    "Confier à un entrepreneur la construction ou la rénovation d'un ouvrage.",
+  'opt.desc.property-sale':
+    "Acheter ou vendre un terrain, un immeuble ou un appartement.",
+  'how.eyebrow': "Comment ça marche",
+  'how.heading':
+    "Un contrat en trois étapes — sans connaissances juridiques",
+  'how.1.title': "Choisissez le contrat",
+  'how.1.body':
+    "Sélectionnez ce dont vous avez besoin parmi treize contrats courants, chacun expliqué en une ligne.",
+  'how.2.title': "Répondez à des questions simples",
+  'how.2.body':
+    "Déplacez les curseurs et les interrupteurs : le projet se réécrit au fur et à mesure, en arabe, en anglais ou en français.",
+  'how.3.title': "Lisez les alertes, puis consultez un avocat",
+  'how.3.body':
+    "Chaque risque est expliqué simplement, avec une correction proposée. Transmettez vos instructions et un avocat finalise le contrat.",
+  'how.cta': "Commencer avec le générateur de contrats",
+  'how.note':
+    "Le projet est un point de départ, et non un conseil juridique. Faites-le relire par un avocat qualifié avant de signer.",
+  'marquee.label': "Contrats disponibles",
   // --- Shared --------------------------------------------------------------
   'common.notLegalAdvice':
     'Le résultat est un signal de tri destiné à un praticien qualifié, et non un conseil juridique.',

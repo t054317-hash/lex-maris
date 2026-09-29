@@ -3,6 +3,8 @@
 import { GavelIntro } from '@/components/intro/GavelIntro';
 import { Hero } from '@/components/hero/Hero';
 import { Capabilities } from '@/components/home/Capabilities';
+import { CategoryMarquee } from '@/components/home/CategoryMarquee';
+import { HowItWorks } from '@/components/home/HowItWorks';
 import { ContractWizard } from '@/components/wizard/ContractWizard';
 import { useT } from '@/i18n/I18nProvider';
 
@@ -26,6 +28,10 @@ export default function HomePage() {
 
       <main id="main">
         <Hero />
+
+        <CategoryMarquee />
+
+        <HowItWorks />
 
         <div className="rule-gold mx-auto max-w-6xl" />
 

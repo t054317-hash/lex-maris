@@ -224,7 +224,7 @@ const RULES: readonly Rule[] = [
             remediation:
               'Insert an express governing-law clause. For cross-border trade, English law or DIFC law are the conventional neutral choices.',
             authority:
-              'Rome I Regulation (EC) No 593/2008, Arts 3–4; UAE Civil Transactions Law (Federal Law No. 5 of 1985), Art. 19',
+              'Rome I Regulation (EC) No 593/2008, Arts 3–4; UAE Civil Transactions Law (Federal Decree-Law No. 25 of 2025), Art. 19',
           }
         : null,
   },
@@ -467,7 +467,7 @@ const RULES: readonly Rule[] = [
               'With no laytime, the moment demurrage starts to run is indeterminate. This is the most frequently arbitrated defect in charterparty drafting.',
             remediation:
               'State laytime in running hours, define notice of readiness, and specify which periods are excepted.',
-            authority: 'Laytime Definitions for Charter Parties 2013',
+            authority: 'Laytime Definitions for Charter Parties 2013 (BIMCO, CMI, FONASBA, Baltic Exchange)',
           }
         : null,
   },
@@ -523,7 +523,7 @@ const RULES: readonly Rule[] = [
       remediation:
         'Confirm the registration requirements and the termination and compensation rules of the territory before signature, and price the exit accordingly.',
       authority:
-        'Kuwait Law No. 13 of 2016 on Commercial Agencies; UAE Federal Decree-Law No. 3 of 2022 on Commercial Agencies',
+        'Kuwait Law No. 13 of 2016 on Commercial Agencies; UAE Federal Law No. 3 of 2022 Regulating Commercial Agencies',
     }),
   },
   {
@@ -637,10 +637,11 @@ const RULES: readonly Rule[] = [
       severity: 'medium',
       title: 'Decennial liability cannot be excluded or capped',
       detail:
-        "The contractor and the designer are jointly liable for ten years for collapse of the building and for defects threatening its stability, and any agreement excluding or limiting that liability is void. The contract's liability cap does not reach it.",
+        "The contractor and the engineer are jointly liable for ten years for collapse of the building and for defects threatening its stability, and any agreement excluding or limiting that liability is void. The contract's liability cap does not reach it.",
       remediation:
         "Price the ten-year exposure, confirm the contractor's and designer's professional indemnity cover, and keep the carve-out in the limitation clause.",
-      authority: 'UAE Civil Transactions Law (Federal Law No. 5 of 1985), Arts 880–882',
+      authority:
+        'Kuwait Civil Code, Arts 692–697; UAE Civil Transactions Law (Federal Decree-Law No. 25 of 2025), Arts 821–824 (formerly Federal Law No. 5 of 1985, Arts 880–883)',
     }),
   },
   {
@@ -653,10 +654,11 @@ const RULES: readonly Rule[] = [
       severity: 'low',
       title: 'Agreed delay damages may be adjusted by the court',
       detail:
-        'Under the civil codes of the region the court may, on application, adjust agreed damages so that they equal the loss actually suffered. A rate set far above the likely loss may not be enforced as written.',
+        'Under the civil codes of the region agreed compensation is not due where no loss is suffered, and the court may reduce it where it is grossly exaggerated. A rate set far above the likely loss may not be enforced as written.',
       remediation:
         'Set the daily rate and the cap by reference to a genuine estimate of the loss from delay, and record the basis of that estimate.',
-      authority: 'UAE Civil Transactions Law, Art. 390',
+      authority:
+        'Kuwait Civil Code, Art. 303; UAE Civil Transactions Law (Federal Decree-Law No. 25 of 2025), Art. 340 (formerly Art. 390)',
     }),
   },
   {
@@ -722,7 +724,8 @@ const RULES: readonly Rule[] = [
         'Several Gulf states restrict ownership of real property by foreign nationals and by companies with foreign shareholders, or confine it to designated areas.',
       remediation:
         "Confirm the buyer's eligibility and obtain any required approval before paying the deposit, and make the sale conditional on it.",
-      authority: 'Kuwait Law No. 74 of 1979 on Real Estate Ownership by Non-Kuwaitis',
+      authority:
+        'Kuwait Decree-Law No. 74 of 1979 on Real Estate Ownership by Non-Kuwaitis, as amended by Decree-Law No. 7 of 2025',
     }),
   },
 ];

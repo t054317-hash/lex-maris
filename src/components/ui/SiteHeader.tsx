@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { AuthDialog } from '@/components/auth/AuthDialog';
 import { LanguageToggle } from './LanguageToggle';
+import { ThemeToggle } from './ThemeToggle';
 import { useI18n } from '@/i18n/I18nProvider';
 import { useSession } from '@/hooks/useSession';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
@@ -56,7 +57,7 @@ export function SiteHeader() {
             <HeaderLink href="/#bench">{t('nav.bench')}</HeaderLink>
           </nav>
 
-          <div className="ms-auto flex items-center gap-2 sm:gap-3 md:ms-0">
+          <div className="ms-auto flex items-center gap-1.5 sm:gap-3 md:ms-0">
             {/* "My files" is shown to everyone and on every screen size: it
                 is how a client finds out where their request has reached.
                 Signed out, middleware sends them to sign in and back. */}
@@ -67,6 +68,7 @@ export function SiteHeader() {
             >
               {t('nav.dashboard')}
             </Link>
+            <ThemeToggle />
             <LanguageToggle />
 
             {/* Reserve the button's width while the session resolves, so the

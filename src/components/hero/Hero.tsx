@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { LegalMatrixCanvas } from '@/components/ui/LegalMatrixCanvas';
 import { useGavelAudio } from '@/components/intro/useGavelAudio';
 import type { GavelPhase } from '@/components/intro/GavelScene';
@@ -37,6 +37,48 @@ const GavelScene = dynamic(
  * - Everything uses logical properties (ms-/me-, text-start) so the whole
  *   layout mirrors correctly under Arabic RTL.
  */
+/** Counts up from zero when first scrolled into view; a still number under reduced motion. */
+function CountUp({ value }: { value: number }) {
+  const reduced = useReducedMotion();
+  const ref = useRef<HTMLSpanElement | null>(null);
+  const [shown, setShown] = useState(reduced ? value : 0);
+
+  useEffect(() => {
+    if (reduced) {
+      setShown(value);
+      return;
+    }
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === 'undefined') {
+      setShown(value);
+      return;
+    }
+    let raf = 0;
+    const io = new IntersectionObserver(([entry]) => {
+      if (!entry?.isIntersecting) return;
+      io.disconnect();
+      const start = performance.now();
+      const tick = (now: number) => {
+        const p = Math.min((now - start) / 1400, 1);
+        setShown(Math.round(value * (1 - Math.pow(1 - p, 3))));
+        if (p < 1) raf = requestAnimationFrame(tick);
+      };
+      raf = requestAnimationFrame(tick);
+    });
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      cancelAnimationFrame(raf);
+    };
+  }, [value, reduced]);
+
+  return (
+    <span ref={ref} className="tabular-nums">
+      {shown}
+    </span>
+  );
+}
+
 export function Hero() {
   const { t } = useI18n();
   const reduced = useReducedMotion();
@@ -83,12 +125,13 @@ export function Hero() {
 
           <motion.h1
             className="mt-5 max-w-[20ch] text-balance font-display text-4xl leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl"
-            initial={reduced ? undefined : { opacity: 0, y: 14 }}
-            animate={reduced ? undefined : { opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.06, ease: [0.22, 1, 0.36, 1] }}
+            // Opening-title reveal: rises out of a soft blur, like a lens pulling focus.
+            initial={reduced ? undefined : { opacity: 0, y: 26, filter: 'blur(12px)' }}
+            animate={reduced ? undefined : { opacity: 1, y: 0, filter: 'blur(0px)' }}
+            transition={{ duration: 1.1, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           >
             {t('hero.title.a')}{' '}
-            <span className="text-gold-500">{t('hero.title.accent')}</span>{' '}
+            <span className="text-gold-sweep">{t('hero.title.accent')}</span>{' '}
             {t('hero.title.b')}
           </motion.h1>
 
@@ -172,7 +215,7 @@ export function Hero() {
           ).map(([value, key]) => (
             <div key={key}>
               <dt className="font-display text-2xl text-gold-500 sm:text-3xl">
-                {value}
+                <CountUp value={Number(value)} />
               </dt>
               <dd className="mt-1.5 text-[11px] uppercase leading-relaxed tracking-[0.12em] text-ink-500">
                 {t(key)}
