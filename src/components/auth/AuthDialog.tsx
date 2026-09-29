@@ -159,6 +159,11 @@ export function AuthDialog({
         // before closing so the header does not lag a beat behind.
         await getSupabaseBrowserClient().auth.getSession();
         onClose();
+        // Land on "My files" unless they were mid-way through an order,
+        // where closing the dialog returns them to the form they were filling.
+        if (!window.location.pathname.startsWith('/checkout')) {
+          window.location.assign('/dashboard');
+        }
       } catch (err) {
         setError(err instanceof Error && err.message ? err.message : t('auth.error.generic'));
       } finally {

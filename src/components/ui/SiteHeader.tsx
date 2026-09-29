@@ -42,11 +42,11 @@ export function SiteHeader() {
   return (
     <>
       <header className="sticky top-0 z-[60] border-b border-ink-500/12 bg-navy-900/70 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-6 sm:px-10">
+        <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4 sm:gap-4 sm:px-10">
           <Link
             href="/"
             data-cursor="hover"
-            className="font-display text-sm tracking-[0.28em] text-gold-500 transition-colors hover:text-gold-400"
+            className="shrink-0 whitespace-nowrap font-display text-xs tracking-[0.16em] text-gold-500 transition-colors hover:text-gold-400 sm:text-sm sm:tracking-[0.28em]"
           >
             {t('brand.name')}
           </Link>
@@ -54,22 +54,31 @@ export function SiteHeader() {
           <nav className="ms-auto hidden items-center gap-7 md:flex">
             <HeaderLink href="/#services">{t('nav.services')}</HeaderLink>
             <HeaderLink href="/#bench">{t('nav.bench')}</HeaderLink>
-            {session && <HeaderLink href="/dashboard">{t('nav.dashboard')}</HeaderLink>}
           </nav>
 
-          <div className="ms-auto flex items-center gap-3 md:ms-0">
+          <div className="ms-auto flex items-center gap-2 sm:gap-3 md:ms-0">
+            {/* "My files" is shown to everyone and on every screen size: it
+                is how a client finds out where their request has reached.
+                Signed out, middleware sends them to sign in and back. */}
+            <Link
+              href="/dashboard"
+              data-cursor="hover"
+              className="whitespace-nowrap rounded-full border border-ink-500/30 px-2.5 py-1.5 text-[10px] uppercase tracking-[0.08em] text-ink-100 transition-colors duration-300 hover:border-gold-500/50 hover:text-gold-400 sm:px-4 sm:py-2 sm:text-[11px] sm:tracking-[0.12em]"
+            >
+              {t('nav.dashboard')}
+            </Link>
             <LanguageToggle />
 
             {/* Reserve the button's width while the session resolves, so the
                 header does not reflow a beat after load. */}
             {loading ? (
-              <span aria-hidden className="h-8 w-[5.5rem] rounded-full bg-navy-800/40" />
+              <span aria-hidden className="hidden h-8 w-[5.5rem] rounded-full bg-navy-800/40 sm:block" />
             ) : session ? (
               <button
                 type="button"
                 data-cursor="hover"
                 onClick={signOut}
-                className="rounded-full border border-ink-500/30 px-4 py-2 text-[11px] uppercase tracking-[0.16em] text-ink-300 transition-colors duration-300 hover:border-gold-500/50 hover:text-gold-400"
+                className="whitespace-nowrap rounded-full border border-ink-500/30 px-2.5 py-1.5 text-[10px] uppercase tracking-[0.08em] sm:px-4 sm:py-2 sm:text-[11px] sm:tracking-[0.16em] text-ink-300 transition-colors duration-300 hover:border-gold-500/50 hover:text-gold-400"
               >
                 {t('nav.signOut')}
               </button>
@@ -78,7 +87,7 @@ export function SiteHeader() {
                 type="button"
                 data-cursor="hover"
                 onClick={() => setAuthOpen(true)}
-                className="rounded-full border border-gold-500/45 bg-gold-500/10 px-4 py-2 text-[11px] uppercase tracking-[0.16em] text-gold-400 transition-all duration-300 hover:border-gold-500 hover:bg-gold-500/20"
+                className="hidden whitespace-nowrap rounded-full border border-gold-500/45 sm:inline-block bg-gold-500/10 px-4 py-2 text-[11px] uppercase tracking-[0.16em] text-gold-400 transition-all duration-300 hover:border-gold-500 hover:bg-gold-500/20"
               >
                 {t('nav.signIn')}
               </button>
