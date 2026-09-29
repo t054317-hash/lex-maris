@@ -168,6 +168,38 @@ export function AuthDialog({
     [mode, email, password, fullName, organisation, locale, onClose, t],
   );
 
+  /**
+   * OAuth round trip (Google, Apple). The browser leaves for the provider and
+   * comes back through /auth/callback, which exchanges the one-time code for
+   * a session cookie. New users get a profile from app.handle_new_user(),
+   * which records the provider.
+   */
+  const signInWith = useCallback(
+    async (provider: 'google' | 'apple') => {
+      setBusy(true);
+      setError(null);
+      const supabase = getSupabaseBrowserClient();
+      const { error: oauthError } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
+          // Google only: consent + offline so a refresh token is issued;
+          // without it the Google identity cannot be refreshed silently.
+          queryParams:
+            provider === 'google'
+              ? { access_type: 'offline', prompt: 'consent' }
+              : undefined,
+        },
+      });
+      if (oauthError) {
+        setError(t('auth.error.oauth'));
+        setBusy(false);
+      }
+      // On success the browser leaves for the provider; nothing to reset.
+    },
+    [t],
+  );
+
   const resetPassword = useCallback(async () => {
     if (!email) {
       setError(t('auth.error.emailFirst'));
@@ -226,42 +258,41 @@ export function AuthDialog({
               {mode === 'signIn' ? t('auth.signIn.subtitle') : t('auth.signUp.subtitle')}
             </p>
 
-            {/* Google first: for a returning user it is one click, and putting
-                it above the form saves them reaching for a password they may
-                not even have. */}
-            <button
-              type="button"
-              disabled={busy}
-              data-cursor="hover"
-              onClick={async () => {
-                setBusy(true);
-                setError(null);
-                const supabase = getSupabaseBrowserClient();
-                const { error: oauthError } = await supabase.auth.signInWithOAuth({
-                  provider: 'google',
-                  options: {
-                    redirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
-                    // consent + offline so a refresh token is issued; without
-                    // it the Google identity cannot be refreshed silently.
-                    queryParams: { access_type: 'offline', prompt: 'consent' },
-                  },
-                });
-                if (oauthError) {
-                  setError(t('auth.error.generic'));
-                  setBusy(false);
-                }
-                // On success the browser leaves for Google; nothing to reset.
-              }}
-              className="mt-7 flex w-full items-center justify-center gap-3 rounded-full border border-ink-500/30 bg-navy-800/60 px-6 py-3 text-sm text-ink-100 transition-colors duration-300 hover:border-gold-500/50 disabled:opacity-50"
-            >
-              <svg aria-hidden viewBox="0 0 18 18" className="h-4 w-4">
-                <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92a8.78 8.78 0 0 0 2.68-6.62Z" />
-                <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.81.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.34A9 9 0 0 0 9 18Z" />
-                <path fill="#FBBC05" d="M3.97 10.72a5.4 5.4 0 0 1 0-3.44V4.94H.96a9 9 0 0 0 0 8.12l3.01-2.34Z" />
-                <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.59C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.94l3.01 2.34C4.68 5.16 6.66 3.58 9 3.58Z" />
-              </svg>
-              {t('auth.google')}
-            </button>
+            {/* Social sign-in first: for a returning user it is one click,
+                and putting it above the form saves them reaching for a
+                password they may not even have. */}
+            <div className="mt-7 grid gap-2.5">
+              <button
+                type="button"
+                disabled={busy}
+                data-cursor="hover"
+                onClick={() => signInWith('google')}
+                className="flex w-full items-center justify-center gap-3 rounded-full border border-ink-500/30 bg-navy-800/60 px-6 py-3 text-sm text-ink-100 transition-colors duration-300 hover:border-gold-500/50 disabled:opacity-50"
+              >
+                <svg aria-hidden viewBox="0 0 18 18" className="h-4 w-4">
+                  <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92a8.78 8.78 0 0 0 2.68-6.62Z" />
+                  <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.81.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.34A9 9 0 0 0 9 18Z" />
+                  <path fill="#FBBC05" d="M3.97 10.72a5.4 5.4 0 0 1 0-3.44V4.94H.96a9 9 0 0 0 0 8.12l3.01-2.34Z" />
+                  <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.59C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.94l3.01 2.34C4.68 5.16 6.66 3.58 9 3.58Z" />
+                </svg>
+                {t('auth.google')}
+              </button>
+
+              {/* Apple's guidelines ask for a black or white button with the
+                  Apple mark; white reads best on the navy glass. */}
+              <button
+                type="button"
+                disabled={busy}
+                data-cursor="hover"
+                onClick={() => signInWith('apple')}
+                className="flex w-full items-center justify-center gap-3 rounded-full border border-white bg-white px-6 py-3 text-sm font-medium text-black transition-opacity duration-300 hover:opacity-90 disabled:opacity-50"
+              >
+                <svg aria-hidden viewBox="0 0 814 1000" className="h-4 w-4" fill="currentColor">
+                  <path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76.5 0-103.7 40.8-165.9 40.8s-105.6-57-155.5-127C46.7 790.7 0 663 0 541.8c0-194.4 126.4-297.5 250.8-297.5 66.1 0 121.2 43.4 162.7 43.4 39.5 0 101.1-46 176.3-46 28.5 0 130.9 2.6 198.3 99.2zm-234-181.5c31.1-36.9 53.1-88.1 53.1-139.3 0-7.1-.6-14.3-1.9-20.1-50.6 1.9-110.8 33.7-147.1 75.8-28.5 32.4-55.1 83.6-55.1 135.5 0 7.8 1.3 15.6 1.9 18.1 3.2.6 8.4 1.3 13.6 1.3 45.4 0 102.5-30.4 135.5-71.3z" />
+                </svg>
+                {t('auth.apple')}
+              </button>
+            </div>
 
             <div aria-hidden className="my-5 flex items-center gap-3">
               <span className="h-px flex-1 bg-ink-500/20" />

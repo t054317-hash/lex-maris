@@ -247,6 +247,7 @@ const en = {
 
   // --- Auth (extra) ----------------------------------------------------------
   'auth.google': 'Continue with Google',
+  'auth.apple': 'Continue with Apple',
   'auth.or': 'or',
   'auth.error.invalid': 'Incorrect email or password.',
   'auth.error.rateLimited': 'Too many attempts. Please wait a moment and try again.',
@@ -256,8 +257,8 @@ const en = {
   'auth.error.generic': 'Something went wrong. Please try again.',
   'auth.error.emailFirst': 'Enter your email address first.',
   'auth.error.oauth':
-    'Google sign-in could not be completed. Please try again, or sign in with your email.',
-  'auth.error.oauthCancelled': 'Google sign-in was cancelled.',
+    'Sign-in could not be completed. Please try again, or sign in with your email.',
+  'auth.error.oauthCancelled': 'Sign-in was cancelled.',
 
   // --- Intro ---------------------------------------------------------------
   'intro.label': 'Introduction',
@@ -564,6 +565,7 @@ const ar: Record<TranslationKey, string> = {
 
   // --- Auth (extra) ----------------------------------------------------------
   'auth.google': 'المتابعة باستخدام Google',
+  'auth.apple': 'المتابعة باستخدام Apple',
   'auth.or': 'أو',
   'auth.error.invalid': 'البريد الإلكتروني أو كلمة المرور غير صحيحة.',
   'auth.error.rateLimited': 'محاولات كثيرة جداً. يرجى الانتظار قليلاً ثم المحاولة مجدداً.',
@@ -573,8 +575,8 @@ const ar: Record<TranslationKey, string> = {
   'auth.error.generic': 'حدث خطأ ما. يرجى المحاولة مجدداً.',
   'auth.error.emailFirst': 'أدخل بريدك الإلكتروني أولاً.',
   'auth.error.oauth':
-    'تعذّر إكمال تسجيل الدخول عبر Google. يرجى المحاولة مجدداً، أو تسجيل الدخول بالبريد الإلكتروني.',
-  'auth.error.oauthCancelled': 'أُلغي تسجيل الدخول عبر Google.',
+    'تعذّر إكمال تسجيل الدخول. يرجى المحاولة مجدداً، أو تسجيل الدخول بالبريد الإلكتروني.',
+  'auth.error.oauthCancelled': 'أُلغي تسجيل الدخول.',
 
   // --- Intro ---------------------------------------------------------------
   'intro.label': 'المقدمة',
@@ -879,6 +881,7 @@ const fr: Record<TranslationKey, string> = {
 
   // --- Auth (extra) ----------------------------------------------------------
   'auth.google': 'Continuer avec Google',
+  'auth.apple': 'Continuer avec Apple',
   'auth.or': 'ou',
   'auth.error.invalid': 'Adresse e-mail ou mot de passe incorrect.',
   'auth.error.rateLimited': 'Trop de tentatives. Veuillez patienter un instant puis réessayer.',
@@ -888,8 +891,8 @@ const fr: Record<TranslationKey, string> = {
   'auth.error.generic': "Une erreur s'est produite. Veuillez réessayer.",
   'auth.error.emailFirst': "Saisissez d'abord votre adresse e-mail.",
   'auth.error.oauth':
-    "La connexion avec Google n'a pas pu aboutir. Veuillez réessayer, ou vous connecter avec votre adresse e-mail.",
-  'auth.error.oauthCancelled': 'La connexion avec Google a été annulée.',
+    "La connexion n'a pas pu aboutir. Veuillez réessayer, ou vous connecter avec votre adresse e-mail.",
+  'auth.error.oauthCancelled': 'La connexion a été annulée.',
 
   // --- Intro ---------------------------------------------------------------
   'intro.label': 'Introduction',
