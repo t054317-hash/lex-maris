@@ -21,7 +21,7 @@ const en = {
   'brand.tagline': 'Commercial · Corporate · Maritime',
   'nav.services': 'Services',
   'nav.bench': 'Contract bench',
-  'nav.dashboard': 'Dashboard',
+  'nav.dashboard': "My files",
   'nav.signIn': 'Sign in',
   'nav.signOut': 'Sign out',
   'nav.account': 'Account',
@@ -30,17 +30,18 @@ const en = {
   // --- Hero ----------------------------------------------------------------
   'hero.eyebrow': 'Commercial, corporate & maritime trade law',
   'hero.title.a': 'Every clause',
-  'hero.title.accent': 'priced before',
+  'hero.title.accent': "assessed before",
   'hero.title.b': 'you sign it.',
   'hero.lede':
-    'Lex Maris drafts commercial and maritime instruments from your terms, scores each clause against a fixed exposure model, and executes them with a verifiable cryptographic trail.',
+    "Lex Maris drafts commercial and maritime instruments from your terms and assesses every clause against a fixed, published rule set — in Arabic, English or French.",
   'hero.cta.primary': 'Commission a contract',
   'hero.cta.secondary': 'Try the risk bench',
-  'hero.trust': 'Kuwait · UAE · England & Wales · Singapore',
+  'hero.trust':
+    "Governing laws modelled: Kuwait · UAE · England & Wales · Singapore · Switzerland · New York",
   'hero.metric.rules': 'clause rules per pass',
-  'hero.metric.turnaround': 'draft to sealed PDF',
-  'hero.metric.sealing': 'per-document sealing',
-  'hero.metric.forum': 'arbitral seats modelled',
+  'hero.metric.turnaround': "drafting languages",
+  'hero.metric.sealing': "standard clauses in the drafting engine",
+  'hero.metric.forum': "arbitral institutions modelled (LCIA · ICC · DIAC)",
   'hero.gavel.hint': 'Strike the gavel',
 
   // --- Auth ----------------------------------------------------------------
@@ -63,12 +64,12 @@ const en = {
   'auth.close': 'Close',
   'auth.working': 'One moment…',
   'auth.privilegeNotice':
-    'Communications through this platform may be privileged. Do not share your credentials.',
+    "Information you submit is treated as confidential. Do not share your credentials.",
 
   // --- Checkout ------------------------------------------------------------
   'checkout.title': 'Contract Writing',
   'checkout.subtitle':
-    'Tell us the terms. Counsel drafts the instrument and returns it with a clause-level risk report.',
+    "Tell us the terms. Counsel reviews your instructions and sends a written fee quote before any drafting begins.",
   'checkout.section.instrument': 'The instrument',
   'checkout.section.parties': 'The parties',
   'checkout.section.terms': 'Commercial terms',
@@ -115,7 +116,7 @@ const en = {
   'cap.automation.eyebrow': 'Contract automation',
   'cap.automation.title': 'Draft in minutes, not days',
   'cap.automation.body':
-    'A declarative clause tree assembles supply, distribution, charterparty and shareholder instruments from validated inputs. Numbering, cross-references and schedules derive themselves.',
+    "A declarative clause tree assembles supply, exclusive distribution and voyage charterparty drafts from validated inputs. Clause numbering updates automatically as terms are added or removed.",
   'cap.analysis.eyebrow': 'Clause-level analysis',
   'cap.analysis.title': 'Exposure scored as you type',
   'cap.analysis.body':
@@ -124,18 +125,18 @@ const en = {
   'cap.maritime.title': 'Laytime and demurrage, handled',
   'cap.maritime.body':
     'Notice of readiness, excepted periods, demurrage accrual and claim time bars are modelled as first-class terms rather than free-text riders.',
-  'cap.execution.eyebrow': 'Execution',
-  'cap.execution.title': 'Cryptographic signature trail',
+  'cap.execution.eyebrow': "Languages",
+  'cap.execution.title': "One contract, three languages",
   'cap.execution.body':
-    'Every executed instrument carries a SHA-256 content hash, a signed audit record and a QR verification route that resolves without an account.',
-  'cap.realtime.eyebrow': 'Real time',
-  'cap.realtime.title': 'The client always knows where it is',
+    "The same terms produce the draft in Arabic, English or French, clause for clause. Where a contract is signed in more than one language, it should state which version prevails.",
+  'cap.realtime.eyebrow': "Tracking",
+  'cap.realtime.title': "Follow every request",
   'cap.realtime.body':
-    'Matter status streams over an authenticated channel. Drafting, review, counterparty comment and execution land on the client rail the moment they happen.',
-  'cap.custody.eyebrow': 'Custody',
-  'cap.custody.title': 'Encrypted at rest, per document',
+    "Each set of instructions you submit appears in your account with its current stage: received, fee quote, drafting and delivery.",
+  'cap.custody.eyebrow': "Confidentiality",
+  'cap.custody.title': "Access limited to your account",
   'cap.custody.body':
-    'Documents are sealed with AES-256-GCM under per-document data keys, wrapped by a KMS master key. Plaintext never touches disk.',
+    "Data travels over encrypted connections (HTTPS). Each request can be read only by you and authorised members of your organisation, and no card details are collected on this site.",
 
   // --- Bench ---------------------------------------------------------------
   'bench.eyebrow': 'Risk scanner & live contract builder',
@@ -167,7 +168,7 @@ const en = {
   'opt.law.XX': 'Not stated',
   'opt.forum.arbitration-lcia': 'LCIA arbitration, London',
   'opt.forum.arbitration-icc': 'ICC arbitration',
-  'opt.forum.arbitration-difc': 'DIFC-LCIA arbitration',
+  'opt.forum.arbitration-difc': "DIAC arbitration, seat DIFC",
   'opt.forum.arbitration-adhoc': 'Ad hoc arbitration',
   'opt.forum.local-courts': 'Courts — first party seat',
   'opt.forum.foreign-courts': 'Courts — counterparty seat',
@@ -185,7 +186,7 @@ const en = {
   'wizard.step.forum': 'Law & forum',
   'wizard.step.execute': 'Review',
   'wizard.partyNote':
-    'Party details are drawn from the matter record. Registry data is verified against the relevant commercial register before execution.',
+    "Party names, registration numbers and addresses appear as placeholders. They must be completed and verified against the relevant commercial register before signature.",
   'wizard.field.value': 'Contract value — {value}',
   'wizard.field.paymentTerms': 'Payment terms — {n} days',
   'wizard.field.security': 'Payment security',
@@ -239,16 +240,13 @@ const en = {
   'checkout.breadcrumb': 'Contract writing',
   'checkout.eyebrow': 'Commission',
   'checkout.offline':
-    'Showing the default catalogue price — the live pricing service is not reachable.',
+    "The ordering service is temporarily unavailable. Please try again shortly.",
   'checkout.disclaimer':
-    'Submitting this form creates an instruction, not a retainer. An engagement letter follows before work begins. Output is a triage signal for a qualified practitioner, not legal advice.',
+    "Submitting this form sends instructions; it does not create a lawyer–client engagement. An engagement letter setting out scope and fees follows before work begins. The risk score shown is an automated indicator, not legal advice.",
   'meta.checkout.description':
     'Commission a commercial or maritime instrument, drafted by counsel and returned with a clause-level risk report.',
 
   // --- Auth (extra) ----------------------------------------------------------
-  'auth.google': 'Continue with Google',
-  'auth.apple': 'Continue with Apple',
-  'auth.or': 'or',
   'auth.error.invalid': 'Incorrect email or password.',
   'auth.error.rateLimited': 'Too many attempts. Please wait a moment and try again.',
   'auth.error.unconfirmed': 'Please confirm your email address first, then sign in.',
@@ -267,50 +265,8 @@ const en = {
   'intro.skip': 'Skip intro',
 
   // --- Dashboard -----------------------------------------------------------
-  'meta.dashboard.title': 'Client dashboard',
-  'dash.summary': '4 open matters · 2 awaiting your action',
-  'dash.new': 'New instrument',
-  'dash.alerts': 'Compliance alerts',
-  'dash.vault': 'Encrypted document vault',
-  'dash.stage.instructed': 'Instructions received',
-  'dash.stage.instructed.meta': '2 Sep, 09:14',
-  'dash.stage.assembled': 'First draft assembled',
-  'dash.stage.assembled.meta': '2 Sep, 09:16',
-  'dash.stage.scanned': 'Risk pass complete — 3 findings',
-  'dash.stage.scanned.meta': '2 Sep, 09:16',
-  'dash.stage.partner': 'Partner review',
-  'dash.stage.partner.meta': '4 Sep, 15:40',
-  'dash.stage.counterparty': 'Counterparty comments awaited',
-  'dash.stage.counterparty.meta': 'Due 10 Sep',
-  'dash.stage.sanctions': 'Sanctions re-screen required before execution',
-  'dash.stage.sanctions.meta': 'Screening expired 6 Sep',
-  'dash.stage.execution': 'Execution and sealing',
-  'dash.stage.execution.meta': 'Not started',
-  'dash.actor.portal': 'Client portal',
-  'dash.actor.engine': 'Document engine',
-  'dash.actor.scanner': 'Scanner v1.0.0',
-  'dash.alert.sanctions.title': 'Sanctions screening expired',
-  'dash.alert.sanctions.body':
-    'The counterparty screening record is 91 days old. Execution is blocked until a fresh screen is recorded against the current consolidated lists.',
-  'dash.alert.sanctions.action': 'Re-screen counterparty',
-  'dash.alert.demurrage.title': 'Demurrage time bar approaching',
-  'dash.alert.demurrage.body':
-    'Claim LM-2026-0388 must be presented with supporting documents within 11 days or it is time-barred under clause 6.2.',
-  'dash.alert.demurrage.action': 'Open claim file',
-  'dash.alert.lc.title': 'Letter of credit expiry',
-  'dash.alert.lc.body':
-    'The confirmed LC on matter LM-2026-0402 expires in 24 days, ahead of the final shipment window.',
-  'dash.alert.lc.action': 'Request amendment',
-  'dash.doc.charter': 'Voyage charterparty — executed',
-  'dash.doc.supply': 'Supply agreement — draft 4',
-  'dash.doc.screening': 'Sanctions screening record',
-  'dash.doc.bol': 'Bill of lading — MV Sirocco',
-  'dash.doc.sealed': 'Sealed · AES-256-GCM',
-  'dash.doc.expired': 'Expired',
-  'dash.date.6sep': '6 Sep',
-  'dash.date.4sep': '4 Sep',
-  'dash.date.7jun': '7 Jun',
-  'dash.date.1sep': '1 Sep',
+  'meta.dashboard.title': "My files",
+  'dash.new': "New instructions",
   'timeline.title': 'Matter progress',
   'timeline.complete': '{done} of {total} stages complete',
   'timeline.action': 'Action required',
@@ -320,8 +276,33 @@ const en = {
   'meta.description':
     'Contract automation, clause-level risk analysis and cryptographic execution for commercial, corporate and maritime trade counsel.',
   'common.skip': 'Skip to content',
-  'hero.metric.turnaround.value': '< 2s',
 
+  'checkout.fee.title': "Fees",
+  'checkout.fee.body':
+    "No fixed fee applies. Fees depend on the scope and complexity of the instrument and are set out in a written quote and engagement letter for your approval. Nothing is charged when you submit this form.",
+  'checkout.submit': "Submit instructions",
+  'checkout.working': "Submitting…",
+  'checkout.success.title': "Instructions received",
+  'checkout.success.body':
+    "Reference {ref}. Counsel will review your instructions and send a fee quote. You can follow the status of this request in your account.",
+  'checkout.success.cta': "View my files",
+  'dash.heading': "My files",
+  'dash.lede':
+    "Every set of instructions you have submitted, with its current stage.",
+  'dash.empty.title': "No files yet",
+  'dash.empty.body':
+    "When you submit instructions, each request appears here with its current stage.",
+  'dash.error': "Your files could not be loaded. Please refresh the page.",
+  'dash.submitted': "Submitted {date}",
+  'dash.stage.received': "Instructions received",
+  'dash.stage.quote': "Review and fee quote",
+  'dash.stage.drafting': "Drafting",
+  'dash.stage.delivered': "Delivered",
+  'dash.stage.pending': "Pending",
+  'dash.stage.current': "In progress",
+  'dash.stage.done': "Complete",
+  'dash.status.cancelled': "Cancelled",
+  'dash.status.refunded': "Refunded",
   // --- Shared --------------------------------------------------------------
   'common.notLegalAdvice':
     'Output is a triage signal for a qualified practitioner, not legal advice.',
@@ -339,7 +320,7 @@ const ar: Record<TranslationKey, string> = {
   'brand.tagline': 'تجاري · مؤسسي · بحري',
   'nav.services': 'الخدمات',
   'nav.bench': 'منصة العقود',
-  'nav.dashboard': 'لوحة المتابعة',
+  'nav.dashboard': "ملفاتي",
   'nav.signIn': 'تسجيل الدخول',
   'nav.signOut': 'تسجيل الخروج',
   'nav.account': 'الحساب',
@@ -351,14 +332,15 @@ const ar: Record<TranslationKey, string> = {
   'hero.title.accent': 'مُقيَّم قبل',
   'hero.title.b': 'أن توقّعه.',
   'hero.lede':
-    'تصوغ ليكس ماريس العقود التجارية والبحرية وفقاً لشروطك، وتقيّم كل بند وفق نموذج مخاطر ثابت، وتنفّذها بسجل تحقّق تشفيري قابل للإثبات.',
+    "تصوغ ليكس ماريس العقود التجارية والبحرية وفقاً لشروطك، وتقيّم كل بند وفق مجموعة قواعد ثابتة ومعلنة — بالعربية أو الإنجليزية أو الفرنسية.",
   'hero.cta.primary': 'اطلب صياغة عقد',
   'hero.cta.secondary': 'جرّب منصة المخاطر',
-  'hero.trust': 'الكويت · الإمارات · إنجلترا وويلز · سنغافورة',
+  'hero.trust':
+    "القوانين المُنمذجة: الكويت · الإمارات · إنجلترا وويلز · سنغافورة · سويسرا · نيويورك",
   'hero.metric.rules': 'قاعدة بنود في كل تقييم',
-  'hero.metric.turnaround': 'من المسودة إلى ملف مختوم',
-  'hero.metric.sealing': 'تشفير لكل مستند',
-  'hero.metric.forum': 'مقار تحكيم مُنمذجة',
+  'hero.metric.turnaround': "لغات للصياغة",
+  'hero.metric.sealing': "بنداً نموذجياً في محرّك الصياغة",
+  'hero.metric.forum': "مؤسسات تحكيم مُنمذجة (LCIA · ICC · DIAC)",
   'hero.gavel.hint': 'اطرق المطرقة',
 
   // --- Auth ----------------------------------------------------------------
@@ -381,12 +363,12 @@ const ar: Record<TranslationKey, string> = {
   'auth.close': 'إغلاق',
   'auth.working': 'لحظة واحدة…',
   'auth.privilegeNotice':
-    'قد تكون المراسلات عبر هذه المنصة مشمولة بالسرية المهنية. لا تشارك بيانات دخولك.',
+    "تُعامَل المعلومات التي ترسلها بسرية. لا تشارك بيانات دخولك مع أحد.",
 
   // --- Checkout ------------------------------------------------------------
   'checkout.title': 'صياغة العقود',
   'checkout.subtitle':
-    'أخبرنا بالشروط. تتولى المحاماة الصياغة وتعيد العقد مع تقرير مخاطر على مستوى البنود.',
+    "أخبرنا بالشروط. يراجع المحامي تكليفك ويرسل لك عرض أتعاب مكتوباً قبل البدء بأي صياغة.",
   'checkout.section.instrument': 'العقد',
   'checkout.section.parties': 'الأطراف',
   'checkout.section.terms': 'الشروط التجارية',
@@ -433,7 +415,7 @@ const ar: Record<TranslationKey, string> = {
   'cap.automation.eyebrow': 'آلية صياغة العقود',
   'cap.automation.title': 'صياغة في دقائق، لا في أيام',
   'cap.automation.body':
-    'شجرة بنود وصفية تُركّب عقود التوريد والتوزيع والإيجار البحري واتفاقيات المساهمين من مدخلات مُتحقَّق منها. الترقيم والإحالات والملاحق تُستنتج تلقائياً.',
+    "شجرة بنود وصفية تُركّب مسودات عقود التوريد والتوزيع الحصري ومشارطات الإيجار بالرحلة من مدخلات مُتحقَّق منها. ويتحدّث ترقيم البنود تلقائياً عند إضافة الشروط أو حذفها.",
   'cap.analysis.eyebrow': 'تحليل على مستوى البنود',
   'cap.analysis.title': 'تقييم التعرّض أثناء الكتابة',
   'cap.analysis.body':
@@ -442,18 +424,18 @@ const ar: Record<TranslationKey, string> = {
   'cap.maritime.title': 'مدة التحميل والغرامة، مُعالجتان',
   'cap.maritime.body':
     'إشعار الجهوزية والفترات المستثناة واستحقاق غرامة التأخير ومواعيد سقوط المطالبات، جميعها مُنمذجة كشروط أساسية وليست ملاحق نصية حرة.',
-  'cap.execution.eyebrow': 'التنفيذ',
-  'cap.execution.title': 'سجل توقيع تشفيري',
+  'cap.execution.eyebrow': "اللغات",
+  'cap.execution.title': "عقد واحد بثلاث لغات",
   'cap.execution.body':
-    'كل عقد منفَّذ يحمل بصمة SHA-256 لمحتواه، وسجل تدقيق موقَّعاً، ومسار تحقّق برمز QR يعمل دون حساب.',
-  'cap.realtime.eyebrow': 'الزمن الفعلي',
-  'cap.realtime.title': 'العميل يعرف دائماً أين وصل ملفه',
+    "تُنتج الشروط نفسها المسودة بالعربية أو الإنجليزية أو الفرنسية، بنداً ببند. وإذا وُقّع العقد بأكثر من لغة، وجب أن ينصّ على النسخة التي يُعتدّ بها عند الاختلاف.",
+  'cap.realtime.eyebrow': "المتابعة",
+  'cap.realtime.title': "تابع كل طلب",
   'cap.realtime.body':
-    'تُبَثّ حالة الملف عبر قناة موثَّقة. الصياغة والمراجعة وملاحظات الطرف المقابل والتنفيذ تظهر على مسار العميل لحظة حدوثها.',
-  'cap.custody.eyebrow': 'الحفظ',
-  'cap.custody.title': 'مشفَّر في التخزين، لكل مستند',
+    "يظهر كل تكليف ترسله في حسابك مع مرحلته الحالية: الاستلام، ثم عرض الأتعاب، ثم الصياغة، ثم التسليم.",
+  'cap.custody.eyebrow': "السرية",
+  'cap.custody.title': "الوصول مقصور على حسابك",
   'cap.custody.body':
-    'تُختم المستندات بتشفير AES-256-GCM بمفاتيح بيانات مستقلة لكل مستند، مُغلَّفة بمفتاح رئيسي في نظام إدارة المفاتيح. النص الصريح لا يُكتب على القرص أبداً.',
+    "تنتقل البيانات عبر اتصالات مشفّرة (HTTPS)، ولا يطّلع على طلبك إلا أنت والمخوّلون من أعضاء جهتك، ولا يجمع هذا الموقع أي بيانات بطاقات دفع.",
 
   // --- Bench ---------------------------------------------------------------
   'bench.eyebrow': 'ماسح المخاطر ومنصة صياغة العقود',
@@ -485,7 +467,8 @@ const ar: Record<TranslationKey, string> = {
   'opt.law.XX': 'غير محدد',
   'opt.forum.arbitration-lcia': 'تحكيم محكمة لندن للتحكيم الدولي (LCIA)، لندن',
   'opt.forum.arbitration-icc': 'تحكيم غرفة التجارة الدولية (ICC)',
-  'opt.forum.arbitration-difc': 'تحكيم مركز DIFC-LCIA',
+  'opt.forum.arbitration-difc':
+    "تحكيم مركز دبي للتحكيم الدولي (DIAC)، مقره مركز دبي المالي العالمي",
   'opt.forum.arbitration-adhoc': 'تحكيم حرّ (غير مؤسسي)',
   'opt.forum.local-courts': 'المحاكم — دولة الطرف الأول',
   'opt.forum.foreign-courts': 'المحاكم — دولة الطرف المقابل',
@@ -503,7 +486,7 @@ const ar: Record<TranslationKey, string> = {
   'wizard.step.forum': 'القانون وجهة النزاع',
   'wizard.step.execute': 'المراجعة',
   'wizard.partyNote':
-    'تُستمد بيانات الأطراف من سجل الملف، ويُتحقَّق من بيانات السجل مقابل السجل التجاري المختص قبل التوقيع.',
+    "تظهر أسماء الأطراف وأرقام قيدها وعناوينها كحقول فارغة بين معقوفين، ويجب استكمالها والتحقق منها من السجل التجاري المختص قبل التوقيع.",
   'wizard.field.value': 'قيمة العقد — {value}',
   'wizard.field.paymentTerms': 'مدة السداد — {n} يوماً',
   'wizard.field.security': 'ضمان السداد',
@@ -557,16 +540,13 @@ const ar: Record<TranslationKey, string> = {
   'checkout.breadcrumb': 'صياغة العقود',
   'checkout.eyebrow': 'طلب خدمة',
   'checkout.offline':
-    'يُعرض السعر الافتراضي من الكتالوج — خدمة التسعير المباشر غير متاحة حالياً.',
+    "خدمة استقبال الطلبات غير متاحة مؤقتاً. يرجى المحاولة بعد قليل.",
   'checkout.disclaimer':
-    'إرسال هذا النموذج يُنشئ تكليفاً وليس اتفاقية أتعاب. يُرسَل خطاب التكليف قبل بدء العمل. النتيجة مؤشر فرز لممارس مؤهّل، وليست استشارة قانونية.',
+    "إرسال هذا النموذج هو تقديم تكليف، ولا يُنشئ بذاته علاقة وكالة بين المحامي والعميل. يُرسَل خطاب تكليف يحدد النطاق والأتعاب قبل بدء العمل. مؤشر المخاطر المعروض تقييم آلي، وليس استشارة قانونية.",
   'meta.checkout.description':
     'اطلب صياغة عقد تجاري أو بحري يُعدّه محامون متخصصون ويُسلَّم مع تقرير مخاطر على مستوى البنود.',
 
   // --- Auth (extra) ----------------------------------------------------------
-  'auth.google': 'المتابعة باستخدام Google',
-  'auth.apple': 'المتابعة باستخدام Apple',
-  'auth.or': 'أو',
   'auth.error.invalid': 'البريد الإلكتروني أو كلمة المرور غير صحيحة.',
   'auth.error.rateLimited': 'محاولات كثيرة جداً. يرجى الانتظار قليلاً ثم المحاولة مجدداً.',
   'auth.error.unconfirmed': 'يرجى تأكيد بريدك الإلكتروني أولاً، ثم تسجيل الدخول.',
@@ -585,50 +565,8 @@ const ar: Record<TranslationKey, string> = {
   'intro.skip': 'تخطّي المقدمة',
 
   // --- Dashboard -----------------------------------------------------------
-  'meta.dashboard.title': 'لوحة العميل',
-  'dash.summary': '4 ملفات مفتوحة · 2 بانتظار إجرائك',
-  'dash.new': 'عقد جديد',
-  'dash.alerts': 'تنبيهات الامتثال',
-  'dash.vault': 'خزنة المستندات المشفّرة',
-  'dash.stage.instructed': 'استلام التكليف',
-  'dash.stage.instructed.meta': '2 سبتمبر، 09:14',
-  'dash.stage.assembled': 'إعداد المسودة الأولى',
-  'dash.stage.assembled.meta': '2 سبتمبر، 09:16',
-  'dash.stage.scanned': 'اكتمال فحص المخاطر — 3 ملاحظات',
-  'dash.stage.scanned.meta': '2 سبتمبر، 09:16',
-  'dash.stage.partner': 'مراجعة الشريك',
-  'dash.stage.partner.meta': '4 سبتمبر، 15:40',
-  'dash.stage.counterparty': 'بانتظار ملاحظات الطرف المقابل',
-  'dash.stage.counterparty.meta': 'الموعد 10 سبتمبر',
-  'dash.stage.sanctions': 'يلزم إعادة فحص العقوبات قبل التوقيع',
-  'dash.stage.sanctions.meta': 'انتهت صلاحية الفحص في 6 سبتمبر',
-  'dash.stage.execution': 'التوقيع والختم',
-  'dash.stage.execution.meta': 'لم يبدأ',
-  'dash.actor.portal': 'بوابة العميل',
-  'dash.actor.engine': 'محرّك المستندات',
-  'dash.actor.scanner': 'الماسح الإصدار 1.0.0',
-  'dash.alert.sanctions.title': 'انتهت صلاحية فحص العقوبات',
-  'dash.alert.sanctions.body':
-    'مضى على سجل فحص الطرف المقابل 91 يوماً. التوقيع موقوف حتى يُسجَّل فحص جديد مقابل القوائم الموحّدة الحالية.',
-  'dash.alert.sanctions.action': 'إعادة فحص الطرف المقابل',
-  'dash.alert.demurrage.title': 'اقتراب موعد سقوط مطالبة غرامة التأخير',
-  'dash.alert.demurrage.body':
-    'يجب تقديم المطالبة LM-2026-0388 مع المستندات المؤيدة خلال 11 يوماً، وإلا سقطت بموجب البند 6.2.',
-  'dash.alert.demurrage.action': 'فتح ملف المطالبة',
-  'dash.alert.lc.title': 'قرب انتهاء خطاب الاعتماد',
-  'dash.alert.lc.body':
-    'ينتهي خطاب الاعتماد المعزَّز في الملف LM-2026-0402 خلال 24 يوماً، قبل نافذة الشحنة الأخيرة.',
-  'dash.alert.lc.action': 'طلب تعديل',
-  'dash.doc.charter': 'مشارطة إيجار بالرحلة — موقّعة',
-  'dash.doc.supply': 'اتفاقية توريد — المسودة 4',
-  'dash.doc.screening': 'سجل فحص العقوبات',
-  'dash.doc.bol': 'سند شحن — السفينة سيروكو',
-  'dash.doc.sealed': 'مختوم · AES-256-GCM',
-  'dash.doc.expired': 'منتهي الصلاحية',
-  'dash.date.6sep': '6 سبتمبر',
-  'dash.date.4sep': '4 سبتمبر',
-  'dash.date.7jun': '7 يونيو',
-  'dash.date.1sep': '1 سبتمبر',
+  'meta.dashboard.title': "ملفاتي",
+  'dash.new': "تكليف جديد",
   'timeline.title': 'مراحل الملف',
   'timeline.complete': 'اكتملت {done} من {total} مراحل',
   'timeline.action': 'مطلوب إجراء',
@@ -638,8 +576,31 @@ const ar: Record<TranslationKey, string> = {
   'meta.description':
     'أتمتة صياغة العقود، وتحليل المخاطر على مستوى البنود، والتوقيع التشفيري للمحامين في القانون التجاري والمؤسسي والتجارة البحرية.',
   'common.skip': 'انتقل إلى المحتوى',
-  'hero.metric.turnaround.value': '< 2 ث',
 
+  'checkout.fee.title': "الأتعاب",
+  'checkout.fee.body':
+    "لا توجد أتعاب ثابتة. تُحدَّد الأتعاب بحسب نطاق العقد ودرجة تعقيده، وتُبيَّن في عرض مكتوب وخطاب تكليف لموافقتك. لا يُستوفى أي مبلغ عند إرسال هذا النموذج.",
+  'checkout.submit': "إرسال التكليف",
+  'checkout.working': "جارٍ الإرسال…",
+  'checkout.success.title': "تم استلام تكليفك",
+  'checkout.success.body':
+    "المرجع {ref}. سيراجع المحامي تكليفك ويرسل لك عرض الأتعاب، ويمكنك متابعة حالة الطلب من حسابك.",
+  'checkout.success.cta': "عرض ملفاتي",
+  'dash.heading': "ملفاتي",
+  'dash.lede': "جميع التكليفات التي أرسلتها، مع المرحلة الحالية لكل منها.",
+  'dash.empty.title': "لا توجد ملفات بعد",
+  'dash.empty.body': "عند إرسال أي تكليف، سيظهر هنا مع مرحلته الحالية.",
+  'dash.error': "تعذّر تحميل ملفاتك. يرجى تحديث الصفحة.",
+  'dash.submitted': "أُرسل في {date}",
+  'dash.stage.received': "استلام التكليف",
+  'dash.stage.quote': "المراجعة وعرض الأتعاب",
+  'dash.stage.drafting': "الصياغة",
+  'dash.stage.delivered': "التسليم",
+  'dash.stage.pending': "لم تبدأ",
+  'dash.stage.current': "قيد التنفيذ",
+  'dash.stage.done': "مكتملة",
+  'dash.status.cancelled': "ملغى",
+  'dash.status.refunded': "مُسترد",
   // --- Shared --------------------------------------------------------------
   'common.notLegalAdvice':
     'النتيجة مؤشر فرز لممارس مؤهّل، وليست استشارة قانونية.',
@@ -655,7 +616,7 @@ const fr: Record<TranslationKey, string> = {
   'brand.tagline': 'Commercial · Sociétés · Maritime',
   'nav.services': 'Services',
   'nav.bench': 'Atelier contrats',
-  'nav.dashboard': 'Tableau de bord',
+  'nav.dashboard': "Mes dossiers",
   'nav.signIn': 'Se connecter',
   'nav.signOut': 'Se déconnecter',
   'nav.account': 'Compte',
@@ -667,14 +628,16 @@ const fr: Record<TranslationKey, string> = {
   'hero.title.accent': 'évaluée avant',
   'hero.title.b': 'votre signature.',
   'hero.lede':
-    "Lex Maris rédige vos instruments commerciaux et maritimes à partir de vos conditions, évalue chaque clause selon un modèle d'exposition fixe et les fait signer avec une piste cryptographique vérifiable.",
+    "Lex Maris rédige vos instruments commerciaux et maritimes à partir de vos conditions et évalue chaque clause selon un ensemble de règles fixe et publié — en arabe, en anglais ou en français.",
   'hero.cta.primary': 'Commander un contrat',
   'hero.cta.secondary': "Essayer l'atelier de risques",
-  'hero.trust': 'Koweït · Émirats · Angleterre et pays de Galles · Singapour',
+  'hero.trust':
+    "Droits applicables modélisés : Koweït · Émirats · Angleterre et pays de Galles · Singapour · Suisse · New York",
   'hero.metric.rules': 'règles de clauses par analyse',
-  'hero.metric.turnaround': 'du projet au PDF scellé',
-  'hero.metric.sealing': 'scellement par document',
-  'hero.metric.forum': "sièges d'arbitrage modélisés",
+  'hero.metric.turnaround': "langues de rédaction",
+  'hero.metric.sealing': "clauses types dans le moteur de rédaction",
+  'hero.metric.forum':
+    "institutions d'arbitrage modélisées (LCIA · CCI · DIAC)",
   'hero.gavel.hint': 'Frappez le maillet',
 
   // --- Auth ----------------------------------------------------------------
@@ -697,12 +660,12 @@ const fr: Record<TranslationKey, string> = {
   'auth.close': 'Fermer',
   'auth.working': 'Un instant…',
   'auth.privilegeNotice':
-    'Les échanges sur cette plateforme peuvent être couverts par le secret professionnel. Ne partagez pas vos identifiants.',
+    "Les informations que vous transmettez sont traitées de manière confidentielle. Ne partagez pas vos identifiants.",
 
   // --- Checkout ------------------------------------------------------------
   'checkout.title': 'Rédaction de contrats',
   'checkout.subtitle':
-    "Indiquez-nous vos conditions. Nos avocats rédigent l'instrument et vous le remettent avec un rapport de risques clause par clause.",
+    "Indiquez-nous vos conditions. Nos avocats examinent vos instructions et vous adressent un devis d'honoraires écrit avant toute rédaction.",
   'checkout.section.instrument': "L'instrument",
   'checkout.section.parties': 'Les parties',
   'checkout.section.terms': 'Conditions commerciales',
@@ -749,7 +712,7 @@ const fr: Record<TranslationKey, string> = {
   'cap.automation.eyebrow': 'Automatisation contractuelle',
   'cap.automation.title': 'Rédiger en minutes, pas en jours',
   'cap.automation.body':
-    "Un arbre de clauses déclaratif assemble contrats de fourniture, de distribution, chartes-parties et pactes d'actionnaires à partir de données validées. Numérotation, renvois et annexes se déduisent d'eux-mêmes.",
+    "Un arbre de clauses déclaratif assemble des projets de contrats de fourniture, de distribution exclusive et de charte-partie au voyage à partir de données validées. La numérotation se met à jour automatiquement lorsque des conditions sont ajoutées ou retirées.",
   'cap.analysis.eyebrow': 'Analyse clause par clause',
   'cap.analysis.title': 'Exposition évaluée pendant la saisie',
   'cap.analysis.body':
@@ -758,18 +721,18 @@ const fr: Record<TranslationKey, string> = {
   'cap.maritime.title': 'Staries et surestaries, maîtrisées',
   'cap.maritime.body':
     "Avis de disponibilité, périodes exceptées, calcul des surestaries et délais de forclusion sont modélisés comme des conditions à part entière, et non comme des avenants en texte libre.",
-  'cap.execution.eyebrow': 'Signature',
-  'cap.execution.title': 'Piste de signature cryptographique',
+  'cap.execution.eyebrow': "Langues",
+  'cap.execution.title': "Un contrat, trois langues",
   'cap.execution.body':
-    "Chaque instrument signé porte une empreinte SHA-256 de son contenu, un journal d'audit signé et un lien de vérification par QR code accessible sans compte.",
-  'cap.realtime.eyebrow': 'Temps réel',
-  'cap.realtime.title': 'Le client sait toujours où en est son dossier',
+    "Les mêmes conditions produisent le projet en arabe, en anglais ou en français, clause par clause. Lorsqu'un contrat est signé en plusieurs langues, il doit préciser quelle version prévaut.",
+  'cap.realtime.eyebrow': "Suivi",
+  'cap.realtime.title': "Suivez chaque demande",
   'cap.realtime.body':
-    "L'état du dossier est diffusé sur un canal authentifié. Rédaction, revue, observations du cocontractant et signature apparaissent sur le suivi client dès qu'elles ont lieu.",
-  'cap.custody.eyebrow': 'Conservation',
-  'cap.custody.title': 'Chiffré au repos, document par document',
+    "Chaque instruction transmise apparaît dans votre compte avec son étape en cours : réception, devis d'honoraires, rédaction et remise.",
+  'cap.custody.eyebrow': "Confidentialité",
+  'cap.custody.title': "Accès limité à votre compte",
   'cap.custody.body':
-    "Les documents sont scellés en AES-256-GCM avec une clé de données propre à chaque document, elle-même protégée par une clé maîtresse KMS. Le texte en clair ne touche jamais le disque.",
+    "Les données transitent par des connexions chiffrées (HTTPS). Chaque demande n'est lisible que par vous et les membres habilités de votre organisation, et aucune donnée de carte n'est collectée sur ce site.",
 
   // --- Bench ---------------------------------------------------------------
   'bench.eyebrow': 'Analyse des risques et rédaction en direct',
@@ -801,7 +764,7 @@ const fr: Record<TranslationKey, string> = {
   'opt.law.XX': 'Non précisé',
   'opt.forum.arbitration-lcia': 'Arbitrage LCIA, Londres',
   'opt.forum.arbitration-icc': 'Arbitrage CCI',
-  'opt.forum.arbitration-difc': 'Arbitrage DIFC-LCIA',
+  'opt.forum.arbitration-difc': "Arbitrage DIAC, siège au DIFC",
   'opt.forum.arbitration-adhoc': 'Arbitrage ad hoc',
   'opt.forum.local-courts': 'Tribunaux — siège du Premier Contractant',
   'opt.forum.foreign-courts': 'Tribunaux — siège du cocontractant',
@@ -819,7 +782,7 @@ const fr: Record<TranslationKey, string> = {
   'wizard.step.forum': 'Droit et for',
   'wizard.step.execute': 'Revue',
   'wizard.partyNote':
-    "Les informations sur les parties proviennent du dossier. Les données d'immatriculation sont vérifiées auprès du registre du commerce compétent avant signature.",
+    "Les dénominations, numéros d'immatriculation et adresses des parties figurent entre crochets. Ils doivent être complétés et vérifiés auprès du registre du commerce compétent avant signature.",
   'wizard.field.value': 'Valeur du contrat — {value}',
   'wizard.field.paymentTerms': 'Délai de paiement — {n} jours',
   'wizard.field.security': 'Garantie de paiement',
@@ -873,16 +836,13 @@ const fr: Record<TranslationKey, string> = {
   'checkout.breadcrumb': 'Rédaction de contrats',
   'checkout.eyebrow': 'Commande',
   'checkout.offline':
-    "Prix catalogue par défaut affiché — le service de tarification en direct est injoignable.",
+    "Le service de commande est momentanément indisponible. Veuillez réessayer dans quelques instants.",
   'checkout.disclaimer':
-    "L'envoi de ce formulaire constitue une instruction, et non une convention d'honoraires. Une lettre de mission vous sera adressée avant le début des travaux. Le résultat est un signal de tri destiné à un praticien qualifié, et non un conseil juridique.",
+    "L'envoi de ce formulaire transmet des instructions ; il ne crée pas de relation avocat-client. Une lettre de mission précisant l'étendue et les honoraires vous sera adressée avant le début des travaux. Le score de risque affiché est un indicateur automatisé, et non un conseil juridique.",
   'meta.checkout.description':
     'Commandez un instrument commercial ou maritime, rédigé par nos avocats et remis avec un rapport de risques clause par clause.',
 
   // --- Auth (extra) ----------------------------------------------------------
-  'auth.google': 'Continuer avec Google',
-  'auth.apple': 'Continuer avec Apple',
-  'auth.or': 'ou',
   'auth.error.invalid': 'Adresse e-mail ou mot de passe incorrect.',
   'auth.error.rateLimited': 'Trop de tentatives. Veuillez patienter un instant puis réessayer.',
   'auth.error.unconfirmed': "Veuillez d'abord confirmer votre adresse e-mail, puis vous connecter.",
@@ -901,50 +861,8 @@ const fr: Record<TranslationKey, string> = {
   'intro.skip': "Passer l'introduction",
 
   // --- Dashboard -----------------------------------------------------------
-  'meta.dashboard.title': 'Tableau de bord client',
-  'dash.summary': '4 dossiers ouverts · 2 en attente de votre action',
-  'dash.new': 'Nouvel instrument',
-  'dash.alerts': 'Alertes de conformité',
-  'dash.vault': 'Coffre-fort documentaire chiffré',
-  'dash.stage.instructed': 'Instructions reçues',
-  'dash.stage.instructed.meta': '2 sept., 09:14',
-  'dash.stage.assembled': 'Premier projet assemblé',
-  'dash.stage.assembled.meta': '2 sept., 09:16',
-  'dash.stage.scanned': 'Analyse des risques terminée — 3 constats',
-  'dash.stage.scanned.meta': '2 sept., 09:16',
-  'dash.stage.partner': "Revue de l'associé",
-  'dash.stage.partner.meta': '4 sept., 15:40',
-  'dash.stage.counterparty': 'Observations du cocontractant attendues',
-  'dash.stage.counterparty.meta': 'Échéance 10 sept.',
-  'dash.stage.sanctions': 'Nouveau filtrage sanctions requis avant signature',
-  'dash.stage.sanctions.meta': 'Filtrage expiré le 6 sept.',
-  'dash.stage.execution': 'Signature et scellement',
-  'dash.stage.execution.meta': 'Non commencé',
-  'dash.actor.portal': 'Portail client',
-  'dash.actor.engine': 'Moteur documentaire',
-  'dash.actor.scanner': 'Analyseur v1.0.0',
-  'dash.alert.sanctions.title': 'Filtrage sanctions expiré',
-  'dash.alert.sanctions.body':
-    "Le filtrage du cocontractant date de 91 jours. La signature est bloquée jusqu'à l'enregistrement d'un nouveau filtrage au regard des listes consolidées en vigueur.",
-  'dash.alert.sanctions.action': 'Refiltrer le cocontractant',
-  'dash.alert.demurrage.title': 'Forclusion des surestaries imminente',
-  'dash.alert.demurrage.body':
-    'La réclamation LM-2026-0388 doit être présentée avec ses justificatifs sous 11 jours, faute de quoi elle sera forclose en vertu de la clause 6.2.',
-  'dash.alert.demurrage.action': 'Ouvrir le dossier de réclamation',
-  'dash.alert.lc.title': 'Expiration du crédit documentaire',
-  'dash.alert.lc.body':
-    "Le crédit documentaire confirmé du dossier LM-2026-0402 expire dans 24 jours, avant la fenêtre d'expédition finale.",
-  'dash.alert.lc.action': 'Demander une modification',
-  'dash.doc.charter': 'Charte-partie au voyage — signée',
-  'dash.doc.supply': 'Contrat de fourniture — projet 4',
-  'dash.doc.screening': 'Rapport de filtrage sanctions',
-  'dash.doc.bol': 'Connaissement — MV Sirocco',
-  'dash.doc.sealed': 'Scellé · AES-256-GCM',
-  'dash.doc.expired': 'Expiré',
-  'dash.date.6sep': '6 sept.',
-  'dash.date.4sep': '4 sept.',
-  'dash.date.7jun': '7 juin',
-  'dash.date.1sep': '1er sept.',
+  'meta.dashboard.title': "Mes dossiers",
+  'dash.new': "Nouvelles instructions",
   'timeline.title': 'Avancement du dossier',
   'timeline.complete': '{done} étapes sur {total} terminées',
   'timeline.action': 'Action requise',
@@ -954,8 +872,34 @@ const fr: Record<TranslationKey, string> = {
   'meta.description':
     "Automatisation contractuelle, analyse des risques clause par clause et signature cryptographique pour les juristes en droit commercial, des sociétés et du commerce maritime.",
   'common.skip': 'Aller au contenu',
-  'hero.metric.turnaround.value': '< 2 s',
 
+  'checkout.fee.title': "Honoraires",
+  'checkout.fee.body':
+    "Aucun honoraire forfaitaire ne s'applique. Les honoraires dépendent de l'étendue et de la complexité de l'instrument et figurent dans un devis écrit et une lettre de mission soumis à votre accord. Rien n'est facturé lors de l'envoi de ce formulaire.",
+  'checkout.submit': "Envoyer les instructions",
+  'checkout.working': "Envoi en cours…",
+  'checkout.success.title': "Instructions reçues",
+  'checkout.success.body':
+    "Référence {ref}. Nos avocats examineront vos instructions et vous adresseront un devis. Vous pouvez suivre l'état de cette demande dans votre compte.",
+  'checkout.success.cta': "Voir mes dossiers",
+  'dash.heading': "Mes dossiers",
+  'dash.lede':
+    "Toutes les instructions que vous avez transmises, avec leur étape en cours.",
+  'dash.empty.title': "Aucun dossier pour le moment",
+  'dash.empty.body':
+    "Lorsque vous transmettez des instructions, chaque demande apparaît ici avec son étape en cours.",
+  'dash.error':
+    "Vos dossiers n’ont pas pu être chargés. Veuillez actualiser la page.",
+  'dash.submitted': "Transmis le {date}",
+  'dash.stage.received': "Instructions reçues",
+  'dash.stage.quote': "Examen et devis d'honoraires",
+  'dash.stage.drafting': "Rédaction",
+  'dash.stage.delivered': "Remise",
+  'dash.stage.pending': "À venir",
+  'dash.stage.current': "En cours",
+  'dash.stage.done': "Terminée",
+  'dash.status.cancelled': "Annulé",
+  'dash.status.refunded': "Remboursé",
   // --- Shared --------------------------------------------------------------
   'common.notLegalAdvice':
     'Le résultat est un signal de tri destiné à un praticien qualifié, et non un conseil juridique.',

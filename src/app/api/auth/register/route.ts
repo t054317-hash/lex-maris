@@ -76,26 +76,29 @@ export async function POST(request: Request) {
   // --- 1. Pre-check, for the message ---------------------------------------
   // Uses the admin client because profiles is behind RLS and the caller is
   // anonymous. It reads one boolean about one address and returns nothing else.
-  const admin = getSupabaseAdminClient();
-  const { data: existing, error: lookupError } = await admin
-    .from('profiles')
-    .select('id')
-    .eq('email', email)
-    .is('deleted_at', null)
-    .maybeSingle();
+  //
+  // OPTIONAL. Without SUPABASE_SERVICE_ROLE_KEY this step is skipped rather
+  // than failing every registration (which is what it used to do: the admin
+  // client threw, the route 500'd, and every visitor saw "something went
+  // wrong"). Duplicates are still caught below -- by Supabase's empty
+  // `identities` response and by the unique indexes.
+  if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    const admin = getSupabaseAdminClient();
+    const { data: existing, error: lookupError } = await admin
+      .from('profiles')
+      .select('id')
+      .eq('email', email)
+      .is('deleted_at', null)
+      .maybeSingle();
 
-  if (lookupError) {
-    return NextResponse.json(
-      { error: 'Could not verify the email address. Please try again.' },
-      { status: 503 },
-    );
-  }
-
-  if (existing && REVEAL_EXISTING) {
-    return NextResponse.json(
-      { error: 'An account with this email already exists. Please log in.' },
-      { status: 409 },
-    );
+    if (lookupError) {
+      console.error('[register] duplicate pre-check failed', lookupError.message);
+    } else if (existing && REVEAL_EXISTING) {
+      return NextResponse.json(
+        { error: 'An account with this email already exists. Please log in.' },
+        { status: 409 },
+      );
+    }
   }
 
   // --- 2. Create the user ---------------------------------------------------
@@ -107,6 +110,9 @@ export async function POST(request: Request) {
     email,
     password,
     options: {
+      // The confirmation link returns through the callback, which exchanges
+      // the one-time code and signs the user straight in.
+      emailRedirectTo: `${new URL(request.url).origin}/auth/callback?next=/dashboard`,
       // Consumed by app.handle_new_user(), which resolves the organisation:
       // a valid invite joins an existing firm, otherwise a new one is founded.
       data: {
@@ -120,9 +126,12 @@ export async function POST(request: Request) {
 
   if (error) {
     // The unique indexes won the race described above.
+    // Not a bare 422: Supabase also uses 422 for a weak password, which must
+    // not be reported as "account already exists".
     const isDuplicate =
+      error.code === 'user_already_exists' ||
+      error.code === 'email_exists' ||
       error.code === '23505' ||
-      error.status === 422 ||
       /already registered|already exists|duplicate/i.test(error.message);
 
     if (isDuplicate) {
@@ -139,8 +148,8 @@ export async function POST(request: Request) {
       );
     }
 
-    console.error('[register] signUp failed', error.message);
-    return NextResponse.json({ error: 'Registration failed.' }, { status: 400 });
+    console.error('[register] signUp failed', error.code, error.message);
+    return NextResponse.json({ error: 'Registration failed.' }, { status: 422 });
   }
 
   /**

@@ -130,6 +130,7 @@ const COUNTRY: Record<Locale, Record<string, string>> = {
     TW: 'Taiwan',
     US: 'the United States',
     CH: 'Switzerland',
+    XX: '[jurisdiction of registration]',
   },
   ar: {
     AE: 'دولة الإمارات العربية المتحدة',
@@ -141,6 +142,7 @@ const COUNTRY: Record<Locale, Record<string, string>> = {
     TW: 'تايوان',
     US: 'الولايات المتحدة الأمريكية',
     CH: 'سويسرا',
+    XX: '[دولة القيد]',
   },
   fr: {
     AE: 'aux Émirats arabes unis',
@@ -152,6 +154,7 @@ const COUNTRY: Record<Locale, Record<string, string>> = {
     TW: 'à Taïwan',
     US: 'aux États-Unis',
     CH: 'en Suisse',
+    XX: "[lieu d'immatriculation]",
   },
 };
 
@@ -203,8 +206,11 @@ const EN: DocText = {
       'any dispute shall be referred to and finally resolved by arbitration under the LCIA Rules, seated in London, before three arbitrators, in the English language',
     'arbitration-icc':
       'any dispute shall be referred to and finally resolved by arbitration under the Rules of Arbitration of the International Chamber of Commerce, before three arbitrators, in the English language',
+    // The DIFC-LCIA Arbitration Centre was abolished by Dubai Decree No. 34
+    // of 2021; its caseload passed to DIAC. The code keeps the old key for
+    // stored briefs, but the clause names the institution that exists.
     'arbitration-difc':
-      'any dispute shall be referred to and finally resolved by arbitration under the DIFC-LCIA Arbitration Rules, seated in the Dubai International Financial Centre, before three arbitrators, in the English language',
+      'any dispute shall be referred to and finally resolved by arbitration under the Arbitration Rules of the Dubai International Arbitration Centre (DIAC), seated in the Dubai International Financial Centre, before three arbitrators, in the English language',
     'arbitration-adhoc':
       'any dispute shall be referred to ad hoc arbitration as the parties may agree at the relevant time',
     silent: '[DISPUTE RESOLUTION MECHANISM NOT SELECTED]',
@@ -234,8 +240,8 @@ const EN: DocText = {
     payment: (days, contractualInterest) => [
       `The Second Party shall pay each valid invoice within ${days} days of the date of invoice, in cleared funds, without set-off or deduction.`,
       contractualInterest
-        ? 'Sums not paid when due shall bear interest at 4% per annum above the applicable reference rate, accruing daily and compounding monthly, from the due date until payment.'
-        : 'Sums not paid when due shall bear interest at the statutory rate from the due date until payment.',
+        ? 'To the extent permitted by the governing law, sums not paid when due shall bear interest at 4% per annum above the applicable reference rate, accruing daily, from the due date until payment.'
+        : 'To the extent permitted by the governing law, sums not paid when due shall bear interest at the statutory rate from the due date until payment.',
     ],
     security: (instrument) => [
       `As a condition precedent to the First Party performance obligations, the Second Party shall procure and maintain ${instrument} in an amount not less than the Contract Value.`,
@@ -295,7 +301,7 @@ const EN: DocText = {
     ],
     execution: [
       'This Agreement may be executed in counterparts and by electronic signature, each of which shall constitute an original and all of which together shall constitute one and the same instrument.',
-      'The parties agree that an electronic signature applied through the platform, together with the associated audit record and document hash, satisfies any requirement for signature in writing.',
+      'To the extent permitted by applicable law, the parties agree that an electronic signature satisfies any requirement for signature in writing. Where the law requires a particular form, notarisation or wet-ink signature, that requirement shall be complied with.',
     ],
   },
 };
@@ -347,7 +353,7 @@ const AR: DocText = {
     'arbitration-icc':
       'يُحال أي نزاع إلى التحكيم ويُفصل فيه نهائياً وفقاً لقواعد التحكيم لدى غرفة التجارة الدولية (ICC)، أمام هيئة من ثلاثة محكّمين، وتكون لغة التحكيم الإنجليزية',
     'arbitration-difc':
-      'يُحال أي نزاع إلى التحكيم ويُفصل فيه نهائياً وفقاً لقواعد التحكيم لدى مركز DIFC-LCIA، ويكون مقر التحكيم مركز دبي المالي العالمي، أمام هيئة من ثلاثة محكّمين، وتكون لغة التحكيم الإنجليزية',
+      'يُحال أي نزاع إلى التحكيم ويُفصل فيه نهائياً وفقاً لقواعد التحكيم لدى مركز دبي للتحكيم الدولي (DIAC)، ويكون مقر التحكيم مركز دبي المالي العالمي، أمام هيئة من ثلاثة محكّمين، وتكون لغة التحكيم الإنجليزية',
     'arbitration-adhoc':
       'يُحال أي نزاع إلى تحكيم حرّ (غير مؤسسي) وفقاً لما قد يتفق عليه الطرفان في حينه',
     silent: '[لم تُحدَّد آلية تسوية النزاعات]',
@@ -377,8 +383,8 @@ const AR: DocText = {
     payment: (days, contractualInterest) => [
       `يلتزم الطرف الثاني بسداد كل فاتورة صحيحة خلال ${days} يوماً من تاريخ إصدارها، بأموال محصَّلة، ودون أي مقاصة أو خصم.`,
       contractualInterest
-        ? 'تستحق على المبالغ غير المسدَّدة في مواعيد استحقاقها فائدة بنسبة 4% سنوياً فوق السعر المرجعي المطبَّق، تُحتسب يومياً وتُركَّب شهرياً، من تاريخ الاستحقاق حتى تمام السداد.'
-        : 'تستحق على المبالغ غير المسدَّدة في مواعيد استحقاقها الفائدة القانونية من تاريخ الاستحقاق حتى تمام السداد.',
+        ? 'في الحدود التي يُجيزها القانون الواجب التطبيق، تستحق على المبالغ غير المسدَّدة في مواعيد استحقاقها فائدة بنسبة 4% سنوياً فوق السعر المرجعي المطبَّق، تُحتسب يومياً، من تاريخ الاستحقاق حتى تمام السداد.'
+        : 'في الحدود التي يُجيزها القانون الواجب التطبيق، تستحق على المبالغ غير المسدَّدة في مواعيد استحقاقها الفائدة القانونية من تاريخ الاستحقاق حتى تمام السداد.',
     ],
     security: (instrument) => [
       `كشرط مسبق لالتزامات الطرف الأول بالتنفيذ، يلتزم الطرف الثاني بتقديم ${instrument} والمحافظة على سريانه، بمبلغ لا يقل عن قيمة العقد.`,
@@ -438,7 +444,7 @@ const AR: DocText = {
     ],
     execution: [
       'يجوز توقيع هذه الاتفاقية على نسخ متعددة وبالتوقيع الإلكتروني، وتُعدّ كل نسخة منها أصلاً، وتشكّل جميعها معاً صكاً واحداً.',
-      'يتفق الطرفان على أن التوقيع الإلكتروني المُطبَّق عبر المنصة، مقروناً بسجل التدقيق المرتبط به وبصمة المستند، يستوفي أي اشتراط للتوقيع الكتابي.',
+      'في الحدود التي يُجيزها القانون المعمول به، يتفق الطرفان على أن التوقيع الإلكتروني يستوفي أي اشتراط للتوقيع الكتابي. وحيثما يشترط القانون شكلاً معيناً أو توثيقاً أو توقيعاً خطياً، وجب استيفاء ذلك الشرط.',
     ],
   },
 };
@@ -492,7 +498,7 @@ const FR: DocText = {
     'arbitration-icc':
       "tout différend sera définitivement tranché suivant le Règlement d'arbitrage de la Chambre de commerce internationale (CCI), par trois arbitres, en langue anglaise",
     'arbitration-difc':
-      "tout différend sera soumis à l'arbitrage et définitivement tranché selon le Règlement d'arbitrage DIFC-LCIA, le siège de l'arbitrage étant fixé au Dubai International Financial Centre, par trois arbitres, en langue anglaise",
+      "tout différend sera soumis à l'arbitrage et définitivement tranché selon le Règlement d'arbitrage du Dubai International Arbitration Centre (DIAC), le siège de l'arbitrage étant fixé au Dubai International Financial Centre, par trois arbitres, en langue anglaise",
     'arbitration-adhoc':
       'tout différend sera soumis à un arbitrage ad hoc selon les modalités dont les parties pourront convenir le moment venu',
     silent: '[MODE DE RÈGLEMENT DES DIFFÉRENDS NON SÉLECTIONNÉ]',
@@ -522,8 +528,8 @@ const FR: DocText = {
     payment: (days, contractualInterest) => [
       `Le Second Contractant règle chaque facture valablement émise dans un délai de ${days} jours à compter de sa date d'émission, en fonds disponibles, sans compensation ni déduction.`,
       contractualInterest
-        ? "Les sommes non payées à leur échéance portent intérêt au taux de 4 % l'an au-dessus du taux de référence applicable, courant quotidiennement et capitalisé mensuellement, de la date d'échéance jusqu'au paiement effectif."
-        : "Les sommes non payées à leur échéance portent intérêt au taux légal de la date d'échéance jusqu'au paiement effectif.",
+        ? "Dans la mesure permise par le droit applicable, les sommes non payées à leur échéance portent intérêt au taux de 4 % l'an au-dessus du taux de référence applicable, courant quotidiennement, de la date d'échéance jusqu'au paiement effectif."
+        : "Dans la mesure permise par le droit applicable, les sommes non payées à leur échéance portent intérêt au taux légal de la date d'échéance jusqu'au paiement effectif.",
     ],
     security: (instrument) => [
       `À titre de condition préalable aux obligations d'exécution du Premier Contractant, le Second Contractant fournit et maintient ${instrument}, pour un montant au moins égal à la Valeur du Contrat.`,
@@ -583,7 +589,7 @@ const FR: DocText = {
     ],
     execution: [
       'Le présent Contrat peut être signé en plusieurs exemplaires et par signature électronique, chacun constituant un original et leur ensemble constituant un seul et même instrument.',
-      "Les parties conviennent qu'une signature électronique apposée via la plateforme, accompagnée du journal d'audit et de l'empreinte du document associés, satisfait à toute exigence de signature écrite.",
+      "Dans la mesure permise par le droit applicable, les parties conviennent qu'une signature électronique satisfait à toute exigence de signature écrite. Lorsque la loi impose une forme particulière, une légalisation ou une signature manuscrite, cette exigence doit être respectée.",
     ],
   },
 };

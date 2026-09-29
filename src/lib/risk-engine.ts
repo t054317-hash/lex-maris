@@ -124,12 +124,7 @@ const GOODS_TYPES: ReadonlySet<ContractType> = new Set([
  * Jurisdictions where recognition of a foreign *court* judgment is materially
  * harder than enforcement of an arbitral award. 'XX' stands for "unstated".
  */
-const WEAK_JUDGMENT_ENFORCEMENT: ReadonlySet<string> = new Set([
-  'TW',
-  'ER',
-  'SO',
-  'XX',
-]);
+const WEAK_JUDGMENT_ENFORCEMENT: ReadonlySet<string> = new Set(['XX']);
 
 export type FindingCode =
   | 'gov-law-silent'
@@ -174,7 +169,8 @@ const RULES: readonly Rule[] = [
               'Without an express choice of law, the applicable law falls to be decided by the forum conflict rules. Neither party can price that outcome at signature.',
             remediation:
               'Insert an express governing-law clause. For cross-border trade, English law or DIFC law are the conventional neutral choices.',
-            authority: 'Rome I Regulation (EC) 593/2008, Art. 3',
+            authority:
+              'Rome I Regulation (EC) No 593/2008, Arts 3–4; UAE Civil Transactions Law (Federal Law No. 5 of 1985), Art. 19',
           }
         : null,
   },
@@ -192,7 +188,6 @@ const RULES: readonly Rule[] = [
             'Absent an agreed forum, proceedings can be commenced in any jurisdiction with a hook, inviting parallel actions and a race to judgment.',
           remediation:
             'Adopt a seated arbitration clause with the seat, language, rules and number of arbitrators expressly stated.',
-          authority: 'New York Convention 1958, Art. II',
         };
       }
       if (c.disputeForum === 'arbitration-adhoc') {
@@ -203,7 +198,7 @@ const RULES: readonly Rule[] = [
           detail:
             'Ad hoc arbitration leaves appointment, challenge and fee mechanics to the parties. It stalls as soon as one party stops cooperating.',
           remediation:
-            'Adopt UNCITRAL Rules with a named appointing authority, or move to an institutional clause (LCIA, ICC, DIFC-LCIA).',
+            'Adopt UNCITRAL Rules with a named appointing authority, or move to an institutional clause (LCIA, ICC, DIAC).',
         };
       }
       if (
@@ -213,11 +208,11 @@ const RULES: readonly Rule[] = [
         return {
           severity: 'high',
           code: 'forum-foreign-courts',
-          title: 'Judgment may be unenforceable where the assets sit',
+          title: 'Enforcement route against the counterparty is unverified',
           detail:
-            'A court judgment must be recognised in the jurisdiction holding the counterparty assets. That route is materially weaker here than arbitral enforcement.',
+            "A court judgment must be recognised where the counterparty's assets are located. With the counterparty's jurisdiction unstated, that route cannot be assessed, whereas an arbitral award is enforceable in the 170+ New York Convention states.",
           remediation:
-            'Switch to arbitration so the award travels under the New York Convention.',
+            "State the counterparty's jurisdiction, or switch to arbitration seated in a New York Convention state.",
           authority: 'New York Convention 1958, Art. III',
         };
       }
@@ -278,7 +273,7 @@ const RULES: readonly Rule[] = [
           detail:
             'Terms beyond 60 days warrant an express late-payment interest rate so the cost of delay is not absorbed silently.',
           remediation:
-            'Add interest at a stated margin over the relevant reference rate, compounding monthly.',
+            'Where the governing law permits contractual interest, add interest at a stated margin over the relevant reference rate. Under Sharia-based systems (e.g. Saudi Arabia) interest is unenforceable; use a different late-payment mechanism.',
         };
       }
       return null;
@@ -314,7 +309,7 @@ const RULES: readonly Rule[] = [
             code: 'force-majeure-missing',
             title: 'No force majeure clause',
             detail:
-              'Common-law frustration is far narrower than a drafted force majeure clause and rarely excuses delay short of impossibility.',
+              "Without an express clause, relief depends on the governing law's default rules (frustration under English law; statutory force majeure and exceptional-circumstances doctrines in civil-law systems such as Kuwait and the UAE), which are narrower and less predictable than a drafted clause.",
             remediation:
               'Add a force majeure clause with notice mechanics, a mitigation duty, and a long-stop termination right.',
           }
@@ -334,7 +329,8 @@ const RULES: readonly Rule[] = [
               'Cross-border trade with no sanctions representation, no screening covenant and no suspension right exposes the party to strict-liability penalties and correspondent-bank de-risking.',
             remediation:
               'Add sanctions representations and warranties, an ongoing screening covenant, and a right to suspend or terminate without liability.',
-            authority: 'OFAC 31 CFR Part 500 et seq.; EU Regulation 833/2014',
+            authority:
+              'UN Security Council sanctions; US OFAC regulations (31 CFR Chapter V); EU restrictive measures, e.g. Council Regulation (EU) No 833/2014',
           }
         : null,
   },
@@ -366,7 +362,7 @@ const RULES: readonly Rule[] = [
             code: 'indemnity-missing',
             title: 'No express indemnity',
             detail:
-              'Recovery is confined to damages for breach, subject to remoteness, causation and the duty to mitigate.',
+              'Recovery is confined to damages for breach, subject to foreseeability (remoteness), causation and the duty to mitigate.',
             remediation:
               'Add targeted indemnities for third-party IP claims, regulatory penalties, and cargo or property damage.',
           }

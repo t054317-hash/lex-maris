@@ -462,6 +462,11 @@ export function GavelScene({
 }) {
   return (
     <Canvas
+      // R3F gives its wrapper `pointer-events: auto` inline, which overrides
+      // the parent's pointer-events-none and swallowed every click and tap
+      // meant for the full-screen strike button underneath. The scene is
+      // purely visual; the button is the interaction.
+      style={{ pointerEvents: 'none' }}
       dpr={[1, 1.6]}
       shadows="soft"
       camera={{ position: CAMERA_POSITION, fov: 42 }}

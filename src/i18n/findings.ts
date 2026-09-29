@@ -29,7 +29,8 @@ const ar: Table = {
       'في غياب اختيار صريح للقانون، يُحدَّد القانون الواجب التطبيق وفق قواعد تنازع القوانين لدى جهة النظر في النزاع، ولا يستطيع أي من الطرفين تقدير هذه النتيجة عند التوقيع.',
     remediation:
       'أدرج بنداً صريحاً للقانون الواجب التطبيق. في التجارة العابرة للحدود، يُعدّ القانون الإنجليزي أو قانون مركز دبي المالي العالمي الخيارين المحايدين المعتادين.',
-    authority: 'لائحة روما الأولى (EC) 593/2008، المادة 3',
+    authority:
+      'لائحة روما الأولى (EC) رقم 593/2008، المادتان 3 و4؛ قانون المعاملات المدنية الإماراتي (القانون الاتحادي رقم 5 لسنة 1985)، المادة 19',
   },
   'forum-silent': {
     title: 'لا توجد آلية لتسوية النزاعات',
@@ -37,20 +38,19 @@ const ar: Table = {
       'في غياب جهة متفق عليها لتسوية النزاع، يمكن رفع الدعوى في أي دولة يتوافر فيها ضابط اختصاص، مما يفتح الباب لدعاوى متوازية وسباق نحو الحكم.',
     remediation:
       'اعتمد شرط تحكيم محدد المقر، مع النص صراحة على المقر واللغة والقواعد وعدد المحكّمين.',
-    authority: 'اتفاقية نيويورك لعام 1958، المادة الثانية',
   },
   'forum-adhoc': {
     title: 'تحكيم حرّ دون دعم مؤسسي',
     detail:
       'يترك التحكيم الحرّ آليات التعيين والردّ والأتعاب للطرفين، ويتعثّر بمجرد توقّف أحدهما عن التعاون.',
     remediation:
-      'اعتمد قواعد الأونسيترال مع تسمية سلطة تعيين، أو انتقل إلى شرط تحكيم مؤسسي (LCIA أو ICC أو DIFC-LCIA).',
+      'اعتمد قواعد الأونسيترال مع تسمية سلطة تعيين، أو انتقل إلى شرط تحكيم مؤسسي (LCIA أو ICC أو DIAC).',
   },
   'forum-foreign-courts': {
-    title: 'قد يتعذّر تنفيذ الحكم حيث توجد الأصول',
+    title: 'طريق التنفيذ ضد الطرف المقابل غير مُتحقَّق منه',
     detail:
-      'يجب الاعتراف بالحكم القضائي في الدولة التي توجد فيها أصول الطرف المقابل، وهذا المسار أضعف هنا بكثير من تنفيذ أحكام التحكيم.',
-    remediation: 'انتقل إلى التحكيم ليُنفَّذ الحكم بموجب اتفاقية نيويورك.',
+      'يجب الاعتراف بالحكم القضائي في الدولة التي توجد فيها أصول الطرف المقابل. ومع عدم تحديد دولة الطرف المقابل يتعذّر تقييم هذا الطريق، بينما يُنفَّذ حكم التحكيم في أكثر من 170 دولة منضمة إلى اتفاقية نيويورك.',
+    remediation: 'حدّد دولة الطرف المقابل، أو انتقل إلى تحكيم يكون مقره في دولة منضمة إلى اتفاقية نيويورك.',
     authority: 'اتفاقية نيويورك لعام 1958، المادة الثالثة',
   },
   'liability-uncapped': {
@@ -78,7 +78,8 @@ const ar: Table = {
     title: 'مدة سداد ممتدة',
     detail:
       'المدد التي تتجاوز 60 يوماً تستوجب النص صراحة على سعر فائدة التأخير، حتى لا تُستوعب تكلفة التأخير بصمت.',
-    remediation: 'أضف فائدة بهامش محدد فوق السعر المرجعي المعني، تُركَّب شهرياً.',
+    remediation:
+      'إذا كان القانون الواجب التطبيق يُجيز الفائدة الاتفاقية، فأضف فائدة بهامش محدد فوق السعر المرجعي المعني. أما في الأنظمة المستندة إلى أحكام الشريعة (كالمملكة العربية السعودية) فلا يُعتدّ بالفائدة، ويلزم اعتماد آلية أخرى للتأخر في السداد.',
   },
   'security-missing': {
     title: 'لا يوجد ضمان للسداد رغم أهمية قيمة العقد',
@@ -91,7 +92,7 @@ const ar: Table = {
   'force-majeure-missing': {
     title: 'لا يوجد بند للقوة القاهرة',
     detail:
-      'مبدأ استحالة التنفيذ في القانون العام أضيق بكثير من بند قوة قاهرة مصاغ، ونادراً ما يُعفي من التأخير ما لم يبلغ حد الاستحالة.',
+      'في غياب بند صريح، يتوقف الإعفاء على القواعد العامة في القانون الواجب التطبيق (نظرية استحالة التنفيذ (frustration) في القانون الإنجليزي، وأحكام القوة القاهرة والظروف الطارئة في القوانين المدنية كقانوني الكويت والإمارات)، وهي أضيق وأقل قابلية للتوقّع من بند مصاغ.',
     remediation:
       'أضف بند قوة قاهرة يتضمن آلية الإخطار، وواجب التخفيف من الأضرار، وحقاً نهائياً في الإنهاء.',
   },
@@ -101,7 +102,8 @@ const ar: Table = {
       'التجارة العابرة للحدود دون إقرار بشأن العقوبات أو تعهّد بالفحص أو حق في التعليق تعرّض الطرف لعقوبات قائمة على المسؤولية المطلقة ولتقليص البنوك المراسلة لتعاملاتها معه.',
     remediation:
       'أضف إقرارات وضمانات بشأن العقوبات، وتعهّداً بالفحص المستمر، وحقاً في التعليق أو الإنهاء دون مسؤولية.',
-    authority: 'OFAC 31 CFR Part 500 وما يليها؛ لائحة الاتحاد الأوروبي 833/2014',
+    authority:
+      'عقوبات مجلس الأمن الدولي؛ لوائح مكتب مراقبة الأصول الأجنبية الأمريكي OFAC (31 CFR Chapter V)؛ التدابير التقييدية للاتحاد الأوروبي، ومنها اللائحة (EU) رقم 833/2014',
   },
   'termination-convenience': {
     title: 'لا يوجد حق في الإنهاء للملاءمة',
@@ -112,7 +114,7 @@ const ar: Table = {
   'indemnity-missing': {
     title: 'لا يوجد تعويض صريح',
     detail:
-      'يقتصر الاسترداد على التعويض عن الإخلال، رهناً بقواعد التوقع والسببية وواجب التخفيف من الضرر.',
+      'يقتصر الاسترداد على التعويض عن الإخلال، رهناً بقواعد توقّع الضرر والسببية وواجب التخفيف منه.',
     remediation:
       'أضف تعويضات محددة عن مطالبات الغير المتعلقة بالملكية الفكرية، والجزاءات التنظيمية، والأضرار التي تلحق بالبضائع أو الممتلكات.',
   },
@@ -148,7 +150,8 @@ const fr: Table = {
       "À défaut de choix exprès, la loi applicable est déterminée par les règles de conflit du for saisi. Aucune des parties ne peut évaluer cette issue au moment de la signature.",
     remediation:
       'Insérez une clause expresse de droit applicable. Pour le commerce international, le droit anglais ou le droit du DIFC sont les choix neutres usuels.',
-    authority: 'Règlement Rome I (CE) n° 593/2008, art. 3',
+    authority:
+      'Règlement (CE) n° 593/2008 (Rome I), art. 3 et 4 ; Code des transactions civiles des Émirats (loi fédérale n° 5 de 1985), art. 19',
   },
   'forum-silent': {
     title: 'Aucun mode de règlement des différends',
@@ -156,21 +159,20 @@ const fr: Table = {
       "Faute de for convenu, une action peut être engagée dans toute juridiction présentant un lien de rattachement, ce qui favorise les procédures parallèles et la course au jugement.",
     remediation:
       "Adoptez une clause compromissoire précisant expressément le siège, la langue, le règlement et le nombre d'arbitres.",
-    authority: 'Convention de New York de 1958, art. II',
   },
   'forum-adhoc': {
     title: 'Arbitrage ad hoc sans soutien institutionnel',
     detail:
       "L'arbitrage ad hoc laisse aux parties la nomination, la récusation et les honoraires. Il se bloque dès qu'une partie cesse de coopérer.",
     remediation:
-      "Adoptez le Règlement de la CNUDCI avec une autorité de nomination désignée, ou optez pour une clause institutionnelle (LCIA, CCI, DIFC-LCIA).",
+      "Adoptez le Règlement de la CNUDCI avec une autorité de nomination désignée, ou optez pour une clause institutionnelle (LCIA, CCI, DIAC).",
   },
   'forum-foreign-courts': {
-    title: 'Jugement potentiellement inexécutable là où se trouvent les actifs',
+    title: "Voie d'exécution contre le cocontractant non vérifiée",
     detail:
-      "Un jugement doit être reconnu dans l'État où se situent les actifs du cocontractant. Cette voie est ici nettement plus fragile que l'exécution d'une sentence arbitrale.",
+      "Un jugement doit être reconnu dans l'État où se situent les actifs du cocontractant. La juridiction du cocontractant n'étant pas précisée, cette voie ne peut être évaluée, alors qu'une sentence arbitrale est exécutoire dans plus de 170 États parties à la Convention de New York.",
     remediation:
-      "Passez à l'arbitrage afin que la sentence circule sous l'empire de la Convention de New York.",
+      "Précisez la juridiction du cocontractant, ou optez pour un arbitrage siégeant dans un État partie à la Convention de New York.",
     authority: 'Convention de New York de 1958, art. III',
   },
   'liability-uncapped': {
@@ -199,7 +201,7 @@ const fr: Table = {
     detail:
       "Au-delà de 60 jours, un taux d'intérêt de retard exprès s'impose pour que le coût du retard ne soit pas absorbé silencieusement.",
     remediation:
-      'Prévoyez des intérêts à une marge déterminée au-dessus du taux de référence pertinent, capitalisés mensuellement.',
+      "Si le droit applicable admet l'intérêt conventionnel, prévoyez des intérêts à une marge déterminée au-dessus du taux de référence pertinent. Dans les systèmes fondés sur la charia (p. ex. l'Arabie saoudite), l'intérêt est inopposable ; prévoyez un autre mécanisme de retard de paiement.",
   },
   'security-missing': {
     title: 'Aucune garantie de paiement pour un contrat significatif',
@@ -212,7 +214,7 @@ const fr: Table = {
   'force-majeure-missing': {
     title: 'Aucune clause de force majeure',
     detail:
-      "La théorie de la frustration en common law est bien plus étroite qu'une clause de force majeure rédigée et n'excuse que rarement un retard en deçà de l'impossibilité.",
+      "À défaut de clause expresse, l'exonération dépend des règles supplétives du droit applicable (frustration en droit anglais ; force majeure et imprévision légales dans les systèmes civilistes tels que le Koweït et les Émirats), plus étroites et moins prévisibles qu'une clause rédigée.",
     remediation:
       "Ajoutez une clause de force majeure prévoyant les modalités de notification, une obligation d'atténuation et un droit de résiliation à terme.",
   },
@@ -222,7 +224,8 @@ const fr: Table = {
       "Un commerce international sans déclaration relative aux sanctions, sans engagement de filtrage et sans droit de suspension expose la partie à des pénalités de responsabilité objective et au désengagement des banques correspondantes.",
     remediation:
       "Ajoutez des déclarations et garanties relatives aux sanctions, un engagement de filtrage continu et un droit de suspendre ou de résilier sans responsabilité.",
-    authority: 'OFAC 31 CFR Part 500 et s. ; Règlement (UE) n° 833/2014',
+    authority:
+      "Sanctions du Conseil de sécurité de l'ONU ; réglementation OFAC (31 CFR Chapter V) ; mesures restrictives de l'UE, p. ex. règlement (UE) n° 833/2014",
   },
   'termination-convenience': {
     title: 'Aucune résiliation pour convenance',

@@ -25,8 +25,6 @@ import {
   options,
 } from '@/i18n/options';
 
-type PayMethod = 'card' | 'knet' | 'transfer';
-
 /**
  * Contract Writing checkout.
  *
@@ -39,12 +37,12 @@ type PayMethod = 'card' | 'knet' | 'transfer';
  *    order converts to a matter, the brief maps onto the matter columns
  *    one-for-one with no translation layer.
  *
- * 2. No card field exists anywhere in this component. Card capture happens on
- *    the gateway's own page, which is what keeps this site out of PCI-DSS
- *    scope. The buttons below choose a *method*; they never collect a number.
+ * 2. There is no fixed price and no payment step. Submitting records the
+ *    instructions (amounts zero); counsel then issues a written fee quote and
+ *    engagement letter. No card data is collected anywhere on this site.
  */
 export function CheckoutForm({ service }: { service: ServiceRow }) {
-  const { t, locale, formatMoney, formatNumber } = useI18n();
+  const { t, locale } = useI18n();
   const { session } = useSession();
 
   const [authOpen, setAuthOpen] = useState(false);
@@ -54,6 +52,8 @@ export function CheckoutForm({ service }: { service: ServiceRow }) {
   const [terms, setTerms] = useState<ContractInput>(() => ({
     ...defaultContractInput(),
     type: 'charterparty',
+    // No amount is suggested: the client states the value, if any.
+    valueUsd: 0,
   }));
   const [firstParty, setFirstParty] = useState('');
   const [secondParty, setSecondParty] = useState('');
@@ -63,7 +63,7 @@ export function CheckoutForm({ service }: { service: ServiceRow }) {
   const [contactEmail, setContactEmail] = useState('');
   const [contactPhone, setContactPhone] = useState('');
   const [country, setCountry] = useState('KW');
-  const [method, setMethod] = useState<PayMethod>('card');
+  const [submitted, setSubmitted] = useState<string | null>(null);
 
   const patch = useCallback(
     <K extends keyof ContractInput>(key: K, value: ContractInput[K]) =>
@@ -73,11 +73,6 @@ export function CheckoutForm({ service }: { service: ServiceRow }) {
 
   // Same engine as the bench. Pure, so this is cheap enough to run per render.
   const report = useMemo(() => analyseContract(terms), [terms]);
-
-  // Money is in minor units end to end; no float arithmetic on a price.
-  const subtotal = service.base_price;
-  const tax = 0; // Kuwait has no VAT at time of writing. Wired for when it does.
-  const total = subtotal + tax;
 
   const submit = useCallback(
     async (e: React.FormEvent) => {
@@ -111,9 +106,10 @@ export function CheckoutForm({ service }: { service: ServiceRow }) {
             contact_phone: contactPhone || null,
             billing_country: country,
             locale,
-            subtotal,
-            tax,
-            total,
+            // Fees are quoted after review, never fixed up front.
+            subtotal: 0,
+            tax: 0,
+            total: 0,
             currency: service.currency,
             brief: {
               terms: { ...terms },
@@ -135,26 +131,7 @@ export function CheckoutForm({ service }: { service: ServiceRow }) {
         // the visitor gets a translated, generic one.
         if (orderError) throw new Error(t('auth.error.generic'));
 
-        // Hand off to the server, which talks to the gateway with the secret
-        // key and writes the payments row as service_role.
-        const res = await fetch('/api/checkout', {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ orderId: order.id, method }),
-        });
-
-        const payload = (await res.json().catch(() => ({}))) as { url?: string };
-        if (!res.ok) {
-          throw new Error(t('checkout.error.failed', { status: res.status }));
-        }
-        // Only ever leave for an https gateway page or a path on this site.
-        // Refusing anything else means a compromised or misconfigured
-        // response cannot turn this into a javascript: sink.
-        if (payload.url && isSafeRedirect(payload.url)) {
-          window.location.assign(payload.url);
-          return;
-        }
-        throw new Error(t('checkout.error.noRedirect'));
+        setSubmitted(order.reference);
       } catch (err) {
         setError(err instanceof Error ? err.message : t('auth.error.generic'));
       } finally {
@@ -163,12 +140,31 @@ export function CheckoutForm({ service }: { service: ServiceRow }) {
     },
     [
       session, service, contactName, contactEmail, contactPhone, country, locale, t,
-      subtotal, tax, total, terms, firstParty, secondParty, deadline,
-      instructions, report, method,
+      terms, firstParty, secondParty, deadline, instructions, report,
     ],
   );
 
   const isMaritime = terms.type === 'charterparty' || terms.type === 'bill-of-lading';
+
+  if (submitted) {
+    return (
+      <GlassCard interactive={false} className="mx-auto max-w-xl p-8 text-center">
+        <p role="status" className="font-display text-2xl text-gold-400">
+          {t('checkout.success.title')}
+        </p>
+        <p className="mt-4 text-sm leading-relaxed text-ink-300">
+          {t('checkout.success.body', { ref: submitted })}
+        </p>
+        <a
+          href="/dashboard"
+          data-cursor="hover"
+          className="mt-7 inline-block rounded-full border border-gold-500/50 bg-gold-500/12 px-6 py-3 text-xs uppercase tracking-[0.18em] text-gold-400 transition-all duration-300 hover:border-gold-500"
+        >
+          {t('checkout.success.cta')}
+        </a>
+      </GlassCard>
+    );
+  }
 
   return (
     <>
@@ -243,7 +239,7 @@ export function CheckoutForm({ service }: { service: ServiceRow }) {
                   type="number"
                   min={0}
                   step={10000}
-                  value={terms.valueUsd}
+                  value={terms.valueUsd || ''}
                   onChange={(e) => patch('valueUsd', Number(e.target.value))}
                   className={INPUT}
                 />
@@ -372,71 +368,10 @@ export function CheckoutForm({ service }: { service: ServiceRow }) {
           </GlassCard>
 
           <GlassCard interactive={false} className="p-6">
-            <p className="eyebrow">{t('checkout.summary.title')}</p>
-
-            <dl className="mt-5 space-y-2.5 text-sm">
-              <Line
-                label={t('checkout.summary.service')}
-                value={formatMoney(subtotal, service.currency)}
-              />
-              <Line
-                label={t('checkout.summary.turnaround')}
-                value={`${formatNumber(service.turnaround_days)} ${t('checkout.summary.days')}`}
-                muted
-              />
-              <Line
-                label={t('checkout.summary.subtotal')}
-                value={formatMoney(subtotal, service.currency)}
-                muted
-              />
-              <Line
-                label={t('checkout.summary.tax')}
-                value={formatMoney(tax, service.currency)}
-                muted
-              />
-              <div className="border-t border-ink-500/15 pt-3">
-                <Line
-                  label={t('checkout.summary.total')}
-                  value={formatMoney(total, service.currency)}
-                  strong
-                />
-              </div>
-            </dl>
-
-            <p className="eyebrow mt-7">{t('checkout.section.payment')}</p>
-            <div className="mt-3 grid gap-2">
-              {(
-                [
-                  ['card', 'checkout.pay.card'],
-                  ['knet', 'checkout.pay.knet'],
-                  ['transfer', 'checkout.pay.transfer'],
-                ] as const
-              ).map(([value, key]) => (
-                <button
-                  key={value}
-                  type="button"
-                  role="radio"
-                  aria-checked={method === value}
-                  data-cursor="hover"
-                  onClick={() => setMethod(value)}
-                  className={`flex items-center justify-between gap-3 rounded-lg border px-4 py-3 text-sm transition-colors duration-300 ${
-                    method === value
-                      ? 'border-gold-500/60 bg-gold-500/10 text-gold-400'
-                      : 'border-ink-500/22 bg-navy-800/40 text-ink-100 hover:border-gold-500/40'
-                  }`}
-                >
-                  <span>{t(key)}</span>
-                  <span
-                    aria-hidden
-                    className={`h-3.5 w-3.5 rounded-full border ${
-                      method === value
-                        ? 'border-gold-500 bg-gold-500/70'
-                        : 'border-ink-500/50'
-                    }`}
-                  />
-                </button>
-              ))}
-            </div>
+            <p className="eyebrow">{t('checkout.fee.title')}</p>
+            <p className="mt-4 text-sm leading-relaxed text-ink-300">
+              {t('checkout.fee.body')}
+            </p>
 
             {!session && (
               <button
@@ -462,12 +397,8 @@ export function CheckoutForm({ service }: { service: ServiceRow }) {
               whileTap={{ scale: 0.985 }}
               className="mt-5 w-full rounded-full border border-gold-500/50 bg-gold-500/12 px-6 py-3.5 text-xs uppercase tracking-[0.18em] text-gold-400 transition-all duration-300 hover:border-gold-500 hover:bg-gold-500/22 disabled:opacity-50"
             >
-              {busy ? t('checkout.pay.working') : t('checkout.pay.submit')}
+              {busy ? t('checkout.working') : t('checkout.submit')}
             </motion.button>
-
-            <p className="mt-4 text-[11px] leading-relaxed text-ink-500">
-              {t('checkout.pay.redirect')}
-            </p>
           </GlassCard>
         </div>
       </form>
@@ -482,15 +413,6 @@ export function CheckoutForm({ service }: { service: ServiceRow }) {
 }
 
 /* -------------------------------------------------------------------------- */
-
-function isSafeRedirect(url: string): boolean {
-  if (/^\/(?![/\\])/.test(url)) return true;
-  try {
-    return new URL(url).protocol === 'https:';
-  } catch {
-    return false;
-  }
-}
 
 const INPUT =
   'w-full rounded-lg border border-ink-500/25 bg-navy-800/70 px-3.5 py-2.5 text-sm text-ink-100 transition-colors duration-300 hover:border-gold-500/50 focus:border-gold-500';
@@ -532,30 +454,5 @@ function Select({
         </option>
       ))}
     </select>
-  );
-}
-
-function Line({
-  label,
-  value,
-  muted,
-  strong,
-}: {
-  label: string;
-  value: string;
-  muted?: boolean;
-  strong?: boolean;
-}) {
-  return (
-    <div className="flex items-baseline justify-between gap-4">
-      <dt className={muted ? 'text-ink-500' : 'text-ink-300'}>{label}</dt>
-      <dd
-        className={`tabular-nums ${
-          strong ? 'font-display text-lg text-gold-400' : 'text-ink-100'
-        }`}
-      >
-        {value}
-      </dd>
-    </div>
   );
 }

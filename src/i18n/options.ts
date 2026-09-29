@@ -15,7 +15,17 @@ export const CONTRACT_TYPES: readonly ContractType[] = [
   'jv',
 ];
 
-export const COUNTERPARTY_JURISDICTIONS = ['AE', 'KW', 'SA', 'GB', 'SG', 'TW', 'XX'] as const;
+/**
+ * Instruments the live builder drafts. Deliberately narrower than
+ * CONTRACT_TYPES: the builder's clause set (contract value, invoice payment,
+ * a liability cap as a multiple of value) is right for these three and wrong
+ * for the others -- a bill of lading's liability is fixed by the Hague-Visby
+ * Rules (Art. III r. 8 voids clauses lessening it), and a shareholders or JV
+ * agreement is not a supply of goods. Those remain orderable from counsel.
+ */
+export const BUILDER_TYPES: readonly ContractType[] = ['supply', 'distribution', 'charterparty'];
+
+export const COUNTERPARTY_JURISDICTIONS = ['AE', 'KW', 'SA', 'QA', 'GB', 'SG', 'XX'] as const;
 
 export const BILLING_JURISDICTIONS = ['KW', 'AE', 'SA', 'QA', 'GB', 'SG', 'XX'] as const;
 

@@ -30,6 +30,8 @@ export function GavelIntro({ onComplete }: { onComplete?: () => void }) {
   const [burst, setBurst] = useState(0);
   const { strike, prime } = useGavelAudio();
   const dismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const fallbackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const impacted = useRef(false);
 
   // Show the intro once per session, and never for reduced-motion users.
   useEffect(() => {
@@ -51,15 +53,25 @@ export function GavelIntro({ onComplete }: { onComplete?: () => void }) {
     // Audio must be started synchronously inside the gesture (autoplay policy).
     prime();
     setPhase('strike');
+    // Safety net: if WebGL is slow, unavailable or loses its context (some
+    // phones do), the scene never reports contact and the visitor would be
+    // stuck behind the overlay. The swing takes ~0.26s; after 1s, land it.
+    fallbackTimer.current = setTimeout(() => handleImpactRef.current(), 1000);
   }, [phase, prime]);
 
-  /** Fired by the 3D scene at the exact frame of contact. */
+  /** Fired by the 3D scene at the exact frame of contact (or by the fallback). */
   const handleImpact = useCallback(() => {
+    if (impacted.current) return;
+    impacted.current = true;
+    if (fallbackTimer.current) clearTimeout(fallbackTimer.current);
     strike(0.85);
     setBurst((n) => n + 1);
     if (navigator.vibrate) navigator.vibrate(18);
     dismissTimer.current = setTimeout(finish, DISSOLVE_MS);
   }, [strike, finish]);
+
+  const handleImpactRef = useRef(handleImpact);
+  handleImpactRef.current = handleImpact;
 
   // Keyboard parity: Enter/Space strikes, Escape skips.
   useEffect(() => {
@@ -78,6 +90,7 @@ export function GavelIntro({ onComplete }: { onComplete?: () => void }) {
   useEffect(
     () => () => {
       if (dismissTimer.current) clearTimeout(dismissTimer.current);
+      if (fallbackTimer.current) clearTimeout(fallbackTimer.current);
     },
     [],
   );

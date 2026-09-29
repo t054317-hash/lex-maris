@@ -15,7 +15,7 @@ import { assembleDocument, type DocumentMeta } from '@/lib/document-engine';
 import { useI18n } from '@/i18n/I18nProvider';
 import { NUMBER_LOCALE, type Locale } from '@/i18n/config';
 import {
-  CONTRACT_TYPES,
+  BUILDER_TYPES,
   COUNTERPARTY_JURISDICTIONS,
   DISPUTE_FORUMS,
   GOVERNING_LAWS,
@@ -25,50 +25,52 @@ import {
 
 const STEPS = ['instrument', 'commercial', 'allocation', 'forum', 'execute'] as const;
 
-const DEMO_META: DocumentMeta = {
-  reference: 'LM-2026-0417',
-  executionDate: '2026-09-08',
-  parties: {
-    first: {
-      name: 'Meridian Trading DMCC',
-      registrationNo: 'DMCC-114820',
-      address: 'Unit 3402, Almas Tower, JLT, Dubai',
-      jurisdiction: 'AE',
-    },
-    second: {
-      name: 'Northgate Commodities Ltd',
-      registrationNo: '09441237',
-      address: '12 Leadenhall Street, London EC3V 1LP',
-      jurisdiction: 'GB',
-    },
-  },
-};
-
 /**
- * The demo parties as an Arabic draft would name them. Registered names keep
- * their legal Latin form in brackets, as Gulf practice does, so the party is
- * still identifiable against the register.
+ * The builder drafts a template, so every party detail is a bracketed
+ * placeholder rather than an invented company: nothing on the page should
+ * read as a real party, registration number or date.
  */
-const DEMO_META_AR: DocumentMeta = {
-  ...DEMO_META,
+const placeholderMeta = (p: {
+  ref: string;
+  date: string;
+  first: string;
+  second: string;
+  reg: string;
+  address: string;
+}): DocumentMeta => ({
+  reference: p.ref,
+  executionDate: p.date,
   parties: {
-    first: {
-      ...DEMO_META.parties.first,
-      name: 'ميريديان للتجارة م.م.ح (Meridian Trading DMCC)',
-      address: 'الوحدة 3402، برج الماس، أبراج بحيرات جميرا، دبي',
-    },
-    second: {
-      ...DEMO_META.parties.second,
-      name: 'نورثغيت للسلع المحدودة (Northgate Commodities Ltd)',
-      address: '12 شارع ليدنهول، لندن EC3V 1LP',
-    },
+    first: { name: p.first, registrationNo: p.reg, address: p.address, jurisdiction: 'XX' },
+    second: { name: p.second, registrationNo: p.reg, address: p.address, jurisdiction: 'XX' },
   },
-};
+});
 
 const META_FOR: Record<Locale, DocumentMeta> = {
-  en: DEMO_META,
-  ar: DEMO_META_AR,
-  fr: DEMO_META,
+  en: placeholderMeta({
+    ref: '[reference]',
+    date: '[date]',
+    first: '[First Party name]',
+    second: '[Second Party name]',
+    reg: '[registration no.]',
+    address: '[registered address]',
+  }),
+  ar: placeholderMeta({
+    ref: '[المرجع]',
+    date: '[التاريخ]',
+    first: '[اسم الطرف الأول]',
+    second: '[اسم الطرف الثاني]',
+    reg: '[رقم القيد]',
+    address: '[عنوان المقر المسجّل]',
+  }),
+  fr: placeholderMeta({
+    ref: '[référence]',
+    date: '[date]',
+    first: '[dénomination du Premier Contractant]',
+    second: '[dénomination du Second Contractant]',
+    reg: "[numéro d'immatriculation]",
+    address: '[adresse du siège social]',
+  }),
 };
 
 /**
@@ -150,7 +152,7 @@ export function ContractWizard() {
                     <Select
                       value={input.type}
                       onChange={(v) => patch('type', v as ContractInput['type'])}
-                      options={options(t, 'opt.type', CONTRACT_TYPES)}
+                      options={options(t, 'opt.type', BUILDER_TYPES)}
                     />
                   </Field>
                   <Field label={t('checkout.field.counterpartyJurisdiction')}>

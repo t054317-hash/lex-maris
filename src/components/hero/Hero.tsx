@@ -158,10 +158,13 @@ export function Hero() {
         <dl className="grid grid-cols-2 gap-x-8 gap-y-7 pt-8 sm:grid-cols-4">
           {(
             [
+              // Each figure is a count of what the code actually does:
+              // RULES in risk-engine, locales in i18n/config, ClauseId in
+              // document-engine, and the institutional forums offered.
               ['12', 'hero.metric.rules'],
-              [t('hero.metric.turnaround.value'), 'hero.metric.turnaround'],
-              ['AES-256', 'hero.metric.sealing'],
-              ['4', 'hero.metric.forum'],
+              ['3', 'hero.metric.turnaround'],
+              ['16', 'hero.metric.sealing'],
+              ['3', 'hero.metric.forum'],
             ] as const
           ).map(([value, key]) => (
             <div key={key}>
