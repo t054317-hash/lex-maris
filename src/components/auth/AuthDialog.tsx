@@ -38,7 +38,6 @@ export function AuthDialog({
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
-  const [organisation, setOrganisation] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(initialError);
   const [notice, setNotice] = useState<string | null>(null);
@@ -122,7 +121,7 @@ export function AuthDialog({
         const payload =
           mode === 'signIn'
             ? { email, password }
-            : { email, password, fullName, organisationName: organisation, locale };
+            : { email, password, fullName, locale };
 
         const res = await fetch(endpoint, {
           method: 'POST',
@@ -170,7 +169,7 @@ export function AuthDialog({
         setBusy(false);
       }
     },
-    [mode, email, password, fullName, organisation, locale, onClose, t],
+    [mode, email, password, fullName, locale, onClose, t],
   );
 
   const resetPassword = useCallback(async () => {
@@ -242,13 +241,6 @@ export function AuthDialog({
                     value={fullName}
                     onChange={setFullName}
                     required
-                  />
-                  <AuthField
-                    label={t('auth.organisation')}
-                    type="text"
-                    autoComplete="organization"
-                    value={organisation}
-                    onChange={setOrganisation}
                   />
                 </>
               )}
